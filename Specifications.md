@@ -7,14 +7,14 @@
 3. Cofounder detection
 4. Pairwise inference
 6. Bayesian Methods : 
-  1. Constraint based
-  2. Score based
-  3. Hybrid
+   * Constraint based
+   * Score based
+   * Hybrid
 7. Utils :
-  1. Graph visualisation 
-  2. Log info ? 
-  3. Import datasets
-  4. Loading pretrained models
+   * Graph visualisation 
+   * Log info ? 
+   * Import datasets
+   * Loading pretrained models
 	  
 ## Types and important notes
 
