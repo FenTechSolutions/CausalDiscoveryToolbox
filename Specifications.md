@@ -2,27 +2,27 @@
 
 ## Subpackages 
 
-	* Dependency criteria
-	* Deconvolution methods
-	* Cofounder detection
-	* Pairwise inference
-	* Bayesian Methods : 
-	  ** Constraint based
-	  ** Score based
-	  ** Hybrid
-	* Utils :
-	  ** Graph visualisation 
-	  ** Log info ? 
-	  ** Import datasets
-	  ** Loading pretrained models
+1. Dependency criteria
+2. Deconvolution methods
+3. Cofounder detection
+4. Pairwise inference
+6. Bayesian Methods : 
+  1. Constraint based
+  2. Score based
+  3. Hybrid
+7. Utils :
+  1. Graph visualisation 
+  2. Log info ? 
+  3. Import datasets
+  4. Loading pretrained models
 	  
 ## Types and important notes
 
 **We should be able to create custom methods using each of these steps as building blocks**
 In order to do that, some types might have to be implemented:
-	* Dependency graphs
-	* Partially oriented
-	* Fully oriented (already done -see CGNN code)
+* Dependency graphs
+* Partially oriented
+* Fully oriented (already done -see CGNN code)
 
 **Dependencies have to be easily installed**
 Including all R packages
