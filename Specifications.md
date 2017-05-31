@@ -6,6 +6,7 @@
 2. Deconvolution methods
 3. Cofounder detection
 4. Pairwise inference
+5. Time-series
 6. Bayesian Methods : 
    * Constraint based
    * Score based
@@ -13,7 +14,7 @@
 7. Utils :
    * Graph visualisation 
    * Log info ? 
-   * Import datasets
+   * Import datasets/ dataset generator
    * Loading pretrained models
 	  
 ## Types and important notes
