@@ -87,9 +87,9 @@ class DirectedGraph(object):
         if df:
             for idx, row in df.iterrows():
                 connections.append(row)
-            self.add_connections(connections)
+            self.add_multiple_edges(connections)
 
-    def add_edges(self, connections):
+    def add_multiple_edges(self, connections):
         """ Add connections (list of tuple pairs) to graph
 
         :param connections: List of tuples (cause, effect, weight)
