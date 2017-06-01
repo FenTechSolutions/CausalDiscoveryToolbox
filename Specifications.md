@@ -16,6 +16,7 @@
    * Log info ? 
    * Import datasets/ dataset generator
    * Loading pretrained models
+   * Metrics
 	  
 ## Types and important notes
 

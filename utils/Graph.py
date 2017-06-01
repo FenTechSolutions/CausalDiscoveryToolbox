@@ -8,19 +8,18 @@ Date : 21/04/2017
 import numpy as np
 from copy import deepcopy
 from collections import defaultdict
-from sklearn.covariance import GraphLasso
-import sklearn.metrics as metrics
-
 
 def cyclic(g):
-    """Return True if the directed graph g has a cycle.
-    g must be represented as a dictionary mapping vertices to
-    iterables of neighbouring vertices. For example:
+    """
+        Return True if the directed graph g has a cycle.
+        g must be represented as a dictionary mapping vertices to
+        iterables of neighbouring vertices.
 
-    >>> cyclic({1: (2,), 2: (3,), 3: (1,)})
-    True
-    >>> cyclic({1: (2,), 2: (3,), 3: (4,)})
-    False
+        :Exemple:
+            >>> cyclic({1: (2,), 2: (3,), 3: (1,)})
+            True
+            >>> cyclic({1: (2,), 2: (3,), 3: (4,)})
+            False
 
     """
     path = set()
@@ -77,65 +76,12 @@ def list_to_dict(links):
     return dic
 
 
-def clr(M):
-    R = np.zeros((M.shape))
-    I = [[0, 0] for i in range(M.shape[0])]
-    for i in range(M.shape[0]):
-        mu_i = np.mean(M[i, :])
-        sigma_i = np.std(M[i, :])
-        I[i] = [mu_i, sigma_i]
-
-    for i in range(M.shape[0]):
-        for j in range(i + 1, M.shape[0]):
-            z_i = np.max([0, (M[i, j] - I[i][0]) / I[i][0]])
-            z_j = np.max([0, (M[i, j] - I[j][0]) / I[j][0]])
-            R[i, j] = np.sqrt(z_i**2 + z_j**2)
-            R[j, i] = R[i, j]  # Symmetric
-
-    return R
-
-
-def skeleton_glasso(df):
-    """Apply Lasso CV to find an adjacency matrix"""
-
-    edge_model = GraphLasso(alpha=0.01, max_iter=2000)
-    edge_model.fit(df.as_matrix())
-    return edge_model.get_precision()
-
-
-def skeleton_ami_fd(df):
-
-    def ajd_mi_fd(a, b):
-        def bin_variable(var1):  # bin with normalization
-            var1 = np.array(var1).astype(np.float)
-
-            var1 = (var1 - np.mean(var1)) / np.std(var1)
-
-            val1 = np.digitize(var1, np.histogram(var1, bins='fd')[1])
-
-            return val1
-
-        return metrics.adjusted_mutual_info_score(bin_variable(a),
-                                                  bin_variable(b))
-
-    nb_var = len(df.columns)
-    skeleton = np.zeros((nb_var, nb_var))
-    col = df.columns
-    for i in range(nb_var):
-        for j in range(i, nb_var):
-            skeleton[i, j] = ajd_mi_fd(
-                list(df[df.columns[i]]), list(df[df.columns[j]]))
-            skeleton[j, i] = skeleton[i, j]
-
-    skeleton = clr(skeleton)
-
-    return skeleton
-
 
 class DirectedGraph(object):
     """ Graph data structure, directed. """
 
     def __init__(self, df=None):
+        """ Create a new directed graph structure"""
         self._graph = defaultdict(dict)
         connections = []
         if df:
@@ -144,19 +90,35 @@ class DirectedGraph(object):
             self.add_connections(connections)
 
     def add_edges(self, connections):
-        """ Add connections (list of tuple pairs) to graph """
+        """ Add connections (list of tuple pairs) to graph
+
+        :param connections: List of tuples (cause, effect, weight)
+        :type connections: list
+        """
 
         for node1, node2, weight in connections:
             self.add(node1, node2, weight)
 
     def add(self, node1, node2, weight):
-        """ Add or update directed connection from node1 to node2 """
+        """ Add or update directed connection from node1 to node2
+
+        :param node1: cause of the edge
+        :param node2: effect of the edge
+        :param weight: value of edge
+        :type weight: float
+        """
 
         self._graph[node1][node2] = weight
 
     def reverse_edge(self, node1, node2, weight=None):
         """ Reverse the edge between node1 and node2
-        with possibly a new weight value """
+        with possibly a new weight value
+
+        :param node1: initial cause of the edge
+        :param node2: initial effect of the edge
+        :param weight: new value of edge
+        :type weight: float
+        """
 
         if not weight:
             weight = self._graph[node1][node2]
@@ -164,13 +126,22 @@ class DirectedGraph(object):
         self.add(node2, node1, weight)
 
     def remove_edge(self, node1, node2):
-        """ Remove the edge from node1 to node2 """
+        """ Remove the edge from node1 to node2
+
+        :param node1: cause of the edge
+        :param node2: effect of the edge
+        """
         del self._graph[node1][node2]
         if len(self._graph[node1]) == 0:
             del self._graph[node1]
 
     def get_parents(self, node):
-        """ Get the list of parents of a node """
+        """ Get the list of parents of a node
+
+        :param node: Selected node
+        :return: list of parents of the nodes
+        :rtype: list
+        """
         parents = []
         for i in self._graph:
             if node in list(self._graph[i]):
@@ -178,7 +149,12 @@ class DirectedGraph(object):
         return parents
 
     def get_list_nodes(self):
-        """ Get list of all nodes in graph """
+        """ Get list of all nodes in graph
+
+        :return: List of nodes
+        :rtype: list
+
+        """
 
         nodes = []
         for i in self._graph:
@@ -189,8 +165,13 @@ class DirectedGraph(object):
                     nodes.append(j)
         return nodes
 
-    def get_list_edges(self, order_by_weight=True, decreasing_order=False):
-        """ Get list of edges according to order defined by parameters """
+    def get_list_edges(self, order_by_weight=True, descending=False):
+        """ Get list of edges according to order defined by parameters
+
+        :param order_by_weight: List of edges will be ordered by weight values
+        :param descending: order elements by decreasing weights
+        :return: List of edges and their weights
+        :rtype: (list,list)"""
 
         list_edges = []
         weights = []
@@ -199,25 +180,42 @@ class DirectedGraph(object):
                 list_edges.append([i, j])
                 weights.append(self._graph[i][j])
 
-        if order_by_weight and decreasing_order:
+        if order_by_weight and descending:
             weights, list_edges = (list(i) for i
                                    in zip(*sorted(zip(weights, list_edges),
                                                   reverse=True)))
         elif order_by_weight:
             weights, list_edges = (list(i) for i
                                    in zip(*sorted(zip(weights, list_edges))))
+        return list_edges, weights
 
-        return list_edges
+    def get_adjacencyMatrix(self):
+        """Get the adjacency matrix of the graph
 
-    def tolist(self):
-        list_edges = []
-        for i in self._graph:
-            for j in list(self._graph[i]):
-                list_edges.append([i, j, self._graph[i][j]])
-        return list_edges
+        :return: Adjacency Matrix (size : Nodes x Nodes), List of nodes
+        :rtype: (numpy.ndarray, list)
+        """
+
+        nodes = self.get_list_nodes()
+        edges, weights = self.get_list_edges(order_by_weight=False)
+
+        M = np.zeros((len(nodes), len(nodes)))
+
+        for idx, e in enumerate(edges):
+            cause = nodes.index(e[0])
+            effect = nodes.index(e[1])
+
+            M[cause,effect] = weights[idx]
+
+        return M, nodes
 
     def get_dict_nw(self):
-        """ Get dictionary of graph without weight values """
+        """Get dictionary of graph without weight values
+
+        :return: Dictionary of the directed graph
+        :rtype: dict
+
+        """
 
         dict_nw = defaultdict(list)
         for i in self._graph:
@@ -228,7 +226,12 @@ class DirectedGraph(object):
         return dict(dict_nw)
 
     def remove_node(self, node):
-        """ Remove all references to node """
+        """ Remove all references to node
+
+        :param node: node to remove
+        :type node: str
+
+        """
 
         for n, cxns in self._graph.iteritems():
             try:
