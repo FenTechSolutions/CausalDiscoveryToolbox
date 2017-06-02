@@ -118,7 +118,7 @@ class RCC(object):
         return x_tr, y_tr, x_ab, y_ab
 
     def predict_proba(self, x_te):
-        """ Predict causal direction. With input data as (X,Y):
+        """ Predict causal directions of a dataset. With input data as (X,Y):
             -1 is Y->X
              1 is X->Y
 
@@ -128,7 +128,7 @@ class RCC(object):
         :rtype: numpy.ndarray
         """
         if not self.clf0 :
-            print('Model has to be train before doing any predictions')
+            print('Model has to be trained before doing any predictions')
             raise ValueError
 
         x_te, _, _, _ = self.transform(x_te)
