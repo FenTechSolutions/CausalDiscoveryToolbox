@@ -7,10 +7,15 @@
 3. Cofounder detection
 4. Pairwise inference
 5. Time-series
-6. Bayesian Methods : 
-   * Constraint based
-   * Score based
-   * Hybrid
+6. Graph inference
+   1. Graph methods:
+      * CGNN
+      * Other (Lingam?)
+   2. Bayesian Methods : 
+      * Constraint based
+      * Score based
+      * Hybrid
+ 
 7. Utils :
    * Graph visualisation 
    * Log info ? 
@@ -47,4 +52,4 @@ Continous, Categorical, Binary?
 
 **Warn User of satisfiability of assumptions/ applicability of algorithms?**
 
-
+**Load Pretrained models ?** 

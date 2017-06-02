@@ -28,14 +28,12 @@ def ajd_mi_fd(a, b):
     :rtype: float
     """
 
-    def bin_variable(var1):  # bin with normalization
-        var1 = np.array(var1).astype(np.float)
+    def bin_variable(var):  # bin with normalization
+        var = np.array(var).astype(np.float)
+        var = (var - np.mean(var)) / np.std(var)
+        var = np.digitize(var, np.histogram(var, bins='fd')[1])
 
-        var1 = (var1 - np.mean(var1)) / np.std(var1)
-
-        val1 = np.digitize(var1, np.histogram(var1, bins='fd')[1])
-
-        return val1
+        return var
 
     return metrics.adjusted_mutual_info_score(bin_variable(a),
                                               bin_variable(b))

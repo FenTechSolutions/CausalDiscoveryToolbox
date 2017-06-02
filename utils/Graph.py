@@ -9,62 +9,6 @@ import numpy as np
 from copy import deepcopy
 from collections import defaultdict
 
-def cyclic(g):
-    """
-        Return True if the directed graph g has a cycle.
-        g must be represented as a dictionary mapping vertices to
-        iterables of neighbouring vertices.
-
-        :Exemple:
-            >>> cyclic({1: (2,), 2: (3,), 3: (1,)})
-            True
-            >>> cyclic({1: (2,), 2: (3,), 3: (4,)})
-            False
-
-    """
-    path = set()
-    visited = set()
-
-    def visit(vertex):
-        if vertex in visited:
-            return False
-        visited.add(vertex)
-        path.add(vertex)
-        for neighbour in g.get(vertex, ()):
-            if neighbour in path or visit(neighbour):
-                return True
-        path.remove(vertex)
-        return False
-
-    return any(visit(v) for v in g)
-
-
-def cycles(g):
-    """Return the list of cycles of the directed graph g .
-    g must be represented as a dictionary mapping vertices to
-    iterables of neighbouring vertices. For example:
-
-    >>> cycles({1: (2,), 2: (3,), 3: (1,)})
-    [1,2,3,1]
-    >>> cycles({1: (2,), 2: (3,), 3: (4,)})
-    []
-
-    """
-
-    def dfs(graph, start, end):
-        fringe = [(start, [])]
-        # print(len(graph))
-        while fringe:
-            state, path = fringe.pop()
-            if path and state == end:
-                yield path
-                continue
-            for next_state in graph[state]:
-                if next_state in path:
-                    continue
-                fringe.append((next_state, path + [next_state]))
-
-    return [[node] + path for node in g for path in dfs(g, node, node) if path]
 
 
 def list_to_dict(links):
@@ -90,7 +34,7 @@ class DirectedGraph(object):
             self.add_multiple_edges(connections)
 
     def add_multiple_edges(self, connections):
-        """ Add connections (list of tuple pairs) to graph
+        """ Add directed edges (list of tuple pairs) to graph
 
         :param connections: List of tuples (cause, effect, weight)
         :type connections: list
@@ -100,7 +44,7 @@ class DirectedGraph(object):
             self.add(node1, node2, weight)
 
     def add(self, node1, node2, weight):
-        """ Add or update directed connection from node1 to node2
+        """ Add or update directed edge from node1 to node2
 
         :param node1: cause of the edge
         :param node2: effect of the edge
@@ -109,6 +53,55 @@ class DirectedGraph(object):
         """
 
         self._graph[node1][node2] = weight
+
+    def cyclic(self):
+        """
+        Return True if the directed graph g has a cycle.
+        g must be represented as a dictionary mapping vertices to
+        iterables of neighbouring vertices.
+
+        :return: True if the directed graph is cyclic
+        :rtype: bool
+        """
+        path = set()
+        visited = set()
+
+        def visit(vertex):
+            if vertex in visited:
+                return False
+            visited.add(vertex)
+            path.add(vertex)
+            for neighbour in g.get(vertex, ()):
+                if neighbour in path or visit(neighbour):
+                    return True
+            path.remove(vertex)
+            return False
+        g = self.get_dict_nw()
+        return any(visit(v) for v in g)
+
+    def cycles(self):
+        """Return the list of cycles of the directed graph g .
+        g must be represented as a dictionary mapping vertices to
+        iterables of neighbouring vertices. For example:
+
+        :return: Cycles in the graph
+        :rtype: list
+        """
+
+        def dfs(graph, start, end):
+            fringe = [(start, [])]
+            # print(len(graph))
+            while fringe:
+                state, path = fringe.pop()
+                if path and state == end:
+                    yield path
+                    continue
+                for next_state in graph[state]:
+                    if next_state in path:
+                        continue
+                    fringe.append((next_state, path + [next_state]))
+        g = self.get_dict_nw()
+        return [[node] + path for node in g for path in dfs(g, node, node) if path]
 
     def reverse_edge(self, node1, node2, weight=None):
         """ Reverse the edge between node1 and node2
@@ -244,11 +237,14 @@ class DirectedGraph(object):
             pass
 
     def remove_cycles(self, verbose=True):
-        """ Remove all cycles in graph by using the weights"""
+        """ Remove all cycles in graph by using the weights
+
+        The edges with the lowest weight values will be reversed or deleted.
+        """
 
         list_ordered_edges = self.get_list_edges()
-        while cyclic(self.get_dict_nw()):
-            cc = cycles(self.get_dict_nw())
+        while self.cyclic():
+            cc = self.cycles()
             # Select the first link:
             s_cycle = cc[0]
             r_edge = next(edge for edge in list_ordered_edges if
@@ -260,7 +256,7 @@ class DirectedGraph(object):
             test_graph = deepcopy(self)
             test_graph.reverse_edge(r_edge[0], r_edge[1])
             print(test_graph)
-            if len(cycles(test_graph.get_dict_nw())) < len(cc):
+            if len(self.cycles()) < len(cc):
                 self.reverse_edge(r_edge[0], r_edge[1])
                 if verbose:
                     print('Link {} got reversed !'.format(r_edge))
