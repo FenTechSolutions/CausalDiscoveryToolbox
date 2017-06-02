@@ -24,8 +24,8 @@ def CCEPC_PairsFilereader(filename):
         :return: tuple of sample ID and the converted data into numpy.ndarrays
         :rtype: tuple
         """
-        a = row["a"].split(" ")
-        b = row["b"].split(" ")
+        a = row["A"].split(" ")
+        b = row["B"].split(" ")
 
         if a[0] == "":
             a.pop(0)
