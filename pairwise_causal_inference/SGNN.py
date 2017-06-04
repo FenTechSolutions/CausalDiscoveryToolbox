@@ -98,23 +98,23 @@ def tf_evalcausalscore_pairwise(df, idx, run):
     return CGNN.evaluate(df)
 
 
-def tf_run_pair(df, idx, run):
-    df = df[df.columns[:2]]
+def tf_run_pair(row, idx, run):
+    a = row['A'].reshape((len(row['A']), 1))
+    b = row['B'].reshape((len(row['B']), 1))
+    m = np.hstack((a, b))
+    m = m.astype('float32')
 
-    df = df.as_matrix()
-    df = scale(df)
-    df = df.astype('float32')
 
     run_i = run
     if SETTINGS.GPU:
         with tf.device('/gpu:' + str(SETTINGS.gpu_offset + run_i % SETTINGS.num_gpu)):
-            XY = tf_evalcausalscore_pairwise(df, idx, run)
+            XY = tf_evalcausalscore_pairwise(m, idx, run)
         with tf.device('/gpu:' + str(SETTINGS.gpu_offset + run_i % SETTINGS.num_gpu)):
-            YX = tf_evalcausalscore_pairwise(df[:, [1, 0]], idx, run)
+            YX = tf_evalcausalscore_pairwise(m[:, [1, 0]], idx, run)
             return [XY, YX]
     else:
-        return [tf_evalcausalscore_pairwise(df, idx, run),
-                tf_evalcausalscore_pairwise(df[:, [1, 0]], idx, run)]
+        return [tf_evalcausalscore_pairwise(m, idx, run),
+                tf_evalcausalscore_pairwise(np.fliplr(m), idx, run)]
 
 
 def predict_tf(df):
@@ -212,7 +212,7 @@ def run_SGNN_th(m, pair, run):
 
     # Evaluate
     for i in range(SETTINGS.nb_epoch_test):
-        e.normal_()
+        e.data.normal_()
         x_in = th.cat([x, e], 1)
         y_pred = SGNN(x_in)
         loss = criterion(x, y_pred, y)
@@ -275,6 +275,7 @@ class SGNN(object):
         super(SGNN, self).__init__()
         if backend == "torch":
             self.predictor = predict_th
+            #ToDO : OPTIMIZE : WHY SO SLOW ?
         else:
             self.predictor = predict_tf
 
