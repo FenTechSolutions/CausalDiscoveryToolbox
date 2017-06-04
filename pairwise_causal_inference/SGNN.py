@@ -177,8 +177,8 @@ def run_SGNN_th(m, pair, run):
     :rtype: float
     """
 
-    x = Variable(th.from_numpy(m[:, 0]))
-    y = Variable(th.from_numpy(m[:, 1]))
+    x = Variable(th.from_numpy(m[:, [0]]))
+    y = Variable(th.from_numpy(m[:, [1]]))
     e = Variable(th.FloatTensor(m.shape[0], 1))
     SGNN = SGNN_th()
 
@@ -220,7 +220,7 @@ def run_SGNN_th(m, pair, run):
 
         # print statistics
         running_loss += loss.data[0]
-        teloss += running_loss
+teloss += running_loss
         if i % 300 == 299:  # print every 300 batches
             print('Pair:{}, Run:{}, Iter:{}, score:{}'.
                   format(pair, run, i, running_loss))
