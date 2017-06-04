@@ -220,7 +220,7 @@ def run_SGNN_th(m, pair, run):
 
         # print statistics
         running_loss += loss.data[0]
-teloss += running_loss
+        teloss += running_loss
         if i % 300 == 299:  # print every 300 batches
             print('Pair:{}, Run:{}, Iter:{}, score:{}'.
                   format(pair, run, i, running_loss))
