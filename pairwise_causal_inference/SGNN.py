@@ -185,7 +185,6 @@ def run_SGNN_th(m, pair, run):
     if SETTINGS.GPU:
         x = x.cuda()
         y = y.cuda()
-        e = e.cuda()
         SGNN = SGNN.cuda()
 
     criterion = MMD(m.shape[0], cuda=SETTINGS.GPU)
@@ -197,7 +196,11 @@ def run_SGNN_th(m, pair, run):
     for i in range(SETTINGS.nb_epoch_train):
         optim.zero_grad()
         e.normal_()
-        x_in = th.cat([x, e], 1)
+        if SETTINGS.GPU:
+            _e = e.cuda()
+        else:
+            _e = e.clone()
+        x_in = th.cat([x, _e], 1)
         y_pred = SGNN(x_in)
         loss = criterion(x, y_pred, y)
         loss.backward()
