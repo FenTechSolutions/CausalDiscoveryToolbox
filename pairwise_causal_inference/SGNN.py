@@ -256,7 +256,7 @@ def predict_th(df):
 
         result_pair = []
         for i in range(SETTINGS.nb_run):
-            result_pair.append(row, idx, i)
+            result_pair.append(th_run_instance(row, idx, i))
         # result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
         #     row, idx, run) for run in range(SETTINGS.nb_run))
 
