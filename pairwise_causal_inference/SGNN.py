@@ -254,8 +254,11 @@ def predict_th(df):
     for idx, row in df.iterrows():
         SampleID = row['SampleID']
 
-        result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
-            row, idx, run) for run in range(SETTINGS.nb_run))
+        result_pair = []
+        for i in range(SETTINGS.nb_run):
+            result_pair.append(row, idx, i)
+        # result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
+        #     row, idx, run) for run in range(SETTINGS.nb_run))
 
         score_XY = np.mean([runpair[0] for runpair in result_pair])
         score_YX = np.mean([runpair[1] for runpair in result_pair])
