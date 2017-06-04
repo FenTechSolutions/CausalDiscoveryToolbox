@@ -269,7 +269,7 @@ def predict_th(df):
 
 class SGNN(object):
     def __init__(self, backend="torch"):
-        super(self, SGNN).__init__()
+        super(SGNN, self).__init__()
         if backend == "torch":
             self.predictor = predict_th
         else:
