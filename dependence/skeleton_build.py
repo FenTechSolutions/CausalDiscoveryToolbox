@@ -8,7 +8,9 @@ import numpy as np
 from sklearn.covariance import GraphLasso
 
 def skeleton_glasso(df):
-    """Apply Lasso CV to find an adjacency matrix
+    """Apply Glasso to find an adjacency matrix
+
+    Ref : ToDo - P.Buhlmann
 
     :param df: Raw data table
     :type df: pandas.DataFrame
@@ -27,7 +29,7 @@ def build_skeleton_pairwise(df, criterion):
     :param df: Raw data table
     :param criterion: Pairwise dependence criterion
     :type df: pandas.DataFrame
-    :type criterion: function
+    :type criterion: function # f(x,y) returns: float
     :return: Skeleton matrix - undirected graph
     :rtype: UndirectedGraph
     """
