@@ -74,7 +74,7 @@ class MMD_loss_th(torch.nn.Module):
         self.cuda = cuda
         if self.cuda:
             s1 = torch.cuda.FloatTensor(input_size, 1).fill_(1)
-            s2 = s1.copy_()
+            s2 = s1.clone()
             s = torch.cat([s1.div(input_size),
                            s2.div(-input_size)], 0)
 
