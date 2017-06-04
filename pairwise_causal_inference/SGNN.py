@@ -197,6 +197,7 @@ def run_SGNN_th(m, pair, run):
     for i in range(SETTINGS.nb_epoch_train):
         optim.zero_grad()
         e.data.normal_()
+        print(e.size(),x.size())
         x_in = th.cat([x, e], 1)
         y_pred = SGNN(x_in)
         loss = criterion(x, y_pred, y)
