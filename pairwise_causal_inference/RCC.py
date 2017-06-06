@@ -121,7 +121,7 @@ class RCC(object):
         """ Predict causal directions of a dataset. With input data as (X,Y):
             -1 is Y->X
              1 is X->Y
-             0 is independent/confounding
+             # 0 is independent/confounding
 
         :param x_te: Inputdata
         :type x_te: pandas.DataFrame

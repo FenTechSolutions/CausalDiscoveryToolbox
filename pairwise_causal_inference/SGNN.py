@@ -10,7 +10,6 @@ from ..utils.loss import MMD_loss_th as MMD
 from ..utils.SETTINGS import CGNN_SETTINGS as SETTINGS
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
-import sys
 import pandas as pd
 import torch as th
 from torch.autograd import Variable
@@ -102,6 +101,7 @@ def tf_run_pair(row, idx, run):
     a = row['A'].reshape((len(row['A']), 1))
     b = row['B'].reshape((len(row['B']), 1))
     m = np.hstack((a, b))
+    m = scale(m)
     m = m.astype('float32')
 
 
@@ -232,6 +232,7 @@ def th_run_instance(row, pair_idx, run):
     a = row['A'].reshape((len(row['A']), 1))
     b = row['B'].reshape((len(row['B']), 1))
     m = np.hstack((a, b))
+    m = scale(m)
     m = m.astype('float32')
 
     if SETTINGS.GPU:
@@ -254,11 +255,11 @@ def predict_th(df):
     for idx, row in df.iterrows():
         SampleID = row['SampleID']
 
-        result_pair = []
-        for i in range(SETTINGS.nb_run):
-            result_pair.append(th_run_instance(row, idx, i))
-        # result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
-        #     row, idx, run) for run in range(SETTINGS.nb_run))
+        # result_pair = []
+        # for i in range(SETTINGS.nb_run):
+        #     result_pair.append(th_run_instance(row, idx, i))
+        result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
+            row, idx, run) for run in range(SETTINGS.nb_run))
 
         score_XY = np.mean([runpair[0] for runpair in result_pair])
         score_YX = np.mean([runpair[1] for runpair in result_pair])
@@ -275,11 +276,13 @@ class SGNN(object):
         super(SGNN, self).__init__()
         if backend == "torch":
             self.predictor = predict_th
-            #ToDO : OPTIMIZE : WHY SO SLOW ?
-        else:
+        elif backend == "tensorflow":
             self.predictor = predict_tf
+        else:
+            print('No backend known as {}'.format(backend))
+            raise ValueError
 
-    def predict(self, x):
+    def predict_proba(self, x):
         return self.predictor(x)
 
 
