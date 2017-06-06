@@ -8,6 +8,7 @@ Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolsti
 from sklearn.preprocessing import scale
 from sklearn.ensemble import RandomForestClassifier as CLF
 from sklearn.metrics import auc
+import pandas
 import numpy as np
 
 
@@ -25,7 +26,11 @@ def score(y, p):
 
 
 class RCC(object):
-    """ Randomized Causation Coefficient model """
+    """ Randomized Causation Coefficient model
+
+    Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,
+     "Towards a Learning Theory of Cause-Effect Inference", ICML 2015.
+    """
 
     def __init__(self, *args, **kwargs):
         """
@@ -58,7 +63,7 @@ class RCC(object):
     def fit(self, x_tr, y_tr):
         """ Fit the model on pairwise data
 
-        :param x_tr: Input data
+        :param x_tr: Input data - CEPC-format DataFrame containing pairs of variables
         :param y_tr: Targets
         :type x_tr: pandas.DataFrame
         :type y_tr: pandas.DataFrame
@@ -80,10 +85,10 @@ class RCC(object):
     def transform(self, x_tr, y_tr=None):
         """ Featurize the data with the randomized coefficients
 
-        :param x_tr: Inputdata
+        :param x_tr: Inputdata - CEPC-format DataFrame containing pairs of variables
         :param y_tr: Targets
         :type x_tr: pandas.DataFrame
-        :type y_tr: pandas.DataFrame
+        :type y_tr: pandas.DataFrame or array
         :return: Featurized data
         """
 
@@ -107,7 +112,8 @@ class RCC(object):
         print(x_tr.shape)
         x_ab, y_ab = None, None
         if y_tr:
-            y_tr = y_tr['Target'].as_matrix()
+            if type(y_tr) == pandas.DataFrame:
+                y_tr = y_tr['Target'].as_matrix()
             y_tr = np.hstack((y_tr, -y_tr))
 
             x_ab = x_tr[(y_tr == 1) | (y_tr == -1)]
@@ -123,7 +129,7 @@ class RCC(object):
              1 is X->Y
              # 0 is independent/confounding
 
-        :param x_te: Inputdata
+        :param x_te: Inputdata - CEPC-format DataFrame containing pairs of variables
         :type x_te: pandas.DataFrame
         :return: Array containing probabilities of predictions
         :rtype: numpy.ndarray

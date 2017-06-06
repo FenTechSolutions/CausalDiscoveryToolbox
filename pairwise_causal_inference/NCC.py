@@ -56,7 +56,7 @@ class NCC(object):
     def fit(self, x_tr, y_tr):
         """ Fit the NCC model
 
-        :param x_tr: CEPC-format df containing pairs of variables
+        :param x_tr: CEPC-format DataFrame containing pairs of variables
         :param y_tr: array containing targets
         """
         self.model = NCC_model()
@@ -86,7 +86,7 @@ class NCC(object):
     def predict_proba(self, x_te):
         """ Infer causal directions using the trained NCC model
 
-        :param x_te: CEPC-format df containing pairs of variables
+        :param x_te: CEPC-format DataFrame containing pairs of variables
         :return: list containing predictions
         :rtype: list
         """
