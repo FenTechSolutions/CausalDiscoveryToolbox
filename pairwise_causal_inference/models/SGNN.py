@@ -15,6 +15,7 @@ import torch as th
 from torch.autograd import Variable
 from .model import Pairwise_Model
 
+
 def init(size):
     return tf.random_normal(shape=size, stddev=SETTINGS.init_weights)
 
@@ -97,14 +98,7 @@ def tf_evalcausalscore_pairwise(df, idx, run):
     return CGNN.evaluate(df)
 
 
-def tf_run_pair(row, idx, run):
-    a = row['A'].reshape((len(row['A']), 1))
-    b = row['B'].reshape((len(row['B']), 1))
-    m = np.hstack((a, b))
-    m = scale(m)
-    m = m.astype('float32')
-
-
+def tf_run_pair(m, idx, run):
     run_i = run
     if SETTINGS.GPU:
         with tf.device('/gpu:' + str(SETTINGS.gpu_offset + run_i % SETTINGS.num_gpu)):
@@ -117,27 +111,18 @@ def tf_run_pair(row, idx, run):
                 tf_evalcausalscore_pairwise(np.fliplr(m), idx, run)]
 
 
-def predict_tf(df):
-    """ Run a Cause-Effect pairs challenge format df """
+def predict_tf(a, b):
+    m = np.hstack((a, b))
+    m = scale(m)
+    m = m.astype('float32')
 
-    results = []
-    pred_proba = []
+    result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(tf_run_pair)(
+        m, 0, run) for run in range(SETTINGS.nb_run))
 
-    for idx, row in df.iterrows():
-        SampleID = row['SampleID']
+    score_AB = sum([runpair[0] for runpair in result_pair]) / SETTINGS.nb_run
+    score_BA = sum([runpair[1] for runpair in result_pair]) / SETTINGS.nb_run
 
-        result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(tf_run_pair)(
-            row, idx, run) for run in range(SETTINGS.nb_run))
-
-        score_AB = sum([runpair[0] for runpair in result_pair]) / SETTINGS.nb_run
-        score_BA = sum([runpair[1] for runpair in result_pair]) / SETTINGS.nb_run
-
-        results.append([SampleID, score_BA - score_AB])
-        pred_proba.append((score_BA - score_AB) / (score_BA + score_AB))
-
-        res_df = pd.DataFrame(results, columns=['SampleID', 'Target'])
-        res_df.to_csv('res_SGNN_pw.csv', index=False)
-    return pred_proba, res_df
+    return (score_BA - score_AB) / (score_BA + score_AB)
 
 
 class SGNN_th(th.nn.Module):
@@ -228,13 +213,7 @@ def run_SGNN_th(m, pair, run):
     return teloss / SETTINGS.nb_epoch_test
 
 
-def th_run_instance(row, pair_idx, run):
-    a = row['A'].reshape((len(row['A']), 1))
-    b = row['B'].reshape((len(row['B']), 1))
-    m = np.hstack((a, b))
-    m = scale(m)
-    m = m.astype('float32')
-
+def th_run_instance(m, pair_idx, run):
     if SETTINGS.GPU:
         with th.cuda.device(SETTINGS.gpu_offset + run % SETTINGS.num_gpu):
             XY = run_SGNN_th(m, pair_idx, run)
@@ -248,27 +227,16 @@ def th_run_instance(row, pair_idx, run):
     return [XY, YX]
 
 
-def predict_th(df):
-    results = []
-    pred_proba = []
+def predict_th(a, b):
+    m = np.hstack((a, b))
+    m = scale(m)
+    m = m.astype('float32')
+    result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
+        m, 0, run) for run in range(SETTINGS.nb_run))
 
-    for idx, row in df.iterrows():
-        SampleID = row['SampleID']
-
-        # result_pair = []
-        # for i in range(SETTINGS.nb_run):
-        #     result_pair.append(th_run_instance(row, idx, i))
-        result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
-            row, idx, run) for run in range(SETTINGS.nb_run))
-
-        score_XY = np.mean([runpair[0] for runpair in result_pair])
-        score_YX = np.mean([runpair[1] for runpair in result_pair])
-
-        results.append([SampleID, score_YX - score_XY])
-        pred_proba.append((score_YX - score_XY) / (score_YX + score_XY))
-        res_df = pd.DataFrame(results, columns=['SampleID', 'Target'])
-        res_df.to_csv('res_SGNN_pw.csv', index=False)
-    return pred_proba, res_df
+    score_XY = np.mean([runpair[0] for runpair in result_pair])
+    score_YX = np.mean([runpair[1] for runpair in result_pair])
+    return (score_YX - score_XY) / (score_YX + score_XY)
 
 
 class SGNN(Pairwise_Model):
@@ -276,6 +244,7 @@ class SGNN(Pairwise_Model):
     Shallow Generative Neural networks, models the causal directions x->y and y->x with a 1-hidden layer neural network
     and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
     """
+
     def __init__(self, backend="torch"):
         super(SGNN, self).__init__()
         if backend == "torch":
@@ -287,17 +256,10 @@ class SGNN(Pairwise_Model):
             raise ValueError
 
     def predictor(self, a, b):
-        if self.backend=="torch":
-            return
-        elif self.backend=="tensorflow":
-            return
+        if self.backend == "torch":
+            return predict_th(a, b)
+        elif self.backend == "tensorflow":
+            return predict_tf(a, b)
         else:
             print('No backend defined !')
             raise ValueError
-
-    def predict_proba(self, x):
-        return self.predictor(x)
-
-
-if __name__ == "__main__":
-    pass

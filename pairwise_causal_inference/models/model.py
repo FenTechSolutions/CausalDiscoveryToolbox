@@ -4,6 +4,8 @@ Author: Diviyan Kalainathan
 Date : 7/06/2017
 """
 from sklearn.preprocessing import scale
+from ...utils.Graph import DirectedGraph
+
 
 class Pairwise_Model(object):
     """ Base class for all pairwise causal inference models
@@ -44,10 +46,27 @@ class Pairwise_Model(object):
 
     def orient_graph(self, x, df_data):
         """ Orient an undirected graph using the pairwise method defined by the subclass
+        Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
-        :param x:
+        :param x: UndirectedGraph
         :param df_data:
         :return: Directed graph w/ weights
+        :rtype: DirectedGraph
         """
-        # ToDo: Implement !
-        pass
+
+        edges = x.get_list_edges()
+        graph = DirectedGraph()
+
+        for edge in edges:
+            a, b = edge
+            weight = self.predictor(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()))
+            if weight > 0:  # a causes b
+                graph.add(a, b, weight)
+            else:
+                graph.add(b, a, abs(weight))
+
+        return graph
+
+
+
+

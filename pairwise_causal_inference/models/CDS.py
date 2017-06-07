@@ -66,34 +66,22 @@ class CDS(object):
     The lower the std. the more likely the pair to be x->y (resp. y->x).
     Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
     """
-    def __init__(self):
+    def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(CDS, self).__init__()
+        self.ffactor = ffactor
+        self.maxdev = maxdev
+        self.minc = minc
 
-    def predict_proba(self, df, ffactor=2, maxdev=3, minc=12):
-        """ Predict probabilities of x->y :1 or y<-x :-1
-
-        :param x_te: CEPC-format DataFrame containing pairs of variables
-        :param ffactor:
-        :param maxdev:
-        :param minc:
-        :return:
-        """
-
-    def predict_pair(self, x_te, y_te, ffactor=2, maxdev=3, minc=12):
-        """ Infer causal relationships between 2 variables x_te and y_te
-
-        If   returns = 1  : x_te -> y_te
-        elif returns = -1 : x_te <- y_te
+    def predictor(self, x_te, y_te):
+        """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
 
         :param x_te: Input variable 1
         :param y_te: Input variable 2
-        :param ffactor:
-        :param maxdev:
-        :param minc:
-        :return:
+        :return: (Value : 1 if a->b and -1 if b->a)
+        :rtype: float
         """
 
-        xd, yd = discretized_sequences(x_te,  y_te,  ffactor, maxdev)
+        xd, yd = discretized_sequences(x_te,  y_te,  self.ffactor, self.maxdev)
         cx = Counter(xd)
         cy = Counter(yd)
         yrange = sorted(cy.keys())
@@ -102,18 +90,18 @@ class CDS(object):
         py = py / py.sum()
         pyx = []
         for a in cx.iterkeys():
-            if cx[a] > minc:
+            if cx[a] > self.minc:
                 yx = y_te[xd == a]
                 # if not numerical(ty):
                 #     cyx = Counter(yx)
                 #     pyxa = np.array([cyx[i] for i in yrange], dtype=float)
                 #     pyxa.sort()
-                if count_unique(y_te) > len_discretized_values(y_te, "Numerical", ffactor, maxdev):
+                if count_unique(y_te) > len_discretized_values(y_te, "Numerical", self.ffactor, self.maxdev):
 
                     yx = (yx - np.mean(yx)) / np.std(y_te)
-                    yx = discretized_sequence(yx, "Numerical", ffactor, maxdev, norm=False)
+                    yx = discretized_sequence(yx, "Numerical", self.ffactor, self.maxdev, norm=False)
                     cyx = Counter(yx.astype(int))
-                    pyxa = np.array([cyx[i] for i in discretized_values(y_te, "Numerical", ffactor, maxdev)],
+                    pyxa = np.array([cyx[i] for i in discretized_values(y_te, "Numerical", self.ffactor, self.maxdev)],
                                     dtype=float)
 
                 else:

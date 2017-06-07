@@ -25,6 +25,7 @@ def score(y, p):
     return (auc(y == 1, p) + auc(y == -1, -p)) / 2
 
 
+
 class RCC(object):
     """ Randomized Causation Coefficient models
 
@@ -82,6 +83,22 @@ class RCC(object):
         self.clf0 = CLF(**self.params).fit(x_ft, y_ft != 0)  # causal or confounded?
         self.clf1 = CLF(**self.params).fit(x_ab, y_ab == 1)  # causal or anticausal?
 
+    def featurize_row(self, row, reverse=False):
+        x = scale(row['A'])[:, np.newaxis]
+        y = scale(row['B'])[:, np.newaxis]
+        if reverse:
+            x, y = y, x
+        d = np.hstack((f1(x, self.wx).mean(0), f1(y, self.wy).mean(0), f1(np.hstack((x, y)), self.wz).mean(0)))
+        return d
+
+    def featurize(self, data):
+        ft_data = []
+        ft_data_rev = []
+        for idx, row in data.iterrows():
+            ft_data.append(self.featurize_row(row))
+            ft_data_rev.append(self.featurize_row(row, reverse=True))
+        return np.vstack((np.array(ft_data), np.array(ft_data_rev)))
+
     def transform(self, x_tr, y_tr=None):
         """ Featurize the data with the randomized coefficients
 
@@ -92,23 +109,7 @@ class RCC(object):
         :return: Featurized data
         """
 
-        def featurize_row(row, reverse=False):
-            x = scale(row['A'])[:, np.newaxis]
-            y = scale(row['B'])[:, np.newaxis]
-            if reverse:
-                x, y = y, x
-            d = np.hstack((f1(x, self.wx).mean(0), f1(y, self.wy).mean(0), f1(np.hstack((x, y)), self.wz).mean(0)))
-            return d
-
-        def featurize(data):
-            ft_data = []
-            ft_data_rev = []
-            for idx, row in data.iterrows():
-                ft_data.append(featurize_row(row))
-                ft_data_rev.append(featurize_row(row, reverse=True))
-            return np.vstack((np.array(ft_data), np.array(ft_data_rev)))
-
-        x_tr = featurize(x_tr)
+        x_tr = self.featurize(x_tr)
         print(x_tr.shape)
         x_ab, y_ab = None, None
         if y_tr:
@@ -123,7 +124,7 @@ class RCC(object):
 
         return x_tr, y_tr, x_ab, y_ab
 
-    def predict_proba(self, x_te):
+    def predict_dataset(self, x_te):
         """ Predict causal directions of a dataset. With input data as (X,Y):
             -1 is Y->X
              1 is X->Y
@@ -134,11 +135,29 @@ class RCC(object):
         :return: Array containing probabilities of predictions
         :rtype: numpy.ndarray
         """
-        if not self.clf0 :
+        if not self.clf0:
             print('Model has to be trained before doing any predictions')
             raise ValueError
 
         x_te, _, _, _ = self.transform(x_te)
         p_te = self.clf0.predict_proba(x_te)[:, 0] * (2 * self.clf1.predict_proba(x_te)[:, 0] - 1)
         p_te = (p_te[:len(p_te)//2] - p_te[len(p_te)//2:])/2
+        return p_te
+
+    def predictor(self, a, b):
+        """ Infer causal directions using the trained RCC model
+
+        :param a: Variable 1
+        :param b: Variable 2
+        :return: probability (Value : 1 if a->b and -1 if b->a)
+        :rtype: float
+        """
+        if not self.clf0:
+            print('Model has to be trained before doing any predictions')
+            raise ValueError
+
+        a = scale(a)
+        b = scale(b)
+        d = np.hstack((f1(a, self.wx).mean(0), f1(b, self.wy).mean(0), f1(np.hstack((a, b)), self.wz).mean(0)))
+        p_te = self.clf0.predict_proba(d)[:, 0] * (2 * self.clf1.predict_proba(d)[:, 0] - 1)
         return p_te

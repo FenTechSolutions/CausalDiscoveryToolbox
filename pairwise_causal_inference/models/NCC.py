@@ -83,29 +83,26 @@ class NCC(object):
             # NOTE : optim is called at each epoch ; might want to change
             opt.step()
 
-    def predict_proba(self, x_te):
+    def predictor(self, a, b):
         """ Infer causal directions using the trained NCC models
 
-        :param x_te: CEPC-format DataFrame containing pairs of variables
-        :return: list containing predictions
-        :rtype: list
+        :param a: Variable 1
+        :param b: Variable 2
+        :return: probability (Value : 1 if a->b and -1 if b->a)
+        :rtype: float
         """
         if not self.model():
             print('Model has to be trained before doing any predictions')
             raise ValueError
 
-        pred =[]
-        for idx, row in x_te.iterrows():
-            a = row['A'].reshape((len(row['A']), 1))
-            b = row['B'].reshape((len(row['B']), 1))
-            m = np.hstack((a, b))
-            m = scale(m)
-            m = m.astype('float32')
-            m = Variable(th.from_numpy(m))
+        m = np.hstack((a, b))
+        m = scale(m)
+        m = m.astype('float32')
+        m = Variable(th.from_numpy(m))
 
-            if th.cuda.is_available():
-                m = m.cuda()
+        if th.cuda.is_available():
+            m = m.cuda()
 
-            pred.append(self.model(m))
+        return self.model(m)
 
-        return pred
+
