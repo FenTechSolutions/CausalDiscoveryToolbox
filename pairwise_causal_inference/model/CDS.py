@@ -86,7 +86,7 @@ class CDS(object):
         elif returns = -1 : x_te <- y_te
 
         :param x_te: Input variable 1
-        :param y_te:
+        :param y_te: Input variable 2
         :param ffactor:
         :param maxdev:
         :param minc:

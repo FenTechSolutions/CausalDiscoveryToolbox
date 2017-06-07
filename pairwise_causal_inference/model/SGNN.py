@@ -6,8 +6,8 @@ Date : 10/05/2017
 
 import tensorflow as tf
 import numpy as np
-from ..utils.loss import MMD_loss_th as MMD
-from ..utils.SETTINGS import CGNN_SETTINGS as SETTINGS
+from utils.loss import MMD_loss_th as MMD
+from utils.SETTINGS import CGNN_SETTINGS as SETTINGS
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 import pandas as pd
