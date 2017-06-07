@@ -4,19 +4,17 @@
 
 1. Dependency criteria
 2. Deconvolution methods
-3. Cofounder detection
-4. Pairwise inference
-5. Time-series
-6. Graph inference
-   1. Graph methods:
+3. Causality
+   1. Pairwise inference
+   2. Cofounder detection
+   3. Graph inference:
       * CGNN
       * Other (Lingam?)
-   2. Bayesian Methods : 
-      * Constraint based
-      * Score based
-      * Hybrid
- 
-7. Utils :
+      * Bayesian: Constraint based
+      * Bayesian: Score based
+      * Bayesian: Hybrid
+4. Time-series
+5. Utils :
    * Graph visualisation 
    * Log info ? 
    * Import datasets/ dataset generator
