@@ -12,7 +12,7 @@ from torch.autograd import Variable
 
 
 class NCC_model(th.nn.Module):
-    """ NCC model structure """
+    """ NCC models structure """
 
     def __init__(self, n_hiddens=20):
         """ Init the NCC structure with the number of hidden units
@@ -54,7 +54,7 @@ class NCC(object):
         self.model = None
 
     def fit(self, x_tr, y_tr):
-        """ Fit the NCC model
+        """ Fit the NCC models
 
         :param x_tr: CEPC-format DataFrame containing pairs of variables
         :param y_tr: array containing targets
@@ -84,7 +84,7 @@ class NCC(object):
             opt.step()
 
     def predict_proba(self, x_te):
-        """ Infer causal directions using the trained NCC model
+        """ Infer causal directions using the trained NCC models
 
         :param x_te: CEPC-format DataFrame containing pairs of variables
         :return: list containing predictions

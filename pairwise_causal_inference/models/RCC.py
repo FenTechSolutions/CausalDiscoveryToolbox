@@ -26,7 +26,7 @@ def score(y, p):
 
 
 class RCC(object):
-    """ Randomized Causation Coefficient model
+    """ Randomized Causation Coefficient models
 
     Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,
      "Towards a Learning Theory of Cause-Effect Inference", ICML 2015.
@@ -34,13 +34,13 @@ class RCC(object):
 
     def __init__(self, *args, **kwargs):
         """
-        Initialize the model w/ its parameters
+        Initialize the models w/ its parameters
 
         :param args: None
         :param kwargs: {K: number of randomized coefficients,
                         E: number of estimators,
                         L: number of min samples leaves of the estimator
-                        max_depth: max depth of the model
+                        max_depth: max depth of the models
                         n_jobs: number of jobs to be run on parallel}
 
         """
@@ -61,7 +61,7 @@ class RCC(object):
         self.clf1 = None
 
     def fit(self, x_tr, y_tr):
-        """ Fit the model on pairwise data
+        """ Fit the models on pairwise data
 
         :param x_tr: Input data - CEPC-format DataFrame containing pairs of variables
         :param y_tr: Targets
@@ -72,7 +72,7 @@ class RCC(object):
         self.fit_ftdata(x_tr, y_tr, x_ab, y_ab)
 
     def fit_ftdata(self, x_ft, y_ft, x_ab, y_ab):
-        """ Fit the model with featurized data as input
+        """ Fit the models with featurized data as input
 
         :param x_ft: x_featurized
         :param y_ft: y_featurized

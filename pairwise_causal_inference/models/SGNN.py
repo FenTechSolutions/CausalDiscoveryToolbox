@@ -13,7 +13,7 @@ from sklearn.preprocessing import scale
 import pandas as pd
 import torch as th
 from torch.autograd import Variable
-
+from .model import Pairwise_Model
 
 def init(size):
     return tf.random_normal(shape=size, stddev=SETTINGS.init_weights)
@@ -271,15 +271,28 @@ def predict_th(df):
     return pred_proba, res_df
 
 
-class SGNN(object):
+class SGNN(Pairwise_Model):
+    """
+    Shallow Generative Neural networks, models the causal directions x->y and y->x with a 1-hidden layer neural network
+    and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
+    """
     def __init__(self, backend="torch"):
         super(SGNN, self).__init__()
         if backend == "torch":
-            self.predictor = predict_th
+            self.backend = "torch"
         elif backend == "tensorflow":
-            self.predictor = predict_tf
+            self.backend = "tensorflow"
         else:
             print('No backend known as {}'.format(backend))
+            raise ValueError
+
+    def predictor(self, a, b):
+        if self.backend=="torch":
+            return
+        elif self.backend=="tensorflow":
+            return
+        else:
+            print('No backend defined !')
             raise ValueError
 
     def predict_proba(self, x):
