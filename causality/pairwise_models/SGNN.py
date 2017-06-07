@@ -255,6 +255,10 @@ class SGNN(Pairwise_Model):
             raise ValueError
 
     def predictor(self, a, b):
+        if len(np.array(a).shape) == 1:
+            a = np.array(a).reshape((-1, 1))
+            b = np.array(b).reshape((-1, 1))
+
         if self.backend == "torch":
             return predict_th(a, b)
         elif self.backend == "tensorflow":

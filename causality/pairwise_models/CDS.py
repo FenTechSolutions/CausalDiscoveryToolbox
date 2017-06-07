@@ -7,6 +7,7 @@ Ref : Fonollosa, José AR, "Conditional distribution variability measures for ca
 
 import numpy as np
 from collections import Counter
+from .model import Pairwise_Model
 
 BINARY = "Binary"
 CATEGORICAL = "Categorical"
@@ -58,7 +59,7 @@ def discretized_sequences(x, y, ffactor=3, maxdev=3):
                                                                                        maxdev)
 
 
-class CDS(object):
+class CDS(Pairwise_Model):
     """
     Conditional Distribution Similarity Statistic
 
@@ -72,15 +73,23 @@ class CDS(object):
         self.maxdev = maxdev
         self.minc = minc
 
-    def predictor(self, x_te, y_te):
+    def predictor(self, a, b):
         """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
 
-        :param x_te: Input variable 1
-        :param y_te: Input variable 2
+        :param a: Input variable 1
+        :param b: Input variable 2
         :return: (Value : 1 if a->b and -1 if b->a)
         :rtype: float
         """
+        return self.cds_score(b, a) - self.cds_score(a, b)
 
+    def cds_score(self, x_te, y_te):
+        """ Computes the cds statistic from variable 1 to variable 2
+
+        :param x_te: Input, seen as cause
+        :param y_te: Input, seen as effect
+        :return: CDS statistic between x_te and y_te
+        """
         xd, yd = discretized_sequences(x_te,  y_te,  self.ffactor, self.maxdev)
         cx = Counter(xd)
         cy = Counter(yd)

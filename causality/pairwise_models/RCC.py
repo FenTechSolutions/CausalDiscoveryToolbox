@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestClassifier as CLF
 from sklearn.metrics import auc
 import pandas
 import numpy as np
-
+from .model import Pairwise_Model
 
 def rp(k, s, d):
     return np.hstack((np.vstack([si * np.random.randn(k, d) for si in s]),
@@ -25,8 +25,7 @@ def score(y, p):
     return (auc(y == 1, p) + auc(y == -1, -p)) / 2
 
 
-
-class RCC(object):
+class RCC(Pairwise_Model):
     """ Randomized Causation Coefficient model
 
     Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,

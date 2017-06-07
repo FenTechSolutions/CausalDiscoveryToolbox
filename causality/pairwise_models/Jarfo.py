@@ -5,13 +5,14 @@ Ref : Fonollosa, José AR, "Conditional distribution variability measures for ca
 """
 
 from .Jarfo_model import *
+from .model import  Pairwise_Model
 
 
-class Jarfo(object):
+class Jarfo(Pairwise_Model):
     def __init__(self):
         super(Jarfo, self).__init__()
         raise NotImplementedError
-    
+
     def fit(self, df, tar):
         pass
 

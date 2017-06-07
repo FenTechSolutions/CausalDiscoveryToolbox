@@ -20,12 +20,9 @@ def rbf_dot2(p1, p2, deg):
 
     G = np.sum(p1 * p1, axis=1)[:, np.newaxis]
     H = np.sum(p2 * p2, axis=1)[:, np.newaxis]
-
     Q = np.tile(G, (1, size2[0]))
     R = np.tile(H.T, (size1[0], 1))
-
     H = Q + R - 2.0 * np.dot(p1, p2.T)
-
     H = np.exp(-H / 2.0 / (deg ** 2))
 
     return H
@@ -60,7 +57,7 @@ def FastHsicTestGamma(X, Y, sig=[-1, -1], maxpnt=200):
 
     m = X.shape[0]
     if m > maxpnt:
-        indx = np.floor(np.r_[0:m:float(m - 1) / (maxpnt - 1)]).astype(int);
+        indx = np.floor(np.r_[0:m:float(m - 1) / (maxpnt - 1)]).astype(int)
         #       indx = np.r_[0:maxpnt]
         Xm = X[indx].astype(float)
         Ym = Y[indx].astype(float)
@@ -71,13 +68,13 @@ def FastHsicTestGamma(X, Y, sig=[-1, -1], maxpnt=200):
 
     H = np.eye(m) - 1.0 / m * np.ones((m, m))
 
-    K = rbf_dot(Xm, sig[0]);
-    L = rbf_dot(Ym, sig[1]);
+    K = rbf_dot(Xm, sig[0])
+    L = rbf_dot(Ym, sig[1])
 
-    Kc = np.dot(H, np.dot(K, H));
-    Lc = np.dot(H, np.dot(L, H));
+    Kc = np.dot(H, np.dot(K, H))
+    Lc = np.dot(H, np.dot(L, H))
 
-    testStat = (1.0 / m) * (Kc.T * Lc).sum();
+    testStat = (1.0 / m) * (Kc.T * Lc).sum()
     if ~np.isfinite(testStat):
         testStat = 0
 
@@ -103,6 +100,7 @@ class ANM(Pairwise_Model):
     Ref:
 
     """
+
     def __init__(self):
         super(ANM, self).__init__()
 
@@ -115,12 +113,18 @@ class ANM(Pairwise_Model):
         :rtype: float
         """
 
-        x = scale(a)
-        y = scale(b)
+        a = scale(a).reshape((-1, 1))
+        b = scale(b).reshape((-1, 1))
 
-        x = np.reshape(x, (x.shape[0], 1))
-        y = np.reshape(y, (y.shape[0], 1))
+        return self.anm_score(b, a) - self.anm_score(a, b)
 
+    def anm_score(self, x, y):
+        """ Computes the fitness score of the ANM model in the x->y direction
+
+        :param x: Input, seen as cause
+        :param y: Input, seen as effect
+        :return: CDS statistic between x_te and y_te
+        """
         gp = GaussianProcessRegressor().fit(x, y)
         y_predict = gp.predict(x)
         indepscore = normalized_hsic(y_predict - y, x)
