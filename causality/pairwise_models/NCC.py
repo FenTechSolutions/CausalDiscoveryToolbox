@@ -40,7 +40,6 @@ class NCC_model(th.nn.Module):
         return th.nn.Sigmoid(out)
 
 
-
 class NCC(object):
     """Neural Causation Coefficient
 
