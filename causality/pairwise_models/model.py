@@ -16,9 +16,9 @@ class Pairwise_Model(object):
         """ Init. """
         super(Pairwise_Model, self).__init__()
 
-    def predictor(self, a, b):
+    def predict_proba(self, a, b):
         """ Prediction method for pairwise causal inference.
-        Predictor is meant to be overridden in all subclasses
+        predict_proba is meant to be overridden in all subclasses
 
         :param a: Variable 1
         :param b: Variable 2
@@ -27,7 +27,7 @@ class Pairwise_Model(object):
         """
         raise NotImplementedError
 
-    def predict_proba(self, x):
+    def predict_dataset(self, x):
         """ Causal prediction of a pairwise dataset (x,y)
 
         :param x: Pairwise dataset
@@ -41,7 +41,7 @@ class Pairwise_Model(object):
             a = scale(row['A'].reshape((len(row['A']), 1)))
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
-            pred.append(self.predictor(a, b))
+            pred.append(self.predict_proba(a, b))
         return pred
 
     def orient_graph(self, x, df_data):
@@ -59,7 +59,7 @@ class Pairwise_Model(object):
 
         for edge in edges:
             a, b = edge
-            weight = self.predictor(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()))
+            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()))
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
             else:

@@ -5,7 +5,7 @@ Ref : Fonollosa, José AR, "Conditional distribution variability measures for ca
 """
 
 from .Jarfo_model import *
-from .model import  Pairwise_Model
+from .model import Pairwise_Model
 
 
 class Jarfo(Pairwise_Model):
@@ -16,5 +16,5 @@ class Jarfo(Pairwise_Model):
     def fit(self, df, tar):
         pass
 
-    def predict_proba(self, df):
+    def predict_proba(self, a, b):
         pass

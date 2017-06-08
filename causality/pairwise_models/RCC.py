@@ -139,11 +139,11 @@ class RCC(Pairwise_Model):
             raise ValueError
 
         x_te, _, _, _ = self.transform(x_te)
-        p_te = self.clf0.predict_proba(x_te)[:, 0] * (2 * self.clf1.predict_proba(x_te)[:, 0] - 1)
+        p_te = self.clf0.predict_dataset(x_te)[:, 0] * (2 * self.clf1.predict_dataset(x_te)[:, 0] - 1)
         p_te = (p_te[:len(p_te)//2] - p_te[len(p_te)//2:])/2
         return p_te
 
-    def predictor(self, a, b):
+    def predict_proba(self, a, b):
         """ Infer causal directions using the trained RCC model
 
         :param a: Variable 1
@@ -158,5 +158,5 @@ class RCC(Pairwise_Model):
         a = scale(a)
         b = scale(b)
         d = np.hstack((f1(a, self.wx).mean(0), f1(b, self.wy).mean(0), f1(np.hstack((a, b)), self.wz).mean(0)))
-        p_te = self.clf0.predict_proba(d)[:, 0] * (2 * self.clf1.predict_proba(d)[:, 0] - 1)
+        p_te = self.clf0.predict_dataset(d)[:, 0] * (2 * self.clf1.predict_dataset(d)[:, 0] - 1)
         return p_te

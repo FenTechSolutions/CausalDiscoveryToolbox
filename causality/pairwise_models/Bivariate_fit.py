@@ -18,7 +18,7 @@ class BivariateFit(Pairwise_Model):
     def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(BivariateFit, self).__init__()
 
-    def predictor(self, a, b):
+    def predict_proba(self, a, b):
         """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
 
         :param a: Input variable 1

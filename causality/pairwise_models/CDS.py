@@ -73,7 +73,7 @@ class CDS(Pairwise_Model):
         self.maxdev = maxdev
         self.minc = minc
 
-    def predictor(self, a, b):
+    def predict_proba(self, a, b):
         """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
 
         :param a: Input variable 1

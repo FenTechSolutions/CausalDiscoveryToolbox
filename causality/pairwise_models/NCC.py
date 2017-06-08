@@ -83,7 +83,7 @@ class NCC(Pairwise_Model):
             # NOTE : optim is called at each epoch ; might want to change
             opt.step()
 
-    def predictor(self, a, b):
+    def predict_proba(self, a, b):
         """ Infer causal directions using the trained NCC pairwise model
 
         :param a: Variable 1

@@ -254,7 +254,7 @@ class SGNN(Pairwise_Model):
             print('No backend known as {}'.format(backend))
             raise ValueError
 
-    def predictor(self, a, b):
+    def predict_proba(self, a, b):
         if len(np.array(a).shape) == 1:
             a = np.array(a).reshape((-1, 1))
             b = np.array(b).reshape((-1, 1))
