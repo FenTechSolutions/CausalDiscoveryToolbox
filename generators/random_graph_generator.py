@@ -1,4 +1,5 @@
 from .functions_default import *
+from ..utils.Graph import DirectedGraph
 from random import shuffle
 from sklearn.preprocessing import scale
 import numpy.random as rd
@@ -35,6 +36,12 @@ class CausalGraphModel:
         self.cat_rate = categorical_rate
         self.num_max_parents = max_joint_causes
         self.joint_functions = [op.add, op.mul]
+        self.causes = None
+        self.graph = None
+        self.data = None
+        self.result_links = None
+        self.cat_data = None
+
         print('Init OK')
 
     def fast_build(self, gen_cat=True):
@@ -113,6 +120,10 @@ class CausalGraphModel:
                 actual_cat_rate = float(len(self.cat_var)) / self.nodes
 
             self.cat_var = pd.DataFrame(self.cat_var)
+        print('Build Directed Graph')
+        self.graph = DirectedGraph()
+        self.graph.add_multiple_edges([list(i)+[1] for i in self.result_links.as_matrix()])
+
         print('--Done !--')
         print('Use class.getData() to retrieve all graph info')
 
@@ -173,3 +184,5 @@ class CausalGraphModel:
                          '_N' + str(self.nodes) +
                          '_targets.csv', index=False)
         print('Done!')
+
+        return pairs_df, target_df

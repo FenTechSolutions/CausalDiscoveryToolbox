@@ -5,7 +5,7 @@ Date : 09/03/2017
 """
 
 import tensorflow as tf
-import torch as torch
+import torch as th
 from torch.autograd import Variable
 
 bandwiths_sigma = [0.01, 0.1, 1, 5, 20, 50, 100]
@@ -66,21 +66,21 @@ def MMD_loss(xy_true, xy_pred, low_memory_version=False):
     return tf.sqrt(loss)
 
 
-class MMD_loss_th(torch.nn.Module):
+class MMD_loss_th(th.nn.Module):
 
     def __init__(self, input_size, cuda=False):
         super(MMD_loss_th, self).__init__()
         self.bandwiths = [0.01, 0.1, 1, 5, 20, 50, 100]
         self.cuda = cuda
         if self.cuda:
-            s1 = torch.cuda.FloatTensor(input_size, 1).fill_(1)
+            s1 = th.cuda.FloatTensor(input_size, 1).fill_(1)
             s2 = s1.clone()
-            s = torch.cat([s1.div(input_size),
+            s = th.cat([s1.div(input_size),
                            s2.div(-input_size)], 0)
 
         else:
-            s = torch.cat([(torch.ones([input_size, 1])).div(input_size),
-            (torch.ones([input_size, 1])).div(-input_size)], 0)
+            s = th.cat([(th.ones([input_size, 1])).div(input_size),
+            (th.ones([input_size, 1])).div(-input_size)], 0)
 
         self.S = s.mm(s.t())
         self.S = Variable(self.S)
@@ -88,8 +88,8 @@ class MMD_loss_th(torch.nn.Module):
     def forward(self, var_input, var_pred, var_true):
 
         # MMD Loss
-        X = torch.cat([torch.cat([var_input, var_pred], 1),
-                       torch.cat([var_input, var_true], 1)], 0)
+        X = th.cat([th.cat([var_input, var_pred], 1),
+                       th.cat([var_input, var_true], 1)], 0)
         # dot product between all combinations of rows in 'X'
         XX = X.mm(X.t())
 
@@ -103,11 +103,11 @@ class MMD_loss_th(torch.nn.Module):
                    (((X2.t()).mul(0.5)).expand_as(XX))
 
         if self.cuda:
-            lossMMD = torch.cuda.FloatTensor([0])
+            lossMMD = th.cuda.FloatTensor([0])
             # lossMMD.zero_()
             lossMMD = Variable(lossMMD)
         else:
-            lossMMD = Variable(torch.zeros(1))
+            lossMMD = Variable(th.zeros(1))
         for i in range(len(self.bandwiths)):
             kernel_val = exponent.mul(1. / self.bandwiths[i]).exp()
             lossMMD.add_((self.S.mul(kernel_val)).sum())
@@ -115,3 +115,17 @@ class MMD_loss_th(torch.nn.Module):
         return lossMMD.sqrt()
 
 
+class MomentMatchingLoss(th.nn.Module):
+    def __init__(self, n_moments=1):
+        super(MomentMatchingLoss, self).__init__()
+        self.moments = n_moments
+
+    def forward(self, pred,target):
+        mean_pred = th.mean(pred).expand_as(pred)
+        mean_target = th.mean(target).expand_as(target)
+        loss_pr = Variable(th.FloatTensor([0]))
+        loss_tar = Variable(th.FloatTensor([0]))
+        for i in range(1, self.moments):
+            loss_pr.add_(th.mean(th.pow(pred-mean_pred,i)))
+            loss_tar.add_(th.mean(th.pow(target-mean_target,i)))
+        return th.abs(loss_tar-loss_pr)
