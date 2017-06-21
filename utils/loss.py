@@ -120,12 +120,12 @@ class MomentMatchingLoss(th.nn.Module):
         super(MomentMatchingLoss, self).__init__()
         self.moments = n_moments
 
-    def forward(self, pred,target):
+    def forward(self, pred, target):
         mean_pred = th.mean(pred).expand_as(pred)
         mean_target = th.mean(target).expand_as(target)
-        loss_pr = Variable(th.FloatTensor([0]))
-        loss_tar = Variable(th.FloatTensor([0]))
+        loss = Variable(th.FloatTensor([0]))
+
         for i in range(1, self.moments):
-            loss_pr.add_(th.mean(th.pow(pred-mean_pred,i)))
-            loss_tar.add_(th.mean(th.pow(target-mean_target,i)))
-        return th.abs(loss_tar-loss_pr)
+            loss.add_(th.abs(th.mean(th.pow(pred-mean_pred, i)) - th.mean(th.pow(target-mean_target, i))))
+
+        return loss
