@@ -58,8 +58,9 @@ class DirectedGraph(object):
         """
 
         self._graph[node1][node2] = weight
+        return self
 
-    def cyclic(self):
+    def is_cyclic(self):
         """
         Return True if the directed graph g has a cycle.
         g must be represented as a dictionary mapping vertices to
@@ -250,7 +251,7 @@ class DirectedGraph(object):
         """
 
         list_ordered_edges = self.get_list_edges()
-        while self.cyclic():
+        while self.is_cyclic():
             cc = self.cycles()
             # Select the first link:
             s_cycle = cc[0]

@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import torch as th
 from torch.autograd import Variable
+from copy import deepcopy
 from ..utils.Graph import DirectedGraph
 from ..utils.loss import MomentMatchingLoss
 
@@ -32,7 +33,7 @@ class PolynomialModel(th.nn.Module):
         :param x: unfeaturized data
         :return: featurized data for polynomial regression of degree=2
         """
-        return th.cat([(x[i].t() @ x[i]).view(1, -1) for i in range(x.size()[0])], 0)
+        return th.cat([(x[i].view(-1, 1) @ x[i].view(1, -1)).view(1, -1) for i in range(x.size()[0])], 0)
 
     def forward(self, x=None, n_examples=None):
         """ Featurize and compute output
@@ -41,7 +42,6 @@ class PolynomialModel(th.nn.Module):
         :param n_examples: number of examples (for the case of no input data)
         :return: predicted data using weights
         """
-
         if x is not None:
             x = th.from_numpy(x)
             inputx = th.cat([x,
@@ -50,16 +50,17 @@ class PolynomialModel(th.nn.Module):
         else:
             inputx = th.cat([th.FloatTensor(n_examples, 1).normal_(),
                              th.FloatTensor(n_examples, 1).fill_(1)], 1)
+
         inputx = Variable(self.polynomial_features(inputx))
         return self.l(inputx)
 
 
-def polynomial_regressor(df, causes, target, train_epochs=30, verbose=True):
+def polynomial_regressor(df, target_df, causes, train_epochs=500, verbose=True):
     """ Regress data using a polynomial regressor of degree 2
 
     :param df: data
+    :param target_df: target node
     :param causes: list of parent nodes
-    :param target: target node
     :param train_epochs: number of train epochs
     :param verbose: verbose
     :return: generated data
@@ -67,23 +68,24 @@ def polynomial_regressor(df, causes, target, train_epochs=30, verbose=True):
     if len(causes) > 0:
         x = df[causes].as_matrix()
     else:
-        causes = None
-    n_ex = len(df)
-    target = df[target].as_matrix()
+        causes = []
+        x = None
+    n_ex = len(target_df) ; print(n_ex)
+    target = Variable(th.FloatTensor(target_df.as_matrix()))
     model = PolynomialModel(len(causes), degree=2)
-    criterion = MomentMatchingLoss(4)
-    optimizer = th.optim.SGD(model.parameters())
+    criterion = th.nn.MSELoss()#MomentMatchingLoss(n_ex)  # 4
+    optimizer = th.optim.Adam(model.parameters(), lr=10e-3)
 
     for epoch in range(train_epochs):
-        y_tr = model(x)
+        y_tr = model(x, n_ex)
         loss = criterion(y_tr, target)
         loss.backward()
         optimizer.step()
 
-        if verbose and epoch % 10 == 0:
-            print('Epoch : {} ; Loss: {}'.format(epoch, loss.numpy()))
+        if verbose and epoch % 1 == 0:
+            print('Epoch : {} ; Loss: {}'.format(epoch, loss.data.numpy()))
 
-    return model(x)
+    return model(x, n_ex).data.numpy()
 
 
 class RandomGraphFromData(object):
@@ -119,7 +121,7 @@ class RandomGraphFromData(object):
         """
         if self.matrix_criterion:
             corr = np.absolute(self.criterion(self.data.as_matrix()))
-            corr = np.fill_diagonal(corr, 0.)
+            np.fill_diagonal(corr, 0.)
         else:
             corr = np.zeros((len(self.data.columns), len(self.data.columns)))
             for idxi, i in enumerate(self.data.columns[:-1]):
@@ -127,11 +129,9 @@ class RandomGraphFromData(object):
                     corr[idxi, idxj] = np.absolute(self.criterion(self.data[i], self.data[j]))
                     corr[idxj, idxi] = corr[idxi, idxj]
 
-        print(corr)
         self.llinks = [(self.data.columns[i], self.data.columns[j])
                        for i in range(len(self.data.columns) - 1)
                        for j in range(i + 1, len(self.data.columns)) if corr[i, j] > threshold]
-
 
     def generate_graph(self, draw_proba=.8):
         """ Generate random graph out of the data
@@ -145,6 +145,7 @@ class RandomGraphFromData(object):
 
         # Draw random number of edges out of the dependent edges and create an acyclic graph
         graph = DirectedGraph()
+        print("Beginning random graph build")
 
         for link in self.llinks:
             if np.random.uniform() < draw_proba:
@@ -153,10 +154,14 @@ class RandomGraphFromData(object):
                 else:
                     link = list(link)
 
-                graph.add(link[0], link[1], 1)
+                # Test if adding the link does not create a cycle
+                if not deepcopy(graph).add(link[0], link[1], 1).is_cyclic():
+                    graph.add(link[0], link[1], 1)
+                elif not deepcopy(graph).add(link[1], link[0], 1).is_cyclic():
+                    graph.add(link[1], link[0], 1)  # Test if we can add the link in the other direction
 
         graph.remove_cycles()
-
+        print("Graph generated, passing to data generation!")
         # Resimulation of variables
         generated_variables = []
         nodes = graph.get_list_nodes()
@@ -169,6 +174,6 @@ class RandomGraphFromData(object):
                 if (var not in generated_variables and
                         set(par).issubset(generated_variables)):
                     # Variable can be generated
-                    self.resimulated_data[var] = self.simulator(self.data, par, var)
+                    self.resimulated_data[var] = self.simulator(self.resimulated_data, self.data[var], par).reshape(-1)
 
         return graph, self.resimulated_data

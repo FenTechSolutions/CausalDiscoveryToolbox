@@ -85,11 +85,14 @@ class MMD_loss_th(th.nn.Module):
         self.S = s.mm(s.t())
         self.S = Variable(self.S)
 
-    def forward(self, var_input, var_pred, var_true):
+    def forward(self, var_input, var_pred, var_true = None):
 
         # MMD Loss
-        X = th.cat([th.cat([var_input, var_pred], 1),
-                       th.cat([var_input, var_true], 1)], 0)
+        if var_true is None:
+            X = th.cat([var_input, var_pred], 0)
+        else:
+            X = th.cat([th.cat([var_input, var_pred], 1),
+                th.cat([var_input, var_true], 1)], 0)
         # dot product between all combinations of rows in 'X'
         XX = X.mm(X.t())
 
