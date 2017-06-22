@@ -3,8 +3,7 @@ Pairwise causal models base class
 Author: Diviyan Kalainathan
 Date : 7/06/2017
 """
-from sklearn.preprocessing import scale
-from ...utils.Graph import DirectedGraph
+from ...utils.Graph import DirectedGraph, UndirectedGraph
 
 
 class GraphModel(object):
@@ -16,27 +15,34 @@ class GraphModel(object):
         """ Init. """
         super(GraphModel, self).__init__()
 
-    def predict_graph(self, df_data, graph=None):
+    def predict(self, df_data, graph=None):
         """ Orient an undirected graph using the pairwise method defined by the subclass
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
-        :param x: UndirectedGraph or DirectedGraph or None
         :param df_data:
+        :param graph: UndirectedGraph or DirectedGraph or None
         :return: Directed graph w/ weights
         :rtype: DirectedGraph
         """
+        if graph is None:
+            return self.create_graph_from_data(df_data)
+        elif type(graph) == DirectedGraph:
+            return self.orient_directed_graph(df_data, graph)
+        elif type(graph) == UndirectedGraph:
+            return self.orient_undirected_graph(df_data, graph)
+        else:
+            print('Unknown Graph type')
+            raise ValueError
 
-        pass
-
-    def orient_undirected_graph(self):
+    def orient_undirected_graph(self, data, umg):
 
         raise NotImplementedError
 
-    def orient_directed_graph(self):
+    def orient_directed_graph(self, data, dag):
 
         raise NotImplementedError
 
-    def create_graph_from_data(self):
+    def create_graph_from_data(self, data):
 
         raise NotImplementedError
 

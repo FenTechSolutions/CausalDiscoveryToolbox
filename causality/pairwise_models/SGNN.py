@@ -1,6 +1,7 @@
 """
 SGNN : Shallow generative Neural Networks
-Authors : Anonymous Author
+Authors : Olivier Goudet & Diviyan Kalainathan
+Ref:
 Date : 10/05/2017
 """
 
@@ -244,25 +245,19 @@ class SGNN(Pairwise_Model):
     and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
     """
 
-    def __init__(self, backend="torch"):
+    def __init__(self, backend="PyTorch"):
         super(SGNN, self).__init__()
-        if backend == "torch":
-            self.backend = "torch"
-        elif backend == "tensorflow":
-            self.backend = "tensorflow"
-        else:
-            print('No backend known as {}'.format(backend))
-            raise ValueError
+        self.backend = backend
 
     def predict_proba(self, a, b):
         if len(np.array(a).shape) == 1:
             a = np.array(a).reshape((-1, 1))
             b = np.array(b).reshape((-1, 1))
 
-        if self.backend == "torch":
+        if self.backend == "PyTorch":
             return predict_th(a, b)
-        elif self.backend == "tensorflow":
+        elif self.backend == "TensorFlow":
             return predict_tf(a, b)
         else:
-            print('No backend defined !')
+            print('No backend known as {}'.format(self.backend))
             raise ValueError

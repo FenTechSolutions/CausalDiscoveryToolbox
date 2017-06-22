@@ -44,17 +44,17 @@ class Pairwise_Model(object):
             pred.append(self.predict_proba(a, b))
         return pred
 
-    def orient_graph(self, x, df_data):
+    def orient_graph(self, df_data, umg):
         """ Orient an undirected graph using the pairwise method defined by the subclass
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
-        :param x: UndirectedGraph
-        :param df_data:
+        :param df_data: dataset
+        :param umg: UndirectedGraph
         :return: Directed graph w/ weights
         :rtype: DirectedGraph
         """
 
-        edges = x.get_list_edges()
+        edges = umg.get_list_edges()
         graph = DirectedGraph()
 
         for edge in edges:
@@ -64,7 +64,7 @@ class Pairwise_Model(object):
                 graph.add(a, b, weight)
             else:
                 graph.add(b, a, abs(weight))
-
+        graph.remove_cycles()
         return graph
 
 
