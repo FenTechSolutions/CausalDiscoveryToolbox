@@ -119,8 +119,12 @@ class MMD_loss_th(th.nn.Module):
 
 
 def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment = 1):
+    """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
+
+    """
+
     loss = 0
-    for i in range(1,nb_moment):
+    for i in range(1, nb_moment):
         mean_pred = tf.reduce_mean(xy_pred**i,0)
         mean_true = tf.reduce_mean(xy_true**i,0)
         loss += tf.sqrt(tf.reduce_sum((mean_true - mean_pred)**2))  # L2
@@ -129,33 +133,30 @@ def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment = 1):
 
 
 class MomentMatchingLoss_th(th.nn.Module):
+    """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
+
+    """
     def __init__(self, n_moments=1):
+        """ Initialize the loss model
+
+        :param n_moments: number of moments
+        """
         super(MomentMatchingLoss_th, self).__init__()
         self.moments = n_moments
 
     def forward(self, pred, target):
-        mean_pred = th.mean(pred).expand_as(pred)
-        mean_target = th.mean(target).expand_as(target)
-        # std_pred = th.std(pred)
-        # std_target = th.std(target)
+        """ Compute the loss model
+
+        :param pred: predicted Variable
+        :param target: Target Variable
+        :return: Loss
+        """
 
         loss = Variable(th.FloatTensor([0]))
-
         for i in range(1, self.moments):
-            loss_i = th.abs((th.mean(th.pow(pred-mean_pred, i))
-                             - th.mean(th.pow(target-mean_target, i))))
-            # loss_i = th.abs((th.mean(th.pow(pred-mean_pred, i))/th.pow(std_pred, i)
-            #                  - th.mean(th.pow(target-mean_target, i))/th.pow(std_target, i)))
-            loss.add_(loss_i)
+            mk_pred = th.mean(th.pow(pred, i))
+            mk_tar = th.mean(th.pow(target,i))
 
-        return loss
-
-    def old_forward(self, pred, target):
-
-        loss = Variable(th.FloatTensor([0]))
-        for i in range(self.moments):
-            mean_pred = th.mean(th.pow(pred, i)).expand_as(pred)
-            mean_target = th.mean(th.pow(pred, i)).expand_as(target)
-            loss.add_(th.sum(th.abs(mean_pred-th.abs(mean_target))))  # L1
+            loss.add_((mk_pred - mk_tar)**2)  # L1
 
         return loss

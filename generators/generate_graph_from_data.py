@@ -83,7 +83,7 @@ def polynomial_regressor(x, target, causes, train_epochs=10000, verbose=True):
     target = Variable(th.FloatTensor(target))
     model = PolynomialModel(len(causes), degree=2)
     criterion = MomentMatchingLoss(4)
-    optimizer = th.optim.Adam(model.parameters(), lr=10e-5)
+    optimizer = th.optim.Adam(model.parameters(), lr=5*10e-6)
 
     for epoch in range(train_epochs):
         y_tr = model(x, n_ex)
