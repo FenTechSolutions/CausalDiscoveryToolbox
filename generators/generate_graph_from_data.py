@@ -33,7 +33,13 @@ class PolynomialModel(th.nn.Module):
         :param x: unfeaturized data
         :return: featurized data for polynomial regression of degree=2
         """
-        return th.cat([(x[i].view(-1, 1) @ x[i].view(1, -1)).view(1, -1) for i in range(x.size()[0])], 0)
+        # return th.cat([(x[i].view(-1, 1) @ x[i].view(1, -1)).view(1, -1) for i in range(x.size()[0])], 0)
+        out = th.FloatTensor(x.size()[0],2**(x.size()[1]))
+        cpt = 0
+        for i in range(x.size()[1]):
+            for j in range(i, x.size()[1]):
+                out[:, cpt] = x[:, i] * x[:, j]
+                cpt += 1
 
     def forward(self, x=None, n_examples=None):
         """ Featurize and compute output
