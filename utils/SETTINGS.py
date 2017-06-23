@@ -12,7 +12,7 @@ class CGNN_SETTINGS(object):
     nb_epoch_test = 500
     nb_run = 24
     nb_jobs = 2
-    GPU = True
+    GPU = False
     num_gpu = 2
     gpu_offset = 0
     learning_rate = 0.01

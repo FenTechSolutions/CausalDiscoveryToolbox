@@ -9,7 +9,7 @@ import torch as th
 from torch.autograd import Variable
 from copy import deepcopy
 from ..utils.Graph import DirectedGraph
-from ..utils.loss import MomentMatchingLoss
+from ..utils.loss import MomentMatchingLoss_th as MomentMatchingLoss
 
 
 class PolynomialModel(th.nn.Module):
@@ -25,7 +25,7 @@ class PolynomialModel(th.nn.Module):
         """
         assert degree == 2
         super(PolynomialModel, self).__init__()
-        self.l = th.nn.Linear(degree ** (rank + 2), 1, bias=False)
+        self.l = th.nn.Linear(int(((rank + 2)*(rank + 1))/2), 1, bias=False)
 
     def polynomial_features(self, x):
         """ Featurize data using a matrix multiplication trick
@@ -33,13 +33,15 @@ class PolynomialModel(th.nn.Module):
         :param x: unfeaturized data
         :return: featurized data for polynomial regression of degree=2
         """
-        # return th.cat([(x[i].view(-1, 1) @ x[i].view(1, -1)).view(1, -1) for i in range(x.size()[0])], 0)
-        out = th.FloatTensor(x.size()[0],2**(x.size()[1]))
+        # return th.cat([(x[i].view(-1, 1) @ x[i].view(1, -1)).view(1, -1) for i in range(x.size()[0])], 0) WRONG
+        out = th.FloatTensor(x.size()[0], int(((x.size()[1])*(x.size()[1]-1))/2))
         cpt = 0
         for i in range(x.size()[1]):
-            for j in range(i, x.size()[1]):
+            for j in range(i+1, x.size()[1]):
                 out[:, cpt] = x[:, i] * x[:, j]
                 cpt += 1
+        # print(int(((x.size()[1])*(x.size()[1]+1))/2)-1, cpt)
+        return out
 
     def forward(self, x=None, n_examples=None):
         """ Featurize and compute output
@@ -48,39 +50,40 @@ class PolynomialModel(th.nn.Module):
         :param n_examples: number of examples (for the case of no input data)
         :return: predicted data using weights
         """
-        if x is not None:
-            x = th.from_numpy(x)
-            inputx = th.cat([x,
-                             th.FloatTensor(n_examples, 1).normal_(),
-                             th.FloatTensor(n_examples, 1).fill_(1)], 1)
-        else:
-            inputx = th.cat([th.FloatTensor(n_examples, 1).normal_(),
-                             th.FloatTensor(n_examples, 1).fill_(1)], 1)
 
+        if x is not None:
+            x = th.FloatTensor(x)
+            inputx = th.cat([x,
+                             th.FloatTensor(n_examples, 1).fill_(1),
+                             th.FloatTensor(n_examples, 1).normal_()],1)
+        else:
+            inputx = th.cat([th.FloatTensor(n_examples, 1).fill_(1),
+                             th.FloatTensor(n_examples, 1).normal_()], 1)
+
+#
         inputx = Variable(self.polynomial_features(inputx))
         return self.l(inputx)
 
 
-def polynomial_regressor(df, target_df, causes, train_epochs=500, verbose=True):
+def polynomial_regressor(x, target, causes, train_epochs=10000, verbose=True):
     """ Regress data using a polynomial regressor of degree 2
 
-    :param df: data
-    :param target_df: target node
+    :param x: parents data
+    :param target: target data
     :param causes: list of parent nodes
     :param train_epochs: number of train epochs
     :param verbose: verbose
     :return: generated data
     """
-    if len(causes) > 0:
-        x = df[causes].as_matrix()
-    else:
+
+    if len(causes) == 0:
         causes = []
         x = None
-    n_ex = len(target_df) ; print(n_ex)
-    target = Variable(th.FloatTensor(target_df.as_matrix()))
+    n_ex = target.shape[0]
+    target = Variable(th.FloatTensor(target))
     model = PolynomialModel(len(causes), degree=2)
-    criterion = th.nn.MSELoss()#MomentMatchingLoss(n_ex)  # 4
-    optimizer = th.optim.Adam(model.parameters(), lr=10e-3)
+    criterion = MomentMatchingLoss(4)
+    optimizer = th.optim.Adam(model.parameters(), lr=10e-5)
 
     for epoch in range(train_epochs):
         y_tr = model(x, n_ex)
@@ -88,7 +91,7 @@ def polynomial_regressor(df, target_df, causes, train_epochs=500, verbose=True):
         loss.backward()
         optimizer.step()
 
-        if verbose and epoch % 1 == 0:
+        if verbose and epoch % 50 == 0:
             print('Epoch : {} ; Loss: {}'.format(epoch, loss.data.numpy()))
 
     return model(x, n_ex).data.numpy()
@@ -139,7 +142,7 @@ class RandomGraphFromData(object):
                        for i in range(len(self.data.columns) - 1)
                        for j in range(i + 1, len(self.data.columns)) if corr[i, j] > threshold]
 
-    def generate_graph(self, draw_proba=.8):
+    def generate_graph(self, draw_proba=.5):
         """ Generate random graph out of the data
 
         :param draw_proba:
@@ -151,7 +154,6 @@ class RandomGraphFromData(object):
 
         # Draw random number of edges out of the dependent edges and create an acyclic graph
         graph = DirectedGraph()
-        print("Beginning random graph build")
 
         for link in self.llinks:
             if np.random.uniform() < draw_proba:
@@ -167,19 +169,23 @@ class RandomGraphFromData(object):
                     graph.add(link[1], link[0], 1)  # Test if we can add the link in the other direction
 
         graph.remove_cycles()
+
+        print('Adjacency matrix : {}'.format(graph.get_adjacency_matrix()))
+        print('Number of edges : {}'.format(len(graph.get_list_edges(return_weights=False))))
+        print("Beginning random graph build")
         print("Graph generated, passing to data generation!")
         # Resimulation of variables
-        generated_variables = []
+        generated_variables = {}
         nodes = graph.get_list_nodes()
-        self.resimulated_data = pd.DataFrame()
 
         # Regress using a y=P(Xc,E)= Sum_i,j^d(_alphaij*(X_1+..+X_c)^i*E^j) model & re-simulate data
+        # run_graph_polynomial(self.data, graph,0,0)
         while len(generated_variables) < len(nodes):
             for var in nodes:
                 par = graph.get_parents(var)
                 if (var not in generated_variables and
                         set(par).issubset(generated_variables)):
                     # Variable can be generated
-                    self.resimulated_data[var] = self.simulator(self.resimulated_data, self.data[var], par).reshape(-1)
+                    generated_variables[var] = self.simulator(pd.DataFrame(generated_variables)[par].as_matrix(), self.data[var].as_matrix(), par).reshape(-1)
 
-        return graph, self.resimulated_data
+        return graph, pd.DataFrame(generated_variables)
