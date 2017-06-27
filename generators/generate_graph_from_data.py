@@ -25,7 +25,8 @@ class PolynomialModel(th.nn.Module):
         """
         assert degree == 2
         super(PolynomialModel, self).__init__()
-        self.l = th.nn.Linear(int(((rank + 2)*(rank + 1))/2), 1, bias=False)
+        self.l = th.nn.Linear(
+            int(((rank + 2) * (rank + 1)) / 2), 1, bias=False)
 
     def polynomial_features(self, x):
         """ Featurize data using a matrix multiplication trick
@@ -33,8 +34,10 @@ class PolynomialModel(th.nn.Module):
         :param x: unfeaturized data
         :return: featurized data for polynomial regression of degree=2
         """
-        # return th.cat([(x[i].view(-1, 1) @ x[i].view(1, -1)).view(1, -1) for i in range(x.size()[0])], 0) WRONG
-        out = th.FloatTensor(x.size()[0], int(((x.size()[1])*(x.size()[1]-1))/2))
+        # return th.cat([(x[i].view(-1, 1) @ x[i].view(1, -1)).view(1, -1) for
+        # i in range(x.size()[0])], 0) WRONG
+        out = th.FloatTensor(x.size()[0], int(
+            ((x.size()[1]) * (x.size()[1] - 1)) / 2))
         cpt = 0
         for i in range(x.size()[1]):
             for j in range(i+1, x.size()[1]):
@@ -43,47 +46,51 @@ class PolynomialModel(th.nn.Module):
         # print(int(((x.size()[1])*(x.size()[1]+1))/2)-1, cpt)
         return out
 
-    def forward(self, x=None, n_examples=None):
+    def forward(self, x=None, n_examples=None, fixed_noise=True):
         """ Featurize and compute output
 
         :param x: input data
         :param n_examples: number of examples (for the case of no input data)
         :return: predicted data using weights
         """
-
-        if x is not None:
-            x = th.FloatTensor(x)
-            inputx = th.cat([x,
-                             th.FloatTensor(n_examples, 1).fill_(1),
-                             th.FloatTensor(n_examples, 1).normal_()],1)
-        else:
+        if not fixed_noise:
             inputx = th.cat([th.FloatTensor(n_examples, 1).fill_(1),
                              th.FloatTensor(n_examples, 1).normal_()], 1)
+            if x is not None:
+                x = th.FloatTensor(x)
+                inputx = th.cat([x, inputx], 1)
+        else:
+            inputx = th.cat([x, th.FloatTensor(n_examples, 1).fill_(1)], 1)
 
-#
         inputx = Variable(self.polynomial_features(inputx))
         return self.l(inputx)
 
 
-def polynomial_regressor(x, target, causes, train_epochs=10000, verbose=True):
+def polynomial_regressor(x, target, causes, train_epochs=50000, fixed_noise=True, verbose=True):
     """ Regress data using a polynomial regressor of degree 2
 
     :param x: parents data
     :param target: target data
     :param causes: list of parent nodes
     :param train_epochs: number of train epochs
+    :param fixed_noise : If the noise in the generation is fixed or not.
     :param verbose: verbose
     :return: generated data
     """
 
+    n_ex = target.shape[0]
     if len(causes) == 0:
         causes = []
         x = None
-    n_ex = target.shape[0]
+        if fixed_noise:
+            x = th.FloatTensor(n_ex, 1).normal_()
+    elif fixed_noise:
+        x = th.FloatTensor(x)
+        x = th.cat([x, th.FloatTensor(n_ex, 1).normal_()], 1)
     target = Variable(th.FloatTensor(target))
     model = PolynomialModel(len(causes), degree=2)
     criterion = MomentMatchingLoss(4)
-    optimizer = th.optim.Adam(model.parameters(), lr=5*10e-6)
+    optimizer = th.optim.Adam(model.parameters(), lr=10e-5)
 
     for epoch in range(train_epochs):
         y_tr = model(x, n_ex)
@@ -98,7 +105,7 @@ def polynomial_regressor(x, target, causes, train_epochs=10000, verbose=True):
 
 
 class RandomGraphFromData(object):
-    """ Generate a random graph out of data
+    """ Generate a random graph out of data : produce a random graph and make statistics fit to the data
 
     """
 
@@ -135,7 +142,8 @@ class RandomGraphFromData(object):
             corr = np.zeros((len(self.data.columns), len(self.data.columns)))
             for idxi, i in enumerate(self.data.columns[:-1]):
                 for idxj, j in enumerate(self.data.columns[idxi + 1:]):
-                    corr[idxi, idxj] = np.absolute(self.criterion(self.data[i], self.data[j]))
+                    corr[idxi, idxj] = np.absolute(
+                        self.criterion(self.data[i], self.data[j]))
                     corr[idxj, idxi] = corr[idxi, idxj]
 
         self.llinks = [(self.data.columns[i], self.data.columns[j])
@@ -152,7 +160,8 @@ class RandomGraphFromData(object):
         if self.llinks is None:
             self.find_dependencies()
 
-        # Draw random number of edges out of the dependent edges and create an acyclic graph
+        # Draw random number of edges out of the dependent edges and create an
+        # acyclic graph
         graph = DirectedGraph()
 
         for link in self.llinks:
@@ -166,12 +175,14 @@ class RandomGraphFromData(object):
                 if not deepcopy(graph).add(link[0], link[1], 1).is_cyclic():
                     graph.add(link[0], link[1], 1)
                 elif not deepcopy(graph).add(link[1], link[0], 1).is_cyclic():
-                    graph.add(link[1], link[0], 1)  # Test if we can add the link in the other direction
+                    # Test if we can add the link in the other direction
+                    graph.add(link[1], link[0], 1)
 
         graph.remove_cycles()
 
         print('Adjacency matrix : {}'.format(graph.get_adjacency_matrix()))
-        print('Number of edges : {}'.format(len(graph.get_list_edges(return_weights=False))))
+        print('Number of edges : {}'.format(
+            len(graph.get_list_edges(return_weights=False))))
         print("Beginning random graph build")
         print("Graph generated, passing to data generation!")
         # Resimulation of variables
@@ -186,6 +197,7 @@ class RandomGraphFromData(object):
                 if (var not in generated_variables and
                         set(par).issubset(generated_variables)):
                     # Variable can be generated
-                    generated_variables[var] = self.simulator(pd.DataFrame(generated_variables)[par].as_matrix(), self.data[var].as_matrix(), par).reshape(-1)
+                    generated_variables[var] = self.simulator(pd.DataFrame(generated_variables)[
+                                                              par].as_matrix(), self.data[var].as_matrix(), par).reshape(-1)
 
         return graph, pd.DataFrame(generated_variables)
