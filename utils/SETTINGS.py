@@ -13,7 +13,7 @@ class CGNN_SETTINGS(object):
     nb_run = 24
     nb_jobs = 2
     GPU = False
-    num_gpu = 2
+    num_gpu = 1
     gpu_offset = 0
     learning_rate = 0.01
     init_weights = 0.05

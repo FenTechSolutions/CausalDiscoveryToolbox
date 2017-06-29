@@ -125,8 +125,8 @@ def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment = 1):
 
     loss = 0
     for i in range(1, nb_moment):
-        mean_pred = tf.reduce_mean(xy_pred**i,0)
-        mean_true = tf.reduce_mean(xy_true**i,0)
+        mean_pred = tf.reduce_mean(xy_pred**i, 0)
+        mean_true = tf.reduce_mean(xy_true**i, 0)
         loss += tf.sqrt(tf.reduce_sum((mean_true - mean_pred)**2))  # L2
 
     return loss
@@ -157,6 +157,6 @@ class MomentMatchingLoss_th(th.nn.Module):
             mk_pred = th.mean(th.pow(pred, i))
             mk_tar = th.mean(th.pow(target,i))
 
-            loss.add_((mk_pred - mk_tar)**2)  # L1
+            loss.add_((mk_pred - mk_tar)**2)  # L2
 
         return loss
