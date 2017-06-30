@@ -8,7 +8,7 @@ Date : 8/05/2017
 
 class CGNN_SETTINGS(object):
     h_dim = 20
-    nb_epoch_train = 1000
+    nb_epoch_train = 400
     nb_epoch_test = 500
     nb_run = 24
     nb_jobs = 2
