@@ -26,8 +26,8 @@ def list_to_dict(links):
     return dic
 
 
-class DirectedGraph(object):
-    """ Graph data structure, directed. """
+class Graph(object):
+    """ Graph data structure (Model Class)"""
 
     def __init__(self, df=None):
         """ Create a new directed graph structure"""
@@ -48,7 +48,149 @@ class DirectedGraph(object):
         for node1, node2, weight in connections:
             self.add(node1, node2, weight)
 
-    def add(self, node1, node2, weight):
+    def add(self, node1, node2, weight=1):
+        """ Add or update directed edge from node1 to node2
+
+        :param node1: cause of the edge
+        :param node2: effect of the edge
+        :param weight: value of edge
+        :type weight: float
+        """
+
+        raise NotImplementedError
+
+    def remove_edge(self, node1, node2):
+        """ Remove the edge from node1 to node2
+
+        :param node1: cause of the edge
+        :param node2: effect of the edge
+        """
+        raise NotImplementedError
+
+    def get_parents(self, node):
+        """ Get the list of parents of a node
+
+        :param node: Selected node
+        :return: list of parents of the nodes
+        :rtype: list
+        """
+        parents = []
+        for i in self._graph:
+            if node in list(self._graph[i]):
+                parents.append(i)
+        return parents
+
+    def get_list_nodes(self):
+        """ Get list of all nodes in graph
+
+        :return: List of nodes
+        :rtype: list
+
+        """
+
+        nodes = []
+        for i in self._graph:
+            if i not in nodes:
+                nodes.append(i)
+            for j in list(self._graph[i]):
+                if j not in nodes:
+                    nodes.append(j)
+        return nodes
+
+    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
+        """ Get list of edges according to order defined by parameters
+
+        :param order_by_weight: List of edges will be ordered by weight values
+        :param descending: order elements by decreasing weights
+        :param return_weights: return the list of weights
+        :return: List of edges and their weights
+        :rtype: (list,list)"""
+
+        list_edges = []
+        weights = []
+        for i in self._graph:
+            for j in list(self._graph[i]):
+                list_edges.append([i, j])
+                weights.append(self._graph[i][j])
+
+        if order_by_weight and descending:
+            weights, list_edges = (list(i) for i
+                                   in zip(*sorted(zip(weights, list_edges),
+                                                  reverse=True)))
+        elif order_by_weight:
+            weights, list_edges = (list(i) for i
+                                   in zip(*sorted(zip(weights, list_edges))))
+        if return_weights:
+            return [[edge[0], edge[1], weight] for edge, weight in zip(list_edges, weights)]
+        else:
+            return list_edges
+
+    def get_adjacency_matrix(self):
+        """Get the adjacency matrix of the graph
+
+        :return: Adjacency Matrix (size : Nodes x Nodes), List of nodes
+        :rtype: (numpy.ndarray, list)
+        """
+
+        nodes = self.get_list_nodes()
+        edges, weights = self.get_list_edges(order_by_weight=False)
+
+        m = np.zeros((len(nodes), len(nodes)))
+
+        for idx, e in enumerate(edges):
+            cause = nodes.index(e[0])
+            effect = nodes.index(e[1])
+
+            m[cause, effect] = weights[idx]
+
+        return m, nodes
+
+    def get_dict_nw(self):
+        """Get dictionary of graph without weight values
+
+        :return: Dictionary of the directed graph
+        :rtype: dict
+
+        """
+
+        dict_nw = defaultdict(list)
+        for i in self._graph:
+            for j in list(self._graph[i]):
+                dict_nw[i].append(j)
+                if j not in dict_nw:
+                    dict_nw[j] = []
+        return dict(dict_nw)
+
+    def remove_node(self, node):
+        """ Remove all references to node
+
+        :param node: node to remove
+        :type node: str
+
+        """
+
+        for n, cxns in self._graph.iteritems():
+            try:
+                cxns.remove(node)
+            except KeyError:
+                pass
+        try:
+            del self._graph[node]
+        except KeyError:
+            pass
+
+    def __str__(self):
+        return '{}({})'.format(self.__class__.__name__, dict(self._graph))
+
+
+class DirectedGraph(Graph):
+    """ Graph data structure, directed. """
+
+    def __init__(self, df=None):
+        """ Create a new directed graph structure"""
+        super(DirectedGraph, self).__init__(df)
+
+    def add(self, node1, node2, weight=1):
         """ Add or update directed edge from node1 to node2
 
         :param node1: cause of the edge
@@ -136,118 +278,6 @@ class DirectedGraph(object):
         if len(self._graph[node1]) == 0:
             del self._graph[node1]
 
-    def get_parents(self, node):
-        """ Get the list of parents of a node
-
-        :param node: Selected node
-        :return: list of parents of the nodes
-        :rtype: list
-        """
-        parents = []
-        for i in self._graph:
-            if node in list(self._graph[i]):
-                parents.append(i)
-        return parents
-
-    def get_list_nodes(self):
-        """ Get list of all nodes in graph
-
-        :return: List of nodes
-        :rtype: list
-
-        """
-
-        nodes = []
-        for i in self._graph:
-            if i not in nodes:
-                nodes.append(i)
-            for j in list(self._graph[i]):
-                if j not in nodes:
-                    nodes.append(j)
-        return nodes
-
-    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
-        """ Get list of edges according to order defined by parameters
-
-        :param order_by_weight: List of edges will be ordered by weight values
-        :param descending: order elements by decreasing weights
-        :param return_weights: return the list of weights
-        :return: List of edges and their weights
-        :rtype: (list,list)"""
-
-        list_edges = []
-        weights = []
-        for i in self._graph:
-            for j in list(self._graph[i]):
-                list_edges.append([i, j])
-                weights.append(self._graph[i][j])
-
-        if order_by_weight and descending:
-            weights, list_edges = (list(i) for i
-                                   in zip(*sorted(zip(weights, list_edges),
-                                                  reverse=True)))
-        elif order_by_weight:
-            weights, list_edges = (list(i) for i
-                                   in zip(*sorted(zip(weights, list_edges))))
-        if return_weights:
-            return list_edges, weights
-        else:
-            return list_edges
-
-    def get_adjacency_matrix(self):
-        """Get the adjacency matrix of the graph
-
-        :return: Adjacency Matrix (size : Nodes x Nodes), List of nodes
-        :rtype: (numpy.ndarray, list)
-        """
-
-        nodes = self.get_list_nodes()
-        edges, weights = self.get_list_edges(order_by_weight=False)
-
-        m = np.zeros((len(nodes), len(nodes)))
-
-        for idx, e in enumerate(edges):
-            cause = nodes.index(e[0])
-            effect = nodes.index(e[1])
-
-            m[cause, effect] = weights[idx]
-
-        return m, nodes
-
-    def get_dict_nw(self):
-        """Get dictionary of graph without weight values
-
-        :return: Dictionary of the directed graph
-        :rtype: dict
-
-        """
-
-        dict_nw = defaultdict(list)
-        for i in self._graph:
-            for j in list(self._graph[i]):
-                dict_nw[i].append(j)
-                if j not in dict_nw:
-                    dict_nw[j] = []
-        return dict(dict_nw)
-
-    def remove_node(self, node):
-        """ Remove all references to node
-
-        :param node: node to remove
-        :type node: str
-
-        """
-
-        for n, cxns in self._graph.iteritems():
-            try:
-                cxns.remove(node)
-            except KeyError:
-                pass
-        try:
-            del self._graph[node]
-        except KeyError:
-            pass
-
     def remove_cycles(self, verbose=True):
         """ Remove all cycles in graph by using the weights
 
@@ -278,33 +308,15 @@ class DirectedGraph(object):
                 if verbose:
                     print('Link {} got deleted !'.format(r_edge))
 
-    def __str__(self):
-        return '{}({})'.format(self.__class__.__name__, dict(self._graph))
 
-
-class UndirectedGraph(object):
+class UndirectedGraph(Graph):
     """ Graph data structure, undirected. """
 
     def __init__(self, df=None):
         """ Create a new undirected graph structure"""
-        self._graph = defaultdict(dict)
-        connections = []
-        if df:
-            for idx, row in df.iterrows():
-                connections.append(row)
-            self.add_multiple_edges(connections)
+        super(UndirectedGraph, self).__init__(df)
 
-    def add_multiple_edges(self, connections):
-        """ Add edges (list of tuple pairs) to graph
-
-        :param connections: List of tuples (node1, node2, weight)
-        :type connections: list
-        """
-
-        for node1, node2, weight in connections:
-            self.add(node1, node2, weight)
-
-    def add(self, node1, node2, weight):
+    def add(self, node1, node2, weight=1):
         """ Add or update edge between node1 to node2
 
         :param node1: end1 of the edge
@@ -337,110 +349,5 @@ class UndirectedGraph(object):
         :return: list of neighbors of the nodes
         :rtype: list
         """
-        neighbors = []
-        for i in self._graph:
-            if node in list(self._graph[i]):
-                neighbors.append(i)
-        return neighbors
+        return self.get_parents(node)
 
-    def get_list_nodes(self):
-        """ Get list of all nodes in graph
-
-        :return: List of nodes
-        :rtype: list
-        """
-
-        nodes = []
-        for i in self._graph:
-            if i not in nodes:
-                nodes.append(i)
-            for j in list(self._graph[i]):
-                if j not in nodes:
-                    nodes.append(j)
-        return nodes
-
-    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
-        """ Get list of edges according to order defined by parameters
-
-        :param order_by_weight: List of edges will be ordered by weight values
-        :param descending: order elements by decreasing weights
-        :param return_weights: return the list of weights
-        :return: List of edges and their weights
-        :rtype: (list,list)"""
-
-        list_edges = []
-        weights = []
-        for i in self._graph:
-            for j in list(self._graph[i]):
-                if (i, j) not in list_edges and (j, i) not in list_edges:
-                    list_edges.append((i, j))
-                    weights.append(self._graph[i][j])
-
-        if order_by_weight and descending:
-            weights, list_edges = (list(i) for i
-                                   in zip(*sorted(zip(weights, list_edges),
-                                                  reverse=True)))
-        elif order_by_weight:
-            weights, list_edges = (list(i) for i
-                                   in zip(*sorted(zip(weights, list_edges))))
-        if return_weights:
-            return list_edges, weights
-        else:
-            return list_edges
-
-    def get_adjacency_matrix(self):
-        """Get the adjacency matrix of the graph
-
-        :return: Adjacency Matrix (size : Nodes x Nodes), List of nodes
-        :rtype: (numpy.ndarray, list)
-        """
-
-        nodes = self.get_list_nodes()
-        edges, weights = self.get_list_edges(order_by_weight=False)
-
-        m = np.zeros((len(nodes), len(nodes)))
-
-        for idx, e in enumerate(edges):
-            node1 = nodes.index(e[0])
-            node2 = nodes.index(e[1])
-
-            m[node1, node2] = weights[idx]
-
-        return m, nodes
-
-    def get_dict_nw(self):
-        """Get dictionary of graph without weight values
-
-        :return: Dictionary of the directed graph
-        :rtype: dict
-
-        """
-
-        dict_nw = defaultdict(list)
-        for i in self._graph:
-            for j in list(self._graph[i]):
-                dict_nw[i].append(j)
-                if j not in dict_nw:
-                    dict_nw[j] = []
-        return dict(dict_nw)
-
-    def remove_node(self, node):
-        """ Remove all references to node
-
-        :param node: node to remove
-        :type node: str
-
-        """
-
-        for n, cxns in self._graph.iteritems():
-            try:
-                cxns.remove(node)
-            except KeyError:
-                pass
-        try:
-            del self._graph[node]
-        except KeyError:
-            pass
-
-    def __str__(self):
-        return '{}({})'.format(self.__class__.__name__, dict(self._graph))
