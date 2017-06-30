@@ -166,11 +166,12 @@ class DirectedGraph(object):
                     nodes.append(j)
         return nodes
 
-    def get_list_edges(self, order_by_weight=True, descending=False):
+    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
         """ Get list of edges according to order defined by parameters
 
         :param order_by_weight: List of edges will be ordered by weight values
         :param descending: order elements by decreasing weights
+        :param return_weights: return the list of weights
         :return: List of edges and their weights
         :rtype: (list,list)"""
 
@@ -188,7 +189,10 @@ class DirectedGraph(object):
         elif order_by_weight:
             weights, list_edges = (list(i) for i
                                    in zip(*sorted(zip(weights, list_edges))))
-        return list_edges, weights
+        if return_weights:
+            return list_edges, weights
+        else:
+            return list_edges
 
     def get_adjacency_matrix(self):
         """Get the adjacency matrix of the graph
@@ -355,11 +359,12 @@ class UndirectedGraph(object):
                     nodes.append(j)
         return nodes
 
-    def get_list_edges(self, order_by_weight=True, descending=False):
+    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
         """ Get list of edges according to order defined by parameters
 
         :param order_by_weight: List of edges will be ordered by weight values
         :param descending: order elements by decreasing weights
+        :param return_weights: return the list of weights
         :return: List of edges and their weights
         :rtype: (list,list)"""
 
@@ -378,7 +383,10 @@ class UndirectedGraph(object):
         elif order_by_weight:
             weights, list_edges = (list(i) for i
                                    in zip(*sorted(zip(weights, list_edges))))
-        return list_edges, weights
+        if return_weights:
+            return list_edges, weights
+        else:
+            return list_edges
 
     def get_adjacency_matrix(self):
         """Get the adjacency matrix of the graph

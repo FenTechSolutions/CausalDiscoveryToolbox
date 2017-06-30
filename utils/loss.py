@@ -118,17 +118,45 @@ class MMD_loss_th(th.nn.Module):
         return lossMMD.sqrt()
 
 
-class MomentMatchingLoss(th.nn.Module):
+def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment = 1):
+    """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
+
+    """
+
+    loss = 0
+    for i in range(1, nb_moment):
+        mean_pred = tf.reduce_mean(xy_pred**i, 0)
+        mean_true = tf.reduce_mean(xy_true**i, 0)
+        loss += tf.sqrt(tf.reduce_sum((mean_true - mean_pred)**2))  # L2
+
+    return loss
+
+
+class MomentMatchingLoss_th(th.nn.Module):
+    """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
+
+    """
     def __init__(self, n_moments=1):
-        super(MomentMatchingLoss, self).__init__()
+        """ Initialize the loss model
+
+        :param n_moments: number of moments
+        """
+        super(MomentMatchingLoss_th, self).__init__()
         self.moments = n_moments
 
     def forward(self, pred, target):
-        mean_pred = th.mean(pred).expand_as(pred)
-        mean_target = th.mean(target).expand_as(target)
-        loss = Variable(th.FloatTensor([0]))
+        """ Compute the loss model
 
+        :param pred: predicted Variable
+        :param target: Target Variable
+        :return: Loss
+        """
+
+        loss = Variable(th.FloatTensor([0]))
         for i in range(1, self.moments):
-            loss.add_(th.abs(th.mean(th.pow(pred-mean_pred, i)) - th.mean(th.pow(target-mean_target, i))))
+            mk_pred = th.mean(th.pow(pred, i))
+            mk_tar = th.mean(th.pow(target,i))
+
+            loss.add_((mk_pred - mk_tar)**2)  # L2
 
         return loss

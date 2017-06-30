@@ -14,24 +14,35 @@ from joblib import Parallel, delayed
 import sys
 from copy import deepcopy
 from .model import GraphModel
-from ..pairwise_models.SGNN import SGNN
+from ..pairwise_models.GNN import GNN
 from ...utils.loss import MMD_loss
 from ...utils.Graph import *
 from ...utils.SETTINGS import CGNN_SETTINGS as SETTINGS
 
 
 def init(size):
+    """ Initialize a random tensor, normal(0,SETTINGS.init_weights).
+
+    :param size: Size of the tensor
+    :return: Tensor
+    """
     return tf.random_normal(shape=size, stddev=SETTINGS.init_weights)
 
 
-class CGNN_graph_tf(object):
-    def __init__(self, N, graph, list_nodes, run, pair, learning_rate=SETTINGS.learning_rate):
+class CGNN_tf(object):
+    def __init__(self, N, graph, run, idx, learning_rate=SETTINGS.learning_rate):
+        """ Build the tensorflow graph of the CGNN structure
+
+        :param N: Number of points
+        :param graph: Graph to be run
+        :param run: number of the run (only for print)
+        :param idx: number of the idx (only for print)
+        :param learning_rate: learning rate of the optimizer
         """
-        Build the tensorflow graph,
-        For a given structure
-        """
+
         self.run = run
-        self.pair = pair
+        self.idx = idx
+        list_nodes = graph.get_list_nodes()
         n_var = len(list_nodes)
 
         self.all_real_variables = tf.placeholder(tf.float32, shape=[None, n_var])
@@ -40,6 +51,7 @@ class CGNN_graph_tf(object):
         theta_G = []
 
         while len(generated_variables) < n_var:
+            # Need to generate all variables in the graph using its parents : possible because of the DAG structure
             for var in list_nodes:
                 # Check if all parents are generated
                 par = graph.get_parents(var)
@@ -69,7 +81,6 @@ class CGNN_graph_tf(object):
 
         self.G_dist_loss_xcausesy = MMD_loss(self.all_real_variables, all_generated_variables)
 
-        # var_list = theta_G
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
                                                   var_list=theta_G))
@@ -81,6 +92,12 @@ class CGNN_graph_tf(object):
         self.sess.run(tf.global_variables_initializer())
 
     def train(self, data, verbose=True):
+        """ Train the initialized model
+
+        :param data: data corresponding to the graph
+        :param verbose: verbose
+        :return: None
+        """
         for it in range(SETTINGS.nb_epoch_train):
 
             _, G_dist_loss_xcausesy_curr = self.sess.run(
@@ -89,12 +106,18 @@ class CGNN_graph_tf(object):
             )
 
             if verbose:
-                if (it % 100 == 0):
+                if it % 100 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'.
-                          format(self.pair, self.run,
+                          format(self.idx, self.run,
                                  it, G_dist_loss_xcausesy_curr))
 
     def evaluate(self, data, verbose=True):
+        """ Test the model
+
+        :param data: data corresponding to the graph
+        :param verbose: verbose
+        :return: mean MMD loss value of the CGNN structure on the data
+        """
 
         sumMMD_tr = 0
 
@@ -106,167 +129,50 @@ class CGNN_graph_tf(object):
             sumMMD_tr += MMD_tr[0]
 
             if verbose:
-                if (it % 100 == 0):
+                if it % 100 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'
-                          .format(self.pair, self.run, it, MMD_tr[0]))
+                          .format(self.idx, self.run, it, MMD_tr[0]))
 
         tf.reset_default_graph()
 
         return sumMMD_tr / SETTINGS.nb_epoch_test
 
 
-def run_graph_tf(df_data, graph, idx, run):
+def run_CGNN_tf(df_data, graph, idx=0, run=0):
+    """ Execute the CGNN, by init, train and eval either on CPU or GPU
+
+    :param df_data: data corresponding to the graph
+    :param graph: Graph to be run
+    :param run: number of the run (only for print)
+    :param idx: number of the idx (only for print)
+    :return: MMD loss value of the given structure after training
+    """
+
     list_nodes = graph.get_list_nodes()
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
 
     if SETTINGS.GPU:
         with tf.device('/gpu:' + str(SETTINGS.gpu_offset + run % SETTINGS.num_gpu)):
-            model = CGNN_graph_tf(df_data.shape[0], graph, list_nodes, run, idx)
+            model = CGNN_tf(df_data.shape[0], graph, run, idx)
             model.train(data)
             return model.evaluate(data)
     else:
-        model = CGNN_graph_tf(df_data.shape[0], graph, list_nodes, run, idx)
+        model = CGNN(df_data.shape[0], graph, run, idx)
         model.train(data)
         return model.evaluate(data)
 
-name_algo = "HC_CGNN_"
 
-dataset_name = ((sys.argv[1].split('.'))[0]).split('/')[-1]
-print(dataset_name)
+def run_CGNN_th(df_data, graph, idx=0, run=0):
+    """
 
-
-def save_log(pair_scores, filename, evalgraph=False):
-    if not evalgraph:
-        r_df = pd.DataFrame(pair_scores, columns=[
-            'SampleID', 'edge_no', 'score_XY', 'score_YX', 'run'])
-    else:
-        r_df = pd.DataFrame(pair_scores, columns=[
-            'SampleID', 'change_edge_no', 'score', 'run'])
-
-    if not os.path.exists('results/'):
-        os.makedirs('results/')
-
-    r_df.to_csv(filename, index=False)
-
-
-def unpack_results(result_pairs, pair_scores, node1, node2, i, loop=0, evalgraph=False, log=False):
-    """  Process the results given by the multiprocessing loop
-
-    :param result_pairs:
-    :param pair_scores:
-    :param node1:
-    :param node2:
-    :param i:
-    :param loop:
-    :param evalgraph:
+    :param df_data:
+    :param graph:
+    :param idx:
+    :param run:
     :return:
     """
-    run_no = 0
-
-    if not evalgraph:
-        sum_score_XY = 0
-        sum_score_YX = 0
-
-        for result_pair in result_pairs:
-
-            run_no += 1
-
-            score_XY = result_pair[0]
-            score_YX = result_pair[1]
-
-            if np.isfinite(score_XY) and np.isfinite(score_YX):
-                sum_score_XY += score_XY
-                sum_score_YX += score_YX
-
-            else:
-                warnings.warn('NaN value', RuntimeWarning)
-
-            if log:
-                pair_scores.append(
-                    [str(node1) + '-' + str(node2), i, score_XY, score_YX, run_no])
-                save_log(pair_scores, 'results/results' + '_pw_' +
-                         dataset_name + name_algo + '.csv')
-
-        return sum_score_XY, sum_score_YX
-
-    else:
-        sum_score_graph = 0
-        for result_pair in result_pairs:
-
-            run_no += 1
-
-            denom = SETTINGS.nb_run
-
-            score_graph = result_pair
-            if np.isfinite(score_graph):
-                sum_score_graph += score_graph
-            else:
-                denom = -1
-                warnings.warn('NaN value', RuntimeWarning)
-
-            if log:
-                pair_scores.append(
-                    [str(node1) + '-' + str(node2), i, score_graph, run_no])
-                save_log(pair_scores, 'results/results' + '_' + dataset_name +
-                         name_algo + str(loop) + '.csv', evalgraph=True)
-
-        return sum_score_graph / denom
-
-
-def infer_graph_tf(data, dag, log=False):
-
-    result = []
-    loop = 0
-    improvement = True
-
-    result_pairs = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(run_graph_tf)(
-        data, dag, 0, run) for run in range(SETTINGS.nb_run))
-    tested_configurations = [dag.get_dict_nw()]
-    score_network = unpack_results(
-        result_pairs, result, "", "", 0, loop, evalgraph=True, log=log)
-    globalscore = score_network
-
-    print("Graph score : " + str(globalscore))
-
-    while improvement:
-        loop += 1
-        improvement = False
-        list_edges = dag.get_list_edges()
-        for idx_pair in range(len(list_edges)):
-            edge = list_edges[idx_pair]
-            test_dag = deepcopy(dag)
-            test_dag.reverse_edge(edge[0], edge[1])
-
-            if (test_dag.get_dict_nw().is_cyclic()
-                or test_dag.get_dict_nw() in tested_configurations):
-                print('No Evaluation for {}'.format([edge]))
-            else:
-                print('Edge {} in evaluation :'.format(edge))
-                tested_configurations.append(test_dag.get_dict_nw())
-                result_pairs = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(run_graph_tf)(
-                    data, test_dag, idx_pair, run) for run in range(SETTINGS.nb_run))
-
-                score_network = unpack_results(
-                    result_pairs, result, edge[0], edge[1], idx_pair, loop, evalgraph=True, log=log)
-                score_network = score_network
-
-                print("Current score : " + str(score_network))
-                print("Best score : " + str(globalscore))
-
-                if score_network < globalscore:
-                    # , globalscore - score_network)
-                    dag.reverse_edge(edge[0], edge[1])
-                    improvement = True
-                    print('Edge {} got reversed !'.format(edge))
-                    globalscore = score_network
-
-                if log:
-                    df_edge_result = pd.DataFrame(dag.tolist(),
-                                                  columns=['Cause', 'Effect', 'Weight'])
-                    df_edge_result.to_csv('results/' + name_algo + dataset_name +
-                                          '-loop{}.csv'.format(loop), index=False)
-    return dag
+    pass
 
 
 class CGNN(GraphModel):
@@ -283,8 +189,16 @@ class CGNN(GraphModel):
         super(CGNN, self).__init__()
         self.backend = backend
 
+        if self.backend == 'TensorFlow':
+            self.infer_graph = run_CGNN_tf
+        elif self.backend == 'PyTorch':
+            self.infer_graph = run_CGNN_th
+        else:
+            print('No backend known as {}'.format(self.backend))
+            raise ValueError
+
     def create_graph_from_data(self, data):
-        print("The CGNN model is not able (yet) to model the graph directly from raw data")
+        print("The CGNN model is not able (yet?) to model the graph directly from raw data")
         raise ValueError
 
     def orient_directed_graph(self, data, dag, log=False):
@@ -295,13 +209,6 @@ class CGNN(GraphModel):
         :param log: Save logs of the execution
         :return:
         """
-        if self.backend == 'TensorFlow':
-            return infer_graph_tf(data, dag, log=False)
-        elif self.backend == 'PyTorch':
-            pass
-        else:
-            print('No backend known as {}'.format(self.backend))
-            raise ValueError
 
     def orient_undirected_graph(self, data, umg):
         """
@@ -312,6 +219,6 @@ class CGNN(GraphModel):
         """
 
         warnings.warn("The pairwise GNN model is computed once on the UMG to initialize the model and start with a DAG")
-        Gnn = SGNN(backend=self.backend)
-        dag = Gnn.orient_graph(data, umg)  # Pairwise method
-        return self.orient_directed_graph(data,dag)
+        gnn = GNN(backend=self.backend)
+        dag = gnn.orient_graph(data, umg)  # Pairwise method
+        return self.orient_directed_graph(data, dag)
