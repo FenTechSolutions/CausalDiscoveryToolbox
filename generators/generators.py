@@ -1,5 +1,5 @@
 """ Regression and generation functions
-Author: Diviyan Kalainathan
+Author: Diviyan Kalainathan & Olivier Goudet
 Date : 30/06/17
 """
 
@@ -130,14 +130,18 @@ def init(size):
 
 
 class FullGraphPolynomialModel_tf(object):
-    def __init__(self, N, graph, list_nodes, run, pair, learning_rate=SETTINGS.learning_rate):
-        """
-        Build the tensorflow graph,
-        For a given structure
+    def __init__(self, N, graph, list_nodes, run, idx, learning_rate=SETTINGS.learning_rate):
+        """ Build the tensorflow graph of the Polynomial generator structure
+
+        :param N: Number of points
+        :param graph: Graph to be run
+        :param run: number of the run (only for log)
+        :param idx: number of the idx (only for log)
+        :param learning_rate: learning rate of the optimizer
         """
         super(FullGraphPolynomialModel_tf, self).__init__()
         self.run = run
-        self.pair = pair
+        self.idx = idx
         n_var = len(list_nodes)
 
         self.all_real_variables = tf.placeholder(tf.float32, shape=[None, n_var])
@@ -172,14 +176,12 @@ class FullGraphPolynomialModel_tf(object):
                     generated_variables[var] = out_v
                     theta_G.extend([W_in])
 
-
         listvariablegraph = []
-        for var in list_nodes[:2]:
+        for var in list_nodes:
             listvariablegraph.append(generated_variables[var])
 
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
-
-        self.G_dist_loss_xcausesy = MMD(self.all_real_variables[:, :2], self.all_generated_variables)
+        self.G_dist_loss_xcausesy = MMD(self.all_real_variables, self.all_generated_variables)
 
         # var_list = theta_G
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
@@ -193,20 +195,31 @@ class FullGraphPolynomialModel_tf(object):
         self.sess.run(tf.global_variables_initializer())
 
     def train(self, data, verbose=True):
+        """ Train the polynomial model by fitting on data using MMD
+
+        :param data: data to fit
+        :param verbose: verbose
+        :return: None
+        """
         for it in range(SETTINGS.nb_epoch_train):
-            print(it)
             _, G_dist_loss_xcausesy_curr = self.sess.run(
                 [self.G_solver_xcausesy, self.G_dist_loss_xcausesy],
                 feed_dict={self.all_real_variables: data}
             )
 
             if verbose:
-                if (it % 1 == 0):
+                if it % 50 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'.
-                          format(self.pair, self.run,
+                          format(self.idx, self.run,
                                  it, G_dist_loss_xcausesy_curr))
 
     def evaluate(self, data, verbose=True):
+        """ Run the model to generate data and output
+
+        :param data: input data
+        :param verbose: verbose
+        :return: Generated data
+        """
 
         sumMMD_tr = 0
 
@@ -215,38 +228,39 @@ class FullGraphPolynomialModel_tf(object):
             MMD_tr, generated_variables = self.sess.run([self.G_dist_loss_xcausesy,
                                                          self.all_generated_variables],
                                                         feed_dict={self.all_real_variables: data})
-
-            sumMMD_tr += MMD_tr[0]
-
             if verbose:
-                if (it % 100 == 0):
+                if it % 100 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'
-                          .format(self.pair, self.run, it, MMD_tr[0]))
+                          .format(self.idx, self.run, it, MMD_tr))
 
         tf.reset_default_graph()
 
         return generated_variables
 
 
-def run_graph_polynomial(df_data, graph, idx, run):
+def run_graph_polynomial_tf(df_data, graph, idx=0, run=0):
+    """ Run the full graph polynomial generator
+
+    :param df_data: data
+    :param graph: the graph to model
+    :param idx: index (optional, for log purposes)
+    :param run: no of run (optional, for log purposes)
+    :return: Generated data using the graph structure
+    """
     list_nodes = graph.get_list_nodes()
+    print(list_nodes)
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
-    print('OK')
 
     if SETTINGS.GPU:
         with tf.device('/gpu:' + str(SETTINGS.gpu_offset + run % SETTINGS.num_gpu)):
 
             CGNN = FullGraphPolynomialModel_tf(df_data.shape[0], graph, list_nodes, run, idx)
-            print('OK')
             CGNN.train(data)
-            print('OKtrain')
             return CGNN.evaluate(data)
     else:
         CGNN = FullGraphPolynomialModel_tf(len(df_data), graph, list_nodes, run, idx)
-        print('OK')
         CGNN.train(data)
-        print('OK')
         return CGNN.evaluate(data)
 
 
@@ -294,6 +308,13 @@ def polynomial_regressor(x, target, causes, train_epochs=1000, fixed_noise=False
 
 
 def linear_regressor(x, target, causes):
+    """ Regression and prediction using a lasso
+
+    :param x: data
+    :param target: target - effect
+    :param causes: causes of the causal mechanism
+    :return: regenerated data with the fitted model
+    """
 
     if len(causes) == 0:
         x= np.random.normal(size=(target.shape[0], 1))
@@ -305,6 +326,13 @@ def linear_regressor(x, target, causes):
 
 
 def support_vector_regressor(x, target, causes):
+    """ Regression and prediction using a SVM (rbf)
+
+    :param x: data
+    :param target: target - effect
+    :param causes: causes of the causal mechanism
+    :return: regenerated data with the fitted model
+    """
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
     if len(causes) == 0:
         x = np.random.normal(size=(target.shape[0], 1))

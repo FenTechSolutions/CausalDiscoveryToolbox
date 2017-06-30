@@ -3,7 +3,6 @@ Build random graphs based on unlabelled data
 Author : Diviyan Kalainathan & Olivier Goudet
 Date: 17/6/17
 """
-import numpy as np
 import pandas as pd
 from copy import deepcopy
 from ..utils.Graph import DirectedGraph
@@ -16,12 +15,13 @@ class RandomGraphFromData(object):
 
     """
 
-    def __init__(self, df_data, simulator=polynomial_regressor,  datatype='Numerical'):
+    def __init__(self, df_data, simulator=run_graph_polynomial_tf, full_graph_simulation=True,  datatype='Numerical'):
         """
 
-        :param df_data:
-        :param simulator:
-        :param datatype:
+        :param df_data: data to make random graphs out of
+        :param simulator: simulator function
+        :param full_graph_simulation: if the simulator generates the whole graph at one or variable per variable
+        :param datatype: Type of the data /!\ Only numerical is supported at the moment
         """
         super(RandomGraphFromData, self).__init__()
         self.data = df_data
@@ -29,6 +29,7 @@ class RandomGraphFromData(object):
         self.matrix_criterion = None
         self.llinks = None
         self.simulator = simulator
+        self.full_graph_simulation = full_graph_simulation
         try:
             assert datatype == 'Numerical'
             self.criterion = np.corrcoef
@@ -40,7 +41,7 @@ class RandomGraphFromData(object):
     def find_dependencies(self, threshold=0.05):
         """ Find dependencies in the dataset out of the dataset
 
-        :param threshold:
+        :param threshold: threshold of the independence test
         """
         if self.matrix_criterion:
             corr = np.absolute(self.criterion(self.data.as_matrix()))
@@ -58,6 +59,12 @@ class RandomGraphFromData(object):
                        for j in range(i + 1, len(self.data.columns)) if corr[i, j] > threshold]
 
     def generate_variables(self, graph, plot=False):
+        """ Generate variables one by one by going through the graph
+
+        :param graph:
+        :param plot:
+        :return:
+        """
         generated_variables = {}
         nodes = graph.get_list_nodes()
         while len(generated_variables) < len(nodes):
@@ -67,7 +74,7 @@ class RandomGraphFromData(object):
                         set(par).issubset(generated_variables)):
                     # Variable can be generated
                     if len(par) == 0:
-                        generated_variables[var] = self.data[var]
+                        generated_variables[var] = self.data[var]  # No generation of sources
                     else:
                         generated_variables[var] = self.simulator(pd.DataFrame(generated_variables)[
                                                                       par].as_matrix(), self.data[var].as_matrix(),
@@ -83,8 +90,8 @@ class RandomGraphFromData(object):
     def generate_graph(self, draw_proba=.2):
         """ Generate random graph out of the data
 
-        :param draw_proba:
-        :return:
+        :param draw_proba: probability of drawing an edge
+        :return: (DirectedGraph, pd.DataFrame) Resimulated Graph, Data
         """
         # Find dependencies
         if self.llinks is None:
@@ -117,9 +124,12 @@ class RandomGraphFromData(object):
         print("Graph generated, passing to data generation!")
         # Resimulation of variables
         nodes = graph.get_list_nodes()
-
+        print(nodes)
         # Regress using a y=P(Xc,E)= Sum_i,j^d(_alphaij*(X_1+..+X_c)^i*E^j) model & re-simulate data
         # run_graph_polynomial(self.data, graph,0,0)
-        generated_variables = run_graph_polynomial(self.data, graph, 0, 0)
+        if self.full_graph_simulation:
+            generated_variables = self.simulator(self.data, graph)
+        else:
+            generated_variables = self.generate_variables(graph)
 
         return graph, pd.DataFrame(generated_variables, columns=nodes)
