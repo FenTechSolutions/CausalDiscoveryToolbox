@@ -1,5 +1,5 @@
 """
-SGNN : Shallow generative Neural Networks
+GNN : Generative Neural Networks for causal inference (pairwise)
 Authors : Olivier Goudet & Diviyan Kalainathan
 Ref:
 Date : 10/05/2017
@@ -20,7 +20,7 @@ def init(size):
     return tf.random_normal(shape=size, stddev=SETTINGS.init_weights)
 
 
-class SGNN_tf(object):
+class GNN_tf(object):
     def __init__(self, N, run, pair, learning_rate=SETTINGS.learning_rate):
         """
         Build the tensorflow graph,
@@ -93,9 +93,9 @@ class SGNN_tf(object):
 
 
 def tf_evalcausalscore_pairwise(df, idx, run):
-    CGNN = SGNN_tf(df.shape[0], run, idx)
-    CGNN.train(df)
-    return CGNN.evaluate(df)
+    GNN = GNN_tf(df.shape[0], run, idx)
+    GNN.train(df)
+    return GNN.evaluate(df)
 
 
 def tf_run_pair(m, idx, run):
@@ -125,12 +125,12 @@ def predict_tf(a, b):
     return (score_BA - score_AB) / (score_BA + score_AB)
 
 
-class SGNN_th(th.nn.Module):
+class GNN_th(th.nn.Module):
     def __init__(self):
         """
         Build the Torch graph
         """
-        super(SGNN_th, self).__init__()
+        super(GNN_th, self).__init__()
 
         self.l1 = th.nn.Linear(2, SETTINGS.h_dim)
         self.l2 = th.nn.Linear(SETTINGS.h_dim, 1)
@@ -150,8 +150,8 @@ class SGNN_th(th.nn.Module):
         return self.l2(x)
 
 
-def run_SGNN_th(m, pair, run):
-    """ Train and eval the SGNN on a pair
+def run_GNN_th(m, pair, run):
+    """ Train and eval the GNN on a pair
 
     :param m: Matrix containing cause at m[:,0],
               and effect at m[:,1]
@@ -165,17 +165,17 @@ def run_SGNN_th(m, pair, run):
     x = Variable(th.from_numpy(m[:, [0]]))
     y = Variable(th.from_numpy(m[:, [1]]))
     e = Variable(th.FloatTensor(m.shape[0], 1))
-    SGNN = SGNN_th()
+    GNN = GNN_th()
 
     if SETTINGS.GPU:
         x = x.cuda()
         y = y.cuda()
         e = e.cuda()
-        SGNN = SGNN.cuda()
+        GNN = GNN.cuda()
 
     criterion = MMD(m.shape[0], cuda=SETTINGS.GPU)
 
-    optim = th.optim.Adam(SGNN.parameters(), lr=SETTINGS.learning_rate)
+    optim = th.optim.Adam(GNN.parameters(), lr=SETTINGS.learning_rate)
     running_loss = 0
     teloss = 0
 
@@ -183,7 +183,7 @@ def run_SGNN_th(m, pair, run):
         optim.zero_grad()
         e.data.normal_()
         x_in = th.cat([x, e], 1)
-        y_pred = SGNN(x_in)
+        y_pred = GNN(x_in)
         loss = criterion(x, y_pred, y)
         loss.backward()
         optim.step()
@@ -199,7 +199,7 @@ def run_SGNN_th(m, pair, run):
     for i in range(SETTINGS.nb_epoch_test):
         e.data.normal_()
         x_in = th.cat([x, e], 1)
-        y_pred = SGNN(x_in)
+        y_pred = GNN(x_in)
         loss = criterion(x, y_pred, y)
 
         # print statistics
@@ -216,13 +216,13 @@ def run_SGNN_th(m, pair, run):
 def th_run_instance(m, pair_idx, run):
     if SETTINGS.GPU:
         with th.cuda.device(SETTINGS.gpu_offset + run % SETTINGS.num_gpu):
-            XY = run_SGNN_th(m, pair_idx, run)
+            XY = run_GNN_th(m, pair_idx, run)
         with th.cuda.device(SETTINGS.gpu_offset + run % SETTINGS.num_gpu):
-            YX = run_SGNN_th(np.fliplr(m), pair_idx, run)
+            YX = run_GNN_th(np.fliplr(m), pair_idx, run)
 
     else:
-        XY = run_SGNN_th(m, pair_idx, run)
-        YX = run_SGNN_th(m, pair_idx, run)
+        XY = run_GNN_th(m, pair_idx, run)
+        YX = run_GNN_th(m, pair_idx, run)
 
     return [XY, YX]
 
@@ -239,14 +239,14 @@ def predict_th(a, b):
     return (score_YX - score_XY) / (score_YX + score_XY)
 
 
-class SGNN(Pairwise_Model):
+class GNN(Pairwise_Model):
     """
     Shallow Generative Neural networks, models the causal directions x->y and y->x with a 1-hidden layer neural network
     and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
     """
 
     def __init__(self, backend="PyTorch"):
-        super(SGNN, self).__init__()
+        super(GNN, self).__init__()
         self.backend = backend
 
     def predict_proba(self, a, b):
