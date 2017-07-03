@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 import torch as th
 from torch.autograd import Variable
-from ..utils.loss import MomentMatchingLoss_th as MomentMatchingLoss, MMD_loss as MMD
+from ..utils.loss import MomentMatchingLoss_th as MomentMatchingLoss, MMD_loss_tf as MMD
 from ..utils.SETTINGS import CGNN_SETTINGS as SETTINGS
 from sklearn.linear_model import LassoLars
 from sklearn.svm import SVR
