@@ -10,7 +10,7 @@ import cdt.causality
 import cdt.deconvolution
 import cdt.dependence
 import cdt.generators
-from cdt.utils import loss
+from cdt.utils import loss, SETTINGS
 
 __all__ = ['DirectedGraph', 'UndirectedGraph']
 

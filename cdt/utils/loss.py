@@ -85,7 +85,7 @@ class MMD_loss_th(th.nn.Module):
         self.S = s.mm(s.t())
         self.S = Variable(self.S)
 
-    def forward(self, var_input, var_pred, var_true = None):
+    def forward(self, var_input, var_pred, var_true=None):
 
         # MMD Loss
         if var_true is None:
@@ -106,9 +106,7 @@ class MMD_loss_th(th.nn.Module):
                    (((X2.t()).mul(0.5)).expand_as(XX))
 
         if self.cuda:
-            lossMMD = th.cuda.FloatTensor([0])
-            # lossMMD.zero_()
-            lossMMD = Variable(lossMMD)
+            lossMMD = Variable(th.cuda.FloatTensor([0]))
         else:
             lossMMD = Variable(th.zeros(1))
         for i in range(len(self.bandwiths)):
