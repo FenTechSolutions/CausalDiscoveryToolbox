@@ -154,7 +154,7 @@ class FSGNN(DeconvolutionModel):
 
                 if (j > i):
 
-                    graph.add(i, j, matrix_results[i, j])
+                    graph.add(data.columns.values[i], data.columns.values[j], matrix_results[i, j])
 
         return graph
 
