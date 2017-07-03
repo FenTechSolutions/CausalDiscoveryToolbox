@@ -11,7 +11,7 @@ from torch.autograd import Variable
 bandwiths_sigma = [0.01, 0.1, 1, 5, 20, 50, 100]
 
 
-def MMD_loss(xy_true, xy_pred, low_memory_version=False):
+def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
 
     N, _ = xy_pred.get_shape().as_list()
 

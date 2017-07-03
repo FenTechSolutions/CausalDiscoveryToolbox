@@ -1,4 +1,4 @@
-from .functions_default import *
+from .functions_default import (noise, cause, effect, rand_bin)
 from ..utils.Graph import DirectedGraph
 from random import shuffle
 from sklearn.preprocessing import scale
@@ -22,7 +22,7 @@ def series_to_cepc_kag(A, B, idxpair):
     return pd.DataFrame([['pair' + str(idxpair), strA, strB]], columns=['SampleID', 'A', 'B'])
 
 
-class CausalGraphModel:
+class RandomGraphGenerator:
     def __init__(self,
                  num_nodes=200,
                  max_joint_causes=4,
@@ -89,9 +89,9 @@ class CausalGraphModel:
                 rd_func = self.joint_functions[np.random.randint(
                     0, len(self.joint_functions))]
                 if rd_func == op.mul:
-                    noise = noise(self.n_points, self.noise).flatten()
+                    noise_var = noise(self.n_points, self.noise).flatten()
                     result = rd_func(result + abs(min(result)),
-                                     noise + abs(min(noise)))
+                                     noise_var + abs(min(noise_var)))
                     # +abs(min(result))
                 else:
                     result = rd_func(result, noise(

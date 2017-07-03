@@ -7,7 +7,8 @@ Date : 10/05/2017
 
 import tensorflow as tf
 import numpy as np
-from ...utils.loss import MMD_loss_th as MMD
+from ...utils.loss import MMD_loss_th as MMD_th
+from ...utils.loss import MMD_loss_tf as MMD_tf
 from ...utils.SETTINGS import CGNN_SETTINGS as SETTINGS
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
@@ -49,7 +50,7 @@ class GNN_tf(object):
         hid = tf.nn.relu(tf.matmul(input, W_in) + b_in)
         out = tf.matmul(hid, W_out) + b_out
 
-        self.G_dist_loss_xcausesy = MMD(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out], 1))
+        self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out], 1))
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=self.learning_rate)
                                   .minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
@@ -173,7 +174,7 @@ def run_GNN_th(m, pair, run):
         e = e.cuda()
         GNN = GNN.cuda()
 
-    criterion = MMD(m.shape[0], cuda=SETTINGS.GPU)
+    criterion = MMD_th(m.shape[0], cuda=SETTINGS.GPU)
 
     optim = th.optim.Adam(GNN.parameters(), lr=SETTINGS.learning_rate)
     running_loss = 0

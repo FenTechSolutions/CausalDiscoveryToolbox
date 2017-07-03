@@ -15,8 +15,7 @@ import sys
 from copy import deepcopy
 from .model import GraphModel
 from ..pairwise_models.GNN import GNN
-from ...utils.loss import MMD_loss
-from ...utils.Graph import *
+from ...utils.loss import MMD_loss_tf
 from ...utils.SETTINGS import CGNN_SETTINGS as SETTINGS
 
 
@@ -79,7 +78,7 @@ class CGNN_tf(object):
 
         all_generated_variables = tf.concat(listvariablegraph, 1)
 
-        self.G_dist_loss_xcausesy = MMD_loss(self.all_real_variables, all_generated_variables)
+        self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, all_generated_variables)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
