@@ -8,7 +8,9 @@ Package for causal inference in graphs and in the pairwise settings. Tools for g
 
 ## Installation
 
-Install dependencies
+python>=3.5
+
+Install dependencies 
 ``` 
 pip -r install requirements.txt
 ```
