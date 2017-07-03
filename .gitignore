@@ -1,14 +1,9 @@
-*
-
-!*.md
-!*.py
-!**/*.py
-!utils
-!.gitignore
-!dependence
-!deconvolution
-!causality
-!causality/**/*
-!generators
-!generators/**/*
-
+# -*- mode: gitignore; -*-
+*~
+\#*\#
+__pycache__/
+*.py[cod]
+build/
+dist/
+cdt.egg-info/
+.idea/

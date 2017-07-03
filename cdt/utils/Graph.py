@@ -27,10 +27,10 @@ def list_to_dict(links):
 
 
 class Graph(object):
-    """ Graph data structure (Model Class)"""
+    """ Base class for Graph structure"""
 
     def __init__(self, df=None):
-        """ Create a new directed graph structure"""
+        """ Create a new graph structure"""
         self._graph = defaultdict(dict)
         connections = []
         if df:
@@ -39,7 +39,7 @@ class Graph(object):
             self.add_multiple_edges(connections)
 
     def add_multiple_edges(self, connections):
-        """ Add directed edges (list of tuple pairs) to graph
+        """ Add edges (list of tuple pairs) to graph
 
         :param connections: List of tuples (cause, effect, weight)
         :type connections: list
@@ -49,7 +49,7 @@ class Graph(object):
             self.add(node1, node2, weight)
 
     def add(self, node1, node2, weight=1):
-        """ Add or update directed edge from node1 to node2
+        """ Add or update edge from node1 to node2
 
         :param node1: cause of the edge
         :param node2: effect of the edge
