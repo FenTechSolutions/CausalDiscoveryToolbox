@@ -19,26 +19,30 @@ from ...utils.loss import MMD_loss_tf, MMD_loss_th
 from ...utils.SETTINGS import CGNN_SETTINGS as SETTINGS
 
 
-def init(size):
-    """ Initialize a random tensor, normal(0,SETTINGS.init_weights).
+def init(size, **kwargs):
+    """ Initialize a random tensor, normal(0,kwargs(SETTINGS.init_weights)).
 
     :param size: Size of the tensor
+    :param kwargs: init_std=(SETTINGS.init_weights) Std of the initialized normal variable
     :return: Tensor
     """
-    return tf.random_normal(shape=size, stddev=SETTINGS.init_weights)
+    init_std = kwargs.get('init_std', SETTINGS.init_weights)
+    return tf.random_normal(shape=size, stddev=init_std)
 
 
 class CGNN_tf(object):
-    def __init__(self, N, graph, run, idx, learning_rate=SETTINGS.learning_rate):
+    def __init__(self, N, graph, run, idx, **kwargs):
         """ Build the tensorflow graph of the CGNN structure
 
         :param N: Number of points
         :param graph: Graph to be run
         :param run: number of the run (only for print)
         :param idx: number of the idx (only for print)
-        :param learning_rate: learning rate of the optimizer
+        :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
+        :param kwargs: h_layer_dim=(SETTINGS.h_dim) Number of units in the hidden layer
         """
-
+        learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
+        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_dim)
         self.run = run
         self.idx = idx
         list_nodes = graph.get_list_nodes()
@@ -57,10 +61,10 @@ class CGNN_tf(object):
                 if (var not in generated_variables and
                         set(par).issubset(generated_variables)):
                     # Generate the variable
-                    W_in = tf.Variable(init([len(par) + 1, SETTINGS.h_dim]))
-                    b_in = tf.Variable(init([SETTINGS.h_dim]))
-                    W_out = tf.Variable(init([SETTINGS.h_dim, 1]))
-                    b_out = tf.Variable(init([1]))
+                    W_in = tf.Variable(init([len(par) + 1, h_layer_dim], **kwargs))
+                    b_in = tf.Variable(init([h_layer_dim], **kwargs))
+                    W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
+                    b_out = tf.Variable(init([1], **kwargs))
 
                     input_v = [generated_variables[i] for i in par]
                     input_v.append(tf.random_normal([N, 1], mean=0, stddev=1))
@@ -90,14 +94,16 @@ class CGNN_tf(object):
         self.sess = tf.Session(config=config)
         self.sess.run(tf.global_variables_initializer())
 
-    def train(self, data, verbose=True):
+    def train(self, data, verbose=True, **kwargs):
         """ Train the initialized model
 
         :param data: data corresponding to the graph
         :param verbose: verbose
+        :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
         :return: None
         """
-        for it in range(SETTINGS.nb_epoch_train):
+        train_epochs = kwargs.get('train_epochs', SETTINGS.nb_epoch_train)
+        for it in range(train_epochs):
 
             _, G_dist_loss_xcausesy_curr = self.sess.run(
                 [self.G_solver_xcausesy, self.G_dist_loss_xcausesy],
@@ -110,17 +116,18 @@ class CGNN_tf(object):
                           format(self.idx, self.run,
                                  it, G_dist_loss_xcausesy_curr))
 
-    def evaluate(self, data, verbose=True):
+    def evaluate(self, data, verbose=True, **kwargs):
         """ Test the model
 
         :param data: data corresponding to the graph
         :param verbose: verbose
+        :param kwargs: test_epochs=(SETTINGS.nb_epoch_test) number of test epochs
         :return: mean MMD loss value of the CGNN structure on the data
         """
-
+        test_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_test)
         sumMMD_tr = 0
 
-        for it in range(SETTINGS.nb_epoch_test):
+        for it in range(test_epochs):
 
             MMD_tr = self.sess.run([self.G_dist_loss_xcausesy], feed_dict={
                 self.all_real_variables: data})
@@ -133,51 +140,60 @@ class CGNN_tf(object):
 
         tf.reset_default_graph()
 
-        return sumMMD_tr / SETTINGS.nb_epoch_test
+        return sumMMD_tr / test_epochs
 
 
-def run_CGNN_tf(df_data, graph, idx=0, run=0):
+def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param df_data: data corresponding to the graph
     :param graph: Graph to be run
     :param run: number of the run (only for print)
     :param idx: number of the idx (only for print)
+    :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
+    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
     :return: MMD loss value of the given structure after training
     """
+    gpu = kwargs.get('gpu', SETTINGS.GPU)
+    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
 
     list_nodes = graph.get_list_nodes()
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
 
-    if SETTINGS.GPU:
-        with tf.device('/gpu:' + str(SETTINGS.gpu_offset + run % SETTINGS.num_gpu)):
-            model = CGNN_tf(df_data.shape[0], graph, run, idx)
-            model.train(data)
-            return model.evaluate(data)
+    if gpu:
+        with tf.device('/gpu:' + str(gpu_offset + run % num_gpu)):
+            model = CGNN_tf(df_data.shape[0], graph, run, idx, **kwargs)
+            model.train(data, **kwargs)
+            return model.evaluate(data, **kwargs)
     else:
-        model = CGNN(df_data.shape[0], graph, run, idx)
-        model.train(data)
-        return model.evaluate(data)
+        model = CGNN(df_data.shape[0], graph, run, idx, **kwargs)
+        model.train(data, **kwargs)
+        return model.evaluate(data, **kwargs)
 
 
 class CGNN_th(th.nn.Module):
     """ Generate all variables in the graph at once, torch model
 
     """
-    def __init__(self, graph, N):
+    def __init__(self, graph, n, **kwargs):
         """ Initialize the model, build the computation graph
 
         :param graph: graph to model
         :param N: Number of examples to generate
+        :param kwargs: h_layer_dim=(SETTINGS.h_dim) Number of units in the hidden layer
         """
         super(CGNN_th, self).__init__()
+        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_dim)
+
         self.graph = graph
         # building the computation graph
         self.graph_variables = []
         self.params_in = []
         self.params_out = []
-        self.N = N
+        self.N = n
         self.activation = th.nn.ReLU()
         nodes = self.graph.get_list_nodes()
         while self.graph_variables < len(nodes):
@@ -186,8 +202,8 @@ class CGNN_th(th.nn.Module):
                 if (var not in self.graph_variables and
                     set(par).issubset(self.graph_variables)):
                     # Variable can be generated
-                    self.params_in.append(th.nn.Linear(len(par) + 1, SETTINGS.h_dim))
-                    self.params_out.append(th.nn.Linear(SETTINGS.h_dim, 1))
+                    self.params_in.append(th.nn.Linear(len(par) + 1, h_layer_dim))
+                    self.params_out.append(th.nn.Linear(h_layer_dim, 1))
                     self.graph_variables.append(par)
 
     def forward(self):
@@ -213,7 +229,7 @@ class CGNN_th(th.nn.Module):
         return th.cat(output, 1)
 
 
-def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True):
+def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True, **kwargs):
     """ Run the CGNN graph with the torch backend
 
     :param df_data: data DataFrame
@@ -221,29 +237,43 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True):
     :param idx: idx of the pair
     :param run: number of the run
     :param verbose: verbose
-    :return: loss of the CGNN
+    :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
+    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
+    :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
+    :param kwargs: test_epochs=(SETTINGS.nb_epoch_test) number of test epochs
+    :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
+    :return: MMD loss value of the given structure after training
+
     """
+
+    gpu = kwargs.get('gpu', SETTINGS.GPU)
+    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+    train_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_train)
+    test_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_test)
+    learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
 
     list_nodes = graph.get_list_nodes()
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
-    model = CGNN_th(graph, data.shape[0])
+    model = CGNN_th(graph, data.shape[0], **kwargs)
     data = Variable(th.from_numpy(data))
-    criterion = MMD_loss_th(data.shape[0], cuda=SETTINGS.GPU)
-    optimizer = th.optim.Adam(model.params_in + model.params_out)
+    criterion = MMD_loss_th(data.shape[0], cuda=gpu)
+    optimizer = th.optim.Adam(model.params_in + model.params_out, lr=learning_rate)
 
-    if SETTINGS.GPU:
-        data = data.cuda(SETTINGS.gpu_offset + run % SETTINGS.num_gpu)
-        model = model.cuda(SETTINGS.gpu_offset + run % SETTINGS.num_gpu)
+    if gpu:
+        data = data.cuda(gpu_offset + run % num_gpu)
+        model = model.cuda(gpu_offset + run % num_gpu)
 
     # Train
-    for it in range(SETTINGS.nb_epoch_train):
+    for it in range(train_epochs):
         out = model()
         loss = criterion(data, out)
         loss.backward()
         optimizer.step()
         if verbose and it%50 == 0:
-            if SETTINGS.GPU:
+            if gpu:
                 ploss=loss.cpu.data[0]
             else:
                 ploss=loss.data[0]
@@ -251,57 +281,37 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True):
 
     #Evaluate
     mmd = 0
-    for it in range(SETTINGS.nb_epoch_test):
+    for it in range(test_epochs):
         out = model()
         loss = criterion(data, out)
-        if SETTINGS.GPU:
+        if gpu:
             mmd += loss.cpu.data[0]
         else:
             mmd += loss.data[0]
 
-    return mmd/SETTINGS.nb_epoch_test
+    return mmd/test_epochs
 
 
-def unpack_results(result_pairs):
-    """  Process the results given by the multiprocessing loop
-
-    :param result_pairs: List of MMD results
-    :return:
-    """
-    run_no = 0
-
-    sum_score_graph = 0
-    for result_pair in result_pairs:
-
-        run_no += 1
-        denom = SETTINGS.nb_run
-
-        score_graph = result_pair
-        if np.isfinite(score_graph):
-            sum_score_graph += score_graph
-        else:
-            denom = -1
-            warnings.warn('NaN value', RuntimeWarning)
-
-    return sum_score_graph / denom
-
-
-def hill_climbing(graph, data, run_cgnn_function):
+def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     """ Optimize graph using CGNN with a hill-climbing algorithm
 
     :param graph: graph to optimize
     :param data: data
     :param run_cgnn_function: name of the CGNN function (depending on the backend)
+    :param kwargs: nb_jobs=(SETTINGS.nb_jobs) number of jobs
+    :param kwargs: nb_runs=(SETTINGS.nb_runs) number of runs, of different evaluations
     :return: improved graph
     """
+    nb_jobs = kwargs.get("nb_jobs", SETTINGS.nb_jobs)
+    nb_run = kwargs.get("nb_run", SETTINGS.nb_run)
     loop = 0
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
     result = []
-    result_pairs = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(run_cgnn_function)(
-        data, graph, 0, run) for run in range(SETTINGS.nb_run))
+    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+        data, graph, 0, run, **kwargs) for run in range(nb_run))
 
-    score_network = unpack_results(result_pairs)
+    score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
     globalscore = score_network
 
     print("Graph score : " + str(globalscore))
@@ -321,11 +331,10 @@ def hill_climbing(graph, data, run_cgnn_function):
             else:
                 print('Edge {} in evaluation :'.format(edge))
                 tested_configurations.append(test_graph.get_dict_nw())
-                result_pairs = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(run_cgnn_function)(
-                    data, test_graph, idx_pair, run) for run in range(SETTINGS.nb_run))
+                result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+                    data, test_graph, idx_pair, run, **kwargs) for run in range(nb_run))
 
-                score_network = unpack_results(result_pairs)
-                score_network = score_network
+                score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
 
                 print("Current score : " + str(score_network))
                 print("Best score : " + str(globalscore))
@@ -365,7 +374,7 @@ class CGNN(GraphModel):
         print("The CGNN model is not able (yet?) to model the graph directly from raw data")
         raise ValueError
 
-    def orient_directed_graph(self, data, dag, alg='HC', log=False):
+    def orient_directed_graph(self, data, dag, alg='HC', **kwargs):
         """ Improve a directed acyclic graph using CGNN
 
         :param data: data
@@ -375,9 +384,9 @@ class CGNN(GraphModel):
         :return: improved directed acyclic graph
         """
         alg_dic = {'HC': hill_climbing}
-        return alg_dic[alg](dag, data, self.infer_graph)
+        return alg_dic[alg](dag, data, self.infer_graph, **kwargs)
 
-    def orient_undirected_graph(self, data, umg):
+    def orient_undirected_graph(self, data, umg, **kwargs):
         """ Orient the undirected graph using GNN and apply CGNN to improve the graph
 
         :param data: data
@@ -387,6 +396,6 @@ class CGNN(GraphModel):
 
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
-        gnn = GNN(backend=self.backend)
-        dag = gnn.orient_graph(data, umg)  # Pairwise method
-        return self.orient_directed_graph(data, dag)
+        gnn = GNN(backend=self.backend, **kwargs)
+        dag = gnn.orient_graph(data, umg, **kwargs)  # Pairwise method
+        return self.orient_directed_graph(data, dag, **kwargs)

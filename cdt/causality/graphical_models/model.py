@@ -15,7 +15,7 @@ class GraphModel(object):
         """ Init. """
         super(GraphModel, self).__init__()
 
-    def predict(self, df_data, graph=None):
+    def predict(self, df_data, graph=None, **kwargs):
         """ Orient an undirected graph using the pairwise method defined by the subclass
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
@@ -25,24 +25,24 @@ class GraphModel(object):
         :rtype: DirectedGraph
         """
         if graph is None:
-            return self.create_graph_from_data(df_data)
+            return self.create_graph_from_data(df_data, **kwargs)
         elif type(graph) == DirectedGraph:
-            return self.orient_directed_graph(df_data, graph)
+            return self.orient_directed_graph(df_data, graph, **kwargs)
         elif type(graph) == UndirectedGraph:
-            return self.orient_undirected_graph(df_data, graph)
+            return self.orient_undirected_graph(df_data, graph, **kwargs)
         else:
             print('Unknown Graph type')
             raise ValueError
 
-    def orient_undirected_graph(self, data, umg):
+    def orient_undirected_graph(self, data, umg, **kwargs):
 
         raise NotImplementedError
 
-    def orient_directed_graph(self, data, dag):
+    def orient_directed_graph(self, data, dag, **kwargs):
 
         raise NotImplementedError
 
-    def create_graph_from_data(self, data):
+    def create_graph_from_data(self, data, **kwargs):
 
         raise NotImplementedError
 
