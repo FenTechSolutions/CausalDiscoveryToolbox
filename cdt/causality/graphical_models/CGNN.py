@@ -9,8 +9,6 @@ import tensorflow as tf
 import torch as th
 from torch.autograd import Variable
 import warnings
-import os
-import pandas as pd
 from joblib import Parallel, delayed
 import sys
 import numpy as np
@@ -216,21 +214,21 @@ class CGNN_th(th.nn.Module):
 
 
 def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True):
-    """
+    """ Run the CGNN graph with the torch backend
 
-    :param df_data:
-    :param graph:
-    :param idx:
-    :param run:
-    :param verbose:
-    :return:
+    :param df_data: data DataFrame
+    :param graph: graph
+    :param idx: idx of the pair
+    :param run: number of the run
+    :param verbose: verbose
+    :return: loss of the CGNN
     """
 
     list_nodes = graph.get_list_nodes()
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
     model = CGNN_th(graph, data.shape[0])
-    data = th.from_numpy(data)
+    data = Variable(th.from_numpy(data))
     criterion = MMD_loss_th(data.shape[0], cuda=SETTINGS.GPU)
     optimizer = th.optim.Adam(model.params_in + model.params_out)
 
@@ -291,10 +289,10 @@ def unpack_results(result_pairs):
 def hill_climbing(graph, data, run_cgnn_function):
     """ Optimize graph using CGNN with a hill-climbing algorithm
 
-    :param graph:
-    :param data:
-    :param run_cgnn_function:
-    :return:
+    :param graph: graph to optimize
+    :param data: data
+    :param run_cgnn_function: name of the CGNN function (depending on the backend)
+    :return: improved graph
     """
     loop = 0
     tested_configurations = [graph.get_dict_nw()]
@@ -368,26 +366,27 @@ class CGNN(GraphModel):
         raise ValueError
 
     def orient_directed_graph(self, data, dag, alg='HC', log=False):
-        """
+        """ Improve a directed acyclic graph using CGNN
 
-        :param data:
-        :param dag:
-        :param alg:
+        :param data: data
+        :param dag: directed acyclic graph to optimize
+        :param alg: type of algorithm
         :param log: Save logs of the execution
-        :return:
+        :return: improved directed acyclic graph
         """
-        alg_dico = {'HC': hill_climbing}
-        return alg_dico[alg](dag, data, self.infer_graph)
+        alg_dic = {'HC': hill_climbing}
+        return alg_dic[alg](dag, data, self.infer_graph)
 
     def orient_undirected_graph(self, data, umg):
+        """ Orient the undirected graph using GNN and apply CGNN to improve the graph
+
+        :param data: data
+        :param umg: undirected acyclic graph
+        :return: directed acyclic graph
         """
 
-        :param data:
-        :param umg:
-        :return:
-        """
-
-        warnings.warn("The pairwise GNN model is computed once on the UMG to initialize the model and start with a DAG")
+        warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
+                      "to initialize the model and start CGNN with a DAG")
         gnn = GNN(backend=self.backend)
         dag = gnn.orient_graph(data, umg)  # Pairwise method
         return self.orient_directed_graph(data, dag)
