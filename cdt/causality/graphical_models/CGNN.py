@@ -169,7 +169,7 @@ def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN(df_data.shape[0], graph, run, idx, **kwargs)
+        model = CGNN_tf(df_data.shape[0], graph, run, idx, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 
@@ -191,20 +191,23 @@ class CGNN_th(th.nn.Module):
         self.graph = graph
         # building the computation graph
         self.graph_variables = []
-        self.params_in = []
-        self.params_out = []
+        self.layers_in = []
+        self.layers_out = []
         self.N = n
         self.activation = th.nn.ReLU()
         nodes = self.graph.get_list_nodes()
-        while self.graph_variables < len(nodes):
+        while len(self.graph_variables) < len(nodes):
             for var in nodes:
                 par = self.graph.get_parents(var)
-                if (var not in self.graph_variables and
-                    set(par).issubset(self.graph_variables)):
+
+                if var not in self.graph_variables and set(par).issubset(self.graph_variables):
                     # Variable can be generated
-                    self.params_in.append(th.nn.Linear(len(par) + 1, h_layer_dim))
-                    self.params_out.append(th.nn.Linear(h_layer_dim, 1))
-                    self.graph_variables.append(par)
+                    self.layers_in.append(th.nn.Linear(len(par) + 1, h_layer_dim))
+                    self.layers_out.append(th.nn.Linear(h_layer_dim, 1))
+                    self.graph_variables.append(var)
+                    self.add_module('linear_{}_in'.format(var), th.nn.Linear(len(par) + 1, h_layer_dim))
+                    self.add_module('linear_{}_out'.format(var), th.nn.Linear(h_layer_dim, 1))
+
 
     def forward(self):
         """ Pass through the generative network
@@ -212,15 +215,16 @@ class CGNN_th(th.nn.Module):
         :return: Generated data
         """
         generated_variables = {}
-        for var, layer_in, layer_out in zip(self.graph_variables, self.params_in, self.params_out):
+        for var in self.graph_variables:
             par = self.graph.get_parents(var)
             if len(par) > 0:
                 inputx = th.cat([th.cat([generated_variables[parent] for parent in par], 1),
-                                 th.FloatTensor(self.N, 1).normal_()], 1)
+                                 Variable(th.FloatTensor(self.N, 1).normal_())], 1)
             else:
-                inputx = th.FloatTensor(self.N, 1).normal_()
+                inputx = Variable(th.FloatTensor(self.N, 1).normal_())
 
-            generated_variables[var] = layer_out(self.activation(layer_in(inputx)))
+            generated_variables[var] = getattr(self, 'linear_{}_out'.format(var))(self.activation(getattr(
+                self, 'linear_{}_in'.format(var))(inputx)))
 
         output = []
         for v in self.graph.get_list_nodes():
@@ -259,8 +263,8 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True, **kwargs):
     data = df_data.astype('float32')
     model = CGNN_th(graph, data.shape[0], **kwargs)
     data = Variable(th.from_numpy(data))
-    criterion = MMD_loss_th(data.shape[0], cuda=gpu)
-    optimizer = th.optim.Adam(model.params_in + model.params_out, lr=learning_rate)
+    criterion = MMD_loss_th(data.size()[0], cuda=gpu)
+    optimizer = th.optim.Adam(model.parameters(), lr=learning_rate)
 
     if gpu:
         data = data.cuda(gpu_offset + run % num_gpu)
@@ -268,11 +272,12 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True, **kwargs):
 
     # Train
     for it in range(train_epochs):
+        optimizer.zero_grad()
         out = model()
         loss = criterion(data, out)
         loss.backward()
         optimizer.step()
-        if verbose and it%50 == 0:
+        if verbose and it % 30 == 0:
             if gpu:
                 ploss=loss.cpu.data[0]
             else:
@@ -303,13 +308,13 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     :return: improved graph
     """
     nb_jobs = kwargs.get("nb_jobs", SETTINGS.nb_jobs)
-    nb_run = kwargs.get("nb_run", SETTINGS.nb_run)
+    nb_runs = kwargs.get("nb_runs", SETTINGS.nb_runs)
     loop = 0
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
     result = []
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-        data, graph, 0, run, **kwargs) for run in range(nb_run))
+        data, graph, 0, run, **kwargs) for run in range(nb_runs))
 
     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
     globalscore = score_network
@@ -332,7 +337,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                 print('Edge {} in evaluation :'.format(edge))
                 tested_configurations.append(test_graph.get_dict_nw())
                 result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                    data, test_graph, idx_pair, run, **kwargs) for run in range(nb_run))
+                    data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
                 score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
 

@@ -33,7 +33,7 @@ class Graph(object):
         """ Create a new graph structure"""
         self._graph = defaultdict(dict)
         connections = []
-        if df:
+        if df is not None:
             for idx, row in df.iterrows():
                 connections.append(row)
             self.add_multiple_edges(connections)
@@ -45,8 +45,11 @@ class Graph(object):
         :type connections: list
         """
 
-        for node1, node2, weight in connections:
-            self.add(node1, node2, weight)
+        for node1, node2, *weight in connections:
+            if not weight:
+                self.add(node1, node2)
+            else:
+                self.add(node1, node2, weight)
 
     def add(self, node1, node2, weight=1):
         """ Add or update edge from node1 to node2

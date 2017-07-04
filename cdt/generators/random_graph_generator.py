@@ -44,7 +44,7 @@ class RandomGraphGenerator:
 
         print('Init OK')
 
-    def fast_build(self, gen_cat=True):
+    def generate(self, gen_cat=True):
         print('--Beginning Fast build--')
         # Drawing causes
         self.causes = [i for i in range(np.random.randint(
@@ -125,22 +125,22 @@ class RandomGraphGenerator:
         self.graph.add_multiple_edges([list(i)+[1] for i in self.result_links.as_matrix()])
 
         print('--Done !--')
-        print('Use class.getData() to retrieve all graph info')
+        return self.get_data()
 
     def get_data(self):
         # Returns Target, Numerical data, Mixed Data and Index of categorical
         # variables
         try:
-            return self.result_links, self.data, self.cat_data, self.cat_var
+            return self.graph, self.data, self.cat_data, self.cat_var
         except NameError:
-            print('Please compute graph using .fast_build(), graph not build yet')
+            print('Please compute graph using .generate(), graph not build yet')
             raise NameError
 
     def save_data(self, filename):
         try:
             self.result_links
         except NameError:
-            print('Please compute graph using .fast_build(), graph not build yet')
+            print('Please compute graph using .generate(), graph not build yet')
             raise NameError
         self.result_links.to_csv(
             filename + '_target.csv', sep=',', index=False)

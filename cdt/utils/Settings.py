@@ -10,7 +10,7 @@ class Settings(object):
     h_dim = 20
     nb_epoch_train = 700
     nb_epoch_test = 500
-    nb_run = 24
+    nb_runs = 24
     nb_jobs = 2
     GPU = False
     num_gpu = 1

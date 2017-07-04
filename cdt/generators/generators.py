@@ -2,7 +2,6 @@
 Author: Diviyan Kalainathan & Olivier Goudet
 Date : 30/06/17
 """
-
 import numpy as np
 import tensorflow as tf
 import torch as th

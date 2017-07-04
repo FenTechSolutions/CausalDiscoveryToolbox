@@ -7,8 +7,8 @@ Date : 10/05/2017
 
 import tensorflow as tf
 import numpy as np
-from ...utils.Loss import MMD_loss_th as MMD_th
 from ...utils.Loss import MMD_loss_tf as MMD_tf
+from ...utils.Loss import MMD_loss_th as MMD_th
 from ...utils.Settings import Settings as SETTINGS
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
@@ -106,7 +106,7 @@ class GNN_tf(object):
             avg_score += score[0]
 
             if verbose:
-                if (it % 100 == 0):
+                if it % 100 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'.format(self.pair, self.run, it, score[0]))
 
         tf.reset_default_graph()
@@ -120,7 +120,7 @@ def tf_evalcausalscore_pairwise(df, idx, run, **kwargs):
     return GNN.evaluate(df, **kwargs)
 
 
-def tf_run_pair(m, idx, run, **kwargs):
+def tf_run_instance(m, idx, run, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param m: data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect
@@ -145,29 +145,6 @@ def tf_run_pair(m, idx, run, **kwargs):
     else:
         return [tf_evalcausalscore_pairwise(m, idx, run, **kwargs),
                 tf_evalcausalscore_pairwise(np.fliplr(m), idx, run, **kwargs)]
-
-
-def predict_tf(a, b, **kwargs):
-    """
-    :param a: Cause of the pair
-    :param b: Effect of the pair
-    :param kwargs: nb_jobs=(SETTINGS.nb_jobs) number of jobs
-    :param kwargs: nb_runs=(SETTINGS.nb_runs) number of runs, of different evaluations
-    :return: evaluation of the pair
-    """
-    nb_jobs = kwargs.get("nb_jobs", SETTINGS.nb_jobs)
-    nb_run = kwargs.get("nb_run", SETTINGS.nb_run)
-    m = np.hstack((a, b))
-    m = scale(m)
-    m = m.astype('float32')
-
-    result_pair = Parallel(n_jobs=nb_jobs)(delayed(tf_run_pair)(
-        m, 0, run, **kwargs) for run in range(nb_run))
-
-    score_AB = np.mean([runpair[0] for runpair in result_pair])
-    score_BA = np.mean([runpair[1] for runpair in result_pair])
-
-    return (score_BA - score_AB) / (score_BA + score_AB)
 
 
 class GNN_th(th.nn.Module):
@@ -245,7 +222,7 @@ def run_GNN_th(m, pair, run, **kwargs):
 
         # print statistics
         running_loss += loss.data[0]
-        if i % 300 == 299:  # print every 2000 mini-batches
+        if i % 300 == 299:
             print('Pair:{}, Run:{}, Iter:{}, score:{}'.
                   format(pair, run, i, running_loss))
             running_loss = 0.0
@@ -296,18 +273,6 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
     return [XY, YX]
 
 
-def predict_th(a, b):
-    m = np.hstack((a, b))
-    m = scale(m)
-    m = m.astype('float32')
-    result_pair = Parallel(n_jobs=SETTINGS.nb_jobs)(delayed(th_run_instance)(
-        m, 0, run) for run in range(SETTINGS.nb_run))
-
-    score_XY = np.mean([runpair[0] for runpair in result_pair])
-    score_YX = np.mean([runpair[1] for runpair in result_pair])
-    return (score_YX - score_XY) / (score_YX + score_XY)
-
-
 class GNN(Pairwise_Model):
     """
     Shallow Generative Neural networks, models the causal directions x->y and y->x with a 1-hidden layer neural network
@@ -318,15 +283,22 @@ class GNN(Pairwise_Model):
         super(GNN, self).__init__()
         self.backend = backend
 
-    def predict_proba(self, a, b):
+    def predict_proba(self, a, b, **kwargs):
+
+        backend_alg_dic = {"PyTorch": th_run_instance, "TensorFlow": tf_run_instance}
         if len(np.array(a).shape) == 1:
             a = np.array(a).reshape((-1, 1))
             b = np.array(b).reshape((-1, 1))
 
-        if self.backend == "PyTorch":
-            return predict_th(a, b)
-        elif self.backend == "TensorFlow":
-            return predict_tf(a, b)
-        else:
-            print('No backend known as {}'.format(self.backend))
-            raise ValueError
+        nb_jobs = kwargs.get("nb_jobs", SETTINGS.nb_jobs)
+        nb_runs = kwargs.get("nb_runs", SETTINGS.nb_runs)
+        m = np.hstack((a, b))
+        m = m.astype('float32')
+
+        result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
+            m, 0, run, **kwargs) for run in range(nb_runs))
+
+        score_AB = np.mean([runpair[0] for runpair in result_pair])
+        score_BA = np.mean([runpair[1] for runpair in result_pair])
+
+        return (score_BA - score_AB) / (score_BA + score_AB)
