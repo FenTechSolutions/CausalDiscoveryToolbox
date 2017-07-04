@@ -15,8 +15,8 @@ import numpy as np
 from copy import deepcopy
 from .model import GraphModel
 from ..pairwise_models.GNN import GNN
-from ...utils.loss import MMD_loss_tf, MMD_loss_th
-from ...utils.SETTINGS import CGNN_SETTINGS as SETTINGS
+from ...utils.Loss import MMD_loss_tf, MMD_loss_th
+from ...utils.Settings import Settings as SETTINGS
 
 
 def init(size, **kwargs):

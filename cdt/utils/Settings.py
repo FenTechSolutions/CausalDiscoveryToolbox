@@ -6,7 +6,7 @@ Date : 8/05/2017
 """
 
 
-class CGNN_SETTINGS(object):
+class Settings(object):
     h_dim = 20
     nb_epoch_train = 700
     nb_epoch_test = 500
