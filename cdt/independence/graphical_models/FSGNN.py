@@ -8,9 +8,9 @@ import os
 import pandas as pd
 from joblib import Parallel, delayed
 from .model import DeconvolutionModel
-from ..utils.Loss import MMD_loss_tf
-from ..utils.Graph import *
-from ..utils.Settings import Settings as SETTINGS
+from cdt.utils.Loss import MMD_loss_tf
+from cdt.utils.Graph import *
+from cdt.utils.Settings import Settings as SETTINGS
 from sklearn.preprocessing import scale
 
 

@@ -136,7 +136,7 @@ class Graph(object):
         """
 
         nodes = self.get_list_nodes()
-        edges, weights = self.get_list_edges(order_by_weight=False)
+        edges = self.get_list_edges(order_by_weight=False)
 
         m = np.zeros((len(nodes), len(nodes)))
 
@@ -144,7 +144,7 @@ class Graph(object):
             cause = nodes.index(e[0])
             effect = nodes.index(e[1])
 
-            m[cause, effect] = weights[idx]
+            m[cause, effect] = e[2]
 
         return m, nodes
 

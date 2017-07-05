@@ -87,7 +87,7 @@ class RandomGraphFromData(object):
 
         return generated_variables
 
-    def generate_graph(self, draw_proba=.2):
+    def generate_graph(self, draw_proba=.2, **kwargs):
         """ Generate random graph out of the data
 
         :param draw_proba: probability of drawing an edge
@@ -128,8 +128,8 @@ class RandomGraphFromData(object):
         # Regress using a y=P(Xc,E)= Sum_i,j^d(_alphaij*(X_1+..+X_c)^i*E^j) model & re-simulate data
         # run_graph_polynomial(self.data, graph,0,0)
         if self.full_graph_simulation:
-            generated_variables = self.simulator(self.data, graph)
+            generated_variables = self.simulator(self.data, graph, **kwargs)
         else:
-            generated_variables = self.generate_variables(graph)
+            generated_variables = self.generate_variables(graph, **kwargs)
 
         return graph, pd.DataFrame(generated_variables, columns=nodes)

@@ -6,7 +6,7 @@ Date : 7/06/2017
 
 
 class DeconvolutionModel(object):
-    """ Base class for all deconvolution models"""
+    """ Base class for all graphical_models models"""
 
     def __init__(self):
         """ Init. """

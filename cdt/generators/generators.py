@@ -129,16 +129,19 @@ def init(size):
 
 
 class FullGraphPolynomialModel_tf(object):
-    def __init__(self, N, graph, list_nodes, run, idx, learning_rate=SETTINGS.learning_rate):
-        """ Build the tensorflow graph of the Polynomial generator structure
+    def __init__(self, N, graph, list_nodes, run=0, idx=0, **kwargs):
+        """ Build the tensorflow graph of the 2nd-degree Polynomial generator structure
 
         :param N: Number of points
         :param graph: Graph to be run
         :param run: number of the run (only for log)
         :param idx: number of the idx (only for log)
-        :param learning_rate: learning rate of the optimizer
+        :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
+
         """
         super(FullGraphPolynomialModel_tf, self).__init__()
+        learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
+
         self.run = run
         self.idx = idx
         n_var = len(list_nodes)
@@ -193,21 +196,23 @@ class FullGraphPolynomialModel_tf(object):
         self.sess = tf.Session(config=config)
         self.sess.run(tf.global_variables_initializer())
 
-    def train(self, data, verbose=True):
+    def train(self, data, verbose=True, **kwargs):
         """ Train the polynomial model by fitting on data using MMD
 
         :param data: data to fit
         :param verbose: verbose
+        :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
         :return: None
         """
-        for it in range(SETTINGS.nb_epoch_train):
+        train_epochs = kwargs.get('train_epochs', SETTINGS.nb_epoch_train)
+        for it in range(train_epochs):
             _, G_dist_loss_xcausesy_curr = self.sess.run(
                 [self.G_solver_xcausesy, self.G_dist_loss_xcausesy],
                 feed_dict={self.all_real_variables: data}
             )
 
             if verbose:
-                if it % 50 == 0:
+                if it % 1 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'.
                           format(self.idx, self.run,
                                  it, G_dist_loss_xcausesy_curr))
@@ -237,29 +242,37 @@ class FullGraphPolynomialModel_tf(object):
         return generated_variables
 
 
-def run_graph_polynomial_tf(df_data, graph, idx=0, run=0):
+def run_graph_polynomial_tf(df_data, graph, idx=0, run=0, **kwargs):
     """ Run the full graph polynomial generator
 
     :param df_data: data
     :param graph: the graph to model
     :param idx: index (optional, for log purposes)
     :param run: no of run (optional, for log purposes)
+    :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
+    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
     :return: Generated data using the graph structure
     """
+
+    gpu = kwargs.get('gpu', SETTINGS.GPU)
+    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+
     list_nodes = graph.get_list_nodes()
     print(list_nodes)
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
 
-    if SETTINGS.GPU:
-        with tf.device('/gpu:' + str(SETTINGS.gpu_offset + run % SETTINGS.num_gpu)):
+    if gpu:
+        with tf.device('/gpu:' + str(gpu_offset + run % num_gpu)):
 
-            CGNN = FullGraphPolynomialModel_tf(df_data.shape[0], graph, list_nodes, run, idx)
-            CGNN.train(data)
+            CGNN = FullGraphPolynomialModel_tf(df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
+            CGNN.train(data, **kwargs)
             return CGNN.evaluate(data)
     else:
-        CGNN = FullGraphPolynomialModel_tf(len(df_data), graph, list_nodes, run, idx)
-        CGNN.train(data)
+        CGNN = FullGraphPolynomialModel_tf(len(df_data), graph, list_nodes, run, idx, **kwargs)
+        CGNN.train(data, **kwargs)
         return CGNN.evaluate(data)
 
 
