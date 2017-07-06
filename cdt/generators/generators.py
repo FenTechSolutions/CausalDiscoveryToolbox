@@ -10,6 +10,7 @@ from ..utils.Loss import MomentMatchingLoss_th as MomentMatchingLoss, MMD_loss_t
 from ..utils.Settings import Settings as SETTINGS
 from sklearn.linear_model import LassoLars
 from sklearn.svm import SVR
+from ..causality.graphical_models import CGNN
 
 
 class PolynomialModel(th.nn.Module):
@@ -202,7 +203,7 @@ class FullGraphPolynomialModel_tf(object):
         :param data: data to fit
         :param verbose: verbose
         :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
-        :return: None
+        :return: Train loss at the last epoch
         """
         train_epochs = kwargs.get('train_epochs', SETTINGS.nb_epoch_train)
         for it in range(train_epochs):
@@ -212,10 +213,12 @@ class FullGraphPolynomialModel_tf(object):
             )
 
             if verbose:
-                if it % 1 == 0:
+                if it % 10 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'.
                           format(self.idx, self.run,
                                  it, G_dist_loss_xcausesy_curr))
+
+        return G_dist_loss_xcausesy_curr
 
     def evaluate(self, data, verbose=True):
         """ Run the model to generate data and output
@@ -233,9 +236,7 @@ class FullGraphPolynomialModel_tf(object):
                                                          self.all_generated_variables],
                                                         feed_dict={self.all_real_variables: data})
             if verbose:
-                if it % 100 == 0:
-                    print('Pair:{}, Run:{}, Iter:{}, score:{}'
-                          .format(self.idx, self.run, it, MMD_tr))
+                print('Pair:{}, Run:{}, Iter:{}, score:{}'.format(self.idx, self.run, it, MMD_tr))
 
         tf.reset_default_graph()
 
@@ -261,19 +262,71 @@ def run_graph_polynomial_tf(df_data, graph, idx=0, run=0, **kwargs):
 
     list_nodes = graph.get_list_nodes()
     print(list_nodes)
-    df_data = df_data[list_nodes].as_matrix()
-    data = df_data.astype('float32')
+    data = df_data[list_nodes].as_matrix()
+    data = data.astype('float32')
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % num_gpu)):
 
-            CGNN = FullGraphPolynomialModel_tf(df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
-            CGNN.train(data, **kwargs)
-            return CGNN.evaluate(data)
+            model = FullGraphPolynomialModel_tf(df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
+            loss = model.train(data, **kwargs)
+            if np.isfinite(loss):
+                return model.evaluate(data)
+            else:
+                print('Has not converged, re-running graph inference')
+                return run_graph_polynomial_tf(df_data, graph, **kwargs)
+
     else:
-        CGNN = FullGraphPolynomialModel_tf(len(df_data), graph, list_nodes, run, idx, **kwargs)
-        CGNN.train(data, **kwargs)
-        return CGNN.evaluate(data)
+        model = FullGraphPolynomialModel_tf(len(df_data), graph, list_nodes, run, idx, **kwargs)
+        loss = model.train(data, **kwargs)
+        if np.isfinite(loss):
+            return model.evaluate(data)
+        else:
+            print('Has not converged, re-running graph inference')
+            return run_graph_polynomial_tf(df_data, graph, **kwargs)
+
+
+def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
+    """ Run the full graph polynomial generator
+
+    :param df_data: data
+    :param graph: the graph to model
+    :param idx: index (optional, for log purposes)
+    :param run: no of run (optional, for log purposes)
+    :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
+    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
+    :return: Generated data using the graph structure
+    """
+
+    gpu = kwargs.get('gpu', SETTINGS.GPU)
+    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+
+    list_nodes = graph.get_list_nodes()
+    print(list_nodes)
+    data = df_data[list_nodes].as_matrix()
+    data = data.astype('float32')
+
+    if gpu:
+        with tf.device('/gpu:' + str(gpu_offset + run % num_gpu)):
+
+            model = CGNN(df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
+            loss = model.train(data, **kwargs)
+            if np.isfinite(loss):
+                return model.evaluate(data)
+            else:
+                print('Has not converged, re-running graph inference')
+                return run_CGNN_tf(df_data, graph, **kwargs)
+
+    else:
+        model = CGNN(len(df_data), graph, list_nodes, run, idx, **kwargs)
+        loss = model.train(data, **kwargs)
+        if np.isfinite(loss):
+            return model.evaluate(data)
+        else:
+            print('Has not converged, re-running graph inference')
+            return run_CGNN_tf(df_data, graph, **kwargs)
 
 
 def polynomial_regressor(x, target, causes, train_epochs=1000, fixed_noise=False, verbose=True):

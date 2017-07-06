@@ -143,7 +143,7 @@ class FSGNN(DeconvolutionModel):
                         matrix_results[j, i] = matrix_results[j, i] + avg_mean[cpt]
                         cpt += 1
 
-        matrix_results = matrix_results / SETTINGS.nb_run
+        matrix_results = matrix_results / SETTINGS.nb_run_feature_selection
 
         if not os.path.exists('results/'):
             os.makedirs('results/')
