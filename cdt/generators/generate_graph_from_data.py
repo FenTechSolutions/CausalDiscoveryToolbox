@@ -127,9 +127,15 @@ class RandomGraphFromData(object):
         print(nodes)
         # Regress using a y=P(Xc,E)= Sum_i,j^d(_alphaij*(X_1+..+X_c)^i*E^j) model & re-simulate data
         # run_graph_polynomial(self.data, graph,0,0)
-        if self.full_graph_simulation:
-            generated_variables = self.simulator(self.data, graph, **kwargs)
-        else:
-            generated_variables = self.generate_variables(graph, **kwargs)
 
-        return graph, pd.DataFrame(generated_variables, columns=nodes)
+        if self.simulator is not None:
+            if self.full_graph_simulation:
+                generated_variables = self.simulator(self.data, graph, **kwargs)
+            else:
+                generated_variables = self.generate_variables(graph, **kwargs)
+
+            return graph, pd.DataFrame(generated_variables, columns=nodes)
+
+        else:
+
+            return graph
