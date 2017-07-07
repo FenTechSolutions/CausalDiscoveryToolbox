@@ -7,10 +7,10 @@ import tensorflow as tf
 import torch as th
 from torch.autograd import Variable
 from ..utils.Loss import MomentMatchingLoss_th as MomentMatchingLoss, MMD_loss_tf as MMD
-from ..utils.Settings import Settings as SETTINGS
+from ..utils.Settings import SETTINGS
 from sklearn.linear_model import LassoLars
 from sklearn.svm import SVR
-from ..causality.graphical_models import CGNN
+from ..causality.graphical_models.CGNN import CGNN_tf as CGNN
 
 
 class PolynomialModel(th.nn.Module):
@@ -61,6 +61,41 @@ class PolynomialModel(th.nn.Module):
             inputx = th.cat([th.FloatTensor(x), th.FloatTensor(n_examples, 1).fill_(1)], 1)
 
         inputx = Variable(self.polynomial_features(inputx))
+        return self.l(inputx)
+
+
+class SEMModel(th.nn.Module):
+    """ Model for SEM regression/generation - Generation one-by-one
+    """
+
+    def __init__(self, rank, degree=2):
+        """ Initialize the model
+
+        :param rank: number of causes to be fitted
+        :param degree: degree of the polynomial function
+        Warning : only degree == 2 has been implemented
+        """
+        assert degree == 2
+        super(SEMModel, self).__init__()
+        self.l = th.nn.Linear(
+            int(((rank + 2) * (rank + 1)) / 2), 1, bias=False)
+
+    def forward(self, x=None, n_examples=None, fixed_noise=False):
+        """ Featurize and compute output
+
+        :param x: input data
+        :param n_examples: number of examples (for the case of no input data)
+        :return: predicted data using weights
+        """
+        if not fixed_noise:
+            inputx = th.FloatTensor(n_examples, 1).normal_()
+
+            if x is not None:
+                x = th.FloatTensor(x)
+                inputx = th.cat([x, inputx], 1)
+        else:
+            inputx = th.FloatTensor(x)
+        inputx = Variable(inputx)
         return self.l(inputx)
 
 
@@ -166,7 +201,8 @@ class FullGraphPolynomialModel_tf(object):
                     input_v = []
                     input_v.append(tf.ones([N, 1]))
                     for i in par:
-                        input_v.append(generated_variables[i])
+                        input_v.append(generated_variables[i]/((len(par) + 2) * (len(par) + 1) / 2))
+                        # Renormalize w/ number of inputs?
                     input_v.append(tf.random_normal([N, 1], mean=0, stddev=1))
 
                     out_v = 0
@@ -205,7 +241,7 @@ class FullGraphPolynomialModel_tf(object):
         :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
         :return: Train loss at the last epoch
         """
-        train_epochs = kwargs.get('train_epochs', SETTINGS.nb_epoch_train)
+        train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
         for it in range(train_epochs):
             _, G_dist_loss_xcausesy_curr = self.sess.run(
                 [self.G_solver_xcausesy, self.G_dist_loss_xcausesy],
@@ -243,7 +279,7 @@ class FullGraphPolynomialModel_tf(object):
         return generated_variables
 
 
-def run_graph_polynomial_tf(df_data, graph, idx=0, run=0, **kwargs):
+def full_graph_polynomial_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     """ Run the full graph polynomial generator
 
     :param df_data: data
@@ -251,14 +287,14 @@ def run_graph_polynomial_tf(df_data, graph, idx=0, run=0, **kwargs):
     :param idx: index (optional, for log purposes)
     :param run: no of run (optional, for log purposes)
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
-    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
+    :param kwargs: nb_gpu=(SETTINGS.NB_GPU) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.GPU_OFFSET)number of gpu offsets
     :return: Generated data using the graph structure
     """
 
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
-    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+    nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
     list_nodes = graph.get_list_nodes()
     print(list_nodes)
@@ -266,15 +302,15 @@ def run_graph_polynomial_tf(df_data, graph, idx=0, run=0, **kwargs):
     data = data.astype('float32')
 
     if gpu:
-        with tf.device('/gpu:' + str(gpu_offset + run % num_gpu)):
+        with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
 
             model = FullGraphPolynomialModel_tf(df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
-            loss = model.train(data, **kwargs)
+            loss = model.train(data, **kwargs)/()
             if np.isfinite(loss):
                 return model.evaluate(data)
             else:
                 print('Has not converged, re-running graph inference')
-                return run_graph_polynomial_tf(df_data, graph, **kwargs)
+                return full_graph_polynomial_generator_tf(df_data, graph, **kwargs)
 
     else:
         model = FullGraphPolynomialModel_tf(len(df_data), graph, list_nodes, run, idx, **kwargs)
@@ -283,10 +319,10 @@ def run_graph_polynomial_tf(df_data, graph, idx=0, run=0, **kwargs):
             return model.evaluate(data)
         else:
             print('Has not converged, re-running graph inference')
-            return run_graph_polynomial_tf(df_data, graph, **kwargs)
+            return full_graph_polynomial_generator_tf(df_data, graph, **kwargs)
 
 
-def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
+def CGNN_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     """ Run the full graph polynomial generator
 
     :param df_data: data
@@ -294,14 +330,14 @@ def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     :param idx: index (optional, for log purposes)
     :param run: no of run (optional, for log purposes)
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
-    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
+    :param kwargs: nb_gpu=(SETTINGS.NB_GPU) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.GPU_OFFSET) number of gpu offsets
     :return: Generated data using the graph structure
     """
 
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
-    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+    nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
     list_nodes = graph.get_list_nodes()
     print(list_nodes)
@@ -309,24 +345,16 @@ def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     data = data.astype('float32')
 
     if gpu:
-        with tf.device('/gpu:' + str(gpu_offset + run % num_gpu)):
+        with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
 
-            model = CGNN(df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
+            model = CGNN(df_data.shape[0], graph, run, idx, **kwargs)
             loss = model.train(data, **kwargs)
-            if np.isfinite(loss):
-                return model.evaluate(data)
-            else:
-                print('Has not converged, re-running graph inference')
-                return run_CGNN_tf(df_data, graph, **kwargs)
+            return model.generate(data)
 
     else:
-        model = CGNN(len(df_data), graph, list_nodes, run, idx, **kwargs)
+        model = CGNN(len(df_data), graph, run, idx, **kwargs)
         loss = model.train(data, **kwargs)
-        if np.isfinite(loss):
-            return model.evaluate(data)
-        else:
-            print('Has not converged, re-running graph inference')
-            return run_CGNN_tf(df_data, graph, **kwargs)
+        return model.generate(data)
 
 
 def polynomial_regressor(x, target, causes, train_epochs=1000, fixed_noise=False, verbose=True):

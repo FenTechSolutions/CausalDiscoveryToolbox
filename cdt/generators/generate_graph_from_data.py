@@ -15,7 +15,7 @@ class RandomGraphFromData(object):
 
     """
 
-    def __init__(self, df_data, simulator=run_graph_polynomial_tf, full_graph_simulation=True,  datatype='Numerical'):
+    def __init__(self, df_data, simulator=full_graph_polynomial_generator_tf, full_graph_simulation=True, datatype='Numerical'):
         """
 
         :param df_data: data to make random graphs out of
@@ -38,7 +38,7 @@ class RandomGraphFromData(object):
             print('Not Yet Implemented')
             raise NotImplementedError
 
-    def find_dependencies(self, threshold=0.05):
+    def find_dependencies(self, threshold=0.1):
         """ Find dependencies in the dataset out of the dataset
 
         :param threshold: threshold of the independence test
@@ -133,7 +133,7 @@ class RandomGraphFromData(object):
                 generated_variables = self.simulator(self.data, graph, **kwargs)
             else:
                 generated_variables = self.generate_variables(graph, **kwargs)
-
+            
             return graph, pd.DataFrame(generated_variables, columns=nodes)
 
         else:

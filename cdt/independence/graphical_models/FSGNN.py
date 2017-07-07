@@ -42,12 +42,12 @@ def eval_feature_selection_score(df_data, target, verbose=False):
     all_parent_variables = tf.placeholder(tf.float32, shape=[None, n_features])
     target_variable = tf.placeholder(tf.float32, shape=[None, 1])
 
-    W_in = tf.Variable(init([n_features, SETTINGS.h_dim]))
+    W_in = tf.Variable(init([n_features, SETTINGS.h_layer_dim]))
     W_noise = tf.Variable(init([1, SETTINGS.h_dim]))
     W_input = tf.concat([W_in, W_noise], 0)
 
-    b_in = tf.Variable(init([SETTINGS.h_dim]))
-    W_out = tf.Variable(init([SETTINGS.h_dim, 1]))
+    b_in = tf.Variable(init([SETTINGS.h_layer_dim]))
+    W_out = tf.Variable(init([SETTINGS.h_layer_dim, 1]))
     b_out = tf.Variable(init([1]))
 
     input = tf.concat([all_parent_variables, tf.random_normal([N, 1], mean=0, stddev=1)], 1)
@@ -108,7 +108,7 @@ def eval_feature_selection_score(df_data, target, verbose=False):
 
 def run_feature_selection(df_data, idx, target):
     if SETTINGS.GPU:
-        with tf.device('/gpu:' + str(SETTINGS.gpu_offset + idx % SETTINGS.num_gpu)):
+        with tf.device('/gpu:' + str(SETTINGS.GPU_OFFSET + idx % SETTINGS.NB_GPU)):
             avg_scores = eval_feature_selection_score(df_data, target)
             return avg_scores
     else:
@@ -130,7 +130,7 @@ class FSGNN(DeconvolutionModel):
 
         for _ in range(SETTINGS.nb_run_feature_selection):
 
-            result_feature_selection = Parallel(n_jobs=SETTINGS.nb_jobs)(
+            result_feature_selection = Parallel(n_jobs=SETTINGS.NB_JOBS)(
                 delayed(run_feature_selection)(data, idx, node) for idx, node in enumerate(list_nodes))
 
             for i in range(len(result_feature_selection)):

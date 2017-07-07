@@ -16,7 +16,7 @@ from copy import deepcopy
 from .model import GraphModel
 from ..pairwise_models.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, MMD_loss_th
-from ...utils.Settings import Settings as SETTINGS
+from ...utils.Settings import SETTINGS
 
 
 def init(size, **kwargs):
@@ -39,10 +39,10 @@ class CGNN_tf(object):
         :param run: number of the run (only for print)
         :param idx: number of the idx (only for print)
         :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
-        :param kwargs: h_layer_dim=(SETTINGS.h_dim) Number of units in the hidden layer
+        :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
         """
         learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
-        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_dim)
+        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
         self.run = run
         self.idx = idx
         list_nodes = graph.get_list_nodes()
@@ -80,9 +80,9 @@ class CGNN_tf(object):
         for var in list_nodes:
             listvariablegraph.append(generated_variables[var])
 
-        all_generated_variables = tf.concat(listvariablegraph, 1)
+        self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
-        self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, all_generated_variables)
+        self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
@@ -99,10 +99,10 @@ class CGNN_tf(object):
 
         :param data: data corresponding to the graph
         :param verbose: verbose
-        :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
+        :param kwargs: train_epochs=(SETTINGS.train_epochs) number of train epochs
         :return: None
         """
-        train_epochs = kwargs.get('train_epochs', SETTINGS.nb_epoch_train)
+        train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
         for it in range(train_epochs):
 
             _, G_dist_loss_xcausesy_curr = self.sess.run(
@@ -121,10 +121,10 @@ class CGNN_tf(object):
 
         :param data: data corresponding to the graph
         :param verbose: verbose
-        :param kwargs: test_epochs=(SETTINGS.nb_epoch_test) number of test epochs
+        :param kwargs: test_epochs=(SETTINGS.test_epochs) number of test epochs
         :return: mean MMD loss value of the CGNN structure on the data
         """
-        test_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_test)
+        test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
         sumMMD_tr = 0
 
         for it in range(test_epochs):
@@ -142,6 +142,12 @@ class CGNN_tf(object):
 
         return sumMMD_tr / test_epochs
 
+    def generate(self, data, **kwargs):
+
+        generated_variables = self.sess.run([self.all_generated_variables], feed_dict={self.all_real_variables: data})
+
+        tf.reset_default_graph()
+        return np.array(generated_variables)[0, :, :]
 
 def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
@@ -151,20 +157,20 @@ def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     :param run: number of the run (only for print)
     :param idx: number of the idx (only for print)
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
+    :param kwargs: nb_gpu=(SETTINGS.nb_gpu) Number of available GPUs
     :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
     :return: MMD loss value of the given structure after training
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
-    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+    nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
     list_nodes = graph.get_list_nodes()
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
 
     if gpu:
-        with tf.device('/gpu:' + str(gpu_offset + run % num_gpu)):
+        with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
             model = CGNN_tf(df_data.shape[0], graph, run, idx, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
@@ -186,7 +192,7 @@ class CGNN_th(th.nn.Module):
         :param kwargs: h_layer_dim=(SETTINGS.h_dim) Number of units in the hidden layer
         """
         super(CGNN_th, self).__init__()
-        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_dim)
+        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
 
         self.graph = graph
         # building the computation graph
@@ -242,20 +248,20 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True, **kwargs):
     :param run: number of the run
     :param verbose: verbose
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
-    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
-    :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
-    :param kwargs: test_epochs=(SETTINGS.nb_epoch_test) number of test epochs
+    :param kwargs: nb_gpu=(SETTINGS.NB_GPU) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.GPU_OFFSET) number of gpu offsets
+    :param kwargs: train_epochs=(SETTINGS.train_epochs) number of train epochs
+    :param kwargs: test_epochs=(SETTINGS.test_epochs) number of test epochs
     :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
     :return: MMD loss value of the given structure after training
 
     """
 
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
-    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
-    train_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_train)
-    test_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_test)
+    nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
+    train_epochs = kwargs.get('test_epochs', SETTINGS.train_epochs)
+    test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
     learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
 
     list_nodes = graph.get_list_nodes()
@@ -267,8 +273,8 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True, **kwargs):
     optimizer = th.optim.Adam(model.parameters(), lr=learning_rate)
 
     if gpu:
-        data = data.cuda(gpu_offset + run % num_gpu)
-        model = model.cuda(gpu_offset + run % num_gpu)
+        data = data.cuda(gpu_offset + run % nb_gpu)
+        model = model.cuda(gpu_offset + run % nb_gpu)
 
     # Train
     for it in range(train_epochs):
@@ -303,12 +309,12 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     :param graph: graph to optimize
     :param data: data
     :param run_cgnn_function: name of the CGNN function (depending on the backend)
-    :param kwargs: nb_jobs=(SETTINGS.nb_jobs) number of jobs
-    :param kwargs: nb_runs=(SETTINGS.nb_runs) number of runs, of different evaluations
+    :param kwargs: nb_jobs=(SETTINGS.NB_JOBS) number of jobs
+    :param kwargs: nb_runs=(SETTINGS.NB_RUNS) number of runs, of different evaluations
     :return: improved graph
     """
-    nb_jobs = kwargs.get("nb_jobs", SETTINGS.nb_jobs)
-    nb_runs = kwargs.get("nb_runs", SETTINGS.nb_runs)
+    nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
+    nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
     loop = 0
     tested_configurations = [graph.get_dict_nw()]
     improvement = True

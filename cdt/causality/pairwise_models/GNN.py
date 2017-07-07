@@ -9,7 +9,7 @@ import tensorflow as tf
 import numpy as np
 from ...utils.Loss import MMD_loss_tf as MMD_tf
 from ...utils.Loss import MMD_loss_th as MMD_th
-from ...utils.Settings import Settings as SETTINGS
+from ...utils.Settings import SETTINGS
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 import torch as th
@@ -27,6 +27,7 @@ def init(size, **kwargs):
     init_std = kwargs.get('init_std', SETTINGS.init_weights)
     return tf.random_normal(shape=size, stddev=init_std)
 
+
 class GNN_tf(object):
     def __init__(self, N, run=0, pair=0, **kwargs):
         """ Build the tensorflow graph, the first column is set as the cause and the second as the effect
@@ -34,11 +35,11 @@ class GNN_tf(object):
         :param N: Number of examples to generate
         :param run: for log purposes (optional)
         :param pair: for log purposes (optional)
-        :param kwargs: h_layer_dim=(SETTINGS.h_dim) Number of units in the hidden layer
+        :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
         :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
         """
 
-        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_dim)
+        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
         learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
         self.run = run
         self.pair = pair
@@ -127,19 +128,19 @@ def tf_run_instance(m, idx, run, **kwargs):
     :param run: number of the run (only for print)
     :param idx: number of the idx (only for print)
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
-    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
+    :param kwargs: nb_gpu=(SETTINGS.NB_GPU) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.GPU_OFFSET) number of gpu offsets
     :return: MMD loss value of the given structure after training
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
-    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+    nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
     run_i = run
     if gpu:
-        with tf.device('/gpu:' + str(gpu_offset + run_i % num_gpu)):
+        with tf.device('/gpu:' + str(gpu_offset + run_i % nb_gpu)):
             XY = tf_evalcausalscore_pairwise(m, idx, run, **kwargs)
-        with tf.device('/gpu:' + str(gpu_offset + run_i % num_gpu)):
+        with tf.device('/gpu:' + str(gpu_offset + run_i % nb_gpu)):
             YX = tf_evalcausalscore_pairwise(m[:, [1, 0]], idx, run, **kwargs)
             return [XY, YX]
     else:
@@ -151,10 +152,10 @@ class GNN_th(th.nn.Module):
     def __init__(self, **kwargs):
         """
         Build the Torch graph
-        :param kwargs: h_layer_dim=(SETTINGS.h_dim) Number of units in the hidden layer
+        :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
         """
         super(GNN_th, self).__init__()
-        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_dim)
+        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
 
         self.l1 = th.nn.Linear(2, h_layer_dim)
         self.l2 = th.nn.Linear(h_layer_dim, 1)
@@ -252,18 +253,18 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
     :param pair_idx: print purposes
     :param run: numner of the run (for GPU dispatch)
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: num_gpu=(SETTINGS.num_gpu) Number of available GPUs
-    :param kwargs: gpu_offset=(SETTINGS.gpu_offset) number of gpu offsets
+    :param kwargs: nb_gpu=(SETTINGS.NB_GPU) Number of available GPUs
+    :param kwargs: gpu_offset=(SETTINGS.GPU_OFFSET) number of gpu offsets
     :return:
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    num_gpu = kwargs.get('num_gpu', SETTINGS.num_gpu)
-    gpu_offset = kwargs.get('gpu_offset', SETTINGS.gpu_offset)
+    nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
+    gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
     if gpu:
-        with th.cuda.device(gpu_offset + run % num_gpu):
+        with th.cuda.device(gpu_offset + run % nb_gpu):
             XY = run_GNN_th(m, pair_idx, run, **kwargs)
-        with th.cuda.device(gpu_offset + run % num_gpu):
+        with th.cuda.device(gpu_offset + run % nb_gpu):
             YX = run_GNN_th(np.fliplr(m), pair_idx, run, **kwargs)
 
     else:
@@ -290,8 +291,8 @@ class GNN(Pairwise_Model):
             a = np.array(a).reshape((-1, 1))
             b = np.array(b).reshape((-1, 1))
 
-        nb_jobs = kwargs.get("nb_jobs", SETTINGS.nb_jobs)
-        nb_runs = kwargs.get("nb_runs", SETTINGS.nb_runs)
+        nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
+        nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
         m = np.hstack((a, b))
         m = m.astype('float32')
 

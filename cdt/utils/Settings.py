@@ -6,23 +6,43 @@ Date : 8/05/2017
 """
 
 
-class Settings(object):
-    h_dim = 20
-    nb_epoch_train = 700
-    nb_epoch_test = 500
-    nb_runs = 24
-    nb_jobs = 2
-    GPU = False
-    num_gpu = 1
-    gpu_offset = 0
-    learning_rate = 0.01
-    init_weights = 0.05
+class DefaultSettings(object):
+    __slots__ = ("h_layer_dim",
+                 "train_epochs",
+                 "test_epochs",
+                 "NB_RUNS",
+                 "NB_JOBS",
+                 "GPU",
+                 "NB_GPU",
+                 "GPU_OFFSET",
+                 "learning_rate",
+                 "init_weights",
+                 "nb_run_feature_selection",
+                 "regul_param",
+                 "threshold_UMG",
+                 "nb_epoch_train_feature_selection",
+                 "nb_epoch_eval_weights",)
 
-    #specific for FSGNN
-    nb_run_feature_selection = 1
-    regul_param = 0.004
-    threshold_UMG = 0.15
-    nb_epoch_train_feature_selection = 2000
-    nb_epoch_eval_weights = 500
+    def __init__(self):  # Define here the default values of the parameters
+        self.NB_RUNS = 24
+        self.NB_JOBS = 2
+        self.GPU = False
+        self.NB_GPU = 1
+        self.GPU_OFFSET = 0
+        self.learning_rate = 0.01
+        self.init_weights = 0.05
+
+        # CGNN
+        self.h_layer_dim = 20
+        self.train_epochs = 700
+        self.test_epochs = 500
+
+        # specific for FSGNN
+        self.nb_run_feature_selection = 1
+        self.regul_param = 0.004
+        self.threshold_UMG = 0.15
+        self.nb_epoch_train_feature_selection = 2000
+        self.nb_epoch_eval_weights = 500
 
 
+SETTINGS = DefaultSettings()
