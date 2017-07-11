@@ -41,6 +41,7 @@ class RandomGraphGenerator:
         self.data = None
         self.result_links = None
         self.cat_data = None
+        self.cat_var = None
 
         print('Init OK')
 

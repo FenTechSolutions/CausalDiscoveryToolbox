@@ -13,72 +13,19 @@ from sklearn.svm import SVR
 from ..causality.graphical_models.CGNN import CGNN_tf as CGNN
 
 
-class PolynomialModel(th.nn.Module):
-    """ Model for multi-polynomial regression - Generation one-by-one
-    """
-
-    def __init__(self, rank, degree=2):
-        """ Initialize the model
-
-        :param rank: number of causes to be fitted
-        :param degree: degree of the polynomial function
-        Warning : only degree == 2 has been implemented
-        """
-        assert degree == 2
-        super(PolynomialModel, self).__init__()
-        self.l = th.nn.Linear(
-            int(((rank + 2) * (rank + 1)) / 2), 1, bias=False)
-
-    def polynomial_features(self, x):
-        """ Featurize data using a matrix multiplication trick
-
-        :param x: unfeaturized data
-        :return: featurized data for polynomial regression of degree=2
-        """
-        out = th.FloatTensor(x.size()[0], int(((x.size()[1]) * (x.size()[1] - 1)) / 2))
-        cpt = 0
-        for i in range(x.size()[1]):
-            for j in range(i+1, x.size()[1]):
-                out[:, cpt] = x[:, i] * x[:, j]
-                cpt += 1
-        # print(int(((x.size()[1])*(x.size()[1]+1))/2)-1, cpt)
-        return out
-
-    def forward(self, x=None, n_examples=None, fixed_noise=False):
-        """ Featurize and compute output
-
-        :param x: input data
-        :param n_examples: number of examples (for the case of no input data)
-        :return: predicted data using weights
-        """
-        if not fixed_noise:
-            inputx = th.cat([th.FloatTensor(n_examples, 1).fill_(1),
-                             th.FloatTensor(n_examples, 1).normal_()], 1)
-            if x is not None:
-                x = th.FloatTensor(x)
-                inputx = th.cat([x, inputx], 1)
-        else:
-            inputx = th.cat([th.FloatTensor(x), th.FloatTensor(n_examples, 1).fill_(1)], 1)
-
-        inputx = Variable(self.polynomial_features(inputx))
-        return self.l(inputx)
-
-
 class SEMModel(th.nn.Module):
     """ Model for SEM regression/generation - Generation one-by-one
     """
 
-    def __init__(self, rank, degree=2):
+    def __init__(self, rank):
         """ Initialize the model
 
         :param rank: number of causes to be fitted
         :param degree: degree of the polynomial function
         Warning : only degree == 2 has been implemented
         """
-        assert degree == 2
         super(SEMModel, self).__init__()
-        self.l = th.nn.Linear(
-            int(((rank + 2) * (rank + 1)) / 2), 1, bias=False)
+        self.l = th.nn.Linear(rank, 1, bias=False)
 
     def forward(self, x=None, n_examples=None, fixed_noise=False):
         """ Featurize and compute output
@@ -87,16 +34,51 @@ class SEMModel(th.nn.Module):
         :param n_examples: number of examples (for the case of no input data)
         :return: predicted data using weights
         """
-        if not fixed_noise:
-            inputx = th.FloatTensor(n_examples, 1).normal_()
-
-            if x is not None:
-                x = th.FloatTensor(x)
-                inputx = th.cat([x, inputx], 1)
-        else:
-            inputx = th.FloatTensor(x)
+        inputx = th.FloatTensor(x)
         inputx = Variable(inputx)
         return self.l(inputx)
+
+
+def SEM_generator(x, target, causes, fixed_noise=True, verbose=True, **kwargs):
+    """ Regress data using a polynomial regressor of degree 2
+
+    :param x: parents data
+    :param target: target data
+    :param causes: list of parent nodes
+    :param train_epochs: number of train epochs
+    :param fixed_noise : If the noise in the generation is fixed or not.
+    :param verbose: verbose
+    :return: generated data
+    """
+
+    lr = kwargs.get('learning_rate', SETTINGS.learning_rate)
+    train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
+    print(lr)
+    n_ex = target.shape[0]
+    if len(causes) == 0:
+        causes = []
+        x = None
+        if fixed_noise:
+            x = th.FloatTensor(n_ex, 1).normal_()
+    elif fixed_noise:
+        x = th.FloatTensor(x)
+        x = th.cat([x, th.FloatTensor(n_ex, 1).normal_()], 1)
+    target = Variable(th.FloatTensor(target))
+    model = SEMModel(len(causes)+1)
+    criterion = th.nn.MSELoss()
+    optimizer = th.optim.Adam(model.parameters(), lr=lr)
+
+    for epoch in range(train_epochs):
+        optimizer.zero_grad()
+        y_tr = model(x, n_ex, fixed_noise=fixed_noise)
+        loss = criterion(y_tr, target)
+        loss.backward()
+        optimizer.step()
+
+        if verbose and epoch % 50 == 0:
+            print('Epoch : {} ; Loss: {}'.format(epoch, loss.data.numpy()))
+
+    return model(x, n_ex).data.numpy()
 
 
 class FullGraphPolynomialModel_th(th.nn.Module):
@@ -357,7 +339,57 @@ def CGNN_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
         return model.generate(data)
 
 
-def polynomial_regressor(x, target, causes, train_epochs=1000, fixed_noise=False, verbose=True):
+class PolynomialModel(th.nn.Module):
+    """ Model for multi-polynomial regression - Generation one-by-one
+    """
+
+    def __init__(self, rank, degree=2):
+        """ Initialize the model
+
+        :param rank: number of causes to be fitted
+        :param degree: degree of the polynomial function
+        Warning : only degree == 2 has been implemented
+        """
+        assert degree == 2
+        super(PolynomialModel, self).__init__()
+        self.l = th.nn.Linear(
+            int(((rank + 2) * (rank + 1)) / 2), 1, bias=False)
+
+    def polynomial_features(self, x):
+        """ Featurize data using a matrix multiplication trick
+
+        :param x: unfeaturized data
+        :return: featurized data for polynomial regression of degree=2
+        """
+        out = th.FloatTensor(x.size()[0], int(((x.size()[1]) * (x.size()[1] - 1)) / 2))
+        cpt = 0
+        for i in range(x.size()[1]):
+            for j in range(i+1, x.size()[1]):
+                out[:, cpt] = x[:, i] * x[:, j]
+                cpt += 1
+        # print(int(((x.size()[1])*(x.size()[1]+1))/2)-1, cpt)
+        return out
+
+    def forward(self, x=None, n_examples=None, fixed_noise=False):
+        """ Featurize and compute output
+
+        :param x: input data
+        :param n_examples: number of examples (for the case of no input data)
+        :return: predicted data using weights
+        """
+        if not fixed_noise:
+            inputx = th.cat([th.FloatTensor(n_examples, 1).fill_(1),
+                             th.FloatTensor(n_examples, 1).normal_()], 1)
+            if x is not None:
+                inputx = th.cat([x, inputx], 1)
+        else:
+            inputx = th.cat([x, th.FloatTensor(n_examples, 1).fill_(1)], 1)
+
+        inputx = Variable(self.polynomial_features(inputx))
+        return self.l(inputx)
+
+
+def polynomial_regressor(x, target, causes, fixed_noise=False, verbose=True, **kwargs):
     """ Regress data using a polynomial regressor of degree 2
 
     :param x: parents data
@@ -369,35 +401,41 @@ def polynomial_regressor(x, target, causes, train_epochs=1000, fixed_noise=False
     :return: generated data
     """
 
+    lr = kwargs.get('learning_rate', SETTINGS.learning_rate)
+    train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
     n_ex = target.shape[0]
     if len(causes) == 0:
         causes = []
         x = None
         if fixed_noise:
-            x = th.FloatTensor(n_ex, 1).normal_()
+            x_input = th.FloatTensor(n_ex, 1).normal_()
     elif fixed_noise:
         x = th.FloatTensor(x)
-        x = th.cat([x, th.FloatTensor(n_ex, 1).normal_()], 1)
+        x_input = th.cat([x, th.FloatTensor(n_ex, 1).normal_()], 1)
+    else:
+        x_input = th.FloatTensor(x)
     target = Variable(th.FloatTensor(target))
     model = PolynomialModel(len(causes), degree=2)
     if SETTINGS.GPU:
         model.cuda()
         target.cuda()
-        if x is not None:
-            x.cuda()
-    criterion = MomentMatchingLoss(3)
-    optimizer = th.optim.Adam(model.parameters(), lr=10e-3)
+        if x_input is not None:
+            x_input.cuda()
+    criterion = MomentMatchingLoss(4)
+    optimizer = th.optim.Adam(model.parameters(), lr=lr)
 
     for epoch in range(train_epochs):
-        y_tr = model(x, n_ex, fixed_noise=fixed_noise)
-        loss = criterion(y_tr, target)
+        optimizer.zero_grad()
+        y_tr = model(x_input, n_ex, fixed_noise=fixed_noise)
+        x = Variable(x_input)
+        loss = criterion(th.cat([y_tr, x], 1), th.cat([target.resize(target.size()[0], 1), x], 1))
         loss.backward()
         optimizer.step()
 
         if verbose and epoch % 50 == 0:
             print('Epoch : {} ; Loss: {}'.format(epoch, loss.data.numpy()))
 
-    return model(x, n_ex).data.numpy()
+    return model(x_input, n_ex).data.numpy()
 
 
 def linear_regressor(x, target, causes):

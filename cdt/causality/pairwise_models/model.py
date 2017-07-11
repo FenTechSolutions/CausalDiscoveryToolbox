@@ -18,7 +18,7 @@ class Pairwise_Model(object):
 
     def predict_proba(self, a, b):
         """ Prediction method for pairwise causal inference.
-        predict_proba is meant to be overridden in all subclasses
+        predict is meant to be overridden in all subclasses
 
         :param a: Variable 1
         :param b: Variable 2

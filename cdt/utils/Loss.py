@@ -152,9 +152,9 @@ class MomentMatchingLoss_th(th.nn.Module):
 
         loss = Variable(th.FloatTensor([0]))
         for i in range(1, self.moments):
-            mk_pred = th.mean(th.pow(pred, i))
-            mk_tar = th.mean(th.pow(target,i))
+            mk_pred = th.mean(th.pow(pred, i), 0)
+            mk_tar = th.mean(th.pow(target, i), 0)
 
-            loss.add_((mk_pred - mk_tar)**2)  # L2
+            loss.add_(th.mean((mk_pred - mk_tar)**2))  # L2
 
         return loss

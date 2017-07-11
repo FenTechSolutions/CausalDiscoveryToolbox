@@ -13,7 +13,7 @@ class IndependenceModel(object):
     def __init__(self):
         super(IndependenceModel, self).__init__()
 
-    def predict_proba(self, a, b):
+    def predict(self, a, b):
         """
 
         :param a: First Variable
@@ -22,7 +22,7 @@ class IndependenceModel(object):
         """
         raise NotImplementedError
 
-    def infer_undirected_graph(self, data):
+    def create_undirected_graph(self, data):
         """ Build a skeleton using a pairwise independence criterion
 
         :param data: Raw data table
@@ -34,7 +34,7 @@ class IndependenceModel(object):
 
         for idx_i, i in enumerate(data.columns):
             for idx_j, j in enumerate(data.columns[idx_i+1:]):
-                score = self.predict_proba(data[i].as_matrix(), data[j].as_matrix())
+                score = self.predict(data[i].as_matrix(), data[j].as_matrix())
                 if abs(score) > 0.001:
                     graph.add(i, j, score)
 

@@ -61,9 +61,9 @@ class RandomGraphFromData(object):
     def generate_variables(self, graph, plot=False):
         """ Generate variables one by one by going through the graph
 
-        :param graph:
-        :param plot:
-        :return:
+        :param graph: Graph to simulate
+        :param plot: plot the resulting pairs
+        :return: generated data
         """
         generated_variables = {}
         nodes = graph.get_list_nodes()
