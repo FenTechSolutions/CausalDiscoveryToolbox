@@ -12,12 +12,12 @@ class DeconvolutionModel(object):
         """ Init. """
         super(DeconvolutionModel, self).__init__()
 
-    def predict(self, df_data):
+    def predict(self, df_data, **kwargs):
         """ get the skeleton of the graph from raw data
         :param df_data: data to construct a graph from
         """
-        return self.create_skeleton_from_data(df_data)
+        return self.create_skeleton_from_data(df_data, **kwargs)
 
-    def create_skeleton_from_data(self, data):
+    def create_skeleton_from_data(self, data, **kwargs):
 
         raise NotImplementedError
