@@ -8,7 +8,7 @@ Date : 21/04/2017
 import numpy as np
 from copy import deepcopy
 from collections import defaultdict
-
+import pandas as pd
 
 def list_to_dict(links):
     """ Create a dict out of a list of links
@@ -29,13 +29,22 @@ def list_to_dict(links):
 class Graph(object):
     """ Base class for Graph structure"""
 
-    def __init__(self, df=None):
+    def __init__(self, df=None, adjacency_matrix=False):
         """ Create a new graph structure"""
         self._graph = defaultdict(dict)
         connections = []
         if df is not None:
-            for idx, row in df.iterrows():
-                connections.append(row)
+            if adjacency_matrix:
+                data = df.as_matrix()
+                col = df.columns
+                for i in range(data.shape[0]):
+                    for j in range(data.shape[0]):
+                        if i != j and data[i, j] > 0.001:
+                            connections.append([col[i], col[j], data[i, j]])
+            else:
+                for idx, row in df.iterrows():
+                    connections.append(row)
+
             self.add_multiple_edges(connections)
 
     def add_multiple_edges(self, connections):
@@ -49,7 +58,7 @@ class Graph(object):
             if not weight:
                 self.add(node1, node2)
             else:
-                self.add(node1, node2, weight)
+                self.add(node1, node2, weight[0])
 
     def add(self, node1, node2, weight=1):
         """ Add or update edge from node1 to node2
@@ -189,9 +198,9 @@ class Graph(object):
 class DirectedGraph(Graph):
     """ Graph data structure, directed. """
 
-    def __init__(self, df=None):
+    def __init__(self, df=None, adjacency_matrix=False):
         """ Create a new directed graph structure"""
-        super(DirectedGraph, self).__init__(df)
+        super(DirectedGraph, self).__init__(df, adjacency_matrix)
 
     def add(self, node1, node2, weight=1):
         """ Add or update directed edge from node1 to node2
@@ -315,9 +324,9 @@ class DirectedGraph(Graph):
 class UndirectedGraph(Graph):
     """ Graph data structure, undirected. """
 
-    def __init__(self, df=None):
+    def __init__(self, df=None, adjacency_matrix=False):
         """ Create a new undirected graph structure"""
-        super(UndirectedGraph, self).__init__(df)
+        super(UndirectedGraph, self).__init__(df, adjacency_matrix)
 
     def add(self, node1, node2, weight=1):
         """ Add or update edge between node1 to node2
