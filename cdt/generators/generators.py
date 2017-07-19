@@ -329,7 +329,7 @@ def CGNN_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
 
-            model = CGNN(df_data.shape[0], graph, run, idx, **kwargs)
+            model = CGNN(df_data.shape[0], graph, run, idx, h_layer_dim=3, **kwargs)
             loss = model.train(data, **kwargs)
             return model.generate(data)
 

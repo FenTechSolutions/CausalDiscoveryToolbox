@@ -30,7 +30,7 @@ class NetworkDeconvolution(DeconvolutionModel):
             Nature Biotechnology
 
         --------------------------------------------------------------------------
-         ND.m: network deconvolution
+         ND.py network deconvolution
         --------------------------------------------------------------------------
 
         DESCRIPTION:
