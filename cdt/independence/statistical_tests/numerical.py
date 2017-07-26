@@ -107,6 +107,16 @@ class MIRegression(IndependenceModel):
         return (mutual_info_regression(a, b.reshape((-1,))) + mutual_info_regression(b, a.reshape((-1,))))/2
 
 
+class KendallTau(IndependenceModel):
+    def __init__(self):
+        super(KendallTau, self).__init__()
+
+    def predict(self, a, b):
+        a = np.array(a).reshape((-1, 1))
+        b = np.array(b).reshape((-1, 1))
+        return sp.kendalltau(a, b)[0]
+
+
 class NormalizedHSIC(IndependenceModel):
     def __init__(self):
         super(NormalizedHSIC, self).__init__()

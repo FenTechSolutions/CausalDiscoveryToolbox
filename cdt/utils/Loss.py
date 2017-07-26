@@ -89,6 +89,7 @@ class MMD_loss_th(th.nn.Module):
 
         # MMD Loss
         if var_true is None:
+            print(var_input.size(),var_pred.size())
             X = th.cat([var_input, var_pred], 0)
         else:
             X = th.cat([th.cat([var_input, var_pred], 1),

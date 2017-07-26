@@ -34,7 +34,7 @@ class DefaultSettings(object):
 
         # CGNN
         self.h_layer_dim = 20
-        self.train_epochs = 700
+        self.train_epochs = 1000
         self.test_epochs = 500
 
         # specific for FSGNN

@@ -156,13 +156,15 @@ class GNN_th(th.nn.Module):
         """
         super(GNN_th, self).__init__()
         h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
+        self.s1 = th.nn.Linear(1, h_layer_dim)
+        self.s2 = th.nn.Linear(h_layer_dim, 1)
 
         self.l1 = th.nn.Linear(2, h_layer_dim)
         self.l2 = th.nn.Linear(h_layer_dim, 1)
         self.act = th.nn.ReLU()
         # ToDo : Init parameters
 
-    def forward(self, x):
+    def forward(self, x1, x2):
         """
         Pass data through the net structure
         :param x: input data: shape (:,2)
@@ -171,8 +173,9 @@ class GNN_th(th.nn.Module):
         :rtype: torch.Variable
 
         """
-        x = self.act(self.l1(x))
-        return self.l2(x)
+        x = self.s2(self.act(self.s1(x1)))
+        y = self.act(self.l1(th.cat([x, x2], 1)))
+        return x, self.l2(y)
 
 
 def run_GNN_th(m, pair, run, **kwargs):
@@ -191,19 +194,21 @@ def run_GNN_th(m, pair, run, **kwargs):
     :rtype: float
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    train_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_train)
-    test_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_test)
+    train_epochs = kwargs.get('test_epochs', SETTINGS.train_epochs)
+    test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
     learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
 
-    x = Variable(th.from_numpy(m[:, [0]]))
-    y = Variable(th.from_numpy(m[:, [1]]))
+    target = Variable(th.from_numpy(m))
+    # x = Variable(th.from_numpy(m[:, [0]]))
+    # y = Variable(th.from_numpy(m[:, [1]]))
     e = Variable(th.FloatTensor(m.shape[0], 1))
+    es = Variable(th.FloatTensor(m.shape[0], 1))
     GNN = GNN_th(**kwargs)
 
     if gpu:
-        x = x.cuda()
-        y = y.cuda()
+        target.cuda()
         e = e.cuda()
+        es = es.cuda()
         GNN = GNN.cuda()
 
     criterion = MMD_th(m.shape[0], cuda=gpu)
@@ -215,9 +220,10 @@ def run_GNN_th(m, pair, run, **kwargs):
     for i in range(train_epochs):
         optim.zero_grad()
         e.data.normal_()
-        x_in = th.cat([x, e], 1)
-        y_pred = GNN(x_in)
-        loss = criterion(x, y_pred, y)
+        es.data.normal_()
+        pred = GNN(es, e)
+
+        loss = criterion(target, th.cat(pred,1))
         loss.backward()
         optim.step()
 
@@ -231,9 +237,9 @@ def run_GNN_th(m, pair, run, **kwargs):
     # Evaluate
     for i in range(test_epochs):
         e.data.normal_()
-        x_in = th.cat([x, e], 1)
-        y_pred = GNN(x_in)
-        loss = criterion(x, y_pred, y)
+        es.data.normal_()
+        pred = GNN(es,e)
+        loss = criterion(target, th.cat(pred,1))
 
         # print statistics
         running_loss += loss.data[0]

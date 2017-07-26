@@ -7,6 +7,7 @@ Date : 2/06/17
 from pandas import DataFrame, read_csv
 from numpy import array
 
+
 def CCEPC_PairsFileReader(filename):
     """ Converts a ChaLearn Cause effect pairs challenge format into numpy.ndarray
 
