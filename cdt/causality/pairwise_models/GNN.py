@@ -46,20 +46,30 @@ class GNN_tf(object):
         self.X = tf.placeholder(tf.float32, shape=[None, 1])
         self.Y = tf.placeholder(tf.float32, shape=[None, 1])
 
+        Ws_in = tf.Variable(init([1, h_layer_dim], **kwargs))
+        bs_in = tf.Variable(init([h_layer_dim], **kwargs))
+        Ws_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
+        bs_out = tf.Variable(init([1], **kwargs))
+
         W_in = tf.Variable(init([2, h_layer_dim], **kwargs))
         b_in = tf.Variable(init([h_layer_dim], **kwargs))
         W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
         b_out = tf.Variable(init([1], **kwargs))
 
         theta_G = [W_in, b_in,
-                   W_out, b_out]
+                   W_out, b_out,
+                   Ws_in, bs_in,
+                   Ws_out, bs_out]
 
+        es = tf.random_normal([N, 1], mean=0, stddev=1)
         e = tf.random_normal([N, 1], mean=0, stddev=1)
-        input = tf.concat([self.X, e], 1)
-        hid = tf.nn.relu(tf.matmul(input, W_in) + b_in)
-        out = tf.matmul(hid, W_out) + b_out
+        out_x = tf.nn.relu(tf.matmul(es, Ws_in) + bs_in)
+        out_x = tf.matmul(out_x, Ws_out) + bs_out
 
-        self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out], 1))
+        hid = tf.nn.relu(tf.matmul(tf.concat([out_x, e], 1), W_in) + b_in)
+        out_y = tf.matmul(hid, W_out) + b_out
+
+        self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1))
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=learning_rate)
                                   .minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
 
@@ -85,7 +95,7 @@ class GNN_tf(object):
             )
 
             if verbose:
-                if (it % 100 == 0):
+                if it % 100 == 0:
                     print('Pair:{}, Run:{}, Iter:{}, score:{}'.
                           format(self.pair, self.run,
                                  it, G_dist_loss_xcausesy_curr))
@@ -223,7 +233,7 @@ def run_GNN_th(m, pair, run, **kwargs):
         es.data.normal_()
         pred = GNN(es, e)
 
-        loss = criterion(target, th.cat(pred,1))
+        loss = criterion(target, th.cat(pred, 1))
         loss.backward()
         optim.step()
 
