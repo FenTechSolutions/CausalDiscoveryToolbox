@@ -206,7 +206,7 @@ def run_GNN_th(m, pair, run, **kwargs):
     GNN = GNN_th(**kwargs)
 
     if gpu:
-        target.cuda()
+        target = target.cuda()
         e = e.cuda()
         es = es.cuda()
         GNN = GNN.cuda()
@@ -271,7 +271,7 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
         with th.cuda.device(gpu_offset + run % nb_gpu):
             XY = run_GNN_th(m, pair_idx, run, **kwargs)
         with th.cuda.device(gpu_offset + run % nb_gpu):
-            YX = run_GNN_th(np.fliplr(m), pair_idx, run, **kwargs)
+            YX = run_GNN_th(m[:, [1, 0]], pair_idx, run, **kwargs)  # fliplr is unsupported in Torch
 
     else:
         XY = run_GNN_th(m, pair_idx, run, **kwargs)

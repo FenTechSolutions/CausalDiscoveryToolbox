@@ -6,9 +6,10 @@ Date : 2/06/17
 """
 from pandas import DataFrame, read_csv
 from numpy import array
+from sklearn.preprocessing import scale as scaler
 
 
-def CCEPC_PairsFileReader(filename):
+def CCEPC_PairsFileReader(filename, scale=True):
     """ Converts a ChaLearn Cause effect pairs challenge format into numpy.ndarray
 
     :param filename:
@@ -17,7 +18,7 @@ def CCEPC_PairsFileReader(filename):
     :rtype: pandas.DataFrame
     """
 
-    def convert_row(row):
+    def convert_row(row, scale):
         """ Convert a CCEPC row into numpy.ndarrays
 
         :param row:
@@ -38,14 +39,16 @@ def CCEPC_PairsFileReader(filename):
 
         a = array([float(i) for i in a])
         b = array([float(i) for i in b])
-
+        if scale:
+            a = scaler(a)
+            b = scaler(b)
         return row['SampleID'], a, b
 
     data = read_csv(filename)
     conv_data = []
 
     for idx, row in data.iterrows():
-        conv_data.append(convert_row(row))
+        conv_data.append(convert_row(row, scale))
     df = DataFrame(conv_data, columns=['SampleID', 'A', 'B'])
     return df
 
