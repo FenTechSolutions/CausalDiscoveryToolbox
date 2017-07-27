@@ -86,7 +86,7 @@ class GNN_tf(object):
         :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
         :return: None
         """
-        train_epochs = kwargs.get('train_epochs', SETTINGS.nb_epoch_train)
+        train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
 
         for it in range(train_epochs):
             _, G_dist_loss_xcausesy_curr = self.sess.run(
@@ -108,7 +108,7 @@ class GNN_tf(object):
         :param kwargs: test_epochs=(SETTINGS.nb_epoch_test) number of test epochs
         :return: mean MMD loss value of the CGNN structure on the data
         """
-        test_epochs = kwargs.get('test_epochs', SETTINGS.nb_epoch_test)
+        test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
         avg_score = 0
 
         for it in range(test_epochs):
