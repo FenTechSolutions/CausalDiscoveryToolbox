@@ -3,7 +3,6 @@ __author__ = 'makotoy'
 import numpy as np
 
 
-
 def kernel_Delta_norm(xin1, xin2):
     n1 = xin1.shape[1]
     n2 = xin2.shape[1]
@@ -43,48 +42,50 @@ def kernel_Gaussian(xin1, xin2, sigma):
     xin12 = np.sum(np.power(xin1, 2), 0)
     xin22 = np.sum(np.power(xin2, 2), 0)
 
-    dist2 = np.tile(xin22, (n1, 1)) + np.tile(xin12, (n2, 1)).transpose() - 2 * np.dot(xin1.T, xin2)
+    dist2 = np.tile(xin22, (n1, 1)) + np.tile(xin12, (n2, 1)
+                                              ).transpose() - 2 * np.dot(xin1.T, xin2)
     K = np.exp(-dist2 / (2 * np.power(sigma, 2)))
 
     return K
 
+# We used the Nonnegative LARS solver
+# http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/5523/zip/imm5523.zip
 
-#We used the Nonnegative LARS solver
-#http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/5523/zip/imm5523.zip
-def hsiclasso(Xin,Yin,numFeat=10,ykernel='Gauss'):
 
-    d,n = Xin.shape
+def hsiclasso(Xin, Yin, numFeat=10, ykernel='Gauss'):
 
-    #Centering matrix
-    H = np.eye(n) - 1.0/float(n)*np.ones(n)
+    d, n = Xin.shape
 
-    #Normalization
-    XX = Xin/(Xin.std(1)[:,None]+0.00001)
+    # Centering matrix
+    H = np.eye(n) - 1.0 / float(n) * np.ones(n)
+
+    # Normalization
+    XX = Xin / (Xin.std(1)[:, None] + 0.00001)
 
     if ykernel == 'Gauss':
-        YY = Yin/(Yin.std(1)[:,None]+0.00001)
-        L = kernel_Gaussian(YY,YY,1.0)
+        YY = Yin / (Yin.std(1)[:, None] + 0.00001)
+        L = kernel_Gaussian(YY, YY, 1.0)
     else:
-        L = kernel_Delta_norm(Yin,Yin)
+        L = kernel_Delta_norm(Yin, Yin)
 
-    L = np.dot(H,np.dot(L,H))
+    L = np.dot(H, np.dot(L, H))
 
-    #Preparing design matrix for HSIC Lars
-    X = np.zeros((n*n,d))
-    Xty = np.zeros((d,1))
-    for ii in range(0,d):
-        Kx = kernel_Gaussian(XX[ii,None],XX[ii,None],1.0)
-        tmp = np.dot(np.dot(H,Kx),H)
-        X[:,ii] = tmp.flatten()
-        Xty[ii] = (tmp*L).sum()
+    # Preparing design matrix for HSIC Lars
+    X = np.zeros((n * n, d))
+    Xty = np.zeros((d, 1))
+    for ii in range(0, d):
+        Kx = kernel_Gaussian(XX[ii, None], XX[ii, None], 1.0)
+        tmp = np.dot(np.dot(H, Kx), H)
+        X[:, ii] = tmp.flatten()
+        Xty[ii] = (tmp * L).sum()
 
-    #Nonnegative Lars
-    #Inactive set
-    I = list(range(0,d))
+    # Nonnegative Lars
+    # Inactive set
+    I = list(range(0, d))
     A = []
-    beta = np.zeros((d,1))
+    beta = np.zeros((d, 1))
 
-    XtXbeta = np.dot(X.transpose(),np.dot(X,beta))
+    XtXbeta = np.dot(X.transpose(), np.dot(X, beta))
     c = Xty - XtXbeta
     j = c.argmax()
     C = c[j]
@@ -94,32 +95,30 @@ def hsiclasso(Xin,Yin,numFeat=10,ykernel='Gauss'):
     inc_path = True
     k = 0
     if inc_path:
-        path = np.zeros((d,4*d))
-        lam = np.zeros((1,4*d))
+        path = np.zeros((d, 4 * d))
+        lam = np.zeros((1, 4 * d))
 
-        path[:,k] = beta.transpose()
+        path[:, k] = beta.transpose()
 
+    while float(sum(c[A])) / float(len(A)) >= 1e-9 and len(A) < numFeat + 1:
+        tmp = float(sum(c[A])) / float(len(A))
 
-    while float(sum(c[A]))/float(len(A)) >= 1e-9 and len(A) < numFeat+1:
-        tmp = float(sum(c[A]))/float(len(A))
-
-
-        s = np.ones((len(A),1))
+        s = np.ones((len(A), 1))
         #w = np.linalg.solve(np.dot(X[:,A].transpose(),X[:,A])+1e-10*np.eye(len(A)),s)
-        w = np.dot(np.linalg.pinv(np.dot(X[:,A].transpose(),X[:,A])),s)
-        XtXw = np.dot(X.transpose(),np.dot(X[:,A],w))
+        w = np.dot(np.linalg.pinv(np.dot(X[:, A].transpose(), X[:, A])), s)
+        XtXw = np.dot(X.transpose(), np.dot(X[:, A], w))
 
-        gamma1 = (C - c[I])/(XtXw[A[0]] - XtXw[I])
-        gamma2 = -beta[A]/(w + 1e-10)
-        gamma3 = np.zeros((1,1))
-        gamma3[0] = c[A[0]]/(XtXw[A[0]] + 1e-10)
-        gamma = np.concatenate((np.concatenate((gamma1,gamma2)),gamma3))
+        gamma1 = (C - c[I]) / (XtXw[A[0]] - XtXw[I])
+        gamma2 = -beta[A] / (w + 1e-10)
+        gamma3 = np.zeros((1, 1))
+        gamma3[0] = c[A[0]] / (XtXw[A[0]] + 1e-10)
+        gamma = np.concatenate((np.concatenate((gamma1, gamma2)), gamma3))
 
         gamma[gamma <= 1e-9] = np.inf
         t = gamma.argmin()
         mu = min(gamma)
 
-        beta[A] = beta[A] + mu*w
+        beta[A] = beta[A] + mu * w
 
         if t > len(gamma1) and t < (len(gamma1) + len(gamma2) + 1):
             lassocond = 1
@@ -129,29 +128,28 @@ def hsiclasso(Xin,Yin,numFeat=10,ykernel='Gauss'):
         else:
             lassocond = 0
 
-        XtXbeta = np.dot(X.transpose(),np.dot(X,beta))
+        XtXbeta = np.dot(X.transpose(), np.dot(X, beta))
         c = Xty - XtXbeta
         j = np.argmax(c[I])
         C = max(c[I])
 
         k += 1
         if inc_path:
-            path[:,k] = beta.transpose()
+            path[:, k] = beta.transpose()
 
             if len(C) == 0:
                 lam[k] = 0
             else:
-                lam[0,k] = C[0]
-        #print mu,t,len(I)
+                lam[0, k] = C[0]
+        # print mu,t,len(I)
         if lassocond is 0:
             A.append(I[j])
             I.remove(I[j])
 
-        #print tmp
+        # print tmp
 
     if inc_path:
-        path_final = path[:,0:(k+1)]
-        lam_final = lam[0:(k+1)]
+        path_final = path[:, 0:(k + 1)]
+        lam_final = lam[0:(k + 1)]
 
-    return path_final,beta,A,lam_final
-
+    return path_final, beta, A, lam_final
