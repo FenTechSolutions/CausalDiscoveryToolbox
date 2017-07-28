@@ -6,9 +6,9 @@ from sklearn.svm import SVR
 from sklearn.svm import LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 from skrebate import ReliefF
-from HSICLasso import *
+from .HSICLasso import *
 import numpy as np
-
+from sklearn.linear_model import ARDRegression
 
 class RandomizedLasso_model(FeatureSelectionModel):
     """ RandomizedLasso from scikit-learn
@@ -92,11 +92,7 @@ class decisionTree_regressor(FeatureSelectionModel):
         return regressor.feature_importances_
 
 
-
-
 class ARD_Regression(FeatureSelectionModel):
-    """ RandomizedLasso from scikit-learn
-    """
 
     def __init__(self):
         super(ARD_Regression, self).__init__()
@@ -113,8 +109,7 @@ class ARD_Regression(FeatureSelectionModel):
 
 
 class RRelief(FeatureSelectionModel):
-    """ RandomizedLasso from scikit-learn
-    """
+
 
     def __init__(self):
         super(RRelief, self).__init__()
@@ -131,8 +126,6 @@ class RRelief(FeatureSelectionModel):
 
 
 class HSICLasso(FeatureSelectionModel):
-    """ RandomizedLasso from scikit-learn
-    """
 
     def __init__(self):
         super(HSICLasso, self).__init__()
@@ -142,7 +135,7 @@ class HSICLasso(FeatureSelectionModel):
         X = np.transpose(df_features.as_matrix())
         y = np.transpose(df_target.as_matrix())
 
-        path, beta, A, lam = hsiclasso(Xin, Yin, numFeat=5)
+        path, beta, A, lam = hsiclasso(X, y, numFeat=5)
 
         return beta
 

@@ -8,6 +8,7 @@ Date : 10/05/2017
 import tensorflow as tf
 import numpy as np
 from ...utils.Loss import MMD_loss_tf as MMD_tf
+from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
 from ...utils.Loss import MMD_loss_th as MMD_th
 from ...utils.Settings import SETTINGS
 from joblib import Parallel, delayed
@@ -37,10 +38,15 @@ class GNN_tf(object):
         :param pair: for log purposes (optional)
         :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
         :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
+        :param kwargs: use_Fast_MMD=(SETTINGS.use_Fast_MMD) use fast MMD option
+        :param kwargs: nb_vectors_approx_MMD=(SETTINGS.nb_vectors_approx_MMD) nb vectors
         """
 
         h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
         learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
+        use_Fast_MMD = kwargs.get('use_Fast_MMD', SETTINGS.use_Fast_MMD)
+        nb_vectors_approx_MMD = kwargs.get('nb_vectors_approx_MMD', SETTINGS.nb_vectors_approx_MMD)
+
         self.run = run
         self.pair = pair
         self.X = tf.placeholder(tf.float32, shape=[None, 1])
@@ -69,7 +75,11 @@ class GNN_tf(object):
         hid = tf.nn.relu(tf.matmul(tf.concat([out_x, e], 1), W_in) + b_in)
         out_y = tf.matmul(hid, W_out) + b_out
 
-        self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1))
+        if(use_Fast_MMD):
+            self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1), nb_vectors_approx_MMD)
+        else:
+            self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1))
+
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=learning_rate)
                                   .minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
 

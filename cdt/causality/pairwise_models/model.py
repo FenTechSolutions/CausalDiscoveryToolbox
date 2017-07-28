@@ -27,7 +27,7 @@ class Pairwise_Model(object):
         """
         raise NotImplementedError
 
-    def predict_dataset(self, x, printout=False):
+    def predict_dataset(self, x):
         """ Causal prediction of a pairwise dataset (x,y)
 
         :param x: Pairwise dataset
@@ -42,7 +42,7 @@ class Pairwise_Model(object):
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
             pred.append(self.predict_proba(a, b))
-            if printout:
+
                 
         return pred
 

@@ -21,13 +21,14 @@ class DefaultSettings(object):
                  "regul_param",
                  "threshold_UMG",
                  "nb_epoch_train_feature_selection",
-                 "nb_epoch_eval_weights",)
+                 "nb_epoch_eval_weights",
+                 "use_Fast_MMD")
 
     def __init__(self):  # Define here the default values of the parameters
-        self.NB_RUNS = 24
+        self.NB_RUNS = 30
         self.NB_JOBS = 2
-        self.GPU = False
-        self.NB_GPU = 1
+        self.GPU = True
+        self.NB_GPU = 2
         self.GPU_OFFSET = 0
         self.learning_rate = 0.01
         self.init_weights = 0.05
@@ -36,7 +37,8 @@ class DefaultSettings(object):
         self.h_layer_dim = 20
         self.train_epochs = 1000
         self.test_epochs = 500
-        self.nb_vectors_approx_MMD = 500
+        self.use_Fast_MMD = False
+        self.nb_vectors_approx_MMD = 100
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1

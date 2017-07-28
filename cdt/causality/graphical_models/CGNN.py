@@ -15,8 +15,9 @@ import numpy as np
 from copy import deepcopy
 from .model import GraphModel
 from ..pairwise_models.GNN import GNN
-from ...utils.Loss import MMD_loss_tf, MMD_loss_th
+from ...utils.Loss import MMD_loss_tf, MMD_loss_th,Fourier_MMD_Loss_tf
 from ...utils.Settings import SETTINGS
+
 
 
 def init(size, **kwargs):
@@ -40,9 +41,14 @@ class CGNN_tf(object):
         :param idx: number of the idx (only for print)
         :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
         :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
+        :param kwargs: use_Fast_MMD=(SETTINGS.use_Fast_MMD) use fast MMD option
+        :param kwargs: nb_vectors_approx_MMD=(SETTINGS.nb_vectors_approx_MMD) nb vectors
         """
         learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
         h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
+        use_Fast_MMD = kwargs.get('use_Fast_MMD', SETTINGS.use_Fast_MMD)
+        nb_vectors_approx_MMD = kwargs.get('nb_vectors_approx_MMD', SETTINGS.nb_vectors_approx_MMD)
+
         self.run = run
         self.idx = idx
         list_nodes = graph.get_list_nodes()
@@ -82,7 +88,10 @@ class CGNN_tf(object):
 
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
-        self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables)
+        if(use_Fast_MMD):
+            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD)
+        else:
+            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
