@@ -8,6 +8,8 @@ Date : 09/5/17
 import tensorflow as tf
 import torch as th
 from torch.autograd import Variable
+from pandas import DataFrame
+from sklearn.preprocessing import scale
 import warnings
 from joblib import Parallel, delayed
 import sys
@@ -469,6 +471,7 @@ class CGNN(GraphModel):
         :param log: Save logs of the execution
         :return: improved directed acyclic graph
         """
+        data = DataFrame(scale(data.as_matrix()), columns=data.columns)
         alg_dic = {'HC': hill_climbing, 'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
         return alg_dic[alg](dag, data, self.infer_graph, **kwargs)
 
