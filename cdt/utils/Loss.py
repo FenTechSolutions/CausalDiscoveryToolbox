@@ -116,6 +116,103 @@ class MMD_loss_th(th.nn.Module):
         return lossMMD.sqrt()
 
 
+def MMD_Fourrier_loss_tf(xy_true, xy_pred):
+
+    N, nDim = xy_pred.get_shape().as_list()
+
+    nBasis = 1000
+
+    k0 = 1
+
+    W = tf.random_normal([nBasis, nDim], mean=0, stddev=1)
+
+    tx = tf.matmul(W, tf.transpose(xy_true))
+    ty = tf.matmul(W, tf.transpose(xy_pred))
+
+    loss = 0
+
+    for kk in range(len(bandwiths_sigma)):
+
+        sgm = bandwiths_sigma[kk];
+        t1 = tx / sgm;
+        t2 = tf.concat([tf.cos(t1), tf.sin(t1)],0)
+
+        phiPos = tf.reduce_sum(t2, axis=1)
+
+        t1 = ty / sgm;
+        t2 = tf.concat([tf.cos(t1), tf.sin(t1)], 0)
+        phiNeg = tf.reduce_sum(t2, axis=1)
+
+        phiPos = phiPos / N / np.sqrt(nBasis)
+        phiNeg = phiNeg / N / np.sqrt(nBasis)
+
+        # t = tf.reduce_sum((phiPos - phiNeg) ** 2) + tf.reduce_sum(phiPos ** 2) / (N - 1) + tf.reduce_sum(phiNeg ** 2) / (
+        # N - 1) - k0 * (N + N - 2) / (N - 1) / (N - 1)
+
+        t = tf.reduce_sum((phiPos - phiNeg) ** 2) + tf.reduce_sum(phiPos ** 2) / (N - 1) + tf.reduce_sum(phiNeg ** 2) / (
+        N - 1)
+
+        # loss += tf.sqrt((tf.maximum(t, 0)))
+        loss += tf.sqrt(t)
+
+    return loss
+
+
+def rp(k,s,d):
+
+  return tf.transpose(tf.concat([tf.concat([si*tf.random_normal([k,d], mean=0, stddev=1) for si in s], axis = 0), 2*np.pi*tf.random_normal([k*len(s),1], mean=0, stddev=1)], axis = 1))
+
+def f1(x,wz,N):
+
+  ones = tf.ones((N, 1))
+  x_ones = tf.concat([x, ones], axis = 1)
+  mult = tf.matmul(x_ones,wz)
+
+  return tf.cos(mult)
+
+def David_MMD_Loss_tf(xy_true, xy_pred):
+
+  N, nDim = xy_pred.get_shape().as_list()
+
+  Ka = 100
+
+  wz = rp(Ka, bandwiths_sigma, nDim)
+
+  e1 = tf.reduce_mean(f1(xy_true,wz,N), axis =0)
+  e2 = tf.reduce_mean(f1(xy_pred,wz,N), axis =0)
+
+  return tf.reduce_mean((e1 - e2)**2)
+
+
+def MMD_Linear_loss_tf(x, y):
+
+    N_, nDim = y.get_shape().as_list()
+
+    N = int(N_/2)
+
+    idx_pair = [2*i  for i in range(N)]
+    idx_impair = [2*i +1 for i in range(N)]
+
+    xx = tf.gather(x,idx_pair) - tf.gather(x,idx_impair)
+    yy = tf.gather(y,idx_pair) - tf.gather(y,idx_impair)
+    xy = tf.gather(x, idx_pair) - tf.gather(y, idx_impair)
+    yx = tf.gather(x, idx_impair) - tf.gather(y, idx_pair)
+
+    loss = 0
+
+    for nSg in bandwiths_sigma:
+
+        exp_xx = tf.exp(-tf.reduce_sum(xx**2, axis=1)*nSg)
+        exp_yy = tf.exp(-tf.reduce_sum(yy**2, axis=1)*nSg)
+        exp_xy = tf.exp(-tf.reduce_sum(xy**2, axis=1)*nSg)
+        exp_yx = tf.exp(-tf.reduce_sum(yx**2, axis=1)*nSg)
+
+        d = tf.reduce_sum(exp_xx + exp_yy - exp_xy - exp_yx, axis=0)
+        loss += tf.sqrt(tf.maximum(d,0))
+
+    return loss
+
+
 def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment = 1):
     """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
 
