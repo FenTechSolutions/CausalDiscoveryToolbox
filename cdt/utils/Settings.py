@@ -36,6 +36,7 @@ class DefaultSettings(object):
         self.h_layer_dim = 20
         self.train_epochs = 1000
         self.test_epochs = 500
+        self.nb_vectors_approx_MMD = 500
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1
