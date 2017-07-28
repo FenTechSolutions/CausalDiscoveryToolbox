@@ -149,6 +149,7 @@ class CGNN_tf(object):
         tf.reset_default_graph()
         return np.array(generated_variables)[0, :, :]
 
+
 def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
@@ -213,7 +214,6 @@ class CGNN_th(th.nn.Module):
                     self.graph_variables.append(var)
                     self.add_module('linear_{}_in'.format(var), th.nn.Linear(len(par) + 1, h_layer_dim))
                     self.add_module('linear_{}_out'.format(var), th.nn.Linear(h_layer_dim, 1))
-
 
     def forward(self):
         """ Pass through the generative network
@@ -359,6 +359,81 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     return graph
 
 
+def exploratory_hill_climbing(graph, data, run_cgnn_function, **kwargs):
+    """ Optimize graph using CGNN with a hill-climbing algorithm
+
+    :param graph: graph to optimize
+    :param data: data
+    :param run_cgnn_function: name of the CGNN function (depending on the backend)
+    :param kwargs: nb_jobs=(SETTINGS.NB_JOBS) number of jobs
+    :param kwargs: nb_runs=(SETTINGS.NB_RUNS) number of runs, of different evaluations
+    :return: improved graph
+    """
+    nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
+    nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
+
+    nb_loops = 150
+    exploration_factor = 10  # Average of number of edges to reverse at the beginning.
+    assert exploration_factor < len(graph.get_list_edges())
+
+    loop = 0
+    tested_configurations = [graph.get_dict_nw()]
+    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+        data, graph, 0, run, **kwargs) for run in range(nb_runs))
+
+    score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
+    globalscore = score_network
+
+    print("Graph score : " + str(globalscore))
+
+    while loop < nb_loops:
+        loop += 1
+        list_edges = graph.get_list_edges()
+
+        possible_solution=False
+        while not possible_solution:
+            test_graph = deepcopy(graph)
+            selected_edges = np.random.choice(len(list_edges),
+                                              max(int(exploration_factor * ((nb_loops-loop)/nb_loops)**2), 1))
+            for edge in list_edges[selected_edges]:
+                test_graph.reverse_edge()
+            if not (test_graph.is_cyclic()
+                    or test_graph.get_dict_nw() in tested_configurations):
+                possible_solution = True
+
+            print('Reversed Edges {} in evaluation :'.format(list_edges[selected_edges]))
+            tested_configurations.append(test_graph.get_dict_nw())
+            result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+                data, test_graph, loop, run, **kwargs) for run in range(nb_runs))
+
+            score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
+
+            print("Current score : " + str(score_network))
+            print("Best score : " + str(globalscore))
+
+            if score_network < globalscore:
+                graph.reverse_edge(edge[0], edge[1])
+                print('Edge {} got reversed !'.format(list_edges[selected_edges]))
+                globalscore = score_network
+
+    return graph
+
+
+def tabu_search(graph, data, run_cgnn_function, **kwargs):
+    """ Optimize graph using CGNN with a hill-climbing algorithm
+
+    :param graph: graph to optimize
+    :param data: data
+    :param run_cgnn_function: name of the CGNN function (depending on the backend)
+    :param kwargs: nb_jobs=(SETTINGS.NB_JOBS) number of jobs
+    :param kwargs: nb_runs=(SETTINGS.NB_RUNS) number of runs, of different evaluations
+    :return: improved graph
+    """
+    nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
+    nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
+    raise ValueError('Not Yet Implemented')
+
+
 class CGNN(GraphModel):
     """
     CGNN Model ; Using generative models, generate the whole causal graph and improve causal
@@ -394,7 +469,7 @@ class CGNN(GraphModel):
         :param log: Save logs of the execution
         :return: improved directed acyclic graph
         """
-        alg_dic = {'HC': hill_climbing}
+        alg_dic = {'HC': hill_climbing, 'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
         return alg_dic[alg](dag, data, self.infer_graph, **kwargs)
 
     def orient_undirected_graph(self, data, umg, **kwargs):
