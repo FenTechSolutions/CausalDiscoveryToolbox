@@ -1,7 +1,7 @@
 __author__ = 'makotoy'
 
 import numpy as np
-from kernel_tools import *
+from .kernel_tools import *
 
 #We used the Nonnegative LARS solver
 #http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/5523/zip/imm5523.zip

@@ -6,7 +6,7 @@ from sklearn.svm import SVR
 from sklearn.svm import LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 from skrebate import ReliefF
-from HSICLasso import *
+from .HSICLasso import *
 import numpy as np
 
 
