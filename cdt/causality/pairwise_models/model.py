@@ -12,6 +12,7 @@ class Pairwise_Model(object):
 
     Usage for undirected/directed graphs and CEPC df format.
     """
+
     def __init__(self):
         """ Init. """
         super(Pairwise_Model, self).__init__()
@@ -42,7 +43,7 @@ class Pairwise_Model(object):
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
             pred.append(self.predict_proba(a, b))
-                
+
         return pred
 
     def orient_graph(self, df_data, umg):
@@ -60,14 +61,11 @@ class Pairwise_Model(object):
 
         for edge in edges:
             a, b, c = edge
-            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()))
+            weight = self.predict_proba(
+                scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()))
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
             else:
                 graph.add(b, a, abs(weight))
         graph.remove_cycles()
         return graph
-
-
-
-
