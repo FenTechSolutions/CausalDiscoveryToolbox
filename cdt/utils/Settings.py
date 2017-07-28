@@ -22,7 +22,8 @@ class DefaultSettings(object):
                  "threshold_UMG",
                  "nb_epoch_train_feature_selection",
                  "nb_epoch_eval_weights",
-                 "use_Fast_MMD")
+                 "use_Fast_MMD",
+                 "nb_vectors_approx_MMD")
 
     def __init__(self):  # Define here the default values of the parameters
         self.NB_RUNS = 30
