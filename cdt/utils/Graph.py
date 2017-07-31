@@ -296,7 +296,7 @@ class DirectedGraph(Graph):
         The edges with the lowest weight values will be reversed or deleted.
         """
 
-        list_ordered_edges = self.get_list_edges()
+        list_ordered_edges = self.get_list_edges(return_weights=False)
         while self.is_cyclic():
             cc = self.cycles()
             # Select the first link:

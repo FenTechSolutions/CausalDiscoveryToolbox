@@ -310,7 +310,7 @@ class GNN(Pairwise_Model):
         super(GNN, self).__init__()
         self.backend = backend
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, a, b,idx=0, **kwargs):
 
         backend_alg_dic = {"PyTorch": th_run_instance, "TensorFlow": tf_run_instance}
         if len(np.array(a).shape) == 1:
@@ -323,9 +323,10 @@ class GNN(Pairwise_Model):
         m = m.astype('float32')
 
         result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
-            m, 0, run, **kwargs) for run in range(nb_runs))
+            m, idx, run, **kwargs) for run in range(nb_runs))
 
         score_AB = np.mean([runpair[0] for runpair in result_pair])
         score_BA = np.mean([runpair[1] for runpair in result_pair])
+
 
         return (score_BA - score_AB) / (score_BA + score_AB)

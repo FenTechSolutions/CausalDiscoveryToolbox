@@ -18,7 +18,7 @@ class Pairwise_Model(object):
         """ Init. """
         super(Pairwise_Model, self).__init__()
 
-    def predict_proba(self, a, b):
+    def predict_proba(self, a, b, idx=0):
         """ Prediction method for pairwise causal inference.
         predict is meant to be overridden in all subclasses
 
@@ -42,15 +42,16 @@ class Pairwise_Model(object):
         pred = []
         res = []
         for idx, row in x.iterrows():
-            a = scale(row['A'].reshape((len(row['A']), 1)))
-            b = scale(row['B'].reshape((len(row['B']), 1)))
 
-            pred.append(self.predict_proba(a, b))
+                a = scale(row['A'].reshape((len(row['A']), 1)))
+                b = scale(row['B'].reshape((len(row['B']), 1)))
 
-            if printout is not None:
-                res.append([row['SampleID'], pred[-1]])
-                DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
-                    printout, index=False)
+                pred.append(self.predict_proba(a, b,idx))
+
+                if printout is not None:
+                    res.append([row['SampleID'], pred[-1]])
+                    DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
+                        printout, index=False)
         return pred
 
     def orient_graph(self, df_data, umg, printout=None):
@@ -67,10 +68,11 @@ class Pairwise_Model(object):
         edges = umg.get_list_edges()
         graph = DirectedGraph()
         res = []
+        idx = 0
+
         for edge in edges:
             a, b, c = edge
-            weight = self.predict_proba(
-                scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()))
+            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()),idx)
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
             else:
@@ -79,5 +81,8 @@ class Pairwise_Model(object):
                 res.append([str(a) + '-' + str(b), weight])
                 DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
                     printout, index=False)
+
+            idx += 1
+
         graph.remove_cycles()
         return graph
