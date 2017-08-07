@@ -68,9 +68,10 @@ In order to do that, some types might have to be implemented:
 
 Including all R packages
 
-**The Matlab software base might have to be ported to python**
+**~~The Matlab software base might have to be ported to python~~** 
+(Too much dependencies already introduced + Not having to pay )
 
-The bnlearn package might be used using an R wrapper (rpy2?)
+The bnlearn package might be used using an R wrapper (rpy2) [ToDo]
 
 **Testing hypothesis/ simplifying assumptions ?** 
 
@@ -82,6 +83,6 @@ Datasets types for simplifying assumptions and types of variables?
 
 Continous, Categorical, Binary?
 
-**Warn User of satisfiability of assumptions/ applicability of algorithms?**
+**Warn User of satisfiability of assumptions/ applicability of algorithms**
 
-**Load Pretrained models ?** 
+**Load Pretrained models** 
