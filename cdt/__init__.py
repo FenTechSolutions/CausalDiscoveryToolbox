@@ -7,7 +7,7 @@ It is CUDA-compatible for the most computationally expensive algorithms.
 import tensorflow as tf  # Required import or TensorFlow will crash with PyTorch
 from cdt.utils.Graph import DirectedGraph, UndirectedGraph
 import cdt.causality
-import cdt.independence
+#import cdt.independence
 import cdt.generators
 from cdt.utils import Loss
 from cdt.utils.Settings import SETTINGS

@@ -10,7 +10,7 @@ from joblib import Parallel, delayed
 from .model import DeconvolutionModel
 from cdt.utils.Loss import MMD_loss_tf
 from cdt.utils.Graph import *
-from cdt.utils.Settings import Settings as SETTINGS
+from ...utils.Settings import SETTINGS
 from sklearn.preprocessing import scale
 
 

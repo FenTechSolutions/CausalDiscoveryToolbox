@@ -7,7 +7,7 @@ Date : 10/05/2017
 import os
 import tensorflow as tf
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import numpy as np
 from ...utils.Loss import MMD_loss_tf as MMD_tf
