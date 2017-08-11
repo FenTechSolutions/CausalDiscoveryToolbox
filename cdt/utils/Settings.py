@@ -26,7 +26,7 @@ class DefaultSettings(object):
                  "nb_vectors_approx_MMD")
 
     def __init__(self):  # Define here the default values of the parameters
-        self.NB_RUNS = 30
+        self.NB_RUNS = 32
         self.NB_JOBS = 2
         self.GPU = True
         self.NB_GPU = 2

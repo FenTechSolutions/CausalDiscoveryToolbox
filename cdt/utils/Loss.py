@@ -9,8 +9,8 @@ import torch as th
 from torch.autograd import Variable
 import numpy as np
 
-bandwiths_sigma = [0.01, 0.1, 1, 5, 20, 50, 100]
-
+#bandwiths_sigma = [0.01, 0.1, 1, 5, 20, 50, 100]
+bandwiths_gamma = [0.01, 0.1, 0.5,1, 2, 10, 100]
 
 def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
 
@@ -43,7 +43,7 @@ def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
         sXY = -tf.constant(2.0 / N ** 2, shape=[N, 1])
 
         for i in range(len(bandwiths_sigma)):
-            kernel_val = tf.exp(1.0 / bandwiths_sigma[i] * exponentXY)
+            kernel_val = tf.exp(bandwiths_gamma[i] * exponentXY)
             loss += tf.reduce_sum(sXY * kernel_val)
 
     else:
@@ -61,7 +61,7 @@ def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
         loss = 0
 
         for i in range(len(bandwiths_sigma)):
-            kernel_val = tf.exp(1.0 / bandwiths_sigma[i] * exponent)
+            kernel_val = tf.exp(bandwiths_gamma[i] * exponent)
             loss += tf.reduce_sum(S * kernel_val)
 
     return tf.sqrt(loss)
@@ -133,7 +133,7 @@ def Fourier_MMD_Loss_tf(xy_true, xy_pred,nb_vectors_approx_MMD):
 
   N, nDim = xy_pred.get_shape().as_list()
 
-  wz = rp(nb_vectors_approx_MMD, bandwiths_sigma, nDim)
+  wz = rp(nb_vectors_approx_MMD, bandwiths_gamma, nDim)
 
   e1 = tf.reduce_mean(f1(xy_true,wz,N), axis =0)
   e2 = tf.reduce_mean(f1(xy_pred,wz,N), axis =0)

@@ -4,8 +4,11 @@ Authors : Olivier Goudet & Diviyan Kalainathan
 Ref:
 Date : 10/05/2017
 """
-
+import os
 import tensorflow as tf
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import numpy as np
 from ...utils.Loss import MMD_loss_tf as MMD_tf
 from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
@@ -16,7 +19,7 @@ from sklearn.preprocessing import scale
 import torch as th
 from torch.autograd import Variable
 from .model import Pairwise_Model
-
+import pandas as pd
 
 def init(size, **kwargs):
     """ Initialize a random tensor, normal(0,kwargs(SETTINGS.init_weights)).
@@ -52,33 +55,39 @@ class GNN_tf(object):
         self.X = tf.placeholder(tf.float32, shape=[None, 1])
         self.Y = tf.placeholder(tf.float32, shape=[None, 1])
 
-        Ws_in = tf.Variable(init([1, h_layer_dim], **kwargs))
-        bs_in = tf.Variable(init([h_layer_dim], **kwargs))
-        Ws_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
-        bs_out = tf.Variable(init([1], **kwargs))
+        #Ws_in = tf.Variable(init([1, h_layer_dim], **kwargs))
+        #bs_in = tf.Variable(init([h_layer_dim], **kwargs))
+        #Ws_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
+        #bs_out = tf.Variable(init([1], **kwargs))
 
         W_in = tf.Variable(init([2, h_layer_dim], **kwargs))
         b_in = tf.Variable(init([h_layer_dim], **kwargs))
         W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
         b_out = tf.Variable(init([1], **kwargs))
 
+        #theta_G = [W_in, b_in,
+        #           W_out, b_out,
+        #           Ws_in, bs_in,
+        #           Ws_out, bs_out]
+
         theta_G = [W_in, b_in,
-                   W_out, b_out,
-                   Ws_in, bs_in,
-                   Ws_out, bs_out]
+                   W_out, b_out]
 
-        es = tf.random_normal([N, 1], mean=0, stddev=1)
+
+        #es = tf.random_normal([N, 1], mean=0, stddev=1)
+        #
+        #out_x = tf.nn.relu(tf.matmul(es, Ws_in) + bs_in)
+        #out_x = tf.matmul(out_x, Ws_out) + bs_out
+
         e = tf.random_normal([N, 1], mean=0, stddev=1)
-        out_x = tf.nn.relu(tf.matmul(es, Ws_in) + bs_in)
-        out_x = tf.matmul(out_x, Ws_out) + bs_out
 
-        hid = tf.nn.relu(tf.matmul(tf.concat([out_x, e], 1), W_in) + b_in)
+        hid = tf.nn.relu(tf.matmul(tf.concat([self.X, e], 1), W_in) + b_in)
         out_y = tf.matmul(hid, W_out) + b_out
 
         if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1), nb_vectors_approx_MMD)
+            self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1), nb_vectors_approx_MMD)
         else:
-            self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1))
+            self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1))
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=learning_rate)
                                   .minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
@@ -155,6 +164,13 @@ def tf_run_instance(m, idx, run, **kwargs):
     gpu = kwargs.get('gpu', SETTINGS.GPU)
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
+
+    if (m.shape[0] > 1500):
+
+        p = np.random.permutation(m.shape[0])
+        m = m[p[:int(1500)],:]
+ 
+
 
     run_i = run
     if gpu:
@@ -300,6 +316,7 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
     return [XY, YX]
 
 
+
 class GNN(Pairwise_Model):
     """
     Shallow Generative Neural networks, models the causal directions x->y and y->x with a 1-hidden layer neural network
@@ -321,12 +338,20 @@ class GNN(Pairwise_Model):
         nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
         m = np.hstack((a, b))
         m = m.astype('float32')
+        
 
         result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
             m, idx, run, **kwargs) for run in range(nb_runs))
-
+     
         score_AB = np.mean([runpair[0] for runpair in result_pair])
         score_BA = np.mean([runpair[1] for runpair in result_pair])
+        
+        for runpair in result_pair:
+            print(runpair[0])
+        print(score_AB)
 
+        for runpair in result_pair:
+            print(runpair[1])
+        print(score_BA)
 
         return (score_BA - score_AB) / (score_BA + score_AB)
