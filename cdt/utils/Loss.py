@@ -25,7 +25,7 @@ def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
         exponentXX = XX - 0.5 * X2 - 0.5 * tf.transpose(X2)
         sXX = tf.constant(1.0 / N ** 2, shape=[N, 1])
 
-        for i in range(len(bandwiths_sigma)):
+        for i in range(len(bandwiths_gamma)):
             kernel_val = tf.exp(1.0 / bandwiths_gamma[i] * exponentXX)
             loss += tf.reduce_sum(sXX * kernel_val)
 
@@ -34,7 +34,7 @@ def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
         exponentYY = YY - 0.5 * Y2 - 0.5 * tf.transpose(Y2)
         sYY = tf.constant(1.0 / N ** 2, shape=[N, 1])
 
-        for i in range(len(bandwiths_sigma)):
+        for i in range(len(bandwiths_gamma)):
             kernel_val = tf.exp(1.0 / bandwiths_gamma[i] * exponentYY)
             loss += tf.reduce_sum(sYY * kernel_val)
 
@@ -42,7 +42,7 @@ def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
         exponentXY = XY - 0.5 * X2 - 0.5 * tf.transpose(Y2)
         sXY = -tf.constant(2.0 / N ** 2, shape=[N, 1])
 
-        for i in range(len(bandwiths_sigma)):
+        for i in range(len(bandwiths_gamma)):
             kernel_val = tf.exp(bandwiths_gamma[i] * exponentXY)
             loss += tf.reduce_sum(sXY * kernel_val)
 
@@ -60,7 +60,7 @@ def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
 
         loss = 0
 
-        for i in range(len(bandwiths_sigma)):
+        for i in range(len(bandwiths_gamma)):
             kernel_val = tf.exp(bandwiths_gamma[i] * exponent)
             loss += tf.reduce_sum(S * kernel_val)
 
