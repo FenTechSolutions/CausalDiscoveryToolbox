@@ -320,6 +320,36 @@ class DirectedGraph(Graph):
                 if verbose:
                     print('Link {} got deleted !'.format(r_edge))
 
+    def remove_cycle_without_deletion(self):
+        """
+        Return True if the directed graph g has a cycle.
+        g must be represented as a dictionary mapping vertices to
+        iterables of neighbouring vertices.
+
+        :return: True if the directed graph is cyclic
+        :rtype: bool
+        """
+        g = self.get_dict_nw()
+        print(g)
+        path = set()
+        visited = set()
+
+        def visit(vertex):
+            if vertex in visited:
+                return False
+            visited.add(vertex)
+            path.add(vertex)
+            for neighbour in g.get(vertex, ()):
+                if neighbour in path :    
+                    self.reverse_edge(vertex, neighbour)
+                else :
+                    visit(neighbour)
+            path.remove(vertex)
+      
+        for v in g:
+            visit(v)
+
+
 
 class UndirectedGraph(Graph):
     """ Graph data structure, undirected. """

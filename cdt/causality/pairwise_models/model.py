@@ -84,5 +84,6 @@ class Pairwise_Model(object):
 
             idx += 1
 
-        graph.remove_cycles()
+        #graph.remove_cycles()
+        graph.remove_cycle_without_deletion()
         return graph
