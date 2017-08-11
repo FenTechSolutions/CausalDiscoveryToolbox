@@ -12,6 +12,7 @@ import pandas
 import numpy as np
 from .model import Pairwise_Model
 
+
 def rp(k, s, d):
     return np.hstack((np.vstack([si * np.random.randn(k, d) for si in s]),
                       2 * np.pi * np.random.rand(k * len(s), 1))).T
