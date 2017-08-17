@@ -84,6 +84,41 @@ class Pairwise_Model(object):
 
             idx += 1
 
-        #graph.remove_cycles()
         graph.remove_cycle_without_deletion()
+
+        return graph
+
+    def orient_graph_confounders(self, df_data, umg, printout=None):
+        """ Orient an undirected graph using the pairwise method defined by the subclass
+        Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
+
+        :param df_data: dataset
+        :param umg: UndirectedGraph
+        :param printout: print regularly predictions
+        :return: Directed graph w/ weights
+        :rtype: DirectedGraph
+        """
+
+        edges = umg.get_list_edges_without_duplicate()
+        graph = DirectedGraph(skeleton = umg)
+        res = []
+        idx = 0
+
+
+        for edge in edges:
+            a, b = edge
+            #weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()),idx)
+            weight = 1
+            if weight > 0:  # a causes b
+                graph.add(a, b, weight)
+            else:
+                graph.add(b, a, abs(weight))
+            if printout is not None:
+                res.append([str(a) + '-' + str(b), weight])
+                DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
+                    printout, index=False)
+
+            idx += 1
+
+        graph.remove_cycles()
         return graph

@@ -23,7 +23,9 @@ class DefaultSettings(object):
                  "nb_epoch_train_feature_selection",
                  "nb_epoch_eval_weights",
                  "use_Fast_MMD",
-                 "nb_vectors_approx_MMD")
+                 "nb_vectors_approx_MMD",
+                 "complexity_graph_param",
+                 "model_confounder")
 
     def __init__(self):  # Define here the default values of the parameters
         self.NB_RUNS = 32
@@ -40,6 +42,8 @@ class DefaultSettings(object):
         self.test_epochs = 500
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
+        self.complexity_graph_param = 0.0007
+        self.model_confounder = 1
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1
