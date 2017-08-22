@@ -261,13 +261,17 @@ def run_CGNN_confounders_tf(df_data, graph, idx=0, run=0, **kwargs):
 
     data = df_data.astype('float32')
 
+    if (data.shape[0] > SETTINGS.max_nb_points):
+        p = np.random.permutation(data .shape[0])
+        data  = data[p[:int(SETTINGS.max_nb_points)],:]
+
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
-            model = CGNN_confounders_tf(df_data.shape[0], graph, run, idx, **kwargs)
+            model = CGNN_confounders_tf(data.shape[0], graph, run, idx, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN_confounders_tf(df_data.shape[0], graph, run, idx, **kwargs)
+        model = CGNN_confounders_tf(data, graph, run, idx, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 

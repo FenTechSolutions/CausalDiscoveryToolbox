@@ -181,13 +181,17 @@ def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
 
+    if (data.shape[0] > SETTINGS.max_nb_points):
+        p = np.random.permutation(data.shape[0])
+        data  = data[p[:int(SETTINGS.max_nb_points)],:]
+
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
-            model = CGNN_tf(df_data.shape[0], graph, run, idx, **kwargs)
+            model = CGNN_tf(data.shape[0], graph, run, idx, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN_tf(df_data.shape[0], graph, run, idx, **kwargs)
+        model = CGNN_tf(data.shape[0], graph, run, idx, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 
@@ -366,6 +370,12 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                     improvement = True
                     print('Edge {} got reversed !'.format(edge))
                     globalscore = score_network
+
+                df_edge_result = pd.DataFrame(graph.tolist(),
+                                              columns=['Cause', 'Effect',
+                                                       'Weight'])
+                df_edge_result.to_csv('results/' + name_algo + dataset_name +
+                                      '-loop{}.csv'.format(loop), index=False)
 
     return graph
 

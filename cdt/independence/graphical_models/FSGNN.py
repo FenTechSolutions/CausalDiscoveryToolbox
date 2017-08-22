@@ -43,7 +43,7 @@ def eval_feature_selection_score(df_data, target, verbose=False):
     target_variable = tf.placeholder(tf.float32, shape=[None, 1])
 
     W_in = tf.Variable(init([n_features, SETTINGS.h_layer_dim]))
-    W_noise = tf.Variable(init([1, SETTINGS.h_dim]))
+    W_noise = tf.Variable(init([1, SETTINGS.h_layer_dim]))
     W_input = tf.concat([W_in, W_noise], 0)
 
     b_in = tf.Variable(init([SETTINGS.h_layer_dim]))

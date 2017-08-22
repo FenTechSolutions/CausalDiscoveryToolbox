@@ -165,10 +165,10 @@ def tf_run_instance(m, idx, run, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    if (m.shape[0] > 1500):
+    if (m.shape[0] > SETTINGS.max_nb_points):
 
         p = np.random.permutation(m.shape[0])
-        m = m[p[:int(1500)],:]
+        m = m[p[:int(SETTINGS.max_nb_points)],:]
  
 
 

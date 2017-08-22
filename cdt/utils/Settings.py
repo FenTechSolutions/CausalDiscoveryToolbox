@@ -25,7 +25,8 @@ class DefaultSettings(object):
                  "use_Fast_MMD",
                  "nb_vectors_approx_MMD",
                  "complexity_graph_param",
-                 "model_confounder")
+                 "model_confounder",
+		 "max_nb_points")
 
     def __init__(self):  # Define here the default values of the parameters
         self.NB_RUNS = 32
@@ -35,6 +36,7 @@ class DefaultSettings(object):
         self.GPU_OFFSET = 0
         self.learning_rate = 0.01
         self.init_weights = 0.05
+        self.max_nb_points = 1500
 
         # CGNN
         self.h_layer_dim = 20
