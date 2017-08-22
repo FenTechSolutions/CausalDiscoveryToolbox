@@ -19,7 +19,7 @@ from .model import GraphModel
 from ..pairwise_models.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, MMD_loss_th,Fourier_MMD_Loss_tf
 from ...utils.Settings import SETTINGS
-
+import pandas as pd
 
 
 def init(size, **kwargs):
