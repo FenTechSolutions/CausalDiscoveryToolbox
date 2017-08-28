@@ -61,17 +61,19 @@
 
 In order to do that, some types might have to be implemented:
 * Dependency graphs
-* Partially oriented
+* Partially oriented **[ToDo]**
 * Fully oriented (already done -see CGNN code)
+
+-> init in Dependency graphs : from partially/fully oriented graphs **[ToDo]**
 
 **Dependencies have to be easily installed**
 
 Including all R packages
 
 **~~The Matlab software base might have to be ported to python~~** 
-(Too much dependencies already introduced + Not having to pay )
+(Too much dependencies already introduced + Not having to pay for Matlab software )
 
-The bnlearn package might be used using an R wrapper (rpy2) [ToDo]
+The bnlearn package might be used using an R wrapper (rpy2) **[ToDo]**
 
 **Testing hypothesis/ simplifying assumptions ?** 
 
@@ -81,8 +83,8 @@ Datasets types for simplifying assumptions and types of variables?
 
 **Types of variables**
 
-Continous, Categorical, Binary?
+Continous, Categorical, Binary? **[ToDo] : Now only numerical is supported**
 
-**Warn User of satisfiability of assumptions/ applicability of algorithms**
+**Warn User of satisfiability of assumptions/ applicability of algorithms [Long term objective]** 
 
 **Load Pretrained models** 
