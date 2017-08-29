@@ -7,6 +7,8 @@ import pandas as pd
 from copy import deepcopy
 from ..utils.Graph import DirectedGraph
 from .generators import *
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 

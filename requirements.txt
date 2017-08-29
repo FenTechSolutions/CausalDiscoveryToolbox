@@ -1,6 +1,7 @@
 numpy
 scipy
 scikit-learn
+skrebate
 tensorflow
 pytorch
 joblib
