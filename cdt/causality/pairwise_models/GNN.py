@@ -341,7 +341,7 @@ class GNN(Pairwise_Model):
         BA = []
 
         while ttest_criterion.loop(AB, BA):
-            print(nb_runs)
+            print(ttest_criterion.p_value)
             result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
                 m, idx, run, **kwargs) for run in range(nb_runs))
             AB.extend([runpair[0] for runpair in result_pair])
