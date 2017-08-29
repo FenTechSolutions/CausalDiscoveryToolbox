@@ -198,7 +198,7 @@ class Graph(object):
 class DirectedGraph(Graph):
     """ Graph data structure, directed. """
 
-    def __init__(self, df=None, adjacency_matrix=False, skeleton = False):
+    def __init__(self, df=None, adjacency_matrix=False, skeleton=False):
         self.skeleton = skeleton
         """ Create a new directed graph structure"""
         super(DirectedGraph, self).__init__(df, adjacency_matrix)
@@ -321,7 +321,7 @@ class DirectedGraph(Graph):
                 if verbose:
                     print('Link {} got deleted !'.format(r_edge))
 
-    def remove_cycle_without_deletion(self):
+    def remove_cycles_without_deletion(self):
         """
         Return True if the directed graph g has a cycle.
         g must be represented as a dictionary mapping vertices to
@@ -343,38 +343,12 @@ class DirectedGraph(Graph):
             for neighbour in g.get(vertex, ()):
                 if neighbour in path :    
                     self.reverse_edge(vertex, neighbour)
-                else :
+                else:
                     visit(neighbour)
             path.remove(vertex)
       
         for v in g:
             visit(v)
-
-    def set_weight(self, node1, node2, weight):
-        """ Remove the edge from node1 to node2
-
-        :param node1: cause of the edge
-        :param node2: effect of the edge
-        :param weight: new weight of the edge
-        """
-        self._graph[node1][node2] = weight
-
-    def get_correlation_matrix(self, sigma):
-        nodes = self.skeleton.get_list_nodes()
-        edges = self.skeleton.get_list_edges_without_duplicate()
-        m = np.zeros((len(nodes), len(nodes)))
-
-        for idx in range(len(nodes)):
-            m[idx, idx] = 1
-
-        for idx, e in enumerate(edges):
-            cause = nodes.index(e[0])
-            effect = nodes.index(e[1])
-
-            m[cause, effect] = sigma
-            m[effect, cause] = sigma
-
-        return m
 
 
 class UndirectedGraph(Graph):
@@ -419,18 +393,32 @@ class UndirectedGraph(Graph):
         """
         return self.get_parents(node)
 
-    def get_list_edges_without_duplicate(self):
+    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
         """ Get list of edges according to order defined by parameters
-        :return: List of edges
+
+        :param order_by_weight: List of edges will be ordered by weight values
+        :param descending: order elements by decreasing weights
+        :param return_weights: return the list of weights
+        :return: List of edges and their weights
         :rtype: (list,list)"""
 
         list_edges = []
-
+        weights = []
         for i in self._graph:
             for j in list(self._graph[i]):
-                if([j, i] not in list_edges):
+                if [j, i] not in list_edges:
                     list_edges.append([i, j])
+                    weights.append(self._graph[i][j])
 
-        return list_edges
-
+        if order_by_weight and descending:
+            weights, list_edges = (list(i) for i
+                                   in zip(*sorted(zip(weights, list_edges),
+                                                  reverse=True)))
+        elif order_by_weight:
+            weights, list_edges = (list(i) for i
+                                   in zip(*sorted(zip(weights, list_edges))))
+        if return_weights:
+            return [[edge[0], edge[1], weight] for edge, weight in zip(list_edges, weights)]
+        else:
+            return list_edges
 

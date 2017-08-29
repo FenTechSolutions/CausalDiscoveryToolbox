@@ -510,7 +510,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     else:
                         #We keep the edge and its score is set to (score_network - globalscore)
                         print("Edge " + str(node1) + " -> " + str(node2) + " not removed. Score edge : " + str(score_network - globalscore))
-                        graph.set_weight(node1, node2, score_network - globalscore)
+                        graph.add(node1, node2, score_network - globalscore)
 
 
             ### Eval if a suppressed edge need to be restored

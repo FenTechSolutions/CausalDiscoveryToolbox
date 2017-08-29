@@ -4,22 +4,21 @@ Authors : Olivier Goudet & Diviyan Kalainathan
 Ref:
 Date : 10/05/2017
 """
-import os
 import tensorflow as tf
-
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 import numpy as np
 from ...utils.Loss import MMD_loss_tf as MMD_tf
 from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
 from ...utils.Loss import MMD_loss_th as MMD_th
+from ...utils.Loss import TTestCriterion
+from ...utils.Graph import DirectedGraph
 from ...utils.Settings import SETTINGS
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 import torch as th
 from torch.autograd import Variable
 from .model import Pairwise_Model
-import pandas as pd
+from pandas import DataFrame
+
 
 def init(size, **kwargs):
     """ Initialize a random tensor, normal(0,kwargs(SETTINGS.init_weights)).
@@ -55,17 +54,17 @@ class GNN_tf(object):
         self.X = tf.placeholder(tf.float32, shape=[None, 1])
         self.Y = tf.placeholder(tf.float32, shape=[None, 1])
 
-        #Ws_in = tf.Variable(init([1, h_layer_dim], **kwargs))
-        #bs_in = tf.Variable(init([h_layer_dim], **kwargs))
-        #Ws_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
-        #bs_out = tf.Variable(init([1], **kwargs))
+        # Ws_in = tf.Variable(init([1, h_layer_dim], **kwargs))
+        # bs_in = tf.Variable(init([h_layer_dim], **kwargs))
+        # Ws_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
+        # bs_out = tf.Variable(init([1], **kwargs))
 
         W_in = tf.Variable(init([2, h_layer_dim], **kwargs))
         b_in = tf.Variable(init([h_layer_dim], **kwargs))
         W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
         b_out = tf.Variable(init([1], **kwargs))
 
-        #theta_G = [W_in, b_in,
+        # theta_G = [W_in, b_in,
         #           W_out, b_out,
         #           Ws_in, bs_in,
         #           Ws_out, bs_out]
@@ -73,19 +72,19 @@ class GNN_tf(object):
         theta_G = [W_in, b_in,
                    W_out, b_out]
 
-
-        #es = tf.random_normal([N, 1], mean=0, stddev=1)
+        # es = tf.random_normal([N, 1], mean=0, stddev=1)
         #
-        #out_x = tf.nn.relu(tf.matmul(es, Ws_in) + bs_in)
-        #out_x = tf.matmul(out_x, Ws_out) + bs_out
+        # out_x = tf.nn.relu(tf.matmul(es, Ws_in) + bs_in)
+        # out_x = tf.matmul(out_x, Ws_out) + bs_out
 
         e = tf.random_normal([N, 1], mean=0, stddev=1)
 
         hid = tf.nn.relu(tf.matmul(tf.concat([self.X, e], 1), W_in) + b_in)
         out_y = tf.matmul(hid, W_out) + b_out
 
-        if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1), nb_vectors_approx_MMD)
+        if (use_Fast_MMD):
+            self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1),
+                                                       nb_vectors_approx_MMD)
         else:
             self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1))
 
@@ -166,11 +165,8 @@ def tf_run_instance(m, idx, run, **kwargs):
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
     if (m.shape[0] > SETTINGS.max_nb_points):
-
         p = np.random.permutation(m.shape[0])
-        m = m[p[:int(SETTINGS.max_nb_points)],:]
- 
-
+        m = m[p[:int(SETTINGS.max_nb_points)], :]
 
     run_i = run
     if gpu:
@@ -274,8 +270,8 @@ def run_GNN_th(m, pair, run, **kwargs):
     for i in range(test_epochs):
         e.data.normal_()
         es.data.normal_()
-        pred = GNN(es,e)
-        loss = criterion(target, th.cat(pred,1))
+        pred = GNN(es, e)
+        loss = criterion(target, th.cat(pred, 1))
 
         # print statistics
         running_loss += loss.data[0]
@@ -316,7 +312,6 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
     return [XY, YX]
 
 
-
 class GNN(Pairwise_Model):
     """
     Shallow Generative Neural networks, models the causal directions x->y and y->x with a 1-hidden layer neural network
@@ -327,7 +322,7 @@ class GNN(Pairwise_Model):
         super(GNN, self).__init__()
         self.backend = backend
 
-    def predict_proba(self, a, b,idx=0, **kwargs):
+    def predict_proba(self, a, b, idx=0, **kwargs):
 
         backend_alg_dic = {"PyTorch": th_run_instance, "TensorFlow": tf_run_instance}
         if len(np.array(a).shape) == 1:
@@ -336,22 +331,84 @@ class GNN(Pairwise_Model):
 
         nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
         nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
+        nb_max_runs = kwargs.get("nb_max_runs", SETTINGS.NB_MAX_RUNS)
+
         m = np.hstack((a, b))
         m = m.astype('float32')
-        
+        ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs)
 
-        result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
-            m, idx, run, **kwargs) for run in range(nb_runs))
-     
-        score_AB = np.mean([runpair[0] for runpair in result_pair])
-        score_BA = np.mean([runpair[1] for runpair in result_pair])
-        
-        for runpair in result_pair:
-            print(runpair[0])
-        print(score_AB)
+        AB = []
+        BA = []
 
-        for runpair in result_pair:
-            print(runpair[1])
-        print(score_BA)
+        while ttest_criterion.loop(AB, BA):
+            print(nb_runs)
+            result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
+                m, idx, run, **kwargs) for run in range(nb_runs))
+            AB.extend([runpair[0] for runpair in result_pair])
+            BA.extend([runpair[1] for runpair in result_pair])
 
-        return (score_BA - score_AB) / (score_BA + score_AB)
+        score_AB = np.mean(AB)
+        score_BA = np.mean(BA)
+
+        return (score_BA - score_AB) / (score_BA + score_AB), ttest_criterion.p_value
+
+    def predict_dataset(self, x, printout=None):
+        """ Causal prediction of a pairwise dataset (x,y)
+
+        :param x: Pairwise dataset
+        :param printout: print regularly predictions
+        :type x: cepc_df format
+        :return: predictions probabilities
+        :rtype: list
+        """
+
+        pred = []
+        res = []
+        for idx, row in x.iterrows():
+
+            a = scale(row['A'].reshape((len(row['A']), 1)))
+            b = scale(row['B'].reshape((len(row['B']), 1)))
+
+            pred.append(self.predict_proba(a, b, idx))
+
+            if printout is not None:
+                res.append([row['SampleID'], pred[-1][0], pred[-1][1]])
+                DataFrame(res, columns=['SampleID', 'Predictions', 'P-Value']).to_csv(
+                    printout, index=False)
+        return pred
+
+    def orient_graph(self, df_data, umg, deletion=False, printout=None):
+        """ Orient an undirected graph using the pairwise method defined by the subclass
+        Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
+
+        :param df_data: dataset
+        :param umg: UndirectedGraph
+        :param printout: print regularly predictions
+        :return: Directed graph w/ weights
+        :rtype: DirectedGraph
+        """
+
+        edges = umg.get_list_edges_without_duplicate()
+        graph = DirectedGraph()
+        res = []
+        idx = 0
+
+        for edge in edges:
+            a, b, c = edge
+            weight, p_val = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
+            if weight > 0:  # a causes b
+                graph.add(a, b, weight)
+            else:
+                graph.add(b, a, abs(weight))
+            if printout is not None:
+                res.append([str(a) + '-' + str(b), weight, p_val])
+                DataFrame(res, columns=['SampleID', 'Predictions', 'P_value']).to_csv(
+                    printout, index=False)
+
+            idx += 1
+        if not deletion:
+            graph.remove_cycles_without_deletion()
+        else:
+            graph.remove_cycles()
+
+        return graph

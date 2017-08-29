@@ -43,18 +43,18 @@ class Pairwise_Model(object):
         res = []
         for idx, row in x.iterrows():
 
-                a = scale(row['A'].reshape((len(row['A']), 1)))
-                b = scale(row['B'].reshape((len(row['B']), 1)))
+            a = scale(row['A'].reshape((len(row['A']), 1)))
+            b = scale(row['B'].reshape((len(row['B']), 1)))
 
-                pred.append(self.predict_proba(a, b,idx))
+            pred.append(self.predict_proba(a, b, idx))
 
-                if printout is not None:
-                    res.append([row['SampleID'], pred[-1]])
-                    DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
-                        printout, index=False)
+            if printout is not None:
+                res.append([row['SampleID'], pred[-1]])
+                DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
+                    printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, umg, printout=None):
+    def orient_graph(self, df_data, umg, deletion=False, printout=None):
         """ Orient an undirected graph using the pairwise method defined by the subclass
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
@@ -66,13 +66,13 @@ class Pairwise_Model(object):
         """
 
         edges = umg.get_list_edges_without_duplicate()
-        graph = DirectedGraph()
+        graph = DirectedGraph(skeleton=umg)
         res = []
         idx = 0
 
         for edge in edges:
             a, b, c = edge
-            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()),idx)
+            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
             else:
@@ -83,9 +83,10 @@ class Pairwise_Model(object):
                     printout, index=False)
 
             idx += 1
-
-        graph.remove_cycle_without_deletion()
-
+        if not deletion:
+            graph.remove_cycles_without_deletion()
+        else:
+            graph.remove_cycles()
         return graph
 
     def orient_graph_confounders(self, df_data, umg, printout=None):
@@ -100,15 +101,14 @@ class Pairwise_Model(object):
         """
 
         edges = umg.get_list_edges_without_duplicate()
-        graph = DirectedGraph(skeleton = umg)
+        graph = DirectedGraph(skeleton=umg)
         res = []
         idx = 0
 
-
         for edge in edges:
             a, b = edge
-            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()),idx)
-           
+            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
+
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
             else:

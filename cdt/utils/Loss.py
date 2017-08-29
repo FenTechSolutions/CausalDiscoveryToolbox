@@ -8,9 +8,11 @@ import tensorflow as tf
 import torch as th
 from torch.autograd import Variable
 import numpy as np
+from scipy.stats import ttest_ind
 
 #bandwiths_sigma = [0.01, 0.1, 1, 5, 20, 50, 100]
-bandwiths_gamma = [0.01, 0.1, 0.5,1, 2, 10, 100]
+bandwiths_gamma = [0.01, 0.1, 0.5, 1, 2, 10, 100]
+
 
 def MMD_loss_tf(xy_true, xy_pred, low_memory_version=False):
 
@@ -121,6 +123,7 @@ def rp(k,s,d):
 
   return tf.transpose(tf.concat([tf.concat([si*tf.random_normal([k,d], mean=0, stddev=1) for si in s], axis = 0), 2*np.pi*tf.random_normal([k*len(s),1], mean=0, stddev=1)], axis = 1))
 
+
 def f1(x,wz,N):
 
   ones = tf.ones((N, 1))
@@ -128,6 +131,7 @@ def f1(x,wz,N):
   mult = tf.matmul(x_ones,wz)
 
   return tf.cos(mult)
+
 
 def Fourier_MMD_Loss_tf(xy_true, xy_pred,nb_vectors_approx_MMD):
 
@@ -141,12 +145,10 @@ def Fourier_MMD_Loss_tf(xy_true, xy_pred,nb_vectors_approx_MMD):
   return tf.reduce_mean((e1 - e2)**2)
 
 
-
 def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment = 1):
     """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
 
     """
-
     loss = 0
     for i in range(1, nb_moment):
         mean_pred = tf.reduce_mean(xy_pred**i, 0)
@@ -184,3 +186,24 @@ class MomentMatchingLoss_th(th.nn.Module):
             loss.add_(th.mean((mk_pred - mk_tar)**2))  # L2
 
         return loss
+
+
+class TTestCriterion(object):
+    def __init__(self, max_iter, runs_per_iter, threshold=0.01):
+        super(TTestCriterion, self).__init__()
+        self.threshold = threshold
+        self.max_iter = max_iter
+        self.runs_per_iter = runs_per_iter
+        self.iter = 0
+        self.p_value = np.nan
+
+    def loop(self, xy, yx):
+        if len(xy) > 0:
+            self.iter += self.runs_per_iter
+        if self.iter < 2:
+            return True
+        t_test, self.p_value = ttest_ind(xy, yx, equal_var=False)
+        if self.p_value > self.threshold and self.iter < self.max_iter:
+            return True
+        else:
+            return False

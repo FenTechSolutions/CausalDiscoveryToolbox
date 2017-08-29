@@ -330,12 +330,14 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     """
     nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
     nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
+    nb_max_runs = kwargs.get("nb_max_runs", SETTINGS.NB_MAX_RUNS)
+    id_run = kwargs.get("id_run", 0)
     loop = 0
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
     result = []
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-        data, graph, 0, run, **kwargs) for run in range(nb_runs))
+        data, graph, 0, run, **kwargs) for run in range(nb_max_runs))
 
     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
     globalscore = score_network
@@ -374,8 +376,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                 df_edge_result = pd.DataFrame(graph.tolist(),
                                               columns=['Cause', 'Effect',
                                                        'Weight'])
-                df_edge_result.to_csv('results/' + name_algo + dataset_name +
-                                      '-loop{}.csv'.format(loop), index=False)
+                df_edge_result.to_csv('results/CGNN-HC' + id_run + '-loop{}.csv'.format(loop), index=False)
 
     return graph
 
