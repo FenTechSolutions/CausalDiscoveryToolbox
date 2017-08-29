@@ -391,7 +391,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                     globalscore = score_network
                     best_structure_scores = configuration_scores
 
-                df_edge_result = pd.DataFrame(graph.tolist(),
+                df_edge_result = pd.DataFrame(graph.get_list_edges(),
                                               columns=['Cause', 'Effect',
                                                        'Weight'])
                 df_edge_result.to_csv('results/CGNN-HC' + id_run + '-loop{}.csv'.format(loop), index=False)
