@@ -346,7 +346,7 @@ class GNN(Pairwise_Model):
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
             if verbose:
-                print(ttest_criterion.p_value)
+                print("P-value after {} runs : {}".format(ttest_criterion.iter, ttest_criterion.p_value))
         score_AB = np.mean(AB)
         score_BA = np.mean(BA)
 
