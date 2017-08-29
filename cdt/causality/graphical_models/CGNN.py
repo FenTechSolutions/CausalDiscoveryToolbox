@@ -18,6 +18,7 @@ from copy import deepcopy
 from .model import GraphModel
 from ..pairwise_models.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, MMD_loss_th, Fourier_MMD_Loss_tf, TTestCriterion
+from ...utils.Loss import median_heursitic
 from ...utils.Settings import SETTINGS
 import pandas as pd
 
@@ -34,7 +35,7 @@ def init(size, **kwargs):
 
 
 class CGNN_tf(object):
-    def __init__(self, N, graph, run, idx, **kwargs):
+    def __init__(self, N, graph, run, idx, gamma, **kwargs):
         """ Build the tensorflow graph of the CGNN structure
 
         :param N: Number of points
@@ -91,9 +92,9 @@ class CGNN_tf(object):
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
         if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD)
+            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD, gamma)
         else:
-            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables)
+            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables, gamma)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
@@ -161,7 +162,7 @@ class CGNN_tf(object):
         return np.array(generated_variables)[0, :, :]
 
 
-def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
+def run_CGNN_tf(data, graph, idx=0, run=0, gamma=1, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param df_data: data corresponding to the graph
@@ -177,9 +178,6 @@ def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    list_nodes = graph.get_list_nodes()
-    df_data = df_data[list_nodes].as_matrix()
-    data = df_data.astype('float32')
 
     if (data.shape[0] > SETTINGS.max_nb_points):
         p = np.random.permutation(data.shape[0])
@@ -187,11 +185,11 @@ def run_CGNN_tf(df_data, graph, idx=0, run=0, **kwargs):
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
-            model = CGNN_tf(data.shape[0], graph, run, idx, **kwargs)
+            model = CGNN_tf(data.shape[0], graph, run, idx, gamma, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN_tf(data.shape[0], graph, run, idx, **kwargs)
+        model = CGNN_tf(data.shape[0], graph, run, idx, gamma, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 
@@ -334,10 +332,18 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     id_run = kwargs.get("id_run", 0)
     ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
     loop = 0
+    data = data[list_nodes].as_matrix()
+
+    gamma = median_heursitic(data)
+
+    data = df_data.astype('float32')
+     
+
+
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-        data, graph, 0, run, **kwargs) for run in range(nb_max_runs))
+        data, graph, 0, run, gamma, **kwargs) for run in range(nb_max_runs))
     best_structure_scores = [i for i in result_pairs if np.isfinite(i)]
     score_network = np.mean(best_structure_scores)
     globalscore = score_network
@@ -365,7 +371,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                 while ttest_criterion.loop(configuration_scores[:len(best_structure_scores)],
                                            best_structure_scores[:len(configuration_scores)]):
                     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                                    data, test_graph, idx_pair, run, **kwargs)
+                                    data, test_graph, idx_pair, run, gamma, **kwargs)
                                     for run in range(ttest_criterion.iter, ttest_criterion.iter+nb_runs))
                     configuration_scores.extend([i for i in result_pairs if np.isfinite(i)])
                 score_network = np.mean(configuration_scores)
@@ -378,7 +384,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                     improvement = True
                     if len(configuration_scores) < nb_max_runs:
                         result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                            data, test_graph, idx_pair, run, **kwargs)
+                            data, test_graph, idx_pair, run, gamma, **kwargs)
                             for run in range(len(configuration_scores), nb_max_runs-len(configuration_scores)))
                         configuration_scores.extend([i for i in result_pairs if np.isfinite(i)])
                     print('Edge {} got reversed !'.format(edge))
@@ -517,6 +523,7 @@ class CGNN(GraphModel):
 
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
+        data = DataFrame(scale(data.as_matrix()), columns=data.columns)
         gnn = GNN(backend=self.backend, **kwargs)
         dag = gnn.orient_graph(data, umg, **kwargs)  # Pairwise method
         return self.orient_directed_graph(data, dag, **kwargs)

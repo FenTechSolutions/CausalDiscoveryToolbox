@@ -18,6 +18,7 @@ from copy import deepcopy
 from .model import GraphModel
 from ..pairwise_models.GNN import GNN
 from ...utils.Loss import MMD_loss_tf,Fourier_MMD_Loss_tf
+from ...utils.Loss import median_heursitic
 # from ...utils.Loss import  MMD_loss_th
 from ...utils.Settings import SETTINGS
 import pandas as pd
@@ -35,7 +36,7 @@ def init(size, **kwargs):
 
 
 class CGNN_confounders_tf(object):
-    def __init__(self, N, graph, run, idx, **kwargs):
+    def __init__(self, N, graph, run, idx, gamma, **kwargs):
         """ Build the tensorflow graph of the CGNN structure
 
         :param N: Number of points
@@ -65,99 +66,45 @@ class CGNN_confounders_tf(object):
         theta_G = []
 
 
-        print("model_confounder " + str(SETTINGS.model_confounder))
+ 
 
-        if(SETTINGS.model_confounder == 0):
-            ### First modelisation confounder
-            ### Generate multivariate random noise variables with 0.2 correlation between the noises of each edge #######
-            #############################################################################################################
-            list_noise = []
-            for i in range(len(list_nodes)):
-                list_noise.append(tf.random_normal([N, 1], mean=0, stddev=1))
+        list_edges = graph.skeleton.get_list_edges_without_duplicate()
 
-            A = graph.get_correlation_matrix(0.3)
-            L = np.linalg.cholesky(A)
+        confounder_variables = {}
+        for edge in list_edges:
+            noise_variable = tf.random_normal([N, 1], mean=0, stddev=1)
+            confounder_variables[edge[0],edge[1]] = noise_variable
+            confounder_variables[edge[1],edge[0]] = noise_variable
 
-            multivariate_noises = {}
+        while len(generated_variables) < n_var:
+            # Need to generate all variables in the graph using its parents : possible because of the DAG structure
+            for var in list_nodes:
+                # Check if all parents are generated
+                par = graph.get_parents(var)
+                if (var not in generated_variables and set(par).issubset(generated_variables)):
 
-            for i, var in enumerate(list_nodes):
-                new_noise = 0
-                for j in range(len(list_nodes)):
-                    new_noise = new_noise + L[i, j] * list_noise[j]
+                    neighboorhood = graph.skeleton.get_neighbors(var)
 
-                multivariate_noises[var] = new_noise
+                    # Generate the variable
+                    W_in = tf.Variable(init([len(par) + len(neighboorhood) + 1, h_layer_dim], **kwargs))
+                    b_in = tf.Variable(init([h_layer_dim], **kwargs))
+                    W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
+                    b_out = tf.Variable(init([1], **kwargs))
 
-            while len(generated_variables) < n_var:
-                # Need to generate all variables in the graph using its parents : possible because of the DAG structure
-                for var in list_nodes:
-                    # Check if all parents are generated
-                    par = graph.get_parents(var)
-                    if (var not in generated_variables and set(par).issubset(generated_variables)):
-                        # Generate the variable
-                        W_in = tf.Variable(init([len(par) + 1, h_layer_dim], **kwargs))
-                        b_in = tf.Variable(init([h_layer_dim], **kwargs))
-                        W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
-                        b_out = tf.Variable(init([1], **kwargs))
-
-                        input_v = [generated_variables[i] for i in par]
-                        input_v.append(multivariate_noises[var])
-                        input_v = tf.concat(input_v, 1)
-
-                        out_v = tf.nn.relu(tf.matmul(input_v, W_in) + b_in)
-                        out_v = tf.matmul(out_v, W_out) + b_out
-
-                        generated_variables[var] = out_v
-                        theta_G.extend([W_in, b_in, W_out, b_out])
-
-        elif(SETTINGS.model_confounder == 1):
-
-            ### Second modelisation confounder
-            ### Additonal noise variable between each edge
-            #############################################################################################################
-
-            # # Define list of confounder noise variables for each edge in the original skeleton
-            list_edges = graph.skeleton.get_list_edges_without_duplicate()
-
-            confounder_variables = {}
-            for edge in list_edges:
-                noise_variable = tf.random_normal([N, 1], mean=0, stddev=1)
-                confounder_variables[edge[0],edge[1]] = noise_variable
-                confounder_variables[edge[1],edge[0]] = noise_variable
-
-            while len(generated_variables) < n_var:
-                # Need to generate all variables in the graph using its parents : possible because of the DAG structure
-                for var in list_nodes:
-                    # Check if all parents are generated
-                    par = graph.get_parents(var)
-                    if (var not in generated_variables and set(par).issubset(generated_variables)):
-
-                        neighboorhood = graph.skeleton.get_neighbors(var)
-
-                        # Generate the variable
-                        W_in = tf.Variable(init([len(par) + len(neighboorhood) + 1, h_layer_dim], **kwargs))
-                        b_in = tf.Variable(init([h_layer_dim], **kwargs))
-                        W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
-                        b_out = tf.Variable(init([1], **kwargs))
-
-                        input_v = [generated_variables[i] for i in par]
-                        input_v.append(tf.random_normal([N, 1], mean=0, stddev=1))
+                    input_v = [generated_variables[i] for i in par]
+                    input_v.append(tf.random_normal([N, 1], mean=0, stddev=1))
 
 
-                        for i in neighboorhood:
-                            input_v.append(confounder_variables[i,var])
+                    for i in neighboorhood:
+                        input_v.append(confounder_variables[i,var])
 
-                        input_v = tf.concat(input_v, 1)
+                    input_v = tf.concat(input_v, 1)
 
-                        out_v = tf.nn.relu(tf.matmul(input_v, W_in) + b_in)
-                        out_v = tf.matmul(out_v, W_out) + b_out
+                    out_v = tf.nn.relu(tf.matmul(input_v, W_in) + b_in)
+                    out_v = tf.matmul(out_v, W_out) + b_out
 
-                        generated_variables[var] = out_v
-                        theta_G.extend([W_in, b_in, W_out, b_out])
-            #################################################################################################
-            ################################################################################################
-
-
-
+                    generated_variables[var] = out_v
+                    theta_G.extend([W_in, b_in, W_out, b_out])
 
 
 
@@ -169,9 +116,9 @@ class CGNN_confounders_tf(object):
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
         if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD)
+            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD, gamma)
         else:
-            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables)
+            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables, gamma)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
@@ -239,7 +186,7 @@ class CGNN_confounders_tf(object):
         return np.array(generated_variables)[0, :, :]
 
 
-def run_CGNN_confounders_tf(df_data, graph, idx=0, run=0, **kwargs):
+def run_CGNN_confounders_tf(data, graph, idx=0, run=0, gamma=1, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param df_data: data corresponding to the graph
@@ -255,23 +202,17 @@ def run_CGNN_confounders_tf(df_data, graph, idx=0, run=0, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    list_nodes = graph.skeleton.get_list_nodes()
-
-    df_data = df_data[list_nodes].as_matrix()
-
-    data = df_data.astype('float32')
-
     if (data.shape[0] > SETTINGS.max_nb_points):
         p = np.random.permutation(data .shape[0])
         data  = data[p[:int(SETTINGS.max_nb_points)],:]
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
-            model = CGNN_confounders_tf(data.shape[0], graph, run, idx, **kwargs)
+            model = CGNN_confounders_tf(data.shape[0], graph, run, idx, gamma, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN_confounders_tf(data, graph, run, idx, **kwargs)
+        model = CGNN_confounders_tf(data, graph, run, idx, gamma, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 
@@ -413,25 +354,22 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
     loop = 0
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
+
+    list_nodes = graph.skeleton.get_list_nodes()
+    data = data[list_nodes].as_matrix()
+
+    gamma = median_heursitic(data)
+
+    data = data.astype('float32')
+
     result = []
-    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, graph, 0, run, **kwargs) for run in range(nb_runs))
-
-    print("Evaluate intial score :")
-    print("show graph")
-    print(graph)
-
+    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, graph, 0, run, gamma, **kwargs) for run in range(nb_runs))
 
     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
-
-    print("score_network : " + str(score_network))
-
     score_network += SETTINGS.complexity_graph_param*len(graph.get_list_edges())
-
-    print("complexity : " + str(SETTINGS.complexity_graph_param*len(graph.get_list_edges())))
 
     globalscore = score_network
 
-    print("Graph score : " + str(globalscore))
 
     while improvement:
 
@@ -465,7 +403,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                 else:
                     print("Reverse Edge " + str(node1) + " -> " + str(node2) + " in evaluation")
                     tested_configurations.append(test_graph.get_dict_nw())
-                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
+                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
 
                     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network += SETTINGS.complexity_graph_param * len(test_graph.get_list_edges())
@@ -493,7 +431,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                     tested_configurations.append(test_graph.get_dict_nw())
                     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
+                        data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
 
                     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network += SETTINGS.complexity_graph_param * len(test_graph.get_list_edges())
@@ -532,7 +470,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     print("Addition of edge " + str(node1) + " -> " + str(node2) + " in evaluation :")
                     tested_configurations.append(test_graph.get_dict_nw())
                     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
+                        data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
 
                     score_network_add_edge_node1_node2 = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network_add_edge_node1_node2 += SETTINGS.complexity_graph_param * len(test_graph.get_list_edges())
@@ -552,7 +490,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     print("Addition of edge " + str(node2) + " -> " + str(node1) + " in evaluation :")
                     tested_configurations.append(test_graph.get_dict_nw())
                     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
+                        data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
 
                     score_network_add_edge_node2_node1 = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network_add_edge_node2_node1 += SETTINGS.complexity_graph_param * len(test_graph.get_list_edges())
@@ -706,6 +644,7 @@ class CGNN_confounders(GraphModel):
 
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
+        data = DataFrame(scale(data.as_matrix()), columns=data.columns)
         gnn = GNN(backend=self.backend, **kwargs)
         dag = gnn.orient_graph(data, umg, **kwargs)  # Pairwise method
         return self.orient_directed_graph(data, dag, **kwargs)

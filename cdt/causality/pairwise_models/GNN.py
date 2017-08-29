@@ -8,6 +8,7 @@ import tensorflow as tf
 import numpy as np
 from ...utils.Loss import MMD_loss_tf as MMD_tf
 from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
+from ...utils.Loss import median_heursitic
 from ...utils.Loss import MMD_loss_th as MMD_th
 from ...utils.Loss import TTestCriterion
 from ...utils.Graph import DirectedGraph
@@ -32,7 +33,7 @@ def init(size, **kwargs):
 
 
 class GNN_tf(object):
-    def __init__(self, N, run=0, pair=0, **kwargs):
+    def __init__(self, N, run=0, pair=0, gamma=1, **kwargs):
         """ Build the tensorflow graph, the first column is set as the cause and the second as the effect
 
         :param N: Number of examples to generate
@@ -84,9 +85,9 @@ class GNN_tf(object):
 
         if (use_Fast_MMD):
             self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1),
-                                                       nb_vectors_approx_MMD)
+                                                       nb_vectors_approx_MMD,gamma)
         else:
-            self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1))
+            self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1),gamma)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=learning_rate)
                                   .minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
@@ -143,13 +144,13 @@ class GNN_tf(object):
         return avg_score / test_epochs
 
 
-def tf_evalcausalscore_pairwise(df, idx, run, **kwargs):
-    GNN = GNN_tf(df.shape[0], run, idx, **kwargs)
+def tf_evalcausalscore_pairwise(df, idx, run, gamma, **kwargs):
+    GNN = GNN_tf(df.shape[0], run, idx, gamma, **kwargs)
     GNN.train(df, **kwargs)
     return GNN.evaluate(df, **kwargs)
 
 
-def tf_run_instance(m, idx, run, **kwargs):
+def tf_run_instance(m, idx, run, gamma, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param m: data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect
@@ -171,13 +172,13 @@ def tf_run_instance(m, idx, run, **kwargs):
     run_i = run
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run_i % nb_gpu)):
-            XY = tf_evalcausalscore_pairwise(m, idx, run, **kwargs)
+            XY = tf_evalcausalscore_pairwise(m, idx, run, gamma, **kwargs)
         with tf.device('/gpu:' + str(gpu_offset + run_i % nb_gpu)):
-            YX = tf_evalcausalscore_pairwise(m[:, [1, 0]], idx, run, **kwargs)
+            YX = tf_evalcausalscore_pairwise(m[:, [1, 0]], idx, run, gamma, **kwargs)
             return [XY, YX]
     else:
-        return [tf_evalcausalscore_pairwise(m, idx, run, **kwargs),
-                tf_evalcausalscore_pairwise(np.fliplr(m), idx, run, **kwargs)]
+        return [tf_evalcausalscore_pairwise(m, idx, run, gamma, **kwargs),
+                tf_evalcausalscore_pairwise(np.fliplr(m), idx, run, gamma, **kwargs)]
 
 
 class GNN_th(th.nn.Module):
@@ -336,6 +337,7 @@ class GNN(Pairwise_Model):
         ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
 
         m = np.hstack((a, b))
+        gamma = median_heursitic(m)
         m = m.astype('float32')
         ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
 
@@ -344,7 +346,7 @@ class GNN(Pairwise_Model):
 
         while ttest_criterion.loop(AB, BA):
             result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
-                m, idx, run, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter+nb_runs))
+                m, idx, run, gamma, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter+nb_runs))
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
         if verbose:

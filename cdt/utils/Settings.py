@@ -27,7 +27,6 @@ class DefaultSettings(object):
                  "use_Fast_MMD",
                  "nb_vectors_approx_MMD",
                  "complexity_graph_param",
-                 "model_confounder",
                  "max_nb_points",
                  "verbose")
 
@@ -39,18 +38,17 @@ class DefaultSettings(object):
         self.NB_GPU = 2
         self.GPU_OFFSET = 0
         self.learning_rate = 0.001
-        self.init_weights = 0.05
+        self.init_weights = 0.1
         self.max_nb_points = 1500
         self.verbose = True
 
         # CGNN
-        self.h_layer_dim = 20
+        self.h_layer_dim = 30
         self.train_epochs = 2000
         self.test_epochs = 1000
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
-        self.complexity_graph_param = 0.0007
-        self.model_confounder = 1
+        self.complexity_graph_param = 0.0005
         self.ttest_threshold = 0.01
 
         # specific for FSGNN
