@@ -390,7 +390,7 @@ class GNN(Pairwise_Model):
         :rtype: DirectedGraph
         """
 
-        edges = umg.get_list_edges_without_duplicate()
+        edges = umg.get_list_edges()
         graph = DirectedGraph()
         res = []
         idx = 0
