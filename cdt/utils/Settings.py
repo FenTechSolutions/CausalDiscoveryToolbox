@@ -18,6 +18,7 @@ class DefaultSettings(object):
                  "GPU_OFFSET",
                  "learning_rate",
                  "init_weights",
+                 "ttest_threshold",
                  "nb_run_feature_selection",
                  "regul_param",
                  "threshold_UMG",
@@ -50,6 +51,7 @@ class DefaultSettings(object):
         self.nb_vectors_approx_MMD = 100
         self.complexity_graph_param = 0.0007
         self.model_confounder = 1
+        self.ttest_threshold = 0.01
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1

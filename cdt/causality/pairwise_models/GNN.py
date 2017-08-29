@@ -333,20 +333,22 @@ class GNN(Pairwise_Model):
         nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
         nb_max_runs = kwargs.get("nb_max_runs", SETTINGS.NB_MAX_RUNS)
         verbose= kwargs.get("verbose", SETTINGS.verbose)
+        ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
+
         m = np.hstack((a, b))
         m = m.astype('float32')
-        ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs)
+        ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
 
         AB = []
         BA = []
 
         while ttest_criterion.loop(AB, BA):
             result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
-                m, idx, run, **kwargs) for run in range(nb_runs))
+                m, idx, run, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter+nb_runs))
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
-            if verbose:
-                print("P-value after {} runs : {}".format(ttest_criterion.iter, ttest_criterion.p_value))
+        if verbose:
+            print("P-value after {} runs : {}".format(ttest_criterion.iter, ttest_criterion.p_value))
         score_AB = np.mean(AB)
         score_BA = np.mean(BA)
 

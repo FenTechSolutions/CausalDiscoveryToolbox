@@ -17,7 +17,7 @@ import numpy as np
 from copy import deepcopy
 from .model import GraphModel
 from ..pairwise_models.GNN import GNN
-from ...utils.Loss import MMD_loss_tf, MMD_loss_th,Fourier_MMD_Loss_tf
+from ...utils.Loss import MMD_loss_tf, MMD_loss_th, Fourier_MMD_Loss_tf, TTestCriterion
 from ...utils.Settings import SETTINGS
 import pandas as pd
 
@@ -332,14 +332,14 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
     nb_max_runs = kwargs.get("nb_max_runs", SETTINGS.NB_MAX_RUNS)
     id_run = kwargs.get("id_run", 0)
+    ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
     loop = 0
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
-    result = []
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
         data, graph, 0, run, **kwargs) for run in range(nb_max_runs))
-
-    score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
+    best_structure_scores = [i for i in result_pairs if np.isfinite(i)]
+    score_network = np.mean(best_structure_scores)
     globalscore = score_network
 
     print("Graph score : " + str(globalscore))
@@ -359,19 +359,31 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
             else:
                 print('Edge {} in evaluation :'.format(edge))
                 tested_configurations.append(test_graph.get_dict_nw())
-                result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                    data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
+                ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
+                configuration_scores = []
 
-                score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
+                while ttest_criterion.loop(configuration_scores[:len(best_structure_scores)],
+                                           best_structure_scores[:len(configuration_scores)]):
+                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+                                    data, test_graph, idx_pair, run, **kwargs)
+                                    for run in range(ttest_criterion.iter, ttest_criterion.iter+nb_runs))
+                    configuration_scores.extend([i for i in result_pairs if np.isfinite(i)])
+                score_network = np.mean(configuration_scores)
 
-                print("Current score : " + str(score_network))
-                print("Best score : " + str(globalscore))
-
-                if score_network < globalscore:
+                print("Current score : {}".format(score_network))
+                print("Best score : {}".format(globalscore))
+                print("P-value : {}".format(ttest_criterion.p_value))
+                if score_network < globalscore and ttest_criterion.p_value < ttest_threshold:
                     graph.reverse_edge(edge[0], edge[1])
                     improvement = True
+                    if len(configuration_scores) < nb_max_runs:
+                        result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+                            data, test_graph, idx_pair, run, **kwargs)
+                            for run in range(len(configuration_scores), nb_max_runs-len(configuration_scores)))
+                        configuration_scores.extend([i for i in result_pairs if np.isfinite(i)])
                     print('Edge {} got reversed !'.format(edge))
                     globalscore = score_network
+                    best_structure_scores = configuration_scores
 
                 df_edge_result = pd.DataFrame(graph.tolist(),
                                               columns=['Cause', 'Effect',
