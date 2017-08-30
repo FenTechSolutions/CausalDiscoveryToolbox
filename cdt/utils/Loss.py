@@ -30,15 +30,18 @@ def MMD_loss_tf(xy_true, xy_pred, gamma, low_memory_version=False):
     X = tf.concat([xy_pred, xy_true], 0)
     XX = tf.matmul(X, tf.transpose(X))
     X2 = tf.reduce_sum(X * X, 1, keep_dims=True)
-    exponent = X2 -2*XX + tf.transpose(X2)
+    exponent = -2*XX + X2  + tf.transpose(X2)
 
     s1 = tf.constant(1.0 / N, shape=[N, 1])
     s2 = -tf.constant(1.0 / N, shape=[N, 1])
     s = tf.concat([s1, s2], 0)
     S = tf.matmul(s, tf.transpose(s))
-
-    kernel_val = tf.exp(-gamma * exponent)
-    loss = tf.reduce_sum(S * kernel_val)
+    
+    loss = 0
+    
+    for i in gamma:
+        kernel_val = tf.exp(-i * exponent)
+        loss += tf.reduce_sum(S * kernel_val)
 
     return loss
 

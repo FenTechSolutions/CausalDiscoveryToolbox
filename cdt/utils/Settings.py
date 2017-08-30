@@ -38,7 +38,7 @@ class DefaultSettings(object):
         self.NB_GPU = 2
         self.GPU_OFFSET = 0
         self.learning_rate = 0.001
-        self.init_weights = 0.1
+        self.init_weights = 0.05
         self.max_nb_points = 1500
         self.verbose = True
 

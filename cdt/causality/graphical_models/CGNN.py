@@ -335,7 +335,8 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     list_nodes = graph.get_list_nodes()
     data = data[list_nodes].as_matrix()
 
-    gamma = median_heursitic(data)
+    median = median_heursitic(data)
+    gamma = [0.1*median, 0.5*median, median, 2*median, 10*median]
 
     data = data.astype('float32')
      

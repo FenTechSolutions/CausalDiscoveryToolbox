@@ -55,28 +55,15 @@ class GNN_tf(object):
         self.X = tf.placeholder(tf.float32, shape=[None, 1])
         self.Y = tf.placeholder(tf.float32, shape=[None, 1])
 
-        # Ws_in = tf.Variable(init([1, h_layer_dim], **kwargs))
-        # bs_in = tf.Variable(init([h_layer_dim], **kwargs))
-        # Ws_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
-        # bs_out = tf.Variable(init([1], **kwargs))
 
         W_in = tf.Variable(init([2, h_layer_dim], **kwargs))
         b_in = tf.Variable(init([h_layer_dim], **kwargs))
         W_out = tf.Variable(init([h_layer_dim, 1], **kwargs))
         b_out = tf.Variable(init([1], **kwargs))
 
-        # theta_G = [W_in, b_in,
-        #           W_out, b_out,
-        #           Ws_in, bs_in,
-        #           Ws_out, bs_out]
-
         theta_G = [W_in, b_in,
                    W_out, b_out]
 
-        # es = tf.random_normal([N, 1], mean=0, stddev=1)
-        #
-        # out_x = tf.nn.relu(tf.matmul(es, Ws_in) + bs_in)
-        # out_x = tf.matmul(out_x, Ws_out) + bs_out
 
         e = tf.random_normal([N, 1], mean=0, stddev=1)
 
@@ -337,7 +324,9 @@ class GNN(Pairwise_Model):
         ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
 
         m = np.hstack((a, b))
-        gamma = median_heursitic(m)
+        median = median_heursitic(m)
+        gamma = [0.1*median, 0.5*median, median, 2*median, 10*median]
+ 
         m = m.astype('float32')
         ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
 
