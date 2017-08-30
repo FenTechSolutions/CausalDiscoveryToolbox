@@ -336,7 +336,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
 
     gamma = median_heursitic(data)
 
-    data = df_data.astype('float32')
+    data = data.astype('float32')
      
 
 
@@ -394,7 +394,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                 df_edge_result = pd.DataFrame(graph.tolist(),
                                               columns=['Cause', 'Effect',
                                                        'Weight'])
-                df_edge_result.to_csv('results/CGNN-HC' + id_run + '-loop{}.csv'.format(loop), index=False)
+                df_edge_result.to_csv('results/CGNN-HC' + str(id_run) + '-loop{}.csv'.format(loop), index=False)
 
     return graph
 

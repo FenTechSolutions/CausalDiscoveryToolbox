@@ -20,7 +20,7 @@ def median_heursitic(m):
                 dist += (m[i,d]-m[j,d])**2
             list_dist.append(dist)
 
-    return np.sqrt(np.median(list_dist))
+    return 1/(2*np.median(list_dist))
 
 
 def MMD_loss_tf(xy_true, xy_pred, gamma, low_memory_version=False):
