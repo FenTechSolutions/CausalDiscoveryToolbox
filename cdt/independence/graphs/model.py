@@ -9,7 +9,7 @@ import numpy as np
 from ...utils.Graph import UndirectedGraph
 
 class DeconvolutionModel(object):
-    """ Base class for all graphical_models models"""
+    """ Base class for all graphs models"""
 
     def __init__(self):
         """ Init. """
@@ -28,7 +28,7 @@ class DeconvolutionModel(object):
 
 
 class FeatureSelectionModel(object):
-    """ Base class for all graphical_models models"""
+    """ Base class for all graphs models"""
 
     def __init__(self):
         """ Init. """

@@ -7,7 +7,7 @@ Ref : Fonollosa, José AR, "Conditional distribution variability measures for ca
 
 import numpy as np
 from collections import Counter
-from .model import Pairwise_Model
+from .model import PairwiseModel
 
 BINARY = "Binary"
 CATEGORICAL = "Categorical"
@@ -59,7 +59,7 @@ def discretized_sequences(x, y, ffactor=3, maxdev=3):
                                                                                        maxdev)
 
 
-class CDS(Pairwise_Model):
+class CDS(PairwiseModel):
     """
     Conditional Distribution Similarity Statistic
 

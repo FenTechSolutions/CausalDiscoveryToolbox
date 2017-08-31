@@ -10,7 +10,7 @@ from ..utils.Loss import MomentMatchingLoss_th as MomentMatchingLoss, MMD_loss_t
 from ..utils.Settings import SETTINGS
 from sklearn.linear_model import LassoLars
 from sklearn.svm import SVR
-from ..causality.graphical_models.CGNN import CGNN_tf as CGNN
+from ..causality.graphs.CGNN import CGNN_tf as CGNN
 
 
 class SEMModel(th.nn.Module):

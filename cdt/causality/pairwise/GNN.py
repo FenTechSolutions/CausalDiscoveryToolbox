@@ -17,7 +17,7 @@ from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 import torch as th
 from torch.autograd import Variable
-from .model import Pairwise_Model
+from .model import PairwiseModel
 from pandas import DataFrame
 
 
@@ -300,7 +300,7 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
     return [XY, YX]
 
 
-class GNN(Pairwise_Model):
+class GNN(PairwiseModel):
     """
     Shallow Generative Neural networks, models the causal directions x->y and y->x with a 1-hidden layer neural network
     and a MMD loss. The causal direction is considered as the "best-fit" between the two directions

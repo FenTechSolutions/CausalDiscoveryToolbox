@@ -1,8 +1,8 @@
 # ToDo : Implement
-from .model import Pairwise_Model
+from .model import PairwiseModel
 
 
-class GPI(Pairwise_Model):
+class GPI(PairwiseModel):
     def __init__(self):
         super(GPI, self).__init__()
 

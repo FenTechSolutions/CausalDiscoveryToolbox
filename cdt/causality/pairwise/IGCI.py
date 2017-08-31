@@ -7,7 +7,7 @@ http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf
 Adapted by Diviyan Kalainathan
 """
 
-from .model import Pairwise_Model
+from .model import PairwiseModel
 from sklearn.preprocessing import (MinMaxScaler, StandardScaler)
 from scipy.special import psi
 import numpy as np
@@ -84,7 +84,7 @@ def uniform_scale(x):
     return min_max_scale.fit_transform(x)
 
 
-class IGCI(Pairwise_Model):
+class IGCI(PairwiseModel):
     """ Information Geometric Causal Inference (IGCI) model from
     P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
     K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
