@@ -30,17 +30,17 @@ def MMD_loss_tf(xy_true, xy_pred, gamma, low_memory_version=False):
     X = tf.concat([xy_pred, xy_true], 0)
     XX = tf.matmul(X, tf.transpose(X))
     X2 = tf.reduce_sum(X * X, 1, keep_dims=True)
-    exponent = -2*XX + X2  + tf.transpose(X2)
+    exponent = -2*XX + X2 + tf.transpose(X2)
 
     s1 = tf.constant(1.0 / N, shape=[N, 1])
     s2 = -tf.constant(1.0 / N, shape=[N, 1])
     s = tf.concat([s1, s2], 0)
     S = tf.matmul(s, tf.transpose(s))
-    
+
     loss = 0
-    
-    for i in gamma:
-        kernel_val = tf.exp(-i * exponent)
+
+    for i in range(len(gamma)):
+        kernel_val = tf.exp(-gamma[i] * exponent)
         loss += tf.reduce_sum(S * kernel_val)
 
     return loss
@@ -98,7 +98,7 @@ class MMD_loss_th(th.nn.Module):
 
 def rp(k,s,d):
 
-  return tf.transpose(tf.concat([tf.concat([2*s*tf.random_normal([k,d], mean=0, stddev=1)], axis = 0), tf.random_uniform([k,1], minval=0, maxval=2*np.pi)], axis = 1))
+  return tf.transpose(tf.concat([tf.concat([si*tf.random_normal([k,d], mean=0, stddev=1) for si in s], axis = 0), 2*np.pi*tf.random_normal([k*len(s),1], mean=0, stddev=1)], axis = 1))
 
 def f1(x,wz,N):
 

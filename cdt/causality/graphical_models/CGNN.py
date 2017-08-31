@@ -162,7 +162,7 @@ class CGNN_tf(object):
         return np.array(generated_variables)[0, :, :]
 
 
-def run_CGNN_tf(data, graph, idx=0, run=0, gamma=1, **kwargs):
+def run_CGNN_tf(data, graph, idx=0, run=0, gamma = [1], **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param df_data: data corresponding to the graph
@@ -178,7 +178,10 @@ def run_CGNN_tf(data, graph, idx=0, run=0, gamma=1, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-
+    list_nodes = graph.get_list_nodes()
+    data = data[list_nodes].as_matrix()
+    data = data.astype('float32')
+     
     if (data.shape[0] > SETTINGS.max_nb_points):
         p = np.random.permutation(data.shape[0])
         data  = data[p[:int(SETTINGS.max_nb_points)],:]
@@ -332,18 +335,17 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     id_run = kwargs.get("id_run", 0)
     ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
     loop = 0
-    list_nodes = graph.get_list_nodes()
-    data = data[list_nodes].as_matrix()
 
-    median = median_heursitic(data)
+
+    median = median_heursitic(data.as_matrix())
+    print(median)
     gamma = [0.1*median, 0.5*median, median, 2*median, 10*median]
 
-    data = data.astype('float32')
-     
+
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-        data, graph, 0, run, gamma, **kwargs) for run in range(nb_max_runs))
+        data, graph, 0, run, gamma,**kwargs) for run in range(nb_max_runs))
     best_structure_scores = [i for i in result_pairs if np.isfinite(i)]
     score_network = np.mean(best_structure_scores)
     globalscore = score_network
@@ -370,10 +372,10 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
 
                 while ttest_criterion.loop(configuration_scores[:len(best_structure_scores)],
                                            best_structure_scores[:len(configuration_scores)]):
-                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                                    data, test_graph, idx_pair, run, gamma, **kwargs)
+                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, gamma, **kwargs)
                                     for run in range(ttest_criterion.iter, ttest_criterion.iter+nb_runs))
                     configuration_scores.extend([i for i in result_pairs if np.isfinite(i)])
+
                 score_network = np.mean(configuration_scores)
 
                 print("Current score : {}".format(score_network))

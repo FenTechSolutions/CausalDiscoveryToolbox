@@ -33,7 +33,7 @@ def init(size, **kwargs):
 
 
 class GNN_tf(object):
-    def __init__(self, N, run=0, pair=0, gamma=1, **kwargs):
+    def __init__(self, N, run=0, pair=0, gamma=[1], **kwargs):
         """ Build the tensorflow graph, the first column is set as the cause and the second as the effect
 
         :param N: Number of examples to generate
@@ -389,6 +389,7 @@ class GNN(Pairwise_Model):
         for edge in edges:
             a, b, c = edge
             weight, p_val = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
+
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
             else:
