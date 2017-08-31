@@ -28,7 +28,8 @@ class DefaultSettings(object):
                  "nb_vectors_approx_MMD",
                  "complexity_graph_param",
                  "max_nb_points",
-                 "verbose")
+                 "verbose",
+                 "r_is_available")
 
     def __init__(self):  # Define here the default values of the parameters
         self.NB_RUNS = 8
@@ -41,6 +42,7 @@ class DefaultSettings(object):
         self.init_weights = 0.05
         self.max_nb_points = 1500
         self.verbose = True
+        self.r_is_available = False
 
         # CGNN
         self.h_layer_dim = 30
