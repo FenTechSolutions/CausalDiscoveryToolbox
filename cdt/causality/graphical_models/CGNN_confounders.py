@@ -68,7 +68,7 @@ class CGNN_confounders_tf(object):
 
  
 
-        list_edges = graph.skeleton.get_list_edges_without_duplicate()
+        list_edges = graph.skeleton.get_list_edges()
 
         confounder_variables = {}
         for edge in list_edges:
@@ -201,6 +201,10 @@ def run_CGNN_confounders_tf(data, graph, idx=0, run=0, gamma=1, **kwargs):
     gpu = kwargs.get('gpu', SETTINGS.GPU)
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
+
+    list_nodes = graph.skeleton.get_list_nodes()
+    data = data[list_nodes].as_matrix()
+    data = data.astype('float32')
 
     if (data.shape[0] > SETTINGS.max_nb_points):
         p = np.random.permutation(data .shape[0])
@@ -355,10 +359,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
     tested_configurations = [graph.get_dict_nw()]
     improvement = True
 
-    list_nodes = graph.skeleton.get_list_nodes()
-    data = data[list_nodes].as_matrix()
-
-    median = median_heursitic(data)
+    median = median_heursitic(data.as_matrix())
     gamma = [0.1*median, 0.5*median, median, 2*median, 10*median]
 
     data = data.astype('float32')
@@ -376,7 +377,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
         loop += 1
         improvement = False
-        list_edges_to_evaluate = graph.skeleton.get_list_edges_without_duplicate()
+        list_edges_to_evaluate = graph.skeleton.get_list_edges()
 
         for idx_pair in range(0,len(list_edges_to_evaluate)):
 
@@ -400,7 +401,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                 if (test_graph.is_cyclic()
                     or test_graph.get_dict_nw() in tested_configurations):
-                    print("No evaluation for edge " + str(node1) + " -> " + str(node2))
+                    print("No reversal possible for edge " + str(node1) + " -> " + str(node2))
                 else:
                     print("Reverse Edge " + str(node1) + " -> " + str(node2) + " in evaluation")
                     tested_configurations.append(test_graph.get_dict_nw())
@@ -516,7 +517,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     print("Edge not added, possible confounder " + str(node1) + " <-> " + str(node2))
 
             dag_result = pd.DataFrame(graph.get_list_edges(),columns=['Cause', 'Effect','Weight'])
-            dag_result.to_csv('results/Dag' + str(SETTINGS.model_confounder) + '-loop{}.csv'.format(loop), index=False)
+            dag_result.to_csv('results/Dag-loop{}.csv'.format(loop), index=False)
 
     return graph
 
