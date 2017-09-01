@@ -382,7 +382,7 @@ class GNN(Pairwise_Model):
         """
 
         edges = umg.get_list_edges()
-        graph = DirectedGraph()
+        graph = DirectedGraph(skeleton = umg)
         res = []
         idx = 0
 

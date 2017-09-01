@@ -37,19 +37,19 @@ class DefaultSettings(object):
         self.GPU = True
         self.NB_GPU = 2
         self.GPU_OFFSET = 0
-        self.learning_rate = 0.001
+        self.learning_rate = 0.01
         self.init_weights = 0.05
         self.max_nb_points = 1500
         self.verbose = True
 
         # CGNN
         self.h_layer_dim = 30
-        self.train_epochs = 2000
-        self.test_epochs = 1000
+        self.train_epochs = 1000
+        self.test_epochs = 500
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
         self.complexity_graph_param = 0.0005
-        self.ttest_threshold = 0.01
+        self.ttest_threshold = 0.05
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1
