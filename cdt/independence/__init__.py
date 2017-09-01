@@ -1,2 +1,2 @@
 from .stats import __init__ as stats
-from .graphs import __init__ as skeleton
+from .graph import __init__ as skeleton

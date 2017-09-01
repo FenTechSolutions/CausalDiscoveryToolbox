@@ -54,7 +54,7 @@ class CGNN_tf(object):
 
         self.run = run
         self.idx = idx
-        list_nodes = graph.get_list_nodes()
+        list_nodes = graph.list_nodes()
         n_var = len(list_nodes)
 
         self.all_real_variables = tf.placeholder(tf.float32, shape=[None, n_var])
@@ -66,7 +66,7 @@ class CGNN_tf(object):
             # Need to generate all variables in the graph using its parents : possible because of the DAG structure
             for var in list_nodes:
                 # Check if all parents are generated
-                par = graph.get_parents(var)
+                par = graph.parents(var)
                 if (var not in generated_variables and
                         set(par).issubset(generated_variables)):
                     # Generate the variable
@@ -215,10 +215,10 @@ class CGNN_th(th.nn.Module):
         self.layers_out = []
         self.N = n
         self.activation = th.nn.ReLU()
-        nodes = self.graph.get_list_nodes()
+        nodes = self.graph.list_nodes()
         while len(self.graph_variables) < len(nodes):
             for var in nodes:
-                par = self.graph.get_parents(var)
+                par = self.graph.parents(var)
 
                 if var not in self.graph_variables and set(par).issubset(self.graph_variables):
                     # Variable can be generated
@@ -235,7 +235,7 @@ class CGNN_th(th.nn.Module):
         """
         generated_variables = {}
         for var in self.graph_variables:
-            par = self.graph.get_parents(var)
+            par = self.graph.parents(var)
             if len(par) > 0:
                 inputx = th.cat([th.cat([generated_variables[parent] for parent in par], 1),
                                  Variable(th.FloatTensor(self.N, 1).normal_())], 1)
@@ -246,7 +246,7 @@ class CGNN_th(th.nn.Module):
                 self, 'linear_{}_in'.format(var))(inputx)))
 
         output = []
-        for v in self.graph.get_list_nodes():
+        for v in self.graph.list_nodes():
             output.append(generated_variables[v])
 
         return th.cat(output, 1)
@@ -277,7 +277,7 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True, **kwargs):
     test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
     learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
     
-    list_nodes = graph.get_list_nodes()
+    list_nodes = graph.list_nodes()
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
     model = CGNN_th(graph, data.shape[0], **kwargs)
@@ -332,7 +332,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     id_run = kwargs.get("id_run", 0)
     ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
     loop = 0
-    list_nodes = graph.get_list_nodes()
+    list_nodes = graph.list_nodes()
     data = data[list_nodes].as_matrix()
 
     median = median_heursitic(data)
@@ -340,7 +340,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
 
     data = data.astype('float32')
      
-    tested_configurations = [graph.get_dict_nw()]
+    tested_configurations = [graph.dict_nw()]
     improvement = True
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
         data, graph, 0, run, gamma, **kwargs) for run in range(nb_max_runs))
@@ -353,18 +353,18 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     while improvement:
         loop += 1
         improvement = False
-        list_edges = graph.get_list_edges()
+        list_edges = graph.list_edges()
         for idx_pair in range(len(list_edges)):
             edge = list_edges[idx_pair]
             test_graph = deepcopy(graph)
             test_graph.reverse_edge(edge[0], edge[1])
 
             if (test_graph.is_cyclic()
-                or test_graph.get_dict_nw() in tested_configurations):
+                or test_graph.dict_nw() in tested_configurations):
                 print('No Evaluation for {}'.format([edge]))
             else:
                 print('Edge {} in evaluation :'.format(edge))
-                tested_configurations.append(test_graph.get_dict_nw())
+                tested_configurations.append(test_graph.dict_nw())
                 ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
                 configuration_scores = []
 
@@ -391,7 +391,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                     globalscore = score_network
                     best_structure_scores = configuration_scores
 
-                df_edge_result = pd.DataFrame(graph.get_list_edges(),
+                df_edge_result = pd.DataFrame(graph.list_edges(),
                                               columns=['Cause', 'Effect',
                                                        'Weight'])
                 df_edge_result.to_csv('results/CGNN-HC' + str(id_run) + '-loop{}.csv'.format(loop), index=False)
@@ -414,10 +414,10 @@ def exploratory_hill_climbing(graph, data, run_cgnn_function, **kwargs):
 
     nb_loops = 150
     exploration_factor = 10  # Average of number of edges to reverse at the beginning.
-    assert exploration_factor < len(graph.get_list_edges())
+    assert exploration_factor < len(graph.list_edges())
 
     loop = 0
-    tested_configurations = [graph.get_dict_nw()]
+    tested_configurations = [graph.dict_nw()]
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
         data, graph, 0, run, **kwargs) for run in range(nb_runs))
 
@@ -428,7 +428,7 @@ def exploratory_hill_climbing(graph, data, run_cgnn_function, **kwargs):
 
     while loop < nb_loops:
         loop += 1
-        list_edges = graph.get_list_edges()
+        list_edges = graph.list_edges()
 
         possible_solution=False
         while not possible_solution:
@@ -438,11 +438,11 @@ def exploratory_hill_climbing(graph, data, run_cgnn_function, **kwargs):
             for edge in list_edges[selected_edges]:
                 test_graph.reverse_edge()
             if not (test_graph.is_cyclic()
-                    or test_graph.get_dict_nw() in tested_configurations):
+                    or test_graph.dict_nw() in tested_configurations):
                 possible_solution = True
 
             print('Reversed Edges {} in evaluation :'.format(list_edges[selected_edges]))
-            tested_configurations.append(test_graph.get_dict_nw())
+            tested_configurations.append(test_graph.dict_nw())
             result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
                 data, test_graph, loop, run, **kwargs) for run in range(nb_runs))
 

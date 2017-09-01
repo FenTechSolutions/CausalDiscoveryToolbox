@@ -28,12 +28,12 @@ data = pd.read_csv(datafile)
 
 GNN = cdt.causality.pairwise.GNN(backend="TensorFlow")
 p_directed_graph = GNN.orient_graph(data, umg, printout=datafile + '_printout.csv')
-gnn_res = pd.DataFrame(p_directed_graph.get_list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
+gnn_res = pd.DataFrame(p_directed_graph.list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
 gnn_res.to_csv(datafile + "_pairwise_predictions.csv")
 
-CGNN = cdt.causality.graphs.CGNN(backend="TensorFlow")
+CGNN = cdt.causality.graph.CGNN(backend="TensorFlow")
 directed_graph = CGNN.orient_directed_graph(data, p_directed_graph)
-cgnn_res = pd.DataFrame(directed_graph.get_list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
+cgnn_res = pd.DataFrame(directed_graph.list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
 cgnn_res.to_csv(datafile + "_predictions.csv")
 
 print('Processed ' + datafile)

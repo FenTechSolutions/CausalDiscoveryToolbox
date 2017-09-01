@@ -1,5 +1,5 @@
 from cdt.generators import RandomGraphGenerator
-from cdt.causality.graphs import CGNN
+from cdt.causality.graph import CGNN
 # Might modify params w/ cdt.Settings
 graphG = RandomGraphGenerator(num_nodes=10)
 graph, data, *c = graphG.generate()
