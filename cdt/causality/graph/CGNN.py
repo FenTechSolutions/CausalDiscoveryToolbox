@@ -92,7 +92,7 @@ class CGNN_tf(object):
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
         if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD, gamma)
+            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables, nb_vectors_approx_MMD)
         else:
             self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables, gamma)
 
