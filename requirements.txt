@@ -6,3 +6,4 @@ tensorflow
 pytorch
 joblib
 pandas
+rpy2

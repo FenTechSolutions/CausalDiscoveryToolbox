@@ -19,7 +19,7 @@ datafile = "Example_pairwise_pairs.csv"
 
 print("Processing " + datafile + "...")
 data = CC(datafile, scale=True)
-model = cdt.causality.pairwise_models.GNN(backend="TensorFlow")
+model = cdt.causality.pairwise.GNN(backend="TensorFlow")
 predictions = model.predict_dataset(data, printout=datafile + '_printout.csv')
 predictions = pd.DataFrame(predictions, columns=["Predictions", "P-value"])
 

@@ -10,7 +10,7 @@ from ..utils.Loss import MomentMatchingLoss_th as MomentMatchingLoss, MMD_loss_t
 from ..utils.Settings import SETTINGS
 from sklearn.linear_model import LassoLars
 from sklearn.svm import SVR
-from ..causality.graphical_models.CGNN import CGNN_tf as CGNN
+from ..causality.graph.CGNN import CGNN_tf as CGNN
 
 
 class SEMModel(th.nn.Module):
@@ -97,10 +97,10 @@ class FullGraphPolynomialModel_th(th.nn.Module):
         self.graph_variables = []
         self.params = []
         self.N = N
-        nodes = self.graph.get_list_nodes()
+        nodes = self.graph.list_nodes()
         while self.graph_variables < len(nodes):
             for var in nodes:
-                par = self.graph.get_parents(var)
+                par = self.graph.parents(var)
                 if (var not in self.graph_variables and
                     set(par).issubset(self.graph_variables)):
                     # Variable can be generated
@@ -114,7 +114,7 @@ class FullGraphPolynomialModel_th(th.nn.Module):
         """
         generated_variables = {}
         for var, layer in zip(self.graph_variables, self.params):
-            par = self.graph.get_parents(var)
+            par = self.graph.parents(var)
             if len(par) > 0:
                 inputx = th.cat([th.cat([generated_variables[parent] for parent in par], 1),
                                  th.FloatTensor(self.N, 1).normal_(),
@@ -132,7 +132,7 @@ class FullGraphPolynomialModel_th(th.nn.Module):
             generated_variables[var] = layer(inputx)
 
         output = []
-        for v in self.graph.get_list_nodes():
+        for v in self.graph.list_nodes():
             output.append(generated_variables[v])
 
         return th.cat(output, 1)
@@ -172,7 +172,7 @@ class FullGraphPolynomialModel_tf(object):
         while len(generated_variables) < n_var:
             for var in list_nodes:
                 # Check if all parents are generated
-                par = graph.get_parents(var)
+                par = graph.parents(var)
 
                 if (var not in generated_variables and
                         set(par).issubset(generated_variables)):
@@ -278,7 +278,7 @@ def full_graph_polynomial_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    list_nodes = graph.get_list_nodes()
+    list_nodes = graph.list_nodes()
     print(list_nodes)
     data = df_data[list_nodes].as_matrix()
     data = data.astype('float32')
@@ -321,7 +321,7 @@ def CGNN_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    list_nodes = graph.get_list_nodes()
+    list_nodes = graph.list_nodes()
     print(list_nodes)
     data = df_data[list_nodes].as_matrix()
     data = data.astype('float32')

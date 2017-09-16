@@ -79,7 +79,7 @@ class Graph(object):
         """
         raise NotImplementedError
 
-    def get_parents(self, node):
+    def parents(self, node):
         """ Get the list of parents of a node
 
         :param node: Selected node
@@ -92,7 +92,17 @@ class Graph(object):
                 parents.append(i)
         return parents
 
-    def get_list_nodes(self):
+    def neighbors(self, node):
+        """  Get the list of neighbors of a node
+
+        :param node: Selected node
+        :return: list of parents and children of a node
+        """
+        neighbors = self.parents(node)
+        neighbors.extend([i for i in list(self._graph[node]) if i not in neighbors])
+        return neighbors
+
+    def list_nodes(self):
         """ Get list of all nodes in graph
 
         :return: List of nodes
@@ -109,7 +119,7 @@ class Graph(object):
                     nodes.append(j)
         return nodes
 
-    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
+    def list_edges(self, order_by_weight=True, descending=False, return_weights=True):
         """ Get list of edges according to order defined by parameters
 
         :param order_by_weight: List of edges will be ordered by weight values
@@ -137,15 +147,15 @@ class Graph(object):
         else:
             return list_edges
 
-    def get_adjacency_matrix(self):
+    def adjacency_matrix(self):
         """Get the adjacency matrix of the graph
 
         :return: Adjacency Matrix (size : Nodes x Nodes), List of nodes
         :rtype: (numpy.ndarray, list)
         """
 
-        nodes = self.get_list_nodes()
-        edges = self.get_list_edges(order_by_weight=False)
+        nodes = self.list_nodes()
+        edges = self.list_edges(order_by_weight=False)
 
         m = np.zeros((len(nodes), len(nodes)))
 
@@ -157,7 +167,7 @@ class Graph(object):
 
         return m, nodes
 
-    def get_dict_nw(self):
+    def dict_nw(self):
         """Get dictionary of graph without weight values
 
         :return: Dictionary of the directed graph
@@ -238,7 +248,7 @@ class DirectedGraph(Graph):
             path.remove(vertex)
             return False
 
-        g = self.get_dict_nw()
+        g = self.dict_nw()
         return any(visit(v) for v in g)
 
     def cycles(self):
@@ -263,7 +273,7 @@ class DirectedGraph(Graph):
                         continue
                     fringe.append((next_state, path + [next_state]))
 
-        g = self.get_dict_nw()
+        g = self.dict_nw()
         return [[node] + path for node in g for path in dfs(g, node, node) if path]
 
     def reverse_edge(self, node1, node2, weight=None):
@@ -297,7 +307,7 @@ class DirectedGraph(Graph):
         The edges with the lowest weight values will be reversed or deleted.
         """
 
-        list_ordered_edges = self.get_list_edges(return_weights=False)
+        list_ordered_edges = self.list_edges(return_weights=False)
         while self.is_cyclic():
             cc = self.cycles()
             # Select the first link:
@@ -330,7 +340,7 @@ class DirectedGraph(Graph):
         :return: True if the directed graph is cyclic
         :rtype: bool
         """
-        g = self.get_dict_nw()
+        g = self.dict_nw()
         print(g)
         path = set()
         visited = set()
@@ -384,16 +394,16 @@ class UndirectedGraph(Graph):
         if len(self._graph[node2]) == 0:
             del self._graph[node2]
 
-    def get_neighbors(self, node):
+    def neighbors(self, node):
         """ Get the list of neighbors of a node
 
         :param node: Selected node
         :return: list of neighbors of the nodes
         :rtype: list
         """
-        return self.get_parents(node)
+        return self.parents(node)
 
-    def get_list_edges(self, order_by_weight=True, descending=False, return_weights=True):
+    def list_edges(self, order_by_weight=True, descending=False, return_weights=True):
         """ Get list of edges according to order defined by parameters
 
         :param order_by_weight: List of edges will be ordered by weight values
@@ -422,3 +432,13 @@ class UndirectedGraph(Graph):
         else:
             return list_edges
 
+    def adjacency_matrix(self):
+        """Get the adjacency matrix of the graph
+
+        :return: Adjacency Matrix (size : Nodes x Nodes), List of nodes
+        :rtype: (numpy.ndarray, list)
+        """
+
+        m, nodes = super(UndirectedGraph, self).adjacency_matrix()
+        m = m + m.transpose()
+        return m, nodes

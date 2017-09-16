@@ -7,10 +7,10 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.preprocessing import scale
 from sklearn.metrics import mean_squared_error
 import numpy as np
-from .model import Pairwise_Model
+from .model import PairwiseModel
 
 
-class BivariateFit(Pairwise_Model):
+class BivariateFit(PairwiseModel):
     """
     Bivariate Fit model.
     Based itself on a best-fit criterion based on a regressor.

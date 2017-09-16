@@ -68,10 +68,10 @@ class RandomGraphFromData(object):
         :return: generated data
         """
         generated_variables = {}
-        nodes = graph.get_list_nodes()
+        nodes = graph.list_nodes()
         while len(generated_variables) < len(nodes):
             for var in nodes:
-                par = graph.get_parents(var)
+                par = graph.parents(var)
                 if (var not in generated_variables and
                         set(par).issubset(generated_variables)):
                     # Variable can be generated
@@ -119,13 +119,13 @@ class RandomGraphFromData(object):
 
         graph.remove_cycles()
         print(graph.is_cyclic(), graph.cycles())
-        print('Adjacency matrix : {}'.format(graph.get_adjacency_matrix()))
+        print('Adjacency matrix : {}'.format(graph.adjacency_matrix()))
         print('Number of edges : {}'.format(
-            len(graph.get_list_edges(return_weights=False))))
+            len(graph.list_edges(return_weights=False))))
         print("Beginning random graph build")
         print("Graph generated, passing to data generation!")
         # Resimulation of variables
-        nodes = graph.get_list_nodes()
+        nodes = graph.list_nodes()
         print(nodes)
         # Regress using a y=P(Xc,E)= Sum_i,j^d(_alphaij*(X_1+..+X_c)^i*E^j) model & re-simulate data
         # run_graph_polynomial(self.data, graph,0,0)

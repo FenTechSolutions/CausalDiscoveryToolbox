@@ -1,8 +1,8 @@
 # ToDo : Implement
-from .model import Pairwise_Model
+from .model import PairwiseModel
 
 
-class PNL(Pairwise_Model):
+class PNL(PairwiseModel):
     def __init__(self):
         super(PNL, self).__init__()
 

@@ -8,7 +8,7 @@ from sklearn.preprocessing import scale
 from pandas import DataFrame
 
 
-class Pairwise_Model(object):
+class PairwiseModel(object):
     """ Base class for all pairwise causal inference models
 
     Usage for undirected/directed graphs and CEPC df format.
@@ -16,7 +16,7 @@ class Pairwise_Model(object):
 
     def __init__(self):
         """ Init. """
-        super(Pairwise_Model, self).__init__()
+        super(PairwiseModel, self).__init__()
 
     def predict_proba(self, a, b, idx=0):
         """ Prediction method for pairwise causal inference.

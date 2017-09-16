@@ -6,7 +6,7 @@ Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas 
 
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.preprocessing import scale
-from .model import Pairwise_Model
+from .model import PairwiseModel
 import numpy as np
 
 
@@ -89,7 +89,7 @@ def normalized_hsic(x, y):
     return h
 
 
-class ANM(Pairwise_Model):
+class ANM(PairwiseModel):
     """ Additive Noise model to infer causal relationships.
 
     Assuming that x->y then if the data follows an additive noise model, there is y=f(x)+e

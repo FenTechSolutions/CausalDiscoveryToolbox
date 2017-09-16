@@ -9,7 +9,7 @@ from sklearn.preprocessing import scale
 import numpy as np
 import torch as th
 from torch.autograd import Variable
-from .model import Pairwise_Model
+from .model import PairwiseModel
 
 
 class NCC_model(th.nn.Module):
@@ -41,7 +41,7 @@ class NCC_model(th.nn.Module):
         return th.nn.Sigmoid(out)
 
 
-class NCC(Pairwise_Model):
+class NCC(PairwiseModel):
     """Neural Causation Coefficient
 
     Infer causal relationships between pairs of variables

@@ -1,4 +1,4 @@
-from cdt.causality.pairwise_models import GNN
+from cdt.causality.pairwise import GNN
 from sklearn.preprocessing import scale
 import numpy as np
 
