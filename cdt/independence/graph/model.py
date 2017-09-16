@@ -8,6 +8,7 @@ from joblib import Parallel, delayed
 import numpy as np
 from ...utils.Graph import UndirectedGraph
 
+
 class DeconvolutionModel(object):
     """ Base class for all graphs models"""
 
@@ -22,9 +23,7 @@ class DeconvolutionModel(object):
         return self.create_skeleton_from_data(df_data, **kwargs)
 
     def create_skeleton_from_data(self, data, **kwargs):
-
         raise NotImplementedError
-
 
 
 class FeatureSelectionModel(object):
@@ -35,14 +34,13 @@ class FeatureSelectionModel(object):
         super(FeatureSelectionModel, self).__init__()
 
     def predict_features(self, df_features, df_target, idx=0, **kwargs):
-        """ get the relevance score of each candidate variable with feature selection mehod
+        """ get the relevance score of each candidate variable with feature selection method
         :param df_features: candidate feature variables
         :param df_target: target variable
         """
         raise NotImplementedError
 
-
-    def run_feature_selection(self,df_data, target, idx,**kwargs):
+    def run_feature_selection(self, df_data, target, idx, **kwargs):
 
         list_features = list(df_data.columns.values)
         list_features.remove(target)
@@ -54,7 +52,6 @@ class FeatureSelectionModel(object):
 
         return scores
 
-
     def predict(self, df_data, **kwargs):
         """ get the skeleton of the graph from raw data
         :param df_data: data to construct a graph from
@@ -65,7 +62,8 @@ class FeatureSelectionModel(object):
         n_nodes = len(list_nodes)
         matrix_results = np.zeros((n_nodes, n_nodes))
 
-        result_feature_selection = Parallel(n_jobs=nb_jobs)(delayed(self.run_feature_selection)(df_data, node, idx, **kwargs) for idx, node in enumerate(list_nodes))
+        result_feature_selection = Parallel(n_jobs=nb_jobs)(
+            delayed(self.run_feature_selection)(df_data, node, idx, **kwargs) for idx, node in enumerate(list_nodes))
 
         for i in range(len(result_feature_selection)):
 
@@ -78,7 +76,7 @@ class FeatureSelectionModel(object):
                     matrix_results[j, i] = matrix_results[j, i] + score[cpt]
                     cpt += 1
 
-        matrix_results = matrix_results/2
+        matrix_results = matrix_results / 2
 
         graph = UndirectedGraph()
 

@@ -1,34 +1,10 @@
-from sklearn.linear_model import RandomizedLasso
 from .model import FeatureSelectionModel
-import pandas as pd
 from sklearn.feature_selection import RFECV
-from sklearn.svm import SVR
-from sklearn.svm import LinearSVR
+from sklearn.svm import SVR, LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 from skrebate import ReliefF
-from .HSICLasso import *
 import numpy as np
 from sklearn.linear_model import ARDRegression
-
-
-class RandomizedLasso_model(FeatureSelectionModel):
-    """ RandomizedLasso from scikit-learn
-    """
-
-    def __init__(self):
-        super(RandomizedLasso_model, self).__init__()
-
-    def predict_features(self, df_features, df_target, idx=0, **kwargs):
-        alpha = kwargs.get("alpha", 'aic')
-        scaling = kwargs.get("scaling", 0.5)
-        sample_fraction = kwargs.get("sample_fraction", 0.75)
-        n_resampling = kwargs.get("n_resampling", 200)
-
-        randomized_lasso = RandomizedLasso(alpha=alpha, scaling=scaling, sample_fraction=sample_fraction,
-                                           n_resampling=n_resampling)
-        randomized_lasso.fit(df_features.as_matrix(), df_target.as_matrix())
-
-        return randomized_lasso.scores_
 
 
 class RFECV_linearSVR(FeatureSelectionModel):
@@ -49,7 +25,7 @@ class RFECV_linearSVR(FeatureSelectionModel):
         return selector.grid_scores_
 
 
-class linearSVR_L2(FeatureSelectionModel):
+class LinearSVR_L2(FeatureSelectionModel):
     """ RandomizedLasso from scikit-learn
     """
 
@@ -66,7 +42,7 @@ class linearSVR_L2(FeatureSelectionModel):
         return np.abs(lsvc.coef_)
 
 
-class decisionTree_regressor(FeatureSelectionModel):
+class DecisionTree_regressor(FeatureSelectionModel):
     """ RandomizedLasso from scikit-learn
     """
 
@@ -109,16 +85,3 @@ class RRelief(FeatureSelectionModel):
         rr.fit(X, y)
 
         return rr.feature_importances_
-
-
-class HSICLasso(FeatureSelectionModel):
-    def __init__(self):
-        super(HSICLasso, self).__init__()
-
-    def predict_features(self, df_features, df_target, idx=0, **kwargs):
-        X = np.transpose(df_features.as_matrix())
-        y = np.transpose(df_target.as_matrix())
-
-        path, beta, A, lam = hsiclasso(X, y, numFeat=5)
-
-        return beta

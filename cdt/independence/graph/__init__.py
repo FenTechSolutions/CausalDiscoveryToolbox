@@ -1,4 +1,4 @@
 from .FSGNN import FSGNN
-from .Glasso import Glasso
+from .Lasso import (Glasso, HSICLasso, RandomizedLasso_model)
 from .ND import NetworkDeconvolution
-from .Scikit_FeatureSelectionModels import *
+from .FSRegression import (RFECV_linearSVR, LinearSVR_L2, RRelief, DecisionTree_regressor, ARD_Regression)
