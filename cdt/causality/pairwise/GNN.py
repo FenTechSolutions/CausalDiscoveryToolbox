@@ -72,7 +72,7 @@ class GNN_tf(object):
 
         if (use_Fast_MMD):
             self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1),
-                                                       nb_vectors_approx_MMD,gamma)
+                                                       nb_vectors_approx_MMD)
         else:
             self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1),gamma)
 
