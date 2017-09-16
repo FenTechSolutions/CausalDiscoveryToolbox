@@ -379,7 +379,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                 print("Current score : {}".format(score_network))
                 print("Best score : {}".format(globalscore))
                 print("P-value : {}".format(ttest_criterion.p_value))
-                if score_network < globalscore and ttest_criterion.p_value < ttest_threshold:
+                if score_network < globalscore:
                     graph.reverse_edge(edge[0], edge[1])
                     improvement = True
                     if len(configuration_scores) < nb_max_runs:
