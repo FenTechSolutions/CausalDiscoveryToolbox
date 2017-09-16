@@ -10,20 +10,10 @@ from torch.autograd import Variable
 import numpy as np
 from scipy.stats import ttest_ind
 
-
-def median_heursitic(m):
-    list_dist = []
-    for i in range(m.shape[0]):
-        for j in range(m.shape[0]):
-            dist = 0
-            for d in range(m.shape[1]):
-                dist += (m[i, d] - m[j, d]) ** 2
-            list_dist.append(dist)
-
-    return 1 / (2 * np.median(list_dist))
+bandwiths_gamma = [0.005, 0.05, 0.25, 0.5, 1, 5, 50]
 
 
-def MMD_loss_tf(xy_true, xy_pred, gamma, low_memory_version=False):
+def MMD_loss_tf(xy_true, xy_pred):
     N, _ = xy_pred.get_shape().as_list()
 
     X = tf.concat([xy_pred, xy_true], 0)
@@ -38,7 +28,7 @@ def MMD_loss_tf(xy_true, xy_pred, gamma, low_memory_version=False):
 
     loss = 0
 
-    for i in gamma:
+    for i in bandwiths_gamma:
         kernel_val = tf.exp(-i * exponent)
         loss += tf.reduce_sum(S * kernel_val)
 
@@ -108,7 +98,6 @@ def f1(x, wz, N):
 
 
 def Fourier_MMD_Loss_tf(xy_true, xy_pred, nb_vectors_approx_MMD):
-    bandwiths_gamma = [0.005, 0.05, 0.25, 0.5, 1, 5, 50]
     N, nDim = xy_pred.get_shape().as_list()
 
     wz = rp(nb_vectors_approx_MMD, bandwiths_gamma, nDim)
