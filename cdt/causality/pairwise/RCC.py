@@ -33,7 +33,7 @@ class RCC(PairwiseModel):
      "Towards a Learning Theory of Cause-Effect Inference", ICML 2015.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         """
         Initialize the model w/ its parameters
 

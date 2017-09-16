@@ -17,8 +17,7 @@ import numpy as np
 from copy import deepcopy
 from .model import GraphModel
 from ..pairwise.GNN import GNN
-from ...utils.Loss import MMD_loss_tf,Fourier_MMD_Loss_tf
-from ...utils.Loss import median_heursitic
+from ...utils.Loss import MMD_loss_tf, Fourier_MMD_Loss_tf, TTestCriterion
 # from ...utils.Loss import  MMD_loss_th
 from ...utils.Settings import SETTINGS
 import pandas as pd
@@ -36,7 +35,7 @@ def init(size, **kwargs):
 
 
 class CGNN_confounders_tf(object):
-    def __init__(self, N, graph, run, idx, gamma, **kwargs):
+    def __init__(self, N, graph, run, idx, **kwargs):
         """ Build the tensorflow graph of the CGNN structure
 
         :param N: Number of points
@@ -116,9 +115,9 @@ class CGNN_confounders_tf(object):
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
         if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD, gamma)
+            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables,nb_vectors_approx_MMD)
         else:
-            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables, gamma)
+            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
@@ -186,7 +185,7 @@ class CGNN_confounders_tf(object):
         return np.array(generated_variables)[0, :, :]
 
 
-def run_CGNN_confounders_tf(data, graph, idx=0, run=0, gamma=1, **kwargs):
+def run_CGNN_confounders_tf(data, graph, idx=0, run=0, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param df_data: data corresponding to the graph
@@ -212,11 +211,11 @@ def run_CGNN_confounders_tf(data, graph, idx=0, run=0, gamma=1, **kwargs):
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
-            model = CGNN_confounders_tf(data.shape[0], graph, run, idx, gamma, **kwargs)
+            model = CGNN_confounders_tf(data.shape[0], graph, run, idx, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN_confounders_tf(data, graph, run, idx, gamma, **kwargs)
+        model = CGNN_confounders_tf(data, graph, run, idx, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 
@@ -365,13 +364,10 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
     list_nodes = graph.skeleton.list_nodes()
     data = data[list_nodes].as_matrix()
 
-    median = median_heursitic(data)
-    gamma = [0.1*median, 0.5*median, median, 2*median, 10*median]
-
     data = data.astype('float32')
 
     result = []
-    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, graph, 0, run, gamma, **kwargs) for run in range(nb_runs))
+    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, graph, 0, run, **kwargs) for run in range(nb_runs))
 
     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
     score_network += SETTINGS.complexity_graph_param*len(graph.list_edges())
@@ -411,7 +407,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                 else:
                     print("Reverse Edge " + str(node1) + " -> " + str(node2) + " in evaluation")
                     tested_configurations.append(test_graph.dict_nw())
-                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
+                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
                     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
@@ -427,7 +423,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                         if len(configuration_scores) < nb_max_runs:
                             result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                                data, test_graph, idx_pair, run, gamma, **kwargs)
+                                data, test_graph, idx_pair, run, **kwargs)
                                                                     for run in range(len(configuration_scores),
                                                                                      nb_max_runs - len(
                                                                                          configuration_scores)))
@@ -451,7 +447,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                     tested_configurations.append(test_graph.dict_nw())
                     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
+                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
                     score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
@@ -466,7 +462,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                         print("Edge " + str(node1) + " -> " + str(node2) + " got removed, possible confounder !")
                         if len(configuration_scores) < nb_max_runs:
                             result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                                data, test_graph, idx_pair, run, gamma, **kwargs)
+                                data, test_graph, idx_pair, run, **kwargs)
                                                                     for run in range(len(configuration_scores),
                                                                                      nb_max_runs - len(
                                                                                          configuration_scores)))
@@ -500,7 +496,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     print("Addition of edge " + str(node1) + " -> " + str(node2) + " in evaluation :")
                     tested_configurations.append(test_graph.dict_nw())
                     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
+                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
                     score_network_add_edge_node1_node2 = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network_add_edge_node1_node2 += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
@@ -520,7 +516,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     print("Addition of edge " + str(node2) + " -> " + str(node1) + " in evaluation :")
                     tested_configurations.append(test_graph.dict_nw())
                     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, gamma, **kwargs) for run in range(nb_runs))
+                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
                     score_network_add_edge_node2_node1 = np.mean([i for i in result_pairs if np.isfinite(i)])
                     score_network_add_edge_node2_node1 += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
@@ -538,7 +534,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                     if len(configuration_scores_add_edge_node1_node2) < nb_max_runs:
                         result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                            data, test_graph_add_edge_node1_node2, idx_pair, run, gamma, **kwargs)
+                            data, test_graph_add_edge_node1_node2, idx_pair, run, **kwargs)
                                                                 for run in range(len(configuration_scores_add_edge_node1_node2),
                                                                                  nb_max_runs - len(
                                                                                      configuration_scores_add_edge_node1_node2)))
@@ -557,7 +553,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                     if len(configuration_scores_add_edge_node2_node1) < nb_max_runs:
                         result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                            data, test_graph_add_edge_node2_node1, idx_pair, run, gamma, **kwargs)
+                            data, test_graph_add_edge_node2_node1, idx_pair, run, **kwargs)
                                                                 for run in range(len(configuration_scores_add_edge_node2_node1),
                                                                                  nb_max_runs - len(
                                                                                      configuration_scores_add_edge_node2_node1)))

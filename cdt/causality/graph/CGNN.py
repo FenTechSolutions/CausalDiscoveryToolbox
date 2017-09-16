@@ -18,7 +18,6 @@ from copy import deepcopy
 from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, MMD_loss_th, Fourier_MMD_Loss_tf, TTestCriterion
-from ...utils.Loss import median_heursitic
 from ...utils.Settings import SETTINGS
 import pandas as pd
 
@@ -44,7 +43,7 @@ class CGNN_tf(object):
         :param idx: number of the idx (only for print)
         :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
         :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
-        :param kwargs: use_Fast_MMD=(SETTINGS.use_Fast_MMD) use fast MMD option
+        :param kwargs: use_Fast_MMD=(SETTINGS.use_Fast_MMD) use fast MMD option, Fourier Approx.
         :param kwargs: nb_vectors_approx_MMD=(SETTINGS.nb_vectors_approx_MMD) nb vectors
         """
         learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)

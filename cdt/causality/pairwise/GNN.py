@@ -8,7 +8,6 @@ import tensorflow as tf
 import numpy as np
 from ...utils.Loss import MMD_loss_tf as MMD_tf
 from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
-from ...utils.Loss import median_heursitic
 from ...utils.Loss import MMD_loss_th as MMD_th
 from ...utils.Loss import TTestCriterion
 from ...utils.Graph import DirectedGraph
