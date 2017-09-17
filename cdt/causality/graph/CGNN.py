@@ -278,7 +278,7 @@ def run_CGNN_th(df_data, graph, idx=0, run=0, verbose=True, **kwargs):
     train_epochs = kwargs.get('test_epochs', SETTINGS.train_epochs)
     test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
     learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
-    
+
     list_nodes = graph.list_nodes()
     df_data = df_data[list_nodes].as_matrix()
     data = df_data.astype('float32')
@@ -334,10 +334,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     id_run = kwargs.get("id_run", 0)
     ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
     loop = 0
-    list_nodes = graph.list_nodes()
-    data = data[list_nodes].as_matrix()
-    data = data.astype('float32')
-     
+
     tested_configurations = [graph.dict_nw()]
     improvement = True
     result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
