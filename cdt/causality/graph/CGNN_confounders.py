@@ -64,10 +64,7 @@ class CGNN_confounders_tf(object):
         generated_variables = {}
         theta_G = []
 
-
- 
-
-        list_edges = graph.skeleton.get_list_edges()
+        list_edges = graph.skeleton.list_edges()
 
         confounder_variables = {}
         for edge in list_edges:
@@ -201,7 +198,7 @@ def run_CGNN_confounders_tf(data, graph, idx=0, run=0, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    list_nodes = graph.skeleton.get_list_nodes()
+    list_nodes = graph.skeleton.list_nodes()
     data = data[list_nodes].as_matrix()
     data = data.astype('float32')
 
@@ -379,7 +376,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
         loop += 1
         improvement = False
-        list_edges_to_evaluate = graph.skeleton.get_list_edges()
+        list_edges_to_evaluate = graph.skeleton.list_edges()
 
         for idx_pair in range(0,len(list_edges_to_evaluate)):
 

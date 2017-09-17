@@ -177,7 +177,7 @@ def run_CGNN_tf(data, graph, idx=0, run=0, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    list_nodes = graph.get_list_nodes()
+    list_nodes = graph.list_nodes()
     data = data[list_nodes].as_matrix()
     data = data.astype('float32')
      
