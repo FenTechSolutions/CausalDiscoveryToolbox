@@ -391,8 +391,8 @@ class GNN(PairwiseModel):
             else:
                 graph.add(b, a, abs(weight))
             if printout is not None:
-                res.append([str(a) + '-' + str(b), weight, p_val])
-                DataFrame(res, columns=['SampleID', 'Predictions', 'P_value']).to_csv(
+                res.append([str(a),  str(b), weight, p_val])
+                DataFrame(res, columns=['Var1', "Var2", 'Predictions', 'P_value']).to_csv(
                     printout, index=False)
 
             idx += 1
