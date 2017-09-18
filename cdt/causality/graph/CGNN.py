@@ -333,6 +333,7 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
     nb_max_runs = kwargs.get("nb_max_runs", SETTINGS.NB_MAX_RUNS)
     id_run = kwargs.get("id_run", 0)
     ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
+    printout = kwargs.get("printout", None)
     loop = 0
 
     tested_configurations = [graph.dict_nw()]
@@ -387,10 +388,11 @@ def hill_climbing(graph, data, run_cgnn_function, **kwargs):
                     globalscore = score_network
                     best_structure_scores = configuration_scores
 
-                df_edge_result = pd.DataFrame(graph.list_edges(),
+                if printout is not None:
+                    df_edge_result = pd.DataFrame(graph.list_edges(),
                                               columns=['Cause', 'Effect',
                                                        'Weight'])
-                df_edge_result.to_csv('results/CGNN-HC' + str(id_run) + '-loop{}.csv'.format(loop), index=False)
+                    df_edge_result.to_csv(printout + str(id_run) + '-loop{}.csv'.format(loop), index=False)
 
     return graph
 
