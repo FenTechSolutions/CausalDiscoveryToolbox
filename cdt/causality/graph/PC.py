@@ -1,7 +1,7 @@
 from ...utils.Settings import SETTINGS
 from ...utils.R import RPackages, default_translation
 from .model import GraphModel
-from ...utils.Graph import UndirectedGraph
+from ...utils.Graph import UndirectedGraph, DirectedGraph
 from pandas import DataFrame
 import numpy as np
 import warnings
@@ -102,7 +102,8 @@ class PC(GraphModel):
             args["suffStat"] = rlc.TaggedList([data.as_matrix(), indepMethod], tags=("data", "ic.method"))
         # print(args, args["fixedGaps"].shape, datashape, np.corrcoef(data.as_matrix(), rowvar=False).shape)
         pcfit = RPackages.pcalg.pc(**args)
-        pcmat = np.array(r("as")(pcfit, "matrix"),dtype=int)
+        pcmat = np.array(r("as")(pcfit, "matrix"), dtype=int)
         # Removing undirected edges from estimated adjacency matrix
-        pcmat2 = np.transpose(pcmat)
-        return pcmat2, pcmat
+        result = DataFrame(pcmat * np.transpose(1-pcmat), columns=data.columns)
+
+        return DirectedGraph(df=result, adjacency_matrix=True)
