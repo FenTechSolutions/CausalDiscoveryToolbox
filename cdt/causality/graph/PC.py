@@ -1,3 +1,7 @@
+"""
+PC algorithm by C.Glymour & P.Sprites (REF, 2000)
+Imported from the Pcalg package, with the rpy2 R wrapper.
+"""
 from ...utils.Settings import SETTINGS
 from ...utils.R import RPackages, default_translation
 from .model import GraphModel
