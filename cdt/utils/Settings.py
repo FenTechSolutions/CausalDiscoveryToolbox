@@ -39,14 +39,14 @@ class DefaultSettings(object):
         self.NB_GPU = 2
         self.GPU_OFFSET = 0
         self.learning_rate = 0.01
-        self.init_weights = 0.05
+        self.init_weights = 0.1
         self.max_nb_points = 1500
         self.verbose = True
         self.r_is_available = False
 
         # CGNN
-        self.h_layer_dim = 30
-        self.train_epochs = 1000
+        self.h_layer_dim = 20
+        self.train_epochs = 1500
         self.test_epochs = 500
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
