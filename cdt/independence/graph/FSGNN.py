@@ -18,11 +18,13 @@ def init(size):
     return tf.random_normal(shape=size, stddev=SETTINGS.init_weights)
 
 
-def eval_feature_selection_score(df_data, target, verbose=False):
+def eval_feature_selection_score(df_data, target):
     print("Feature selection for target " + str(target))
 
     list_features = list(df_data.columns.values)
 
+    verbose = SETTINGS.verbose
+    
     N = df_data.shape[0]
 
     if (target in list_features):
