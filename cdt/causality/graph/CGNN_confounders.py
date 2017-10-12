@@ -411,9 +411,9 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                     print("Current score : " + str(score_network))
                     print("Best score : " + str(globalscore))
-                    print("P-value : {}".format(ttest_criterion.p_value))
 
-                    if score_network < globalscore and ttest_criterion.p_value < ttest_threshold:
+
+                    if score_network < globalscore:
                         graph.reverse_edge(node1, node2)
                         improvement = True
                         print("Edge " + str(node1) + "->" + str(node2) + " got reversed !")
@@ -451,9 +451,8 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                     print("Current score : " + str(score_network))
                     print("Best score : " + str(globalscore))
-                    print("P-value : {}".format(ttest_criterion.p_value))
 
-                    if score_network < globalscore and ttest_criterion.p_value < ttest_threshold:
+                    if score_network < globalscore:
                         graph.remove_edge(node1, node2)
                         improvement = True
                         print("Edge " + str(node1) + " -> " + str(node2) + " got removed, possible confounder !")
@@ -522,7 +521,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
                 print("Best score : " + str(globalscore))
 
-                if score_network_add_edge_node1_node2 < globalscore and score_network_add_edge_node1_node2 < score_network_add_edge_node2_node1 and ttest_criterion_add_edge_node1_node2.p_value < ttest_threshold:
+                if score_network_add_edge_node1_node2 < globalscore and score_network_add_edge_node1_node2 < score_network_add_edge_node2_node1:
                     score_edge = globalscore - score_network_add_edge_node1_node2
                     graph.add(node1, node2, score_edge)
                     improvement = True
@@ -540,7 +539,7 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     globalscore = score_network_add_edge_node1_node2
                     best_structure_scores = configuration_scores_add_edge_node1_node2
 
-                elif score_network_add_edge_node2_node1 < globalscore and score_network_add_edge_node2_node1 < score_network_add_edge_node1_node2 and ttest_criterion_add_edge_node2_node1.p_value < ttest_threshold:
+                elif score_network_add_edge_node2_node1 < globalscore and score_network_add_edge_node2_node1 < score_network_add_edge_node1_node2:
                     score_edge = globalscore - score_network_add_edge_node2_node1
                     graph.add(node2, node1, score_edge)
                     improvement = True
