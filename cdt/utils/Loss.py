@@ -102,10 +102,10 @@ def Fourier_MMD_Loss_tf(xy_true, xy_pred, nb_vectors_approx_MMD):
 
     wz = rp(nb_vectors_approx_MMD, bandwiths_gamma, nDim)
 
-    e1 = tf.reduce_mean(f1(xy_true, wz, N), axis=0)
-    e2 = tf.reduce_mean(f1(xy_pred, wz, N), axis=0)
+    e1 = tf.sqrt(2/nb_vectors_approx_MMD)*tf.reduce_mean(f1(xy_true, wz, N), axis=0)
+    e2 = tf.sqrt(2/nb_vectors_approx_MMD)*tf.reduce_mean(f1(xy_pred, wz, N), axis=0)
 
-    return tf.reduce_mean((e1 - e2) ** 2)
+    return tf.reduce_sum((e1 - e2) ** 2)
 
 
 def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment=1):

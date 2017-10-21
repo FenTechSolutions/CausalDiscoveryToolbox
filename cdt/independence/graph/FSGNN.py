@@ -9,6 +9,7 @@ import pandas as pd
 from joblib import Parallel, delayed
 from .model import DeconvolutionModel
 from cdt.utils.Loss import MMD_loss_tf
+from cdt.utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
 from cdt.utils.Graph import *
 from ...utils.Settings import SETTINGS
 from sklearn.preprocessing import scale
@@ -59,7 +60,14 @@ def eval_feature_selection_score(df_data, target):
     all_generated_variables = tf.concat([all_parent_variables, output], 1)
     all_real_variables = tf.concat([all_parent_variables, target_variable], 1)
 
+    if (SETTINGS.use_Fast_MMD):
+        print("OK")
+        G_dist_loss = Fourier_MMD_tf(all_real_variables, all_generated_variables, SETTINGS.nb_vectors_approx_MMD)
+    else:
+        G_dist_loss = MMD_loss_tf(all_real_variables, all_generated_variables)
+
     G_dist_loss = MMD_loss_tf(all_real_variables, all_generated_variables)
+
     model_complexity = tf.reduce_sum(tf.abs(W_in))
     G_global_loss = G_dist_loss + SETTINGS.regul_param * model_complexity
     G_solver = tf.train.AdamOptimizer(learning_rate=SETTINGS.learning_rate).minimize(G_global_loss)
@@ -72,7 +80,7 @@ def eval_feature_selection_score(df_data, target):
 
     avg_weights = 0
 
-    for it in range(SETTINGS.nb_epoch_train_feature_selection):
+    for it in range(SETTINGS.train_epochs):
 
         _, G_dist_loss_curr, complexity_curr, W_in_curr = sess.run([G_solver, G_dist_loss, model_complexity, W_in],
                                                                    feed_dict={all_parent_variables: data_features,
@@ -95,13 +103,18 @@ def eval_feature_selection_score(df_data, target):
                     print(list_features[argmaxlist[i]])
                     print(maxlist[i])
 
-        if (it > SETTINGS.nb_epoch_train_feature_selection - SETTINGS.nb_epoch_eval_weights):
-            W_in_curr = np.abs(W_in_curr)
-            mean_weights = np.mean(W_in_curr, axis=1)
-            mean_weights = mean_weights / np.sum(mean_weights)
-            avg_weights += mean_weights
 
-    avg_weights = avg_weights / SETTINGS.nb_epoch_eval_weights
+    for it in range(SETTINGS.test_epochs):
+
+         _, G_dist_loss_curr, complexity_curr, W_in_curr = sess.run([G_solver, G_dist_loss, model_complexity, W_in],
+                                                                       feed_dict={all_parent_variables: data_features,
+                                                                                  target_variable: data_target})
+         W_in_curr = np.abs(W_in_curr)
+         mean_weights = np.mean(W_in_curr, axis=1)
+         mean_weights = mean_weights / np.sum(mean_weights)
+         avg_weights += mean_weights
+
+    avg_weights = avg_weights / SETTINGS.test_epochs
 
     tf.reset_default_graph()
 
@@ -109,6 +122,13 @@ def eval_feature_selection_score(df_data, target):
 
 
 def run_feature_selection(df_data, idx, target):
+
+
+    if (df_data.shape[0] > SETTINGS.max_nb_points):
+        p = np.random.permutation(df_data.shape[0])
+        df_data = df_data[p[:int(SETTINGS.max_nb_points)], :]
+
+
     if SETTINGS.GPU:
         with tf.device('/gpu:' + str(SETTINGS.GPU_OFFSET + idx % SETTINGS.NB_GPU)):
             avg_scores = eval_feature_selection_score(df_data, target)

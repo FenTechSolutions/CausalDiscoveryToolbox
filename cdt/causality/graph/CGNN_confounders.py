@@ -18,7 +18,7 @@ from copy import deepcopy
 from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, Fourier_MMD_Loss_tf, TTestCriterion
-# from ...utils.Loss import  MMD_loss_th
+from ...utils.Loss import  MMD_loss_th
 from ...utils.Settings import SETTINGS
 import pandas as pd
 
@@ -363,11 +363,9 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
 
     data = data.astype('float32')
 
-    result = []
-    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, graph, 0, run, **kwargs) for run in range(nb_runs))
 
-    score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
-    score_network += SETTINGS.complexity_graph_param*len(graph.list_edges())
+    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, graph, 0, run, **kwargs) for run in range(nb_max_runs))
+    score_network = SETTINGS.complexity_graph_param*len(graph.list_edges()) + np.mean([i for i in result_pairs if np.isfinite(i)])
 
     globalscore = score_network
 
@@ -398,22 +396,32 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                 test_graph = deepcopy(graph)
                 test_graph.reverse_edge(node1, node2)
 
-                if (test_graph.is_cyclic()
-                    or test_graph.dict_nw() in tested_configurations):
+                if (test_graph.is_cyclic() or test_graph.dict_nw() in tested_configurations):
                     print("No evaluation for edge " + str(node1) + " -> " + str(node2))
                 else:
                     print("Reverse Edge " + str(node1) + " -> " + str(node2) + " in evaluation")
                     tested_configurations.append(test_graph.dict_nw())
-                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
-                    score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
-                    score_network += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+                    ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
+                    configuration_scores = []
+
+                    while ttest_criterion.loop(configuration_scores[:len(best_structure_scores)], best_structure_scores[:len(configuration_scores)]):
+
+                        result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, **kwargs)
+                                                                for run in range(ttest_criterion.iter,
+                                                                                 ttest_criterion.iter + nb_runs))
+
+                        complexity_score = SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+                        configuration_scores.extend([(i+complexity_score) for i in result_pairs if np.isfinite(i)])
+
+                    score_network = np.mean(configuration_scores)
 
                     print("Current score : " + str(score_network))
                     print("Best score : " + str(globalscore))
 
 
                     if score_network < globalscore:
+
                         graph.reverse_edge(node1, node2)
                         improvement = True
                         print("Edge " + str(node1) + "->" + str(node2) + " got reversed !")
@@ -424,6 +432,8 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                                                                     for run in range(len(configuration_scores),
                                                                                      nb_max_runs - len(
                                                                                          configuration_scores)))
+
+                            complexity_score = SETTINGS.complexity_graph_param * len(test_graph.list_edges())
                             configuration_scores.extend([(i+complexity_score) for i in result_pairs if np.isfinite(i)])
 
                         globalscore = score_network
@@ -443,11 +453,20 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     print("Removing edge " + str(node1) + " -> " + str(node2) + " in evaluation")
 
                     tested_configurations.append(test_graph.dict_nw())
-                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
-                    score_network = np.mean([i for i in result_pairs if np.isfinite(i)])
-                    score_network += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+                    ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
+                    configuration_scores = []
+
+                    while ttest_criterion.loop(configuration_scores[:len(best_structure_scores)], best_structure_scores[:len(configuration_scores)]):
+                        result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, test_graph, idx_pair, run, **kwargs)
+                                                                for run in range(ttest_criterion.iter,
+                                                                                 ttest_criterion.iter + nb_runs))
+
+                        complexity_score = SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+                        configuration_scores.extend([(i+complexity_score) for i in result_pairs if np.isfinite(i)])
+
+                    score_network = np.mean(configuration_scores)
+
 
                     print("Current score : " + str(score_network))
                     print("Best score : " + str(globalscore))
@@ -462,6 +481,8 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                                                                     for run in range(len(configuration_scores),
                                                                                      nb_max_runs - len(
                                                                                          configuration_scores)))
+
+                            complexity_score = SETTINGS.complexity_graph_param * len(test_graph.list_edges())
                             configuration_scores.extend([(i+complexity_score) for i in result_pairs if np.isfinite(i)])
 
                         globalscore = score_network
@@ -480,28 +501,32 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                 node2 = edge[1]
 
                 #### Test add edge sens node1 -> node2
-                test_graph_add_edge_node1_node2 = deepcopy(graph)
-                test_graph_add_edge_node1_node2.add(node1, node2)
+                test_graph = deepcopy(graph)
+                test_graph.add(node1, node2)
 
                 score_network_add_edge_node1_node2 = 9999
 
-                if (test_graph.is_cyclic()
-                    or test_graph.dict_nw() in tested_configurations):
+                if (test_graph.is_cyclic() or test_graph.dict_nw() in tested_configurations):
                     print("No addition possible for " + str(node1) + " -> " + str(node2))
                 else:
                     print("Addition of edge " + str(node1) + " -> " + str(node2) + " in evaluation :")
                     tested_configurations.append(test_graph.dict_nw())
-                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
-                    score_network_add_edge_node1_node2 = np.mean([i for i in result_pairs if np.isfinite(i)])
-                    score_network_add_edge_node1_node2 += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+                    configuration_scores_add_edge_node1_node2 = []
+                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_max_runs))
+
+                    complexity_score = SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+                    configuration_scores_add_edge_node1_node2.extend([(i + complexity_score) for i in result_pairs if np.isfinite(i)])
+
+
+                    score_network_add_edge_node1_node2 = np.mean(configuration_scores_add_edge_node1_node2)
 
                     print("score network add edge " + str(node1) + " -> " + str(node2) + " : " + str(score_network_add_edge_node1_node2))
 
                 #### Test add edge sens node2 -> node1
-                test_graph_add_edge_node2_node1 = deepcopy(graph)
-                test_graph_add_edge_node2_node1.add(node2, node1)
+                test_graph = deepcopy(graph)
+                test_graph.add(node2, node1)
 
                 score_network_add_edge_node2_node1 = 9999
 
@@ -511,11 +536,17 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                 else:
                     print("Addition of edge " + str(node2) + " -> " + str(node1) + " in evaluation :")
                     tested_configurations.append(test_graph.dict_nw())
-                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_runs))
 
-                    score_network_add_edge_node2_node1 = np.mean([i for i in result_pairs if np.isfinite(i)])
-                    score_network_add_edge_node2_node1 += SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+                    configuration_scores_add_edge_node2_node1 = []
+
+                    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+                        data, test_graph, idx_pair, run, **kwargs) for run in range(nb_max_runs))
+
+                    complexity_score = SETTINGS.complexity_graph_param * len(test_graph.list_edges())
+
+                    configuration_scores_add_edge_node2_node1.extend([(i + complexity_score) for i in result_pairs if np.isfinite(i)])
+
+                    score_network_add_edge_node2_node1 = np.mean(configuration_scores_add_edge_node2_node1)
 
                     print("score network add edge " + str(node2) + " -> " + str(node1) + " : " + str(score_network_add_edge_node2_node1))
 
@@ -526,15 +557,6 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     graph.add(node1, node2, score_edge)
                     improvement = True
                     print("Edge " + str(node1) + " -> " + str(node2) + " is added with score : " + str(score_edge) + " !")
-                    complexity_score = SETTINGS.complexity_graph_param * len(test_graph_add_edge_node1_node2.get_list_edges())
-
-                    if len(configuration_scores_add_edge_node1_node2) < nb_max_runs:
-                        result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                            data, test_graph_add_edge_node1_node2, idx_pair, run, **kwargs)
-                                                                for run in range(len(configuration_scores_add_edge_node1_node2),
-                                                                                 nb_max_runs - len(
-                                                                                     configuration_scores_add_edge_node1_node2)))
-                        configuration_scores_add_edge_node1_node2.extend([(i + complexity_score) for i in result_pairs if np.isfinite(i)])
 
                     globalscore = score_network_add_edge_node1_node2
                     best_structure_scores = configuration_scores_add_edge_node1_node2
@@ -544,16 +566,6 @@ def hill_climbing_confounders(graph, data, run_cgnn_function, **kwargs):
                     graph.add(node2, node1, score_edge)
                     improvement = True
                     print("Edge " + str(node2) + " -> " + str(node1) + " is added with score : " + str(score_edge) + " !")
-
-                    complexity_score = SETTINGS.complexity_graph_param * len(test_graph_add_edge_node2_node1.get_list_edges())
-
-                    if len(configuration_scores_add_edge_node2_node1) < nb_max_runs:
-                        result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
-                            data, test_graph_add_edge_node2_node1, idx_pair, run, **kwargs)
-                                                                for run in range(len(configuration_scores_add_edge_node2_node1),
-                                                                                 nb_max_runs - len(
-                                                                                     configuration_scores_add_edge_node2_node1)))
-                        configuration_scores_add_edge_node2_node1.extend([(i + complexity_score) for i in result_pairs if np.isfinite(i)])
 
                     globalscore = score_network_add_edge_node2_node1
                     best_structure_scores = configuration_scores_add_edge_node2_node1
