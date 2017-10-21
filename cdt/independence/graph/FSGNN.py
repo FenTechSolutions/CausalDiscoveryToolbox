@@ -177,6 +177,9 @@ class FSGNN(DeconvolutionModel):
             for j in range(n_nodes):
 
                 if (j > i):
-                    graph.add(data.columns.values[i], data.columns.values[j], matrix_results[i, j])
+
+                    if(matrix_results[i, j] > SETTINGS.threshold_UMG):
+
+                        graph.add(data.columns.values[i], data.columns.values[j], matrix_results[i, j])
 
         return graph
