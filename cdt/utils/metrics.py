@@ -9,31 +9,8 @@ import pandas as pd
 from sklearn.metrics import auc, precision_recall_curve
 
 
-def count_true(tp, fp):
-    try:
-        tp.append(tp[-1] + 1)
-        fp.append(fp[-1])
-
-    except IndexError:
-        tp.append(1)
-        fp.append(0)
-    return tp, fp
-
-
-def count_false(tp, fp):
-    try:
-        tp.append(tp[-1])
-        fp.append(fp[-1]+1)
-
-    except IndexError:
-        tp.append(0)
-        fp.append(1)
-
-    return tp, fp
-
-
 def precision_recall(predictions, result):
-    """ Sums up to Hamming distance on Directed Graphs
+    """ Computes (area under the PR curve, precision, recall), metric of evaluation for directed graphs.
 
     :param predictions: list of Graphs or Graph
     :param result: DirectedGraph
