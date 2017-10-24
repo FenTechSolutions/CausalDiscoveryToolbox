@@ -18,7 +18,7 @@ import torch as th
 from torch.autograd import Variable
 from .model import PairwiseModel
 from pandas import DataFrame
-
+from ...utils.Formats import reshape_data
 
 def init(size, **kwargs):
     """ Initialize a random tensor, normal(0,kwargs(SETTINGS.init_weights)).
@@ -366,7 +366,7 @@ class GNN(PairwiseModel):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, umg, deletion=False, printout=None):
+    def orient_graph(self, df_data, type_variables, umg, deletion=False, printout=None):
         """ Orient an undirected graph using the pairwise method defined by the subclass
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
@@ -384,6 +384,9 @@ class GNN(PairwiseModel):
 
         for edge in edges:
             a, b, c = edge
+
+            data, dim_variables = reshape_data(df_data, list_nodes, type_variables)
+
             weight, p_val = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
 
             if weight > 0:  # a causes b

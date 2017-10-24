@@ -19,6 +19,9 @@ from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, MMD_loss_th, Fourier_MMD_Loss_tf, TTestCriterion
 from ...utils.Settings import SETTINGS
+from ...utils.Formats import reshape_data
+
+
 import pandas as pd
 
 
@@ -192,28 +195,7 @@ class CGNN_tf(object):
         return np.array(generated_variables)[0, :, :]
 
 
-def reshape_data(df_data, list_variables, type_variables):
 
-    list_array = []
-
-    dim_variables = {}
-
-
-    for var in list_variables:
-        if (type_variables[var] == "Categorical"):
-            data = df_data[var].values
-            data = pd.get_dummies(data).as_matrix()
-            data = data.reshape(data.shape[0], data.shape[1])
-
-        elif (type_variables[var] == "Numerical"):
-            data = scale(df_data[var].values)
-            data = data.reshape(data.shape[0], 1)
-
-        dim_variables[var] = data.shape[1]
-
-        list_array.append(data)
-
-    return np.concatenate(list_array, axis=1), dim_variables
 
 
 
