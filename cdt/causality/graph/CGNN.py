@@ -180,7 +180,7 @@ def run_CGNN_tf(data, graph, idx=0, run=0, **kwargs):
     list_nodes = graph.list_nodes()
     data = data[list_nodes].as_matrix()
     data = data.astype('float32')
-     
+
     if (data.shape[0] > SETTINGS.max_nb_points):
         p = np.random.permutation(data.shape[0])
         data  = data[p[:int(SETTINGS.max_nb_points)],:]
