@@ -51,8 +51,8 @@ def SEM_generator(x, target, causes, fixed_noise=True, verbose=True, **kwargs):
     :return: generated data
     """
 
-    lr = kwargs.get('learning_rate', SETTINGS.learning_rate)
-    train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
+    lr = kwargs.get('learning_rate', CGNN_SETTINGS.learning_rate)
+    train_epochs = kwargs.get('train_epochs', CGNN_SETTINGS.train_epochs)
     print(lr)
     n_ex = target.shape[0]
     if len(causes) == 0:
@@ -64,7 +64,7 @@ def SEM_generator(x, target, causes, fixed_noise=True, verbose=True, **kwargs):
         x = th.FloatTensor(x)
         x = th.cat([x, th.FloatTensor(n_ex, 1).normal_()], 1)
     target = Variable(th.FloatTensor(target))
-    model = SEMModel(len(causes)+1)
+    model = SEMModel(len(causes) + 1)
     criterion = th.nn.MSELoss()
     optimizer = th.optim.Adam(model.parameters(), lr=lr)
 
@@ -85,6 +85,7 @@ class FullGraphPolynomialModel_th(th.nn.Module):
     """ Generate all variables in the graph at once, torch model
 
     """
+
     def __init__(self, graph, N):
         """ Initialize the model, build the computation graph
 
@@ -102,9 +103,10 @@ class FullGraphPolynomialModel_th(th.nn.Module):
             for var in nodes:
                 par = self.graph.parents(var)
                 if (var not in self.graph_variables and
-                    set(par).issubset(self.graph_variables)):
+                        set(par).issubset(self.graph_variables)):
                     # Variable can be generated
-                    self.params.append(th.nn.Linear(int((len(par) + 2) * (len(par) + 1) / 2), 1))
+                    self.params.append(th.nn.Linear(
+                        int((len(par) + 2) * (len(par) + 1) / 2), 1))
                     self.graph_variables.append(par)
 
     def forward(self, N):
@@ -139,11 +141,11 @@ class FullGraphPolynomialModel_th(th.nn.Module):
 
 
 def init(size):
-    """ Initialize a random tensor, normal(0,SETTINGS.init_weights).
+    """ Initialize a random tensor, normal(0,CGNN_SETTINGS.init_weights).
         :param size: Size of the tensor
         :return: Tensor
     """
-    return tf.random_normal(shape=size, stddev=SETTINGS.init_weights)
+    return tf.random_normal(shape=size, stddev=CGNN_SETTINGS.init_weights)
 
 
 class FullGraphPolynomialModel_tf(object):
@@ -154,17 +156,19 @@ class FullGraphPolynomialModel_tf(object):
         :param graph: Graph to be run
         :param run: number of the run (only for log)
         :param idx: number of the idx (only for log)
-        :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
+        :param kwargs: learning_rate=(CGNN_SETTINGS.learning_rate) learning rate of the optimizer
 
         """
         super(FullGraphPolynomialModel_tf, self).__init__()
-        learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
+        learning_rate = kwargs.get(
+            'learning_rate', CGNN_SETTINGS.learning_rate)
 
         self.run = run
         self.idx = idx
         n_var = len(list_nodes)
 
-        self.all_real_variables = tf.placeholder(tf.float32, shape=[None, n_var])
+        self.all_real_variables = tf.placeholder(
+            tf.float32, shape=[None, n_var])
         alpha = tf.Variable(init([1, 1]))
         generated_variables = {}
         theta_G = [alpha]
@@ -178,12 +182,14 @@ class FullGraphPolynomialModel_tf(object):
                         set(par).issubset(generated_variables)):
 
                     # Generate the variable
-                    W_in = tf.Variable(init([int((len(par) + 2) * (len(par) + 1) / 2), 1]))
+                    W_in = tf.Variable(
+                        init([int((len(par) + 2) * (len(par) + 1) / 2), 1]))
 
                     input_v = []
                     input_v.append(tf.ones([N, 1]))
                     for i in par:
-                        input_v.append(generated_variables[i]/((len(par) + 2) * (len(par) + 1) / 2))
+                        input_v.append(
+                            generated_variables[i] / ((len(par) + 2) * (len(par) + 1) / 2))
                         # Renormalize w/ number of inputs?
                     input_v.append(tf.random_normal([N, 1], mean=0, stddev=1))
 
@@ -191,7 +197,8 @@ class FullGraphPolynomialModel_tf(object):
                     cpt = 0
                     for i in range(len(par) + 2):
                         for j in range(i + 1, len(par) + 2):
-                            out_v += W_in[cpt] * tf.multiply(input_v[i], input_v[j])
+                            out_v += W_in[cpt] * \
+                                tf.multiply(input_v[i], input_v[j])
                             cpt += 1
 
                     generated_variables[var] = out_v
@@ -202,7 +209,8 @@ class FullGraphPolynomialModel_tf(object):
             listvariablegraph.append(generated_variables[var])
 
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
-        self.G_dist_loss_xcausesy = MMD(self.all_real_variables, self.all_generated_variables)
+        self.G_dist_loss_xcausesy = MMD(
+            self.all_real_variables, self.all_generated_variables)
 
         # var_list = theta_G
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
@@ -220,10 +228,10 @@ class FullGraphPolynomialModel_tf(object):
 
         :param data: data to fit
         :param verbose: verbose
-        :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
+        :param kwargs: train_epochs=(CGNN_SETTINGS.nb_epoch_train) number of train epochs
         :return: Train loss at the last epoch
         """
-        train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
+        train_epochs = kwargs.get('train_epochs', CGNN_SETTINGS.train_epochs)
         for it in range(train_epochs):
             _, G_dist_loss_xcausesy_curr = self.sess.run(
                 [self.G_solver_xcausesy, self.G_dist_loss_xcausesy],
@@ -254,7 +262,8 @@ class FullGraphPolynomialModel_tf(object):
                                                          self.all_generated_variables],
                                                         feed_dict={self.all_real_variables: data})
             if verbose:
-                print('Pair:{}, Run:{}, Iter:{}, score:{}'.format(self.idx, self.run, it, MMD_tr))
+                print('Pair:{}, Run:{}, Iter:{}, score:{}'.format(
+                    self.idx, self.run, it, MMD_tr))
 
         tf.reset_default_graph()
 
@@ -286,8 +295,9 @@ def full_graph_polynomial_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
 
-            model = FullGraphPolynomialModel_tf(df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
-            loss = model.train(data, **kwargs)/()
+            model = FullGraphPolynomialModel_tf(
+                df_data.shape[0], graph, list_nodes, run, idx, **kwargs)
+            loss = model.train(data, **kwargs) / ()
             if np.isfinite(loss):
                 return model.evaluate(data)
             else:
@@ -295,7 +305,8 @@ def full_graph_polynomial_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
                 return full_graph_polynomial_generator_tf(df_data, graph, **kwargs)
 
     else:
-        model = FullGraphPolynomialModel_tf(len(df_data), graph, list_nodes, run, idx, **kwargs)
+        model = FullGraphPolynomialModel_tf(
+            len(df_data), graph, list_nodes, run, idx, **kwargs)
         loss = model.train(data, **kwargs)
         if np.isfinite(loss):
             return model.evaluate(data)
@@ -329,7 +340,8 @@ def CGNN_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     if gpu:
         with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
 
-            model = CGNN(df_data.shape[0], graph, run, idx, h_layer_dim=3, **kwargs)
+            model = CGNN(df_data.shape[0], graph, run,
+                         idx, h_layer_dim=3, **kwargs)
             loss = model.train(data, **kwargs)
             return model.generate(data)
 
@@ -361,10 +373,11 @@ class PolynomialModel(th.nn.Module):
         :param x: unfeaturized data
         :return: featurized data for polynomial regression of degree=2
         """
-        out = th.FloatTensor(x.size()[0], int(((x.size()[1]) * (x.size()[1] - 1)) / 2))
+        out = th.FloatTensor(x.size()[0], int(
+            ((x.size()[1]) * (x.size()[1] - 1)) / 2))
         cpt = 0
         for i in range(x.size()[1]):
-            for j in range(i+1, x.size()[1]):
+            for j in range(i + 1, x.size()[1]):
                 out[:, cpt] = x[:, i] * x[:, j]
                 cpt += 1
         # print(int(((x.size()[1])*(x.size()[1]+1))/2)-1, cpt)
@@ -401,8 +414,8 @@ def polynomial_regressor(x, target, causes, fixed_noise=False, verbose=True, **k
     :return: generated data
     """
 
-    lr = kwargs.get('learning_rate', SETTINGS.learning_rate)
-    train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
+    lr = kwargs.get('learning_rate', CGNN_SETTINGS.learning_rate)
+    train_epochs = kwargs.get('train_epochs', CGNN_SETTINGS.train_epochs)
     n_ex = target.shape[0]
     if len(causes) == 0:
         causes = []
@@ -428,7 +441,8 @@ def polynomial_regressor(x, target, causes, fixed_noise=False, verbose=True, **k
         optimizer.zero_grad()
         y_tr = model(x_input, n_ex, fixed_noise=fixed_noise)
         x = Variable(x_input)
-        loss = criterion(th.cat([y_tr, x], 1), th.cat([target.resize(target.size()[0], 1), x], 1))
+        loss = criterion(th.cat([y_tr, x], 1), th.cat(
+            [target.resize(target.size()[0], 1), x], 1))
         loss.backward()
         optimizer.step()
 
@@ -448,7 +462,7 @@ def linear_regressor(x, target, causes):
     """
 
     if len(causes) == 0:
-        x= np.random.normal(size=(target.shape[0], 1))
+        x = np.random.normal(size=(target.shape[0], 1))
 
     lasso = LassoLars(alpha=1.)  # no regularization
     lasso.fit(x, target)
@@ -469,4 +483,3 @@ def support_vector_regressor(x, target, causes):
         x = np.random.normal(size=(target.shape[0], 1))
 
     return svr_rbf.fit(x, target).predict(x)
-

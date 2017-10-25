@@ -80,8 +80,9 @@ class CGNNSettings(object):
 
 def autoset_settings(set_var):
     """
-    Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables. Return default config if variable not set.
-    :param set_var: Variable to set. Must be of type ConfigSettings 
+    Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.
+    Return default config if variable not set.
+    :param set_var: Variable to set. Must be of type ConfigSettings
     """
     try:
         devices = ast.literal_eval(os.environ["CUDA_VISIBLE_DEVICES"])
