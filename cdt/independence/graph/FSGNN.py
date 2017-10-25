@@ -131,7 +131,7 @@ def run_feature_selection(df_data, idx, target):
         df_data = df_data[p[:int(CGNN_SETTINGS.max_nb_points)], :]
 
     if SETTINGS.GPU:
-        with tf.device('/gpu:' + str(SETTINGS.GPU_OFFSET + idx % SETTINGS.NB_GPU)):
+        with tf.device('/gpu:' + str(SETTINGS.GPU_LIST[idx % len(SETTINGS.GPU_LIST)])):
             avg_scores = eval_feature_selection_score(df_data, target)
             return avg_scores
     else:
