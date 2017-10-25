@@ -403,12 +403,13 @@ class UndirectedGraph(Graph):
         """
         return self.parents(node)
 
-    def list_edges(self, order_by_weight=True, descending=False, return_weights=True):
+    def list_edges(self, order_by_weight=True, descending=False, return_weights=True, duplicates=False):
         """ Get list of edges according to order defined by parameters
 
         :param order_by_weight: List of edges will be ordered by weight values
         :param descending: order elements by decreasing weights
         :param return_weights: return the list of weights
+        :param duplicates: return duplicates or not
         :return: List of edges and their weights
         :rtype: (list,list)"""
 
@@ -416,7 +417,7 @@ class UndirectedGraph(Graph):
         weights = []
         for i in self._graph:
             for j in list(self._graph[i]):
-                if [j, i] not in list_edges:
+                if duplicates or (not duplicates and [j, i] not in list_edges):
                     list_edges.append([i, j])
                     weights.append(self._graph[i][j])
 

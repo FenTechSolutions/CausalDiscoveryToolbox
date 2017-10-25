@@ -3,20 +3,22 @@ from cdt.utils import CCEPC_PairsFileReader as CC
 import pandas as pd
 
 # Params
+
 cdt.SETTINGS.GPU = False
 cdt.SETTINGS.NB_GPU = 1
 cdt.SETTINGS.NB_JOBS = 1
-cdt.SETTINGS.NB_MAX_RUNS = 32
-#Setting for CGNN-Fourier
-cdt.SETTINGS.use_Fast_MMD = True
-cdt.SETTINGS.NB_RUNS = 1
+cdt.CGNN_SETTINGS.NB_MAX_RUNS = 32
+# Setting for CGNN-Fourier
+cdt.CGNN_SETTINGS.use_Fast_MMD = True
 
-#Setting for CDT-MMD
-cdt.SETTINGS.use_Fast_MMD = True
-cdt.SETTINGS.NB_RUNS = 1
+cdt.CGNN_SETTINGS.NB_RUNS = 1
+
+# Setting for CDT-MMD
+cdt.CGNN_SETTINGS.use_Fast_MMD = True
+cdt.CGNN_SETTINGS.NB_RUNS = 1
 
 
-cdt.SETTINGS.max_nb_points = 500
+cdt.CGNN_SETTINGS.max_nb_points = 500
 
 
 datafile = "Example_pairwise_pairs.csv"

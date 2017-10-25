@@ -11,7 +11,7 @@ from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
 from ...utils.Loss import MMD_loss_th as MMD_th
 from ...utils.Loss import TTestCriterion
 from ...utils.Graph import DirectedGraph
-from ...utils.Settings import SETTINGS
+from ...utils.Settings import SETTINGS, CGNN_SETTINGS
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 import torch as th
@@ -20,14 +20,15 @@ from .model import PairwiseModel
 from pandas import DataFrame
 from ...utils.Formats import reshape_data
 
+
 def init(size, **kwargs):
-    """ Initialize a random tensor, normal(0,kwargs(SETTINGS.init_weights)).
+    """ Initialize a random tensor, normal(0,kwargs(CGNN_SETTINGS.init_weights)).
 
     :param size: Size of the tensor
-    :param kwargs: init_std=(SETTINGS.init_weights) Std of the initialized normal variable
+    :param kwargs: init_std=(CGNN_SETTINGS.init_weights) Std of the initialized normal variable
     :return: Tensor
     """
-    init_std = kwargs.get('init_std', SETTINGS.init_weights)
+    init_std = kwargs.get('init_std', CGNN_SETTINGS.init_weights)
     return tf.random_normal(shape=size, stddev=init_std)
 
 
@@ -38,22 +39,23 @@ class GNN_tf(object):
         :param N: Number of examples to generate
         :param run: for log purposes (optional)
         :param pair: for log purposes (optional)
-        :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
-        :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
-        :param kwargs: use_Fast_MMD=(SETTINGS.use_Fast_MMD) use fast MMD option
-        :param kwargs: nb_vectors_approx_MMD=(SETTINGS.nb_vectors_approx_MMD) nb vectors
+        :param kwargs: h_layer_dim=(CGNN_SETTINGS.h_layer_dim) Number of units in the hidden layer
+        :param kwargs: learning_rate=(CGNN_SETTINGS.learning_rate) learning rate of the optimizer
+        :param kwargs: use_Fast_MMD=(CGNN_SETTINGS.use_Fast_MMD) use fast MMD option
+        :param kwargs: nb_vectors_approx_MMD=(CGNN_SETTINGS.nb_vectors_approx_MMD) nb vectors
         """
 
-        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
-        learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
-        use_Fast_MMD = kwargs.get('use_Fast_MMD', SETTINGS.use_Fast_MMD)
-        nb_vectors_approx_MMD = kwargs.get('nb_vectors_approx_MMD', SETTINGS.nb_vectors_approx_MMD)
+        h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
+        learning_rate = kwargs.get(
+            'learning_rate', CGNN_SETTINGS.learning_rate)
+        use_Fast_MMD = kwargs.get('use_Fast_MMD', CGNN_SETTINGS.use_Fast_MMD)
+        nb_vectors_approx_MMD = kwargs.get(
+            'nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
 
         self.run = run
         self.pair = pair
         self.X = tf.placeholder(tf.float32, shape=[None, 1])
         self.Y = tf.placeholder(tf.float32, shape=[None, 1])
-
 
         W_in = tf.Variable(init([2, h_layer_dim], **kwargs))
         b_in = tf.Variable(init([h_layer_dim], **kwargs))
@@ -62,7 +64,6 @@ class GNN_tf(object):
 
         theta_G = [W_in, b_in,
                    W_out, b_out]
-
 
         e = tf.random_normal([N, 1], mean=0, stddev=1)
 
@@ -73,7 +74,8 @@ class GNN_tf(object):
             self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1),
                                                        nb_vectors_approx_MMD)
         else:
-            self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1))
+            self.G_dist_loss_xcausesy = MMD_tf(
+                tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1))
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=learning_rate)
                                   .minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
@@ -88,10 +90,10 @@ class GNN_tf(object):
 
         :param data: data corresponding to the graph
         :param verbose: verbose
-        :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
+        :param kwargs: train_epochs=(CGNN_SETTINGS.nb_epoch_train) number of train epochs
         :return: None
         """
-        train_epochs = kwargs.get('train_epochs', SETTINGS.train_epochs)
+        train_epochs = kwargs.get('train_epochs', CGNN_SETTINGS.train_epochs)
 
         for it in range(train_epochs):
             _, G_dist_loss_xcausesy_curr = self.sess.run(
@@ -110,20 +112,22 @@ class GNN_tf(object):
 
         :param data: data corresponding to the graph
         :param verbose: verbose
-        :param kwargs: test_epochs=(SETTINGS.nb_epoch_test) number of test epochs
+        :param kwargs: test_epochs=(CGNN_SETTINGS.nb_epoch_test) number of test epochs
         :return: mean MMD loss value of the CGNN structure on the data
         """
-        test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
+        test_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.test_epochs)
         avg_score = 0
 
         for it in range(test_epochs):
-            score = self.sess.run([self.G_dist_loss_xcausesy], feed_dict={self.X: data[:, [0]], self.Y: data[:, [1]]})
+            score = self.sess.run([self.G_dist_loss_xcausesy], feed_dict={
+                                  self.X: data[:, [0]], self.Y: data[:, [1]]})
 
             avg_score += score[0]
 
             if verbose:
                 if it % 100 == 0:
-                    print('Pair:{}, Run:{}, Iter:{}, score:{}'.format(self.pair, self.run, it, score[0]))
+                    print('Pair:{}, Run:{}, Iter:{}, score:{}'.format(
+                        self.pair, self.run, it, score[0]))
 
         tf.reset_default_graph()
 
@@ -151,9 +155,9 @@ def tf_run_instance(m, idx, run, **kwargs):
     nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
     gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
 
-    if (m.shape[0] > SETTINGS.max_nb_points):
+    if (m.shape[0] > CGNN_SETTINGS.max_nb_points):
         p = np.random.permutation(m.shape[0])
-        m = m[p[:int(SETTINGS.max_nb_points)], :]
+        m = m[p[:int(CGNN_SETTINGS.max_nb_points)], :]
 
     run_i = run
     if gpu:
@@ -171,10 +175,10 @@ class GNN_th(th.nn.Module):
     def __init__(self, **kwargs):
         """
         Build the Torch graph
-        :param kwargs: h_layer_dim=(SETTINGS.h_layer_dim) Number of units in the hidden layer
+        :param kwargs: h_layer_dim=(CGNN_SETTINGS.h_layer_dim) Number of units in the hidden layer
         """
         super(GNN_th, self).__init__()
-        h_layer_dim = kwargs.get('h_layer_dim', SETTINGS.h_layer_dim)
+        h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
         self.s1 = th.nn.Linear(1, h_layer_dim)
         self.s2 = th.nn.Linear(h_layer_dim, 1)
 
@@ -206,16 +210,16 @@ def run_GNN_th(m, pair, run, **kwargs):
     :param pair: Number of the pair
     :param run: Number of the run
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: train_epochs=(SETTINGS.nb_epoch_train) number of train epochs
-    :param kwargs: test_epochs=(SETTINGS.nb_epoch_test) number of test epochs
-    :param kwargs: learning_rate=(SETTINGS.learning_rate) learning rate of the optimizer
+    :param kwargs: train_epochs=(CGNN_SETTINGS.nb_epoch_train) number of train epochs
+    :param kwargs: test_epochs=(CGNN_SETTINGS.nb_epoch_test) number of test epochs
+    :param kwargs: learning_rate=(CGNN_SETTINGS.learning_rate) learning rate of the optimizer
     :return: Value of the evaluation after training
     :rtype: float
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    train_epochs = kwargs.get('test_epochs', SETTINGS.train_epochs)
-    test_epochs = kwargs.get('test_epochs', SETTINGS.test_epochs)
-    learning_rate = kwargs.get('learning_rate', SETTINGS.learning_rate)
+    train_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.train_epochs)
+    test_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.test_epochs)
+    learning_rate = kwargs.get('learning_rate', CGNN_SETTINGS.learning_rate)
 
     target = Variable(th.from_numpy(m))
     # x = Variable(th.from_numpy(m[:, [0]]))
@@ -290,7 +294,8 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
         with th.cuda.device(gpu_offset + run % nb_gpu):
             XY = run_GNN_th(m, pair_idx, run, **kwargs)
         with th.cuda.device(gpu_offset + run % nb_gpu):
-            YX = run_GNN_th(m[:, [1, 0]], pair_idx, run, **kwargs)  # fliplr is unsupported in Torch
+            # fliplr is unsupported in Torch
+            YX = run_GNN_th(m[:, [1, 0]], pair_idx, run, **kwargs)
 
     else:
         XY = run_GNN_th(m, pair_idx, run, **kwargs)
@@ -311,31 +316,35 @@ class GNN(PairwiseModel):
 
     def predict_proba(self, a, b, idx=0, **kwargs):
 
-        backend_alg_dic = {"PyTorch": th_run_instance, "TensorFlow": tf_run_instance}
+        backend_alg_dic = {"PyTorch": th_run_instance,
+                           "TensorFlow": tf_run_instance}
         if len(np.array(a).shape) == 1:
             a = np.array(a).reshape((-1, 1))
             b = np.array(b).reshape((-1, 1))
 
         nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
-        nb_runs = kwargs.get("nb_runs", SETTINGS.NB_RUNS)
-        nb_max_runs = kwargs.get("nb_max_runs", SETTINGS.NB_MAX_RUNS)
-        verbose= kwargs.get("verbose", SETTINGS.verbose)
-        ttest_threshold = kwargs.get("ttest_threshold", SETTINGS.ttest_threshold)
+        nb_runs = kwargs.get("nb_runs", CGNN_SETTINGS.NB_RUNS)
+        nb_max_runs = kwargs.get("nb_max_runs", CGNN_SETTINGS.NB_MAX_RUNS)
+        verbose = kwargs.get("verbose", SETTINGS.verbose)
+        ttest_threshold = kwargs.get(
+            "ttest_threshold", CGNN_SETTINGS.ttest_threshold)
 
         m = np.hstack((a, b))
         m = m.astype('float32')
-        ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
+        ttest_criterion = TTestCriterion(
+            max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
 
         AB = []
         BA = []
 
         while ttest_criterion.loop(AB, BA):
             result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(
-                m, idx, run, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter+nb_runs))
+                m, idx, run, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
         if verbose:
-            print("P-value after {} runs : {}".format(ttest_criterion.iter, ttest_criterion.p_value))
+            print("P-value after {} runs : {}".format(ttest_criterion.iter,
+                                                      ttest_criterion.p_value))
         score_AB = np.mean(AB)
         score_BA = np.mean(BA)
 
@@ -385,9 +394,11 @@ class GNN(PairwiseModel):
         for edge in edges:
             a, b, c = edge
 
-            data, dim_variables = reshape_data(df_data, list_nodes, type_variables)
+            data, dim_variables = reshape_data(
+                df_data, list_nodes, type_variables)
 
-            weight, p_val = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
+            weight, p_val = self.predict_proba(
+                scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
 
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
