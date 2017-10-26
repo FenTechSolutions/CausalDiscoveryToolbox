@@ -6,6 +6,7 @@ Date : 8/05/2017
 """
 import ast
 import os
+import warnings
 
 
 class ConfigSettings(object):
@@ -13,20 +14,20 @@ class ConfigSettings(object):
                  "GPU",  # True if GPU is available
                  "NB_GPU",  # Number of available GPUs (Not used if autoset)
                  "GPU_OFFSET",  # First index of GPU (Not used if autoset)
-                 "GPU_LIST"  # List of CUDA_VISIBLE_DEVICES
-                 "autoset_config"
+                 "GPU_LIST",  # List of CUDA_VISIBLE_DEVICES
+                 "autoset_config",
                  "verbose",
                  "r_is_available")
 
     def __init__(self):  # Define here the default values of the parameters
-
+        super(ConfigSettings, self).__init__()
         self.NB_JOBS = 2
         self.GPU = True
         self.NB_GPU = 2
         self.GPU_OFFSET = 0
         self.GPU_LIST = [i for i in range(
             self.GPU_OFFSET, self.GPU_OFFSET + self.NB_GPU)]
-        self.autoset_config = True
+        self.autoset_config = False
         self.verbose = True
         self.r_is_available = False
 
@@ -54,7 +55,7 @@ class CGNNSettings(object):
                  "max_nb_points")
 
     def __init__(self):
-        super(object, self).__init__()
+        super(CGNNSettings, self).__init__()
         self.NB_RUNS = 8
         self.NB_MAX_RUNS = 32
         self.learning_rate = 0.01
@@ -89,8 +90,8 @@ def autoset_settings(set_var):
         else:
             raise KeyError
     except KeyError:
-        warnings.warn("No GPU automatically detected.
-                      Switching back to default settings")
+        warnings.warn(
+            "No GPU automatically detected. Switching back to default settings")
     return set_var
 
 

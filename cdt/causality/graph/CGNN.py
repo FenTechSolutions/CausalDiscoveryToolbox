@@ -731,9 +731,9 @@ class CGNN(GraphModel):
         :return: improved directed acyclic graph
         """
 
-    alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
-               'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
-    return alg_dic[alg](dag, data, type_variables, self.infer_graph, with_confounders, **kwargs)
+        alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
+                   'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
+        return alg_dic[alg](dag, data, type_variables, self.infer_graph, with_confounders, **kwargs)
 
     def orient_undirected_graph(self, data, type_variables, umg, with_confounders=False, **kwargs):
         """ Orient the undirected graph using GNN and apply CGNN to improve the graph
