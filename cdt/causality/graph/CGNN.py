@@ -717,8 +717,9 @@ class CGNN(GraphModel):
             raise ValueError
 
     def create_graph_from_data(self, data):
-        print("The CGNN model is not able (yet?) to model the graph directly from raw data")
-        raise ValueError
+
+        raise ValueError(
+            "The CGNN model is not able to model the graph directly from raw data")
 
     def orient_directed_graph(self, data, dag, alg='HC', with_confounders=False, **kwargs):
         """ Improve a directed acyclic graph using CGNN
