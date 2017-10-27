@@ -12,7 +12,7 @@ python>=3.5
 
 Install dependencies 
 ``` 
-pip -r install requirements.txt
+pip install -r requirements.txt
 ```
 
 Get source code
