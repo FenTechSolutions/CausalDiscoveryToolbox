@@ -1,0 +1,13 @@
+Cause,Effect,Score
+Allergy,Coughing,1
+Anxiety,Smoking,1
+Attention_Disorder,Car_Accident,1
+Coughing,Fatigue,1
+Fatigue,Car_Accident,1
+Genetics,Attention_Disorder,1
+Genetics,Lung_Cancer,1
+Lung_Cancer,Coughing,1
+Lung_Cancer,Fatigue,1
+Peer_Pressure,Smoking,1
+Smoking,Lung_Cancer,1
+Smoking,Yellow_Fingers,1

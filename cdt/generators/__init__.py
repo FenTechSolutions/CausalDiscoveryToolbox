@@ -1,3 +1,2 @@
 from .generate_graph_from_data import RandomGraphFromData
-from .random_graph_generator import RandomGraphGenerator
-
+from .random_graph_generator import RandomGraphGenerator, generate_graph_with_structure

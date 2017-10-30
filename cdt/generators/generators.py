@@ -329,8 +329,7 @@ def CGNN_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     """
 
     gpu = kwargs.get('gpu', SETTINGS.GPU)
-    nb_gpu = kwargs.get('nb_gpu', SETTINGS.NB_GPU)
-    gpu_offset = kwargs.get('gpu_offset', SETTINGS.GPU_OFFSET)
+    gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
 
     list_nodes = graph.list_nodes()
     print(list_nodes)
@@ -338,7 +337,7 @@ def CGNN_generator_tf(df_data, graph, idx=0, run=0, **kwargs):
     data = data.astype('float32')
 
     if gpu:
-        with tf.device('/gpu:' + str(gpu_offset + run % nb_gpu)):
+        with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
 
             model = CGNN(df_data.shape[0], graph, run,
                          idx, h_layer_dim=3, **kwargs)

@@ -8,7 +8,7 @@ from copy import deepcopy
 from ..utils.Graph import DirectedGraph
 from .generators import *
 import matplotlib
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
@@ -76,15 +76,18 @@ class RandomGraphFromData(object):
                         set(par).issubset(generated_variables)):
                     # Variable can be generated
                     if len(par) == 0:
-                        generated_variables[var] = self.data[var]  # No generation of sources
+                        # No generation of sources
+                        generated_variables[var] = self.data[var]
                     else:
                         generated_variables[var] = self.simulator(pd.DataFrame(generated_variables)[
-                                                                      par].as_matrix(), self.data[var].as_matrix(),
-                                                                  par).reshape(-1)
+                            par].as_matrix(), self.data[var].as_matrix(),
+                            par).reshape(-1)
                         if plot:
                             if len(par) > 0:
-                                plt.scatter(self.data[par[0]], self.data[var], alpha=0.2)
-                                plt.scatter(generated_variables[par[0]], generated_variables[var], alpha=0.2)
+                                plt.scatter(
+                                    self.data[par[0]], self.data[var], alpha=0.2)
+                                plt.scatter(
+                                    generated_variables[par[0]], generated_variables[var], alpha=0.2)
                                 plt.show()
 
         return generated_variables
@@ -132,10 +135,11 @@ class RandomGraphFromData(object):
 
         if self.simulator is not None:
             if self.full_graph_simulation:
-                generated_variables = self.simulator(self.data, graph, **kwargs)
+                generated_variables = self.simulator(
+                    self.data, graph, **kwargs)
             else:
                 generated_variables = self.generate_variables(graph, **kwargs)
-            
+
             return graph, pd.DataFrame(generated_variables, columns=nodes)
 
         else:
