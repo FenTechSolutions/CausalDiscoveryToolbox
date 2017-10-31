@@ -29,4 +29,4 @@ python setup.py install develop --user
 
 ## Usage
 
-ToDo
+An example of application on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](LUCAS_example/Discovery_LUCAS.ipynb)
