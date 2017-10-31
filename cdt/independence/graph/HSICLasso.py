@@ -48,9 +48,6 @@ def kernel_Gaussian(xin1, xin2, sigma):
 
     return K
 
-# We used the Nonnegative LARS solver
-# http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/5523/zip/imm5523.zip
-
 
 def hsiclasso(Xin, Yin, numFeat=10, ykernel='Gauss'):
 

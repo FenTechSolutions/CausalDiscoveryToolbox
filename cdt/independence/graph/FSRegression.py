@@ -18,9 +18,7 @@ class RFECV_linearSVR(FeatureSelectionModel):
         estimator = SVR(kernel='linear')
         selector = RFECV(estimator, step=1)
 
-        selector = selector.fit(df_features.as_matrix(), df_target.as_matrix())
-
-        print(selector.grid_scores_)
+        selector = selector.fit(df_features.as_matrix(), df_target.as_matrix()[:,0])
 
         return selector.grid_scores_
 
@@ -30,14 +28,13 @@ class LinearSVR_L2(FeatureSelectionModel):
     """
 
     def __init__(self):
-        super(linearSVR_L2, self).__init__()
+        super(LinearSVR_L2, self).__init__()
 
     def predict_features(self, df_features, df_target, idx=0, **kwargs):
         C = kwargs.get("C", 0.1)
 
         lsvc = LinearSVR(C=C).fit(df_features.as_matrix(), df_target.as_matrix())
 
-        print(np.abs(lsvc.coef_))
 
         return np.abs(lsvc.coef_)
 
@@ -47,7 +44,7 @@ class DecisionTree_regressor(FeatureSelectionModel):
     """
 
     def __init__(self):
-        super(decisionTree_regressor, self).__init__()
+        super(DecisionTree_regressor, self).__init__()
 
     def predict_features(self, df_features, df_target, idx=0, **kwargs):
         X = df_features.as_matrix()
@@ -79,7 +76,10 @@ class RRelief(FeatureSelectionModel):
 
     def predict_features(self, df_features, df_target, idx=0, **kwargs):
         X = df_features.as_matrix()
-        y = df_target.as_matrix()
+        y = df_target.as_matrix()[:,0]
+
+        print(X.shape)
+        print(y.shape)
 
         rr = ReliefF()
         rr.fit(X, y)
