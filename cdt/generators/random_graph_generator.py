@@ -1,11 +1,12 @@
-from .functions_default import (noise, cause, effect, rand_bin)
-from ..utils.Graph import DirectedGraph
-from random import shuffle
-from sklearn.preprocessing import scale
 import numpy.random as rd
 import pandas as pd
 import numpy as np
 import operator as op
+from toposort import toposort_flatten
+from random import shuffle
+from sklearn.preprocessing import scale
+from .functions_default import (noise, cause, effect, rand_bin)
+from ..utils.Graph import DirectedGraph
 
 
 def series_to_cepc_kag(A, B, idxpair):
@@ -72,7 +73,7 @@ class RandomGraphGenerator:
                 last_idx = layer[-2][-1]
                 parents = list(set([np.random.randint(0, last_idx)
                                     for i in range(
-                        self.num_max_parents)]))  # np.random.randint(self.num_max_parents - 1, self.num_max_parents))]))
+                    self.num_max_parents)]))  # np.random.randint(self.num_max_parents - 1, self.num_max_parents))]))
                 child = []
                 # Compute each cause's contribution
                 for par in parents:
@@ -123,7 +124,8 @@ class RandomGraphGenerator:
             self.cat_var = pd.DataFrame(self.cat_var)
         print('Build Directed Graph')
         self.graph = DirectedGraph()
-        self.graph.add_multiple_edges([list(i)+[1] for i in self.result_links.as_matrix()])
+        self.graph.add_multiple_edges(
+            [list(i) + [1] for i in self.result_links.as_matrix()])
 
         print('--Done !--')
         return self.get_data()
@@ -187,3 +189,48 @@ class RandomGraphGenerator:
         print('Done!')
 
         return pairs_df, target_df
+
+
+def generate_variable(data, parents_names, n_points=500, noise_coeff=.7, joint_functions=[op.add, op.mul]):
+    child = []
+    # Compute each cause's contribution
+    for par in parents_names:
+        child.append(
+            effect(data[par], n_points, noise_coeff))
+    # Combine contributions
+    shuffle(child)
+    result = child[0]
+    for i in child[1:]:
+        rd_func = joint_functions[np.random.randint(
+            0, len(joint_functions))]
+        result = op.add(result, i)
+    # Add a final noise
+    rd_func = joint_functions[np.random.randint(
+        0, len(joint_functions))]
+    if rd_func == op.mul:
+        noise_var = noise(n_points, noise_coeff).flatten()
+        result = rd_func(result + abs(min(result)),
+                         noise_var + abs(min(noise_var)))
+        # +abs(min(result))
+    else:
+        result = rd_func(result, noise(
+            n_points, noise_coeff).flatten())
+    result = scale(result)
+    return result
+
+
+def generate_graph_with_structure(graph, n_points=500, noise=.7, joint_functions=[op.add, op.mul]):
+    num_var, all_vars = len(graph.list_nodes()), graph.list_nodes()
+    generated_vars = pd.DataFrame()
+
+    gen_order = toposort_flatten(graph.dict_nw(reverse_order=True))
+
+    for i in gen_order:
+        par = graph.parents(i)
+        if len(par) == 0:
+            generated_vars[i] = cause(n_points)
+        else:
+            generated_vars[i] = generate_variable(
+                generated_vars, par, n_points, noise, joint_functions)
+
+    return generated_vars

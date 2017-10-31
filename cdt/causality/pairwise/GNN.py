@@ -6,19 +6,18 @@ Date : 10/05/2017
 """
 
 import numpy as np
+from joblib import Parallel, delayed
+from sklearn.preprocessing import scale
+import tensorflow as tf
+from .model import PairwiseModel
+from pandas import DataFrame
+from .GNN_th import th_run_instance
+from ...utils.Formats import reshape_data
 from ...utils.Loss import MMD_loss_tf as MMD_tf
 from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
 from ...utils.Loss import TTestCriterion
 from ...utils.Graph import DirectedGraph
 from ...utils.Settings import SETTINGS, CGNN_SETTINGS
-from joblib import Parallel, delayed
-from sklearn.preprocessing import scale
-import torch as th
-from torch.autograd import Variable
-from .model import PairwiseModel
-from pandas import DataFrame
-from ...utils.Formats import reshape_data
-
 
 def init(size, **kwargs):
     """ Initialize a random tensor, normal(0,kwargs(CGNN_SETTINGS.init_weights)).
@@ -250,6 +249,7 @@ class GNN(PairwiseModel):
         """
 
         edges = umg.list_edges()
+        list_nodes = umg.list_nodes()
         graph = DirectedGraph()
         res = []
         idx = 0

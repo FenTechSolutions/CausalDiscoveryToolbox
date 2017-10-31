@@ -9,6 +9,9 @@ import numpy as np
 from copy import deepcopy
 from collections import defaultdict
 import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
+
 
 def list_to_dict(links):
     """ Create a dict out of a list of links
@@ -99,7 +102,8 @@ class Graph(object):
         :return: list of parents and children of a node
         """
         neighbors = self.parents(node)
-        neighbors.extend([i for i in list(self._graph[node]) if i not in neighbors])
+        neighbors.extend(
+            [i for i in list(self._graph[node]) if i not in neighbors])
         return neighbors
 
     def list_nodes(self):
@@ -167,21 +171,26 @@ class Graph(object):
 
         return m, nodes
 
-    def dict_nw(self):
+    def dict_nw(self, reverse_order=False):
         """Get dictionary of graph without weight values
-
+        :param reverse_order: If the causes are set as 1st dict elements.   
         :return: Dictionary of the directed graph
         :rtype: dict
 
         """
 
-        dict_nw = defaultdict(list)
+        _dict_nw = defaultdict(set)
         for i in self._graph:
             for j in list(self._graph[i]):
-                dict_nw[i].append(j)
-                if j not in dict_nw:
-                    dict_nw[j] = []
-        return dict(dict_nw)
+                if reverse_order:
+                    _dict_nw[j].add(i)
+                    if i not in _dict_nw:
+                        _dict_nw[i] = set()
+                else:
+                    _dict_nw[i].add(j)
+                    if j not in _dict_nw:
+                        _dict_nw[j] = set()
+        return dict(_dict_nw)
 
     def remove_node(self, node):
         """ Remove all references to node
@@ -351,14 +360,28 @@ class DirectedGraph(Graph):
             visited.add(vertex)
             path.add(vertex)
             for neighbour in g.get(vertex, ()):
-                if neighbour in path :    
+                if neighbour in path:
                     self.reverse_edge(vertex, neighbour)
                 else:
                     visit(neighbour)
             path.remove(vertex)
-      
+
         for v in g:
             visit(v)
+
+    def plot(self):
+        """
+        Draws a simple plot of the graph
+        :return: plot 
+        """
+        nodes = self.list_nodes()
+        edges = self.list_edges()
+        G = nx.DiGraph()
+        G.add_weighted_edges_from(edges)
+        nx.draw_networkx_nodes(G, pos=nx.spectral_layout(G))
+        nx.draw_networkx_edges(G, pos=nx.spectral_layout(G), arrows=True)
+        nx.draw_networkx_labels(G, pos=nx.spectral_layout(G), font_size=9)
+        plt.show()
 
 
 class UndirectedGraph(Graph):
@@ -417,7 +440,7 @@ class UndirectedGraph(Graph):
         weights = []
         for i in self._graph:
             for j in list(self._graph[i]):
-                if duplicates or (not duplicates and [j, i] not in list_edges):
+                if duplicates or [j, i] not in list_edges:
                     list_edges.append([i, j])
                     weights.append(self._graph[i][j])
 
@@ -443,3 +466,17 @@ class UndirectedGraph(Graph):
         m, nodes = super(UndirectedGraph, self).adjacency_matrix()
         m = m + m.transpose()
         return m, nodes
+
+    def plot(self):
+        """
+        Draw a simple plot of the graph
+        :return: plot 
+        """
+        nodes = self.list_nodes()
+        edges = self.list_edges()
+        G = nx.Graph()
+        G.add_weighted_edges_from(edges)
+        nx.draw_networkx_nodes(G, pos=nx.spectral_layout(G))
+        nx.draw_networkx_edges(G, pos=nx.spectral_layout(G), arrows=True)
+        nx.draw_networkx_labels(G, pos=nx.spectral_layout(G), font_size=9)
+        plt.show()
