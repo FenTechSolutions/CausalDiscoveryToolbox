@@ -15,6 +15,7 @@ import pandas as pd
 from joblib import Parallel, delayed
 from copy import deepcopy
 from .model import GraphModel
+from .CGNN_th import run_CGNN_th
 from ..pairwise.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, Fourier_MMD_Loss_tf, TTestCriterion
 from ...utils.Settings import SETTINGS, CGNN_SETTINGS
@@ -202,7 +203,7 @@ class CGNN_tf(object):
 def run_CGNN_tf(data, type_variables, graph, idx=0, run=0, with_confounders=False, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
-    :param df_data: data corresponding to the graph
+    :param data: data corresponding to the graph
     :param graph: Graph to be run
     :param run: number of the run (only for print)
     :param idx: number of the idx (only for print)
@@ -212,8 +213,9 @@ def run_CGNN_tf(data, type_variables, graph, idx=0, run=0, with_confounders=Fals
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
     gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
+    list_nodes = graph.list_nodes()
 
-    data, dim_variables = reshape_data(df_data, list_nodes, type_variables)
+    data, dim_variables = reshape_data(data, list_nodes, type_variables)
     data = data.astype('float32')
     if (data.shape[0] > CGNN_SETTINGS.max_nb_points):
 
@@ -721,7 +723,7 @@ class CGNN(GraphModel):
         raise ValueError(
             "The CGNN model is not able to model the graph directly from raw data")
 
-    def orient_directed_graph(self, data, dag, alg='HC', with_confounders=False, **kwargs):
+    def orient_directed_graph(self, data, dag, type_variables=None, alg='HC', with_confounders=False, **kwargs):
         """ Improve a directed acyclic graph using CGNN
 
         :param data: data
@@ -730,12 +732,17 @@ class CGNN(GraphModel):
         :param log: Save logs of the execution
         :return: improved directed acyclic graph
         """
-
+        if type_variables is None:
+            type_variables = {}
+            for node in data.columns:
+                type_variables[node] = "Numerical"
+                
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
+        
         return alg_dic[alg](dag, data, type_variables, self.infer_graph, with_confounders, **kwargs)
 
-    def orient_undirected_graph(self, data, type_variables, umg, with_confounders=False, **kwargs):
+    def orient_undirected_graph(self, data, umg, type_variables=None, with_confounders=False, **kwargs):
         """ Orient the undirected graph using GNN and apply CGNN to improve the graph
 
         :param data: data
@@ -745,9 +752,12 @@ class CGNN(GraphModel):
 
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
-
+        if type_variables is None:
+            type_variables = {}
+            for node in data.columns:
+                type_variables[node] = "Numerical"
         gnn = GNN(backend=self.backend, **kwargs)
         dag = gnn.orient_graph(data, type_variables, umg,
                                **kwargs)  # Pairwise method
 
-        return self.orient_directed_graph(data, type_variables, dag, with_confounders, **kwargs)
+        return self.orient_directed_graph(data, dag, type_variables, with_confounders=with_confounders, **kwargs)

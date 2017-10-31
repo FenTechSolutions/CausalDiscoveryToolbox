@@ -5,9 +5,8 @@ Date : 2/06/17
 
 """
 from pandas import DataFrame, read_csv
-from numpy import array
+from numpy import array, concatenate
 from sklearn.preprocessing import scale as scaler
-
 
 def CCEPC_PairsFileReader(filename, scale=True):
     """ Converts a ChaLearn Cause effect pairs challenge format into numpy.ndarray
@@ -67,11 +66,11 @@ def reshape_data(df_data, list_variables, type_variables):
             data = data.reshape(data.shape[0], data.shape[1])
 
         elif (type_variables[var] == "Numerical"):
-            data = scale(df_data[var].values)
+            data = scaler(df_data[var].values)
             data = data.reshape(data.shape[0], 1)
 
         dim_variables[var] = data.shape[1]
 
         list_array.append(data)
 
-    return np.concatenate(list_array, axis=1), dim_variables
+    return concatenate(list_array, axis=1), dim_variables

@@ -27,7 +27,7 @@ class ConfigSettings(object):
         self.GPU_OFFSET = 0
         self.GPU_LIST = [i for i in range(
             self.GPU_OFFSET, self.GPU_OFFSET + self.NB_GPU)]
-        self.autoset_config = False
+        self.autoset_config = True
         self.verbose = True
         self.r_is_available = False
 
@@ -72,6 +72,8 @@ class CGNNSettings(object):
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1
+        self.nb_epoch_train_feature_selection = 2000
+        self.nb_epoch_eval_weights = 500
         self.regul_param = 0.004
         self.threshold_UMG = 0.15
 
@@ -85,7 +87,7 @@ def autoset_settings(set_var):
     try:
         devices = ast.literal_eval(os.environ["CUDA_VISIBLE_DEVICES"])
         if len(devices) != 0:
-            set_var.GPU_LIST = os.environ["CUDA_VISIBLE_DEVICES"]
+            set_var.GPU_LIST = devices
             print("Detecting CUDA devices : {}".format(devices))
         else:
             raise KeyError
