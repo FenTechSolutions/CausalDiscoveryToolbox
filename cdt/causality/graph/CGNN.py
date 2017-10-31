@@ -723,7 +723,7 @@ class CGNN(GraphModel):
         raise ValueError(
             "The CGNN model is not able to model the graph directly from raw data")
 
-    def orient_directed_graph(self, data, dag, type_variables=None, alg='HC', with_confounders=False, **kwargs):
+    def orient_directed_graph(self, data, dag, alg='HC', **kwargs):
         """ Improve a directed acyclic graph using CGNN
 
         :param data: data
@@ -732,17 +732,20 @@ class CGNN(GraphModel):
         :param log: Save logs of the execution
         :return: improved directed acyclic graph
         """
+        type_variables = kwargs.get("type_variables", None)
+        with_confounders = kwargs.get("with_confounders", False)
+
         if type_variables is None:
             type_variables = {}
             for node in data.columns:
                 type_variables[node] = "Numerical"
-                
+
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
-        
+
         return alg_dic[alg](dag, data, type_variables, self.infer_graph, with_confounders, **kwargs)
 
-    def orient_undirected_graph(self, data, umg, type_variables=None, with_confounders=False, **kwargs):
+    def orient_undirected_graph(self, data, umg, **kwargs):
         """ Orient the undirected graph using GNN and apply CGNN to improve the graph
 
         :param data: data
@@ -752,6 +755,9 @@ class CGNN(GraphModel):
 
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
+        type_variables = kwargs.get("type_variables", None)
+        with_confounders = kwargs.get("with_confounders", False)
+
         if type_variables is None:
             type_variables = {}
             for node in data.columns:

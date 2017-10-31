@@ -232,11 +232,13 @@ class GNN(PairwiseModel):
         super(GNN, self).__init__()
         self.backend = backend
 
-    def predict_proba(self, a, b, dim_variables_a, dim_variables_b, idx=0, **kwargs):
+    def predict_proba(self, a, b, idx=0, **kwargs):
 
         backend_alg_dic = {"PyTorch": th_run_instance,
                            "TensorFlow": tf_run_instance}
 
+        dim_variables_a = kwargs.get("dim_variables_a", 1)
+        dim_variables_b = kwargs.get("dim_variables_b", 1)
         nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
         nb_runs = kwargs.get("nb_runs", CGNN_SETTINGS.NB_RUNS)
         nb_max_runs = kwargs.get("nb_max_runs", CGNN_SETTINGS.NB_MAX_RUNS)
@@ -246,10 +248,6 @@ class GNN(PairwiseModel):
 
         a = a.astype('float32')
         b = b.astype('float32')
-
-        print(nb_jobs)
-        print(nb_runs)
-        print(nb_max_runs)
 
         ttest_criterion = TTestCriterion(
             max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
@@ -272,7 +270,7 @@ class GNN(PairwiseModel):
 
         return (score_BA - score_AB) / (score_BA + score_AB), ttest_criterion.p_value
 
-    def predict_dataset(self, x, printout=None):
+    def predict_dataset(self, x, **kwargs):
         """ Causal prediction of a pairwise dataset (x,y)
 
         :param x: Pairwise dataset
@@ -281,6 +279,8 @@ class GNN(PairwiseModel):
         :return: predictions probabilities
         :rtype: list
         """
+
+        printout = kwargs.get("printout", None)
 
         pred = []
         res = []
@@ -297,7 +297,7 @@ class GNN(PairwiseModel):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, type_variables, umg, deletion=False, printout=None):
+    def orient_graph(self, df_data, umg, **kwargs):
         """ Orient an undirected graph using the pairwise method defined by the subclass
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
@@ -312,6 +312,9 @@ class GNN(PairwiseModel):
         graph = DirectedGraph()
         res = []
         idx = 0
+
+        deletion = kwargs.get("deletion", False)
+        printout = kwargs.get("printout", None)
 
         for edge in edges:
             a, b, c = edge

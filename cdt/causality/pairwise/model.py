@@ -18,7 +18,7 @@ class PairwiseModel(object):
         """ Init. """
         super(PairwiseModel, self).__init__()
 
-    def predict_proba(self, a, b, idx=0):
+    def predict_proba(self, a, b, idx=0, **kwargs):
         """ Prediction method for pairwise causal inference.
         predict is meant to be overridden in all subclasses
 
@@ -29,7 +29,7 @@ class PairwiseModel(object):
         """
         raise NotImplementedError
 
-    def predict_dataset(self, x, printout=None):
+    def predict_dataset(self, x, **kwargs):
         """ Causal prediction of a pairwise dataset (x,y)
 
         :param x: Pairwise dataset
@@ -38,7 +38,7 @@ class PairwiseModel(object):
         :return: predictions probabilities
         :rtype: list
         """
-
+        printout = kwargs.get("printout", None)
         pred = []
         res = []
         for idx, row in x.iterrows():
@@ -54,7 +54,7 @@ class PairwiseModel(object):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, umg, deletion=False, printout=None):
+    def orient_graph(self, df_data, umg, **kwargs):
         """ Orient an undirected graph using the pairwise method defined by the subclass
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
 
@@ -65,6 +65,8 @@ class PairwiseModel(object):
         :rtype: DirectedGraph
         """
 
+        deletion = kwargs.get("deletion", False)
+        printout = kwargs.get("printout", None)
         edges = umg.get_list_edges_without_duplicate()
         graph = DirectedGraph(skeleton=umg)
         res = []
@@ -72,7 +74,8 @@ class PairwiseModel(object):
 
         for edge in edges:
             a, b, c = edge
-            weight = self.predict_proba(scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
+            weight = self.predict_proba(
+                scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)
             else:
@@ -88,4 +91,3 @@ class PairwiseModel(object):
         else:
             graph.remove_cycles()
         return graph
-
