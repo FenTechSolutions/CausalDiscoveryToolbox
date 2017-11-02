@@ -7,6 +7,7 @@ Date : 8/05/2017
 import ast
 import os
 import warnings
+import multiprocessing
 
 
 class ConfigSettings(object):
@@ -17,7 +18,8 @@ class ConfigSettings(object):
                  "GPU_LIST",  # List of CUDA_VISIBLE_DEVICES
                  "autoset_config",
                  "verbose",
-                 "r_is_available")
+                 "r_is_available",
+                 "torch")
 
     def __init__(self):  # Define here the default values of the parameters
         super(ConfigSettings, self).__init__()
@@ -30,7 +32,14 @@ class ConfigSettings(object):
         self.autoset_config = True
         self.verbose = True
         self.r_is_available = False
-
+        try:
+            import torch
+            from torch.autograd import Variable
+            # Remaining package install only reserve namespace
+            self.torch = torch
+        except ImportError as e:
+            warnings.warn("Torch not available : {}".format(e))
+            self.torch = None
         if self.autoset_config:
             self = autoset_settings(self)
 
@@ -88,12 +97,19 @@ def autoset_settings(set_var):
         devices = ast.literal_eval(os.environ["CUDA_VISIBLE_DEVICES"])
         if len(devices) != 0:
             set_var.GPU_LIST = devices
+            set_var.GPU = True
+            set_var.NB_JOBS = len(devices)
             print("Detecting CUDA devices : {}".format(devices))
         else:
             raise KeyError
     except KeyError:
         warnings.warn(
-            "No GPU automatically detected. Switching back to default settings")
+            "No GPU automatically detected. Set SETTINGS.GPU to false," +
+            "SETTINGS.GPU_LIST to [], and SETTINGS.NB_JOBS to cpu_count.")
+        set_var.GPU = False
+        set_var.GPU_LIST = []
+        set_var.NB_JOBS = multiprocessing.cpu_count()
+
     return set_var
 
 

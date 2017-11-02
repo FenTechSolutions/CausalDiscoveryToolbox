@@ -4,9 +4,10 @@ Author: Diviyan Kalainathan
 Date : 2/06/17
 
 """
-from pandas import DataFrame, read_csv
+from pandas import DataFrame, read_csv, get_dummies
 from numpy import array, concatenate
 from sklearn.preprocessing import scale as scaler
+
 
 def CCEPC_PairsFileReader(filename, scale=True):
     """ Converts a ChaLearn Cause effect pairs challenge format into numpy.ndarray
@@ -58,11 +59,10 @@ def reshape_data(df_data, list_variables, type_variables):
 
     dim_variables = {}
 
-
     for var in list_variables:
         if (type_variables[var] == "Categorical"):
             data = df_data[var].values
-            data = pd.get_dummies(data).as_matrix()
+            data = get_dummies(data).as_matrix()
             data = data.reshape(data.shape[0], data.shape[1])
 
         elif (type_variables[var] == "Numerical"):

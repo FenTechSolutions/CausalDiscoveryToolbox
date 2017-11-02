@@ -13,22 +13,6 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def list_to_dict(links):
-    """ Create a dict out of a list of links
-
-    :param links: list of links
-    :type links: list
-    :return: dictionary reprensenting the graph structure
-    :rtype: dict
-    """
-    dic = defaultdict(list)
-    for link in links:
-        dic[int(link[0][1:])].append(int(link[1][1:]))
-        if int(link[1][1:]) not in dic:
-            dic[int(link[1][1:])] = []
-    return dic
-
-
 class Graph(object):
     """ Base class for Graph structure"""
 
@@ -173,7 +157,7 @@ class Graph(object):
 
     def dict_nw(self, reverse_order=False):
         """Get dictionary of graph without weight values
-        :param reverse_order: If the causes are set as 1st dict elements.   
+        :param reverse_order: If the causes are set as 1st dict elements.
         :return: Dictionary of the directed graph
         :rtype: dict
 

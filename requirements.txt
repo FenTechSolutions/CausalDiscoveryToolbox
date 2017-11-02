@@ -2,8 +2,8 @@ numpy
 scipy
 scikit-learn
 skrebate
-tensorflow
-pytorch
 joblib
 pandas
-rpy2
+tensorflow
+networkx
+toposort

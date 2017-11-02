@@ -6,18 +6,35 @@ import numpy as np
 import pandas as pd
 import torch as th
 from torch.autograd import Variable
+from toposort import toposort_flatten
 from joblib import Parallel, delayed
 from copy import deepcopy
 from .model import GraphModel
 from ..pairwise.GNN import GNN
-from ...utils.Loss import MMD_loss_tf, MMD_loss_th, Fourier_MMD_Loss_tf, TTestCriterion
+from ...utils.Loss import (MMD_loss_tf, MMD_loss_th,
+                           Fourier_MMD_Loss_tf, TTestCriterion)
 from ...utils.Settings import SETTINGS, CGNN_SETTINGS
 from ...utils.Formats import reshape_data
 
 
+class CGNN_block(th.nn.Module):
+    def __init__(self, sizes):
+        super(CGNN_block, self).__init__()
+        L = len(sizes)
+        layers = []
+
+        for i in sizes[:-1]:
+            layers.append(th.nn.Linear())
+        layers.append(th.nn.Linear(sizes[L - 2], sizes[L - 1]))
+
+        self.layers = th.nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.layers(x)
+
+
 class CGNN_th(th.nn.Module):
     """ Generate all variables in the graph at once, torch model
-
     """
 
     def __init__(self, graph, n, **kwargs):
@@ -31,27 +48,22 @@ class CGNN_th(th.nn.Module):
         h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
 
         self.graph = graph
+        self.gen_order = toposort_flatten(graph.dict_nw(reverse_order=True))
         # building the computation graph
-        self.graph_variables = []
-        self.layers_in = []
-        self.layers_out = []
         self.N = n
         self.activation = th.nn.ReLU()
-        nodes = self.graph.list_nodes()
-        while len(self.graph_variables) < len(nodes):
-            for var in nodes:
-                par = self.graph.parents(var)
-
-                if var not in self.graph_variables and set(par).issubset(self.graph_variables):
-                    # Variable can be generated
-                    self.layers_in.append(
-                        th.nn.Linear(len(par) + 1, h_layer_dim))
-                    self.layers_out.append(th.nn.Linear(h_layer_dim, 1))
-                    self.graph_variables.append(var)
-                    self.add_module('linear_{}_in'.format(
-                        var), th.nn.Linear(len(par) + 1, h_layer_dim))
-                    self.add_module('linear_{}_out'.format(
-                        var), th.nn.Linear(h_layer_dim, 1))
+        self.generated_variables = th.FloatTensor(
+            len(self.graph.list_nodes()), self.N)
+        for var in self.gen_order:
+            par = self.graph.parents(var)
+            self.layers_in.append(
+                th.nn.Linear(len(par) + 1, h_layer_dim))
+            self.layers_out.append(th.nn.Linear(h_layer_dim, 1))
+            self.graph_variables.append(var)
+            self.add_module('linear_{}_in'.format(
+                var), th.nn.Linear(len(par) + 1, h_layer_dim))
+            self.add_module('linear_{}_out'.format(
+                var), th.nn.Linear(h_layer_dim, 1))
 
     def forward(self):
         """ Pass through the generative network

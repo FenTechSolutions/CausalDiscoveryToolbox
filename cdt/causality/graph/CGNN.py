@@ -15,11 +15,14 @@ import pandas as pd
 from joblib import Parallel, delayed
 from copy import deepcopy
 from .model import GraphModel
-from .CGNN_th import run_CGNN_th
 from ..pairwise.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, Fourier_MMD_Loss_tf, TTestCriterion
 from ...utils.Settings import SETTINGS, CGNN_SETTINGS
 from ...utils.Formats import reshape_data
+if SETTINGS.torch is not None:
+    from .CGNN_th import run_CGNN_th
+else:
+    run_CGNN_th = None
 
 
 def init(size, **kwargs):
@@ -235,7 +238,8 @@ def run_CGNN_tf(data, type_variables, graph, idx=0, run=0, with_confounders=Fals
         return model.evaluate(data, **kwargs)
 
 
-def hill_climbing(graph, data, type_variables, run_cgnn_function, with_confounders=False, **kwargs):
+def hill_climbing(graph, data, run_cgnn_function, type_variables,
+                  with_confounders=False, **kwargs):
     """ Optimize graph using CGNN with a hill-climbing algorithm
 
     :param graph: graph to optimize
@@ -251,6 +255,7 @@ def hill_climbing(graph, data, type_variables, run_cgnn_function, with_confounde
     id_run = kwargs.get("id_run", 0)
     ttest_threshold = kwargs.get(
         "ttest_threshold", CGNN_SETTINGS.ttest_threshold)
+
     printout = kwargs.get("printout", None)
     loop = 0
 
@@ -743,7 +748,9 @@ class CGNN(GraphModel):
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
 
-        return alg_dic[alg](dag, data, type_variables, self.infer_graph, with_confounders, **kwargs)
+        return alg_dic[alg](dag, data, self.infer_graph,
+                            type_variables=type_variables,
+                            with_confounders=with_confounders, **kwargs)
 
     def orient_undirected_graph(self, data, umg, **kwargs):
         """ Orient the undirected graph using GNN and apply CGNN to improve the graph
@@ -762,8 +769,11 @@ class CGNN(GraphModel):
             type_variables = {}
             for node in data.columns:
                 type_variables[node] = "Numerical"
-        gnn = GNN(backend=self.backend, **kwargs)
-        dag = gnn.orient_graph(data, type_variables, umg,
+
+        gnn = GNN(backend=self.backend,
+                  type_variables=type_variables, **kwargs)
+        dag = gnn.orient_graph(data, umg, type_variables=type_variables,
                                **kwargs)  # Pairwise method
 
-        return self.orient_directed_graph(data, dag, type_variables, with_confounders=with_confounders, **kwargs)
+        return self.orient_directed_graph(data, dag, type_variables=type_variables,
+                                          with_confounders=with_confounders, **kwargs)
