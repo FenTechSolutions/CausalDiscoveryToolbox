@@ -4,7 +4,7 @@ Date : 30/06/17
 """
 import numpy as np
 import tensorflow as tf
-from ..utils.Loss import MomentMatchingLoss_th as MomentMatchingLoss, MMD_loss_tf as MMD
+from ..utils.Loss import MMD_loss_tf as MMD
 from ..utils.Settings import SETTINGS, CGNN_SETTINGS
 from sklearn.linear_model import LassoLars
 from sklearn.svm import SVR
@@ -13,6 +13,7 @@ th = SETTINGS.torch
 
 if th is not None:
     from torch.autograd import Variable
+    from ..utils.Loss import MomentMatchingLoss_th as MomentMatchingLoss
 
     class SEMModel(th.nn.Module):
         """ Model for SEM regression/generation - Generation one-by-one
