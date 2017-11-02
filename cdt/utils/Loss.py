@@ -5,8 +5,10 @@ Date : 09/03/2017
 """
 
 import tensorflow as tf
-import torch as th
-from torch.autograd import Variable
+from .Settings import SETTINGS
+if SETTINGS.torch is not None:
+    import torch as th
+    from torch.autograd import Variable
 import numpy as np
 from scipy.stats import ttest_ind
 
@@ -35,55 +37,6 @@ def MMD_loss_tf(xy_true, xy_pred):
     return loss
 
 
-class MMD_loss_th(th.nn.Module):
-    def __init__(self, input_size, cuda=False):
-        super(MMD_loss_th, self).__init__()
-        self.bandwiths = [0.01, 0.1, 1, 5, 20, 50, 100]
-        self.cuda = cuda
-        if self.cuda:
-            s1 = th.cuda.FloatTensor(input_size, 1).fill_(1)
-            s2 = s1.clone()
-            s = th.cat([s1.div(input_size),
-                        s2.div(-input_size)], 0)
-
-        else:
-            s = th.cat([(th.ones([input_size, 1])).div(input_size),
-                        (th.ones([input_size, 1])).div(-input_size)], 0)
-
-        self.S = s.mm(s.t())
-        self.S = Variable(self.S)
-
-    def forward(self, var_input, var_pred, var_true=None):
-
-        # MMD Loss
-        if var_true is None:
-            X = th.cat([var_input, var_pred], 0)
-        else:
-            X = th.cat([th.cat([var_input, var_pred], 1),
-                        th.cat([var_input, var_true], 1)], 0)
-        # dot product between all combinations of rows in 'X'
-        XX = X.mm(X.t())
-
-        # dot product of rows with themselves
-        X2 = (X.mul(X)).sum(dim=1)
-
-        # exponent entries of the RBF kernel (without the sigma) for each
-        # combination of the rows in 'X'
-        # -0.5 * (x^Tx - 2*x^Ty + y^Ty)
-        exponent = XX.sub((X2.mul(0.5)).expand_as(XX)) - \
-                   (((X2.t()).mul(0.5)).expand_as(XX))
-
-        if self.cuda:
-            lossMMD = Variable(th.cuda.FloatTensor([0]))
-        else:
-            lossMMD = Variable(th.zeros(1))
-        for i in range(len(self.bandwiths)):
-            kernel_val = exponent.mul(1. / self.bandwiths[i]).exp()
-            lossMMD.add_((self.S.mul(kernel_val)).sum())
-
-        return lossMMD.sqrt()
-
-
 def rp(k, s, d):
     return tf.transpose(tf.concat([tf.concat([2 * si * tf.random_normal([k, d], mean=0, stddev=1) for si in s], axis=0),
                                    tf.random_uniform([k * len(s), 1], minval=0, maxval=2 * np.pi)], axis=1))
@@ -102,8 +55,10 @@ def Fourier_MMD_Loss_tf(xy_true, xy_pred, nb_vectors_approx_MMD):
 
     wz = rp(nb_vectors_approx_MMD, bandwiths_gamma, nDim)
 
-    e1 = tf.sqrt(2/nb_vectors_approx_MMD)*tf.reduce_mean(f1(xy_true, wz, N), axis=0)
-    e2 = tf.sqrt(2/nb_vectors_approx_MMD)*tf.reduce_mean(f1(xy_pred, wz, N), axis=0)
+    e1 = tf.sqrt(2 / nb_vectors_approx_MMD) * \
+        tf.reduce_mean(f1(xy_true, wz, N), axis=0)
+    e2 = tf.sqrt(2 / nb_vectors_approx_MMD) * \
+        tf.reduce_mean(f1(xy_pred, wz, N), axis=0)
 
     return tf.reduce_sum((e1 - e2) ** 2)
 
@@ -119,37 +74,6 @@ def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment=1):
         loss += tf.sqrt(tf.reduce_sum((mean_true - mean_pred) ** 2))  # L2
 
     return loss
-
-
-class MomentMatchingLoss_th(th.nn.Module):
-    """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
-
-    """
-
-    def __init__(self, n_moments=1):
-        """ Initialize the loss model
-
-        :param n_moments: number of moments
-        """
-        super(MomentMatchingLoss_th, self).__init__()
-        self.moments = n_moments
-
-    def forward(self, pred, target):
-        """ Compute the loss model
-
-        :param pred: predicted Variable
-        :param target: Target Variable
-        :return: Loss
-        """
-
-        loss = Variable(th.FloatTensor([0]))
-        for i in range(1, self.moments):
-            mk_pred = th.mean(th.pow(pred, i), 0)
-            mk_tar = th.mean(th.pow(target, i), 0)
-
-            loss.add_(th.mean((mk_pred - mk_tar) ** 2))  # L2
-
-        return loss
 
 
 class TTestCriterion(object):
@@ -171,3 +95,83 @@ class TTestCriterion(object):
             return True
         else:
             return False
+
+
+if SETTINGS.torch is not None:
+    class MMD_loss_th(th.nn.Module):
+        def __init__(self, input_size, cuda=False):
+            super(MMD_loss_th, self).__init__()
+            self.bandwiths = [0.01, 0.1, 1, 5, 20, 50, 100]
+            self.cuda = cuda
+            if self.cuda:
+                s1 = th.cuda.FloatTensor(input_size, 1).fill_(1)
+                s2 = s1.clone()
+                s = th.cat([s1.div(input_size),
+                            s2.div(-input_size)], 0)
+
+            else:
+                s = th.cat([(th.ones([input_size, 1])).div(input_size),
+                            (th.ones([input_size, 1])).div(-input_size)], 0)
+
+            self.S = s.mm(s.t())
+            self.S = Variable(self.S)
+
+        def forward(self, var_input, var_pred, var_true=None):
+
+            # MMD Loss
+            if var_true is None:
+                X = th.cat([var_input, var_pred], 0)
+            else:
+                X = th.cat([th.cat([var_input, var_pred], 1),
+                            th.cat([var_input, var_true], 1)], 0)
+            # dot product between all combinations of rows in 'X'
+            XX = X.mm(X.t())
+
+            # dot product of rows with themselves
+            X2 = (X.mul(X)).sum(dim=1)
+
+            # exponent entries of the RBF kernel (without the sigma) for each
+            # combination of the rows in 'X'
+            # -0.5 * (x^Tx - 2*x^Ty + y^Ty)
+            exponent = XX.sub((X2.mul(0.5)).expand_as(XX)) - \
+                (((X2.t()).mul(0.5)).expand_as(XX))
+
+            if self.cuda:
+                lossMMD = Variable(th.cuda.FloatTensor([0]))
+            else:
+                lossMMD = Variable(th.zeros(1))
+            for i in range(len(self.bandwiths)):
+                kernel_val = exponent.mul(1. / self.bandwiths[i]).exp()
+                lossMMD.add_((self.S.mul(kernel_val)).sum())
+
+            return lossMMD.sqrt()
+
+    class MomentMatchingLoss_th(th.nn.Module):
+        """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
+
+        """
+
+        def __init__(self, n_moments=1):
+            """ Initialize the loss model
+
+            :param n_moments: number of moments
+            """
+            super(MomentMatchingLoss_th, self).__init__()
+            self.moments = n_moments
+
+        def forward(self, pred, target):
+            """ Compute the loss model
+
+            :param pred: predicted Variable
+            :param target: Target Variable
+            :return: Loss
+            """
+
+            loss = Variable(th.FloatTensor([0]))
+            for i in range(1, self.moments):
+                mk_pred = th.mean(th.pow(pred, i), 0)
+                mk_tar = th.mean(th.pow(target, i), 0)
+
+                loss.add_(th.mean((mk_pred - mk_tar) ** 2))  # L2
+
+            return loss
