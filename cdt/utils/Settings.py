@@ -17,7 +17,8 @@ class ConfigSettings(object):
                  "GPU_LIST",  # List of CUDA_VISIBLE_DEVICES
                  "autoset_config",
                  "verbose",
-                 "r_is_available")
+                 "r_is_available",
+                 "torch")
 
     def __init__(self):  # Define here the default values of the parameters
         super(ConfigSettings, self).__init__()
@@ -30,7 +31,11 @@ class ConfigSettings(object):
         self.autoset_config = True
         self.verbose = True
         self.r_is_available = False
-
+        try:
+            import torch
+            self.torch = torch
+        except ImportError as e:
+            warnings.warn("Torch not available : {}".format(e))
         if self.autoset_config:
             self = autoset_settings(self)
 

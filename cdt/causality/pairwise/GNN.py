@@ -11,13 +11,17 @@ from sklearn.preprocessing import scale
 import tensorflow as tf
 from .model import PairwiseModel
 from pandas import DataFrame
-from .GNN_th import th_run_instance
 from ...utils.Formats import reshape_data
 from ...utils.Loss import MMD_loss_tf as MMD_tf
 from ...utils.Loss import Fourier_MMD_Loss_tf as Fourier_MMD_tf
 from ...utils.Loss import TTestCriterion
 from ...utils.Graph import DirectedGraph
 from ...utils.Settings import SETTINGS, CGNN_SETTINGS
+
+if SETTINGS.torch is not None:
+    from .GNN_th import th_run_instance
+else:
+    th_run_instance = None
 
 
 def init(size, **kwargs):
@@ -315,6 +319,11 @@ class GNN(PairwiseModel):
 
         deletion = kwargs.get("deletion", False)
         printout = kwargs.get("printout", None)
+        type_variables = kwargs.get("type_variables", None)
+        if type_variables is None:
+            type_variables = {}
+            for node in df_data.columns:
+                type_variables[node] = "Numerical"
 
         for edge in edges:
             a, b, c = edge

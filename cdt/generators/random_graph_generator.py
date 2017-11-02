@@ -219,8 +219,9 @@ def generate_variable(data, parents_names, n_points=500, noise_coeff=.7, joint_f
     return result
 
 
-def generate_graph_with_structure(graph, n_points=500, noise=.7, joint_functions=[op.add, op.mul]):
-    num_var, all_vars = len(graph.list_nodes()), graph.list_nodes()
+def generate_graph_with_structure(graph, n_points=500, noise=.7,
+                                  joint_functions=[op.add, op.mul]):
+
     generated_vars = pd.DataFrame()
 
     gen_order = toposort_flatten(graph.dict_nw(reverse_order=True))

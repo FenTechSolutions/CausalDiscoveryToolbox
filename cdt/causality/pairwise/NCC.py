@@ -24,7 +24,7 @@ class NCC_model(th.nn.Module):
         super(NCC_model, self).__init__()
         self.c1 = th.nn.Conv1d(2, n_hiddens, 1)
         self.c2 = th.nn.Conv1d(n_hiddens, n_hiddens, 1)
-        self.batch_norm = th.nn.BatchNorm1d(n_hiddens, affine = False)
+        self.batch_norm = th.nn.BatchNorm1d(n_hiddens, affine=False)
         self.l1 = th.nn.Linear(n_hiddens, n_hiddens)
         self.l2 = th.nn.Linear(n_hiddens, 1)
 
@@ -49,6 +49,7 @@ class NCC(PairwiseModel):
     "Discovering Causal Signals in Images", CVPR 2017.
 
     """
+
     def __init__(self):
         super(NCC, self).__init__()
         self.model = None
@@ -106,5 +107,3 @@ class NCC(PairwiseModel):
             m = m.cuda()
 
         return self.model(m)
-
-
