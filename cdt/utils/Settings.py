@@ -38,6 +38,7 @@ class ConfigSettings(object):
             self.torch = torch
         except ImportError as e:
             warnings.warn("Torch not available : {}".format(e))
+            self.torch = None
         if self.autoset_config:
             self = autoset_settings(self)
 
