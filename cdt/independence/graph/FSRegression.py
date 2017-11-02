@@ -78,9 +78,6 @@ class RRelief(FeatureSelectionModel):
         X = df_features.as_matrix()
         y = df_target.as_matrix()[:,0]
 
-        print(X.shape)
-        print(y.shape)
-
         rr = ReliefF()
         rr.fit(X, y)
 
