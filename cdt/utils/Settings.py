@@ -61,7 +61,8 @@ class CGNNSettings(object):
                  "use_Fast_MMD",
                  "nb_vectors_approx_MMD",
                  "complexity_graph_param",
-                 "max_nb_points")
+                 "max_nb_points",
+                 "max_parents_block")
 
     def __init__(self):
         super(CGNNSettings, self).__init__()
@@ -85,6 +86,9 @@ class CGNNSettings(object):
         self.nb_epoch_eval_weights = 500
         self.regul_param = 0.004
         self.threshold_UMG = 0.15
+
+        # specific for blockwise CGNN
+        self.max_parents_block = 5
 
 
 def autoset_settings(set_var):

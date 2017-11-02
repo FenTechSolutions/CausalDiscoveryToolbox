@@ -176,6 +176,31 @@ class Graph(object):
                         _dict_nw[j] = set()
         return dict(_dict_nw)
 
+    def cycles(self):
+        """Return the list of cycles of the directed graph g .
+        g must be represented as a dictionary mapping vertices to
+        iterables of neighbouring vertices. For example:
+
+        :return: Cycles in the graph
+        :rtype: list
+        """
+
+        def dfs(graph, start, end):
+            fringe = [(start, [])]
+            # print(len(graph))
+            while fringe:
+                state, path = fringe.pop()
+                if path and state == end:
+                    yield path
+                    continue
+                for next_state in graph[state]:
+                    if next_state in path:
+                        continue
+                    fringe.append((next_state, path + [next_state]))
+
+        g = self.dict_nw()
+        return [[node] + path for node in g for path in dfs(g, node, node) if path]
+
     def remove_node(self, node):
         """ Remove all references to node
 
@@ -203,8 +228,23 @@ class DirectedGraph(Graph):
 
     def __init__(self, df=None, adjacency_matrix=False, skeleton=False):
         self.skeleton = skeleton
+        self.score_node = {}
+
         """ Create a new directed graph structure"""
         super(DirectedGraph, self).__init__(df, adjacency_matrix)
+
+
+    def total_score(self):
+
+        list_nodes = self.list_nodes()
+        total_score = 0.0
+
+        for node in list_nodes:
+            print("score node " + str(node) + " : " + str(self.score_node[node]))
+            total_score += self.score_node[node]
+
+        return total_score
+
 
     def add(self, node1, node2, weight=1):
         """ Add or update directed edge from node1 to node2
@@ -244,30 +284,7 @@ class DirectedGraph(Graph):
         g = self.dict_nw()
         return any(visit(v) for v in g)
 
-    def cycles(self):
-        """Return the list of cycles of the directed graph g .
-        g must be represented as a dictionary mapping vertices to
-        iterables of neighbouring vertices. For example:
 
-        :return: Cycles in the graph
-        :rtype: list
-        """
-
-        def dfs(graph, start, end):
-            fringe = [(start, [])]
-            # print(len(graph))
-            while fringe:
-                state, path = fringe.pop()
-                if path and state == end:
-                    yield path
-                    continue
-                for next_state in graph[state]:
-                    if next_state in path:
-                        continue
-                    fringe.append((next_state, path + [next_state]))
-
-        g = self.dict_nw()
-        return [[node] + path for node in g for path in dfs(g, node, node) if path]
 
     def reverse_edge(self, node1, node2, weight=None):
         """ Reverse the edge between node1 and node2
@@ -464,3 +481,16 @@ class UndirectedGraph(Graph):
         nx.draw_networkx_edges(G, pos=nx.spectral_layout(G), arrows=True)
         nx.draw_networkx_labels(G, pos=nx.spectral_layout(G), font_size=9)
         plt.show()
+
+
+class Block(object):
+
+    def __init__(self,node, parents):
+        """ Init. """
+        self.score = 0
+        self.parents = parents
+        self.node = node
+        self.idx = 0
+
+        super(Block, self).__init__()
+
