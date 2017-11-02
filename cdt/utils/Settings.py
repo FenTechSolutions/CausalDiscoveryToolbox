@@ -7,6 +7,7 @@ Date : 8/05/2017
 import ast
 import os
 import warnings
+import multiprocessing
 
 
 class ConfigSettings(object):
@@ -96,12 +97,19 @@ def autoset_settings(set_var):
         devices = ast.literal_eval(os.environ["CUDA_VISIBLE_DEVICES"])
         if len(devices) != 0:
             set_var.GPU_LIST = devices
+            set_var.GPU = True
+            set_var.NB_JOBS = len(devices)
             print("Detecting CUDA devices : {}".format(devices))
         else:
             raise KeyError
     except KeyError:
         warnings.warn(
-            "No GPU automatically detected. Switching back to default settings")
+            "No GPU automatically detected. Set SETTINGS.GPU to false," +
+            "SETTINGS.GPU_LIST to [], and SETTINGS.NB_JOBS to cpu_count.")
+        set_var.GPU = False
+        set_var.GPU_LIST = []
+        set_var.NB_JOBS = multiprocessing.cpu_count()
+
     return set_var
 
 
