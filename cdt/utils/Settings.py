@@ -33,6 +33,8 @@ class ConfigSettings(object):
         self.r_is_available = False
         try:
             import torch
+            from torch.autograd import Variable
+            # Remaining package install only reserve namespace
             self.torch = torch
         except ImportError as e:
             warnings.warn("Torch not available : {}".format(e))

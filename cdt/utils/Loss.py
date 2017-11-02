@@ -6,11 +6,11 @@ Date : 09/03/2017
 
 import tensorflow as tf
 from .Settings import SETTINGS
+import numpy as np
+from scipy.stats import ttest_ind
 if SETTINGS.torch is not None:
     import torch as th
     from torch.autograd import Variable
-import numpy as np
-from scipy.stats import ttest_ind
 
 bandwiths_gamma = [0.005, 0.05, 0.25, 0.5, 1, 5, 50]
 
