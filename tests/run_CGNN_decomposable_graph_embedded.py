@@ -5,19 +5,23 @@ import sys
 # Params
 cdt.SETTINGS.GPU = True
 
-cdt.SETTINGS.NB_JOBS = 4
-# cdt.SETTINGS.GPU_LIST = ["0"]
+cdt.SETTINGS.NB_JOBS = 2
+#cdt.SETTINGS.GPU_LIST = ["0"]
 
 #Setting for CGNN-Fourier
 cdt.CGNN_SETTINGS.use_Fast_MMD = False
-cdt.CGNN_SETTINGS.NB_RUNS = 8
+cdt.CGNN_SETTINGS.NB_RUNS = 2
 
 
+# cdt.CGNN_SETTINGS.train_epochs = 2000
+# cdt.CGNN_SETTINGS.test_epochs = 500
 
-datafile = sys.argv[1]
-skeletonfile = sys.argv[2]
 
+# datafile = sys.argv[1]
+# skeletonfile = sys.argv[2]
 
+datafile = "graph/G2_v1_numdata.tab"
+skeletonfile = "graph/G2_v1_target.tab"
 
 print("Processing " + datafile + "...")
 undirected_links = pd.read_csv(skeletonfile, sep = '\t')
@@ -42,7 +46,7 @@ for node in df_data.columns:
 
 
 CGNN_decomposable = cdt.causality.graph.CGNN_decomposable(backend="TensorFlow")
-directed_graph = CGNN_decomposable.orient_undirected_graph(df_data, type_variables, umg, 0)
+directed_graph = CGNN_decomposable.orient_undirected_graph(df_data, type_variables, umg, 2)
 
 cgnn_res = pd.DataFrame(directed_graph.list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
 cgnn_res.to_csv(datafile + "_predictions.csv")

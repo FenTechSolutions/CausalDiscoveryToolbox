@@ -62,7 +62,8 @@ class CGNNSettings(object):
                  "nb_vectors_approx_MMD",
                  "complexity_graph_param",
                  "max_nb_points",
-                 "max_parents_block")
+                 "max_parents_block",
+                 "asymmetry_param")
 
     def __init__(self):
         super(CGNNSettings, self).__init__()
@@ -89,6 +90,7 @@ class CGNNSettings(object):
 
         # specific for blockwise CGNN
         self.max_parents_block = 5
+        self.asymmetry_param = 0.0001
 
 
 def autoset_settings(set_var):

@@ -152,6 +152,151 @@ class CGNN_decomposable_tf(object):
 
 
 
+class CGNN_all_blocks(object):
+
+    def __init__(self, df_data, umg, run, **kwargs):
+
+
+        learning_rate = kwargs.get('learning_rate', CGNN_SETTINGS.learning_rate)
+        h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
+        use_Fast_MMD = kwargs.get('use_Fast_MMD', CGNN_SETTINGS.use_Fast_MMD)
+        nb_vectors_approx_MMD = kwargs.get('nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
+
+        self.run = run
+
+        list_nodes = umg.list_nodes()
+
+        data = df_data.as_matrix()
+        data = data.reshape(data.shape[0], data.shape[1])
+        N = data.shape[0]
+
+        self.all_variables = tf.placeholder(tf.float32, shape=[None, df_data.shape[1]])
+
+        G_dist_loss = 0
+        self.dict_all_W_in = {}
+
+        for target in list_nodes:
+
+            num_target = int(target[1:])
+
+            list_neighbours = umg.neighbors(target)
+
+            list_num_neighbours = []
+            for node in list_neighbours:
+                list_num_neighbours.append(int(node[1:]))
+
+            list_all_other_variables = list(df_data.columns.values)
+            list_all_other_variables.remove(target)
+
+            list_num_all_other_variables = []
+            for node in list_all_other_variables:
+                list_num_all_other_variables.append(int(node[1:]))
+
+            all_neighbour_variables = tf.transpose(tf.gather(tf.transpose(self.all_variables) , np.array(list_num_neighbours)))
+
+            target_variable = tf.transpose(tf.gather(tf.transpose(self.all_variables), num_target))
+            target_variable = tf.reshape(target_variable, [N,1])
+
+            all_other_variables = tf.transpose(tf.gather(tf.transpose(self.all_variables) , np.array(list_num_all_other_variables)))
+
+            list_W_in = []
+            dict_target_W_in = {}
+            for node in list_neighbours:
+                W_in = tf.Variable(init([1, CGNN_SETTINGS.h_layer_dim]))
+                dict_target_W_in[node] = tf.reduce_sum(tf.abs(W_in))
+                list_W_in.append(W_in)
+
+            self.dict_all_W_in[target] = dict_target_W_in
+
+            W_noise = tf.Variable(init([1, CGNN_SETTINGS.h_layer_dim]))
+            W_input = tf.concat([tf.concat(list_W_in,0),W_noise ], 0)
+
+            b_in = tf.Variable(init([CGNN_SETTINGS.h_layer_dim]))
+            W_out = tf.Variable(init([CGNN_SETTINGS.h_layer_dim, 1]))
+            b_out = tf.Variable(init([1]))
+
+            input = tf.concat([all_neighbour_variables, tf.random_normal([N, 1], mean=0, stddev=1)], 1)
+            output = tf.nn.relu(tf.matmul(input, W_input) + b_in)
+            output = tf.matmul(output, W_out) + b_out
+            output = tf.reshape(output, [N, 1])
+
+            if (use_Fast_MMD):
+                G_dist_loss += Fourier_MMD_Loss_tf(tf.concat([tf.concat(all_other_variables, 1),target_variable],1), tf.concat([tf.concat(all_other_variables, 1),output],1), nb_vectors_approx_MMD)
+            else:
+                G_dist_loss += MMD_loss_tf(tf.concat([tf.concat(all_other_variables, 1),target_variable],1), tf.concat([tf.concat(all_other_variables, 1),output],1))
+
+        asymmetry_constraint = 0
+
+        for edge in umg.list_edges():
+            asymmetry_constraint += CGNN_SETTINGS.asymmetry_param * self.dict_all_W_in[edge[0]][edge[1]] * self.dict_all_W_in[edge[1]][edge[0]]
+
+        self.G_global_loss = G_dist_loss + asymmetry_constraint
+
+        self.G_solver = (tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.G_global_loss))
+
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+
+        self.sess = tf.Session(config=config)
+        self.sess.run(tf.global_variables_initializer())
+
+
+    def train(self, data, verbose=True, **kwargs):
+        """ Train the initialized model
+
+        :param data: data corresponding to the graph
+        :param verbose: verbose
+        :param kwargs: train_epochs=(SETTINGS.train_epochs) number of train epochs
+        :return: None
+        """
+        train_epochs = kwargs.get('train_epochs', CGNN_SETTINGS.train_epochs)
+        for it in range(train_epochs):
+
+            _, G_global_loss_curr = self.sess.run([self.G_solver, self.G_global_loss],feed_dict={self.all_variables: data})
+
+            if verbose:
+                if it % 100 == 0:
+                    print('Run:{}, Iter:{}, score:{}'.format(self.run, it, G_global_loss_curr))
+
+
+    def evaluate(self, data, umg, verbose=True, **kwargs):
+        """ Test the model
+
+        :param data: data corresponding to the graph
+        :param verbose: verbose
+        :param kwargs: test_epochs=(SETTINGS.test_epochs) number of test epochs
+        :return: mean MMD loss value of the CGNN structure on the data
+        """
+        test_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.test_epochs)
+
+        nb_nodes = len(umg.list_nodes())
+        matrix_results = np.zeros((nb_nodes,nb_nodes))
+
+        for it in range(test_epochs):
+
+            _, G_global_loss_curr, dict_all_W_in_curr = self.sess.run([self.G_solver, self.G_global_loss, self.dict_all_W_in],feed_dict={self.all_variables: data})
+
+            if verbose:
+                if it % 100 == 0:
+                    print('Run:{}, Iter:{}, score:{}'.format(self.run, it, G_global_loss_curr))
+
+
+            for edge in umg.list_edges():
+
+                print(edge[0] + " -> " + edge[1] + " : " + str(dict_all_W_in_curr[edge[0]][edge[1]]))
+                print(edge[1] + " -> " + edge[0] + " : " + str(dict_all_W_in_curr[edge[1]][edge[0]]))
+
+                matrix_results[int(edge[0][1:]), int(edge[1][1:])] += dict_all_W_in_curr[edge[0]][edge[1]]
+                matrix_results[int(edge[1][1:]), int(edge[0][1:])] += dict_all_W_in_curr[edge[1]][edge[0]]
+
+
+        tf.reset_default_graph()
+
+        return matrix_results
+
+
+
+
 def run_CGNN_decomposable_tf(df_data, type_variables, graph, list_parents, target, idx=0, run=0,  **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
@@ -196,7 +341,7 @@ def run_CGNN_decomposable_tf(df_data, type_variables, graph, list_parents, targe
             model.train(data_target, data_all_other_variables, data_parents, **kwargs)
             score_node = model.evaluate(data_target, data_all_other_variables, data_parents, **kwargs)
     else:
-        model = CGNN_decomposable_tf(df_data.shape[0], data_target.shape[1], data_parents.shape[1], data_all_other_variables.shape[1], gamma, run, idx, **kwargs)
+        model = CGNN_decomposable_tf(df_data.shape[0], data_target.shape[1], data_parents.shape[1], data_all_other_variables.shape[1],  run, idx, **kwargs)
         model.train(data_target, data_all_other_variables, data_parents, **kwargs)
         score_node = model.evaluate(data_target, data_all_other_variables, data_parents, **kwargs)
 
@@ -339,6 +484,7 @@ def eval_all_possible_blocks(data, type_variables, umg, run_cgnn_function, **kwa
     return list_block
 
 
+
 def solve_ilp_problem(list_blocks, umg):
 
 
@@ -453,6 +599,54 @@ def get_random_graph(umg):
     return graph
 
 
+def run_CGNN_all_blocks(df_data, umg, run,**kwargs):
+
+    gpu = kwargs.get('gpu', SETTINGS.GPU)
+    gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
+
+    df_data = pd.DataFrame(scale(df_data), columns=df_data.columns)
+
+    if gpu:
+        with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
+            model = CGNN_all_blocks(df_data, umg, run, **kwargs)
+            model.train(df_data.as_matrix(), **kwargs)
+            matrix_result = model.evaluate(df_data.as_matrix(),umg, **kwargs)
+    else:
+        model = CGNN_all_blocks(df_data, umg, run, **kwargs)
+        model.train(df_data.as_matrix(), **kwargs)
+        matrix_result = model.evaluate(df_data.as_matrix(), umg, **kwargs)
+
+    return matrix_result
+
+
+
+
+def embedded_method(data, umg,**kwargs):
+
+    list_nodes = list(data.columns.values)
+    matrix_results = np.zeros((len(list_nodes), len(list_nodes)))
+
+    result_matrix = Parallel(n_jobs=SETTINGS.NB_JOBS)(delayed(run_CGNN_all_blocks)(data, umg, run,**kwargs ) for run in range(CGNN_SETTINGS.NB_RUNS))
+
+    for i in range(len(result_matrix)):
+        matrix_results += result_matrix[i]
+
+    matrix_results = matrix_results / CGNN_SETTINGS.NB_RUNS
+
+    dag = DirectedGraph()
+
+    for edge in umg.list_edges():
+
+        score_edge = matrix_results[int(edge[0][1:]),int(edge[1][1:])] - matrix_results[int(edge[1][1:]),int(edge[0][1:])]
+        if(score_edge > 0):
+            dag.add(edge[0],edge[1], score_edge)
+        else:
+            dag.add(edge[1], edge[0], -score_edge)
+
+    return dag
+
+
+
 def load_block(df_block):
 
     list_block = []
@@ -514,14 +708,14 @@ class CGNN_decomposable(GraphModel):
         alg_dic = {'HC': hill_climbing}
         return alg_dic[alg](dag, data, type_variables, self.infer_graph, **kwargs)
 
-    def orient_undirected_graph(self, data, type_variables, umg, ilp_mode, name_graph = "", saved_blocks = None, **kwargs):
+    def orient_undirected_graph(self, data, type_variables, umg, mode, name_graph = "", saved_blocks = None, **kwargs):
         """ Orient the undirected graph using GNN and apply CGNN to improve the graph
 
         :param data: data
         :param umg: undirected acyclic graph
         :return: directed acyclic graph
         """
-        if(ilp_mode): 
+        if(mode == 0):
             if saved_blocks is not None:
                 result_blocks = load_block(saved_blocks)
                 return solve_ilp_problem(result_blocks, umg)
@@ -531,7 +725,11 @@ class CGNN_decomposable(GraphModel):
                 for block in result_blocks:
                     file.write(str(block.idx) + ";" + str(block.node) + ";" + str(block.parents) + ";" + str(block.score) + "\n")
                 return solve_ilp_problem(result_blocks, umg)
-        else:
+
+        elif(mode == 1):
+
             return self.orient_directed_graph(data,type_variables, get_random_graph(umg) , **kwargs)
 
+        elif (mode == 2):
 
+            return embedded_method(data, umg, **kwargs)

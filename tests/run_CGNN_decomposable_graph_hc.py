@@ -47,7 +47,7 @@ GNN = cdt.causality.pairwise.GNN(backend="TensorFlow")
 p_directed_graph = GNN.orient_graph(df_data, umg, printout=datafile + '_printout.csv')
 
 CGNN_decomposable = cdt.causality.graph.CGNN_decomposable(backend="TensorFlow")
-directed_graph = CGNN_decomposable.orient_directed_graph(df_data, type_variables, p_directed_graph)
+directed_graph = CGNN_decomposable.orient_directed_graph(df_data, type_variables, p_directed_graph, 1)
 
 cgnn_res = pd.DataFrame(directed_graph.get_list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
 cgnn_res.to_csv(datafile + "_predictions.csv")
