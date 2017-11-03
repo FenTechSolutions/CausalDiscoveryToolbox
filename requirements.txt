@@ -7,3 +7,5 @@ pandas
 tensorflow
 networkx
 toposort
+pymprog
+
