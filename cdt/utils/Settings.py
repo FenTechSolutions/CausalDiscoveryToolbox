@@ -72,7 +72,7 @@ class CGNNSettings(object):
         self.learning_rate = 0.01
         self.init_weights = 0.05
         self.max_nb_points = 1500
-        self.h_layer_dim = 30
+        self.h_layer_dim = 40
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
 
