@@ -283,8 +283,8 @@ class CGNN_all_blocks(object):
 
             for edge in umg.list_edges():
 
-                print(edge[0] + " -> " + edge[1] + " : " + str(dict_all_W_in_curr[edge[1]][edge[0]]))
-                print(edge[1] + " -> " + edge[0] + " : " + str(dict_all_W_in_curr[edge[0]][edge[1]]))
+                # print(edge[0] + " -> " + edge[1] + " : " + str(dict_all_W_in_curr[edge[1]][edge[0]]))
+                # print(edge[1] + " -> " + edge[0] + " : " + str(dict_all_W_in_curr[edge[0]][edge[1]]))
 
                 matrix_results[int(edge[0][1:]), int(edge[1][1:])] += dict_all_W_in_curr[edge[1]][edge[0]]
                 matrix_results[int(edge[1][1:]), int(edge[0][1:])] += dict_all_W_in_curr[edge[0]][edge[1]]
