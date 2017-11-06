@@ -57,10 +57,11 @@ class HSICLasso(FeatureSelectionModel):
     def __init__(self):
         super(HSICLasso, self).__init__()
 
-    def predict_features(self, df_features, df_target, numFeat=10, idx=0, **kwargs):
-        X = np.transpose(df_features.as_matrix())
-        y = np.transpose(df_target.as_matrix())
+    def predict_features(self, df_features, df_target, idx=0, **kwargs):
 
-        path, beta, A, lam = hsiclasso(X, y, numFeat)
+        y = np.transpose(df_target.as_matrix())
+        X = np.transpose(df_features.as_matrix())
+
+        path, beta, A, lam = hsiclasso(X, y)
 
         return beta

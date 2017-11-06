@@ -19,7 +19,8 @@ class ConfigSettings(object):
                  "autoset_config",
                  "verbose",
                  "r_is_available",
-                 "torch")
+                 "torch",
+                 "threshold_UMG",)
 
     def __init__(self):  # Define here the default values of the parameters
         super(ConfigSettings, self).__init__()
@@ -32,6 +33,8 @@ class ConfigSettings(object):
         self.autoset_config = True
         self.verbose = True
         self.r_is_available = False
+        self.threshold_UMG = 0.15
+
         try:
             import torch
             from torch.autograd import Variable
@@ -55,7 +58,6 @@ class CGNNSettings(object):
                  "ttest_threshold",
                  "nb_run_feature_selection",
                  "regul_param",
-                 "threshold_UMG",
                  "nb_epoch_train_feature_selection",
                  "nb_epoch_eval_weights",
                  "use_Fast_MMD",
@@ -86,7 +88,6 @@ class CGNNSettings(object):
         self.nb_epoch_train_feature_selection = 2000
         self.nb_epoch_eval_weights = 500
         self.regul_param = 0.004
-        self.threshold_UMG = 0.15
 
         # specific for blockwise CGNN
         self.max_parents_block = 5

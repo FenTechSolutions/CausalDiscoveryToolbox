@@ -7,7 +7,7 @@ from ...utils.Settings import SETTINGS
 from joblib import Parallel, delayed
 import numpy as np
 from ...utils.Graph import UndirectedGraph
-
+import pandas as pd
 
 class DeconvolutionModel(object):
     """ Base class for all graphs models"""
@@ -45,7 +45,8 @@ class FeatureSelectionModel(object):
         list_features = list(df_data.columns.values)
         list_features.remove(target)
 
-        df_target = df_data[target]
+        df_target = pd.DataFrame(df_data[target], columns=[target])
+
         df_features = df_data[list_features]
 
         scores = self.predict_features(df_features, df_target, idx, **kwargs)
@@ -62,8 +63,7 @@ class FeatureSelectionModel(object):
         n_nodes = len(list_nodes)
         matrix_results = np.zeros((n_nodes, n_nodes))
 
-        result_feature_selection = Parallel(n_jobs=nb_jobs)(
-            delayed(self.run_feature_selection)(df_data, node, idx, **kwargs) for idx, node in enumerate(list_nodes))
+        result_feature_selection = Parallel(n_jobs=nb_jobs)(delayed(self.run_feature_selection)(df_data, node, idx, **kwargs) for idx, node in enumerate(list_nodes))
 
         for i in range(len(result_feature_selection)):
 
@@ -83,6 +83,7 @@ class FeatureSelectionModel(object):
         for i in range(n_nodes):
             for j in range(n_nodes):
                 if (j > i):
-                    graph.add(df_data.columns.values[i], df_data.columns.values[j], matrix_results[i, j])
+                    if(matrix_results[i, j] > SETTINGS.threshold_UMG):
+                        graph.add(df_data.columns.values[i], df_data.columns.values[j], matrix_results[i, j])
 
         return graph

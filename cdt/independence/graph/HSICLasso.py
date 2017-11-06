@@ -49,7 +49,7 @@ def kernel_Gaussian(xin1, xin2, sigma):
     return K
 
 
-def hsiclasso(Xin, Yin, numFeat=10, ykernel='Gauss'):
+def hsiclasso(Xin, Yin, numFeat=5, ykernel='Gauss'):
 
     d, n = Xin.shape
 
@@ -117,13 +117,15 @@ def hsiclasso(Xin, Yin, numFeat=10, ykernel='Gauss'):
 
         beta[A] = beta[A] + mu * w
 
-        if t > len(gamma1) and t < (len(gamma1) + len(gamma2) + 1):
-            lassocond = 1
-            j = t - len(gamma1)
-            I.append(A[j])
-            A.remove(j)
-        else:
-            lassocond = 0
+        # if t > len(gamma1) and t < (len(gamma1) + len(gamma2) + 1):
+        #     lassocond = 1
+        #     j = t - len(gamma1)
+        #     I.append(A[j])
+        #     A.remove(j)
+        # else:
+        #     lassocond = 0
+
+        lassocond = 0
 
         XtXbeta = np.dot(X.transpose(), np.dot(X, beta))
         c = Xty - XtXbeta

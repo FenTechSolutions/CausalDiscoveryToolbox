@@ -164,7 +164,9 @@ class CGNN_all_blocks(object):
 
         self.run = run
 
-        list_nodes = umg.list_nodes()
+        self.list_nodes = df_data.columns
+
+        print(self.list_nodes)
 
         data = df_data.as_matrix()
         data = data.reshape(data.shape[0], data.shape[1])
@@ -175,15 +177,11 @@ class CGNN_all_blocks(object):
         G_dist_loss = 0
         self.dict_all_W_in = {}
 
-        for target in list_nodes:
+        penalty_edge = 0
+
+        for target in self.list_nodes:
 
             num_target = int(target[1:])
-
-            list_neighbours = umg.neighbors(target)
-
-            list_num_neighbours = []
-            for node in list_neighbours:
-                list_num_neighbours.append(int(node[1:]))
 
             list_all_other_variables = list(df_data.columns.values)
             list_all_other_variables.remove(target)
@@ -192,7 +190,17 @@ class CGNN_all_blocks(object):
             for node in list_all_other_variables:
                 list_num_all_other_variables.append(int(node[1:]))
 
-            all_neighbour_variables = tf.transpose(tf.gather(tf.transpose(self.all_variables) , np.array(list_num_neighbours)))
+
+            if umg is not None:
+                list_neighbours = umg.neighbors(target)
+            else:
+                list_neighbours = list(list_all_other_variables)
+
+            list_num_neighbours = []
+            for node in list_neighbours:
+                list_num_neighbours.append(int(node[1:]))
+            all_neighbour_variables = tf.transpose(tf.gather(tf.transpose(self.all_variables), np.array(list_num_neighbours)))
+
 
             target_variable = tf.transpose(tf.gather(tf.transpose(self.all_variables), num_target))
             target_variable = tf.reshape(target_variable, [N,1])
@@ -202,17 +210,22 @@ class CGNN_all_blocks(object):
             list_W_in = []
             dict_target_W_in = {}
             for node in list_neighbours:
-                W_in = tf.Variable(init([1, CGNN_SETTINGS.h_layer_dim]))
-                dict_target_W_in[node] = tf.reduce_sum(tf.abs(W_in))
+                W_in = tf.Variable(init([1, h_layer_dim]))
+                coeff = tf.reduce_sum(tf.abs(W_in))
+                dict_target_W_in[node] = coeff
                 list_W_in.append(W_in)
+
+                if umg is None:
+                    penalty_edge += CGNN_SETTINGS.regul_param * coeff
+
 
             self.dict_all_W_in[target] = dict_target_W_in
 
-            W_noise = tf.Variable(init([1, CGNN_SETTINGS.h_layer_dim]))
+            W_noise = tf.Variable(init([1, h_layer_dim]))
             W_input = tf.concat([tf.concat(list_W_in,0),W_noise ], 0)
 
-            b_in = tf.Variable(init([CGNN_SETTINGS.h_layer_dim]))
-            W_out = tf.Variable(init([CGNN_SETTINGS.h_layer_dim, 1]))
+            b_in = tf.Variable(init([h_layer_dim]))
+            W_out = tf.Variable(init([h_layer_dim, 1]))
             b_out = tf.Variable(init([1]))
 
             input = tf.concat([all_neighbour_variables, tf.random_normal([N, 1], mean=0, stddev=1)], 1)
@@ -225,12 +238,27 @@ class CGNN_all_blocks(object):
             else:
                 G_dist_loss += MMD_loss_tf(tf.concat([tf.concat(all_other_variables, 1),target_variable],1), tf.concat([tf.concat(all_other_variables, 1),output],1))
 
+
+
+
+
         asymmetry_constraint = 0
 
-        for edge in umg.list_edges():
-            asymmetry_constraint += CGNN_SETTINGS.asymmetry_param * self.dict_all_W_in[edge[0]][edge[1]] * self.dict_all_W_in[edge[1]][edge[0]]
+        if umg is not None:
+            for edge in umg.list_edges():
+                asymmetry_constraint += CGNN_SETTINGS.asymmetry_param * self.dict_all_W_in[edge[0]][edge[1]] * \
+                                        self.dict_all_W_in[edge[1]][edge[0]]
+        else:
+            for node1 in self.list_nodes:
+                for node2 in self.list_nodes:
+                    if(node1 != node2):
+                        asymmetry_constraint += CGNN_SETTINGS.asymmetry_param * self.dict_all_W_in[node1][node2] * \
+                                                self.dict_all_W_in[node2][node1]
 
-        self.G_global_loss = G_dist_loss + asymmetry_constraint
+        self.G_global_loss = G_dist_loss + asymmetry_constraint + penalty_edge
+
+
+
 
         self.G_solver = (tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.G_global_loss))
 
@@ -280,14 +308,17 @@ class CGNN_all_blocks(object):
                 if it % 100 == 0:
                     print('Run:{}, Iter:{}, score:{}'.format(self.run, it, G_global_loss_curr))
 
+            if umg is not None:
+                for edge in umg.list_edges():
+                    matrix_results[int(edge[0][1:]), int(edge[1][1:])] += dict_all_W_in_curr[edge[1]][edge[0]]
+                    matrix_results[int(edge[1][1:]), int(edge[0][1:])] += dict_all_W_in_curr[edge[0]][edge[1]]
 
-            for edge in umg.list_edges():
+            else:
+                for node1 in self.list_nodes:
+                    for node2 in self.list_nodes:
+                        if (node1 != node2):
+                            matrix_results[int(node1[1:]), int(node2[1:])] += dict_all_W_in_curr[node2][node1]
 
-                # print(edge[0] + " -> " + edge[1] + " : " + str(dict_all_W_in_curr[edge[1]][edge[0]]))
-                # print(edge[1] + " -> " + edge[0] + " : " + str(dict_all_W_in_curr[edge[0]][edge[1]]))
-
-                matrix_results[int(edge[0][1:]), int(edge[1][1:])] += dict_all_W_in_curr[edge[1]][edge[0]]
-                matrix_results[int(edge[1][1:]), int(edge[0][1:])] += dict_all_W_in_curr[edge[0]][edge[1]]
 
 
         tf.reset_default_graph()
@@ -621,7 +652,7 @@ def run_CGNN_all_blocks(df_data, umg, run,**kwargs):
 
 
 
-def embedded_method(data, umg,**kwargs):
+def embedded_method(data, umg = None,**kwargs):
 
     list_nodes = list(data.columns.values)
     matrix_results = np.zeros((len(list_nodes), len(list_nodes)))
@@ -691,9 +722,8 @@ class CGNN_decomposable(GraphModel):
             print('No backend known as {}'.format(self.backend))
             raise ValueError
 
-    def create_graph_from_data(self, data):
-        print("The CGNN model is not able (yet?) to model the graph directly from raw data")
-        raise ValueError
+    def create_graph_from_data(self, data,**kwargs):
+        embedded_method(data, **kwargs)
 
     def orient_directed_graph(self, data, type_variables, dag, alg='HC', **kwargs):
         """ Improve a directed acyclic graph using CGNN
