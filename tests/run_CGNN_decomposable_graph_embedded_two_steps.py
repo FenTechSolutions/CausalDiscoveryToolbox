@@ -20,8 +20,6 @@ if __name__ == '__main__':
 
 
 
-    datafile = "graph/G2_v1_numdata.tab"
-
     datafile = sys.argv[1]
 
     cdt.CGNN_SETTINGS.asymmetry_param = 0.01
@@ -63,6 +61,6 @@ if __name__ == '__main__':
     directed_graph = CGNN_decomposable.orient_undirected_graph(df_data, type_variables, umg, 2)
 
     cgnn_res = pd.DataFrame(directed_graph.list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
-    cgnn_res.to_csv(datafile + "_predictions" + str(cdt.CGNN_SETTINGS.asymmetry_param) + "_" + str(cdt.CGNN_SETTINGS.h_layer_dim) + ".csv")
+    cgnn_res.to_csv(datafile + "_predictions" + str(cdt.CGNN_SETTINGS.asymmetry_param) + "_" + str(type_FS) + ".csv")
 
     print('Processed ' + datafile)

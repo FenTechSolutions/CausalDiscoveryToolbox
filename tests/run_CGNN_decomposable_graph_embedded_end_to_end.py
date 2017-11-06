@@ -22,8 +22,8 @@ if __name__ == '__main__':
 
     datafile = sys.argv[1]
 
-    cdt.CGNN_SETTINGS.asymmetry_param = sys.argv[2]
-    cdt.CGNN_SETTINGS.regul_param = sys.argv[3]
+    cdt.CGNN_SETTINGS.asymmetry_param = float(sys.argv[2])
+    cdt.CGNN_SETTINGS.regul_param = float(sys.argv[3])
 
 
     df_data = pd.read_csv(datafile, sep = '\t')
@@ -37,6 +37,6 @@ if __name__ == '__main__':
     directed_graph = CGNN_decomposable.create_graph_from_data(df_data)
 
     cgnn_res = pd.DataFrame(directed_graph.list_edges(descending=True), columns=['Cause', 'Effect', 'Score'])
-    cgnn_res.to_csv(datafile + "_predictions" + str(cdt.CGNN_SETTINGS.asymmetry_param) + "_" + str(cdt.CGNN_SETTINGS.h_layer_dim) + ".csv")
+    cgnn_res.to_csv(datafile + "_predictions" + str(cdt.CGNN_SETTINGS.asymmetry_param) + "_" + str(cdt.CGNN_SETTINGS.regul_param) + ".csv")
 
     print('Processed ' + datafile)
