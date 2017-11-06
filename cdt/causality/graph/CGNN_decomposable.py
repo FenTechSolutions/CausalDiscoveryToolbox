@@ -297,7 +297,7 @@ class CGNN_all_blocks(object):
         """
         test_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.test_epochs)
 
-        nb_nodes = len(umg.list_nodes())
+        nb_nodes = len(self.list_nodes)
         matrix_results = np.zeros((nb_nodes,nb_nodes))
 
         for it in range(test_epochs):
