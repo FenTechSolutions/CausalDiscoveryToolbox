@@ -666,13 +666,25 @@ def embedded_method(data, umg = None,**kwargs):
 
     dag = DirectedGraph()
 
-    for edge in umg.list_edges():
+    if umg is not None:
+        for edge in umg.list_edges():
 
-        score_edge = matrix_results[int(edge[0][1:]),int(edge[1][1:])] - matrix_results[int(edge[1][1:]),int(edge[0][1:])]
-        if(score_edge > 0):
-            dag.add(edge[0],edge[1], score_edge)
-        else:
-            dag.add(edge[1], edge[0], -score_edge)
+            score_edge = matrix_results[int(edge[0][1:]),int(edge[1][1:])] - matrix_results[int(edge[1][1:]),int(edge[0][1:])]
+            if(score_edge > 0):
+                dag.add(edge[0],edge[1], score_edge)
+            else:
+                dag.add(edge[1], edge[0], -score_edge)
+    else:
+        for node1 in list_nodes:
+            for node2 in list_nodes:
+                if (node1 != node2):
+                    score_edge = matrix_results[int(node1[1:]), int(node2[1:])] - matrix_results[int(node2[1:]), int(node1[1:])]
+                    if (score_edge > 0):
+                        dag.add(node1, node2, score_edge)
+                    else:
+                        dag.add(node2, node1, -score_edge)
+
+
 
     return dag
 
