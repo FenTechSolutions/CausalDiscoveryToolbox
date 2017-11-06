@@ -252,6 +252,7 @@ class CGNN_all_blocks(object):
             for node1 in self.list_nodes:
                 for node2 in self.list_nodes:
                     if(node1 != node2):
+                        print(node1 + " - " + node2)
                         asymmetry_constraint += CGNN_SETTINGS.asymmetry_param * self.dict_all_W_in[node1][node2] * \
                                                 self.dict_all_W_in[node2][node1]
 
@@ -679,6 +680,7 @@ def embedded_method(data, umg = None,**kwargs):
             for node2 in list_nodes:
                 if (node1 != node2):
                     score_edge = matrix_results[int(node1[1:]), int(node2[1:])] - matrix_results[int(node2[1:]), int(node1[1:])]
+                    print(node1 + node2 + " : " + str(score_edge))
                     if (score_edge > 0):
                         dag.add(node1, node2, score_edge)
                     else:
@@ -735,7 +737,7 @@ class CGNN_decomposable(GraphModel):
             raise ValueError
 
     def create_graph_from_data(self, data,**kwargs):
-        embedded_method(data, **kwargs)
+        return embedded_method(data, **kwargs)
 
     def orient_directed_graph(self, data, type_variables, dag, alg='HC', **kwargs):
         """ Improve a directed acyclic graph using CGNN
