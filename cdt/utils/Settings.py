@@ -30,7 +30,7 @@ class ConfigSettings(object):
         self.GPU_OFFSET = 0
         self.GPU_LIST = [i for i in range(
             self.GPU_OFFSET, self.GPU_OFFSET + self.NB_GPU)]
-        self.autoset_config = True
+        self.autoset_config = False
         self.verbose = True
         self.r_is_available = False
         self.threshold_UMG = 0.15
@@ -56,6 +56,7 @@ class CGNNSettings(object):
                  "learning_rate",
                  "init_weights",
                  "ttest_threshold",
+                 "nb_max_loop",
                  "nb_run_feature_selection",
                  "regul_param",
                  "nb_epoch_train_feature_selection",
@@ -74,14 +75,15 @@ class CGNNSettings(object):
         self.learning_rate = 0.01
         self.init_weights = 0.05
         self.max_nb_points = 1500
-        self.h_layer_dim = 40
+        self.h_layer_dim = 20
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
 
         self.train_epochs = 1000
         self.test_epochs = 500
-        self.complexity_graph_param = 0.0005
-        self.ttest_threshold = 0.05
+        self.complexity_graph_param = 0.00005
+        self.ttest_threshold = 0.01
+        self.nb_max_loop = 3
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1
