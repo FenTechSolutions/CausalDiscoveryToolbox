@@ -37,7 +37,7 @@ def init(size, **kwargs):
 
 
 class CGNN_tf(object):
-    def __init__(self, N, dim_variables, graph, run, idx, with_confounders=False, **kwargs):
+    def __init__(self, batch_size, dim_variables, graph, run, idx, with_confounders=False, **kwargs):
         """ Build the tensorflow graph of the CGNN structure
 
         :param N: Number of points
@@ -49,15 +49,15 @@ class CGNN_tf(object):
         :param kwargs: use_Fast_MMD=(CGNN_SETTINGS.use_Fast_MMD) use fast MMD option, Fourier Approx.
         :param kwargs: nb_vectors_approx_MMD=(CGNN_SETTINGS.nb_vectors_approx_MMD) nb vectors
         """
-        learning_rate = kwargs.get(
-            'learning_rate', CGNN_SETTINGS.learning_rate)
+        learning_rate = kwargs.get('learning_rate', CGNN_SETTINGS.learning_rate)
         h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
         use_Fast_MMD = kwargs.get('use_Fast_MMD', CGNN_SETTINGS.use_Fast_MMD)
-        nb_vectors_approx_MMD = kwargs.get(
-            'nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
+        nb_vectors_approx_MMD = kwargs.get('nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
 
         self.run = run
         self.idx = idx
+        self.batch_size = batch_size
+
         if(graph.skeleton is not None): 
             list_nodes = graph.skeleton.list_nodes()
         else:
@@ -68,8 +68,7 @@ class CGNN_tf(object):
         for i in list_nodes:
             tot_dim += dim_variables[i]
 
-        self.all_real_variables = tf.placeholder(
-            tf.float32, shape=[None, tot_dim])
+        self.all_real_variables = tf.placeholder(tf.float32, shape=[None, tot_dim])
 
         generated_variables = {}
         theta_G = []
@@ -78,7 +77,7 @@ class CGNN_tf(object):
             list_edges = graph.skeleton.list_edges()
             confounder_variables = {}
             for edge in list_edges:
-                noise_variable = tf.random_normal([N, 1], mean=0, stddev=1)
+                noise_variable = tf.random_normal([batch_size, 1], mean=0, stddev=1)
                 confounder_variables[edge[0], edge[1]] = noise_variable
                 confounder_variables[edge[1], edge[0]] = noise_variable
 
@@ -96,19 +95,17 @@ class CGNN_tf(object):
 
                     if(with_confounders):
                         neighboorhood = graph.skeleton.neighbors(var)
-                        W_in = tf.Variable(
-                            init([n_parents + len(neighboorhood) + 1, h_layer_dim], **kwargs))
+                        W_in = tf.Variable(init([n_parents + len(neighboorhood) + 1, h_layer_dim], **kwargs))
                     else:
                         W_in = tf.Variable(
                             init([n_parents + 1, h_layer_dim], **kwargs))
 
                     b_in = tf.Variable(init([h_layer_dim], **kwargs))
-                    W_out = tf.Variable(
-                        init([h_layer_dim, dim_variables[var]], **kwargs))
+                    W_out = tf.Variable(init([h_layer_dim, dim_variables[var]], **kwargs))
                     b_out = tf.Variable(init([dim_variables[var]], **kwargs))
 
                     input_v = [generated_variables[i] for i in par]
-                    input_v.append(tf.random_normal([N, 1], mean=0, stddev=1))
+                    input_v.append(tf.random_normal([batch_size, 1], mean=0, stddev=1))
 
                     if(with_confounders):
                         for i in neighboorhood:
@@ -133,15 +130,11 @@ class CGNN_tf(object):
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
         if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(
-                self.all_real_variables, self.all_generated_variables, nb_vectors_approx_MMD)
+            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables, nb_vectors_approx_MMD)
         else:
-            self.G_dist_loss_xcausesy = MMD_loss_tf(
-                self.all_real_variables, self.all_generated_variables)
+            self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables)
 
-        self.G_solver_xcausesy = (tf.train.AdamOptimizer(
-            learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy,
-                                                  var_list=theta_G))
+        self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
 
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
@@ -149,53 +142,61 @@ class CGNN_tf(object):
         self.sess = tf.Session(config=config)
         self.sess.run(tf.global_variables_initializer())
 
-    def train(self, data, verbose=True, **kwargs):
+    def train(self, data, verbose=False, **kwargs):
         """ Train the initialized model
 
         :param data: data corresponding to the graph
         :param verbose: verbose
-        :param kwargs: train_epochs=(CGNN_SETTINGS.train_epochs) number of train epochs
+        :param kwargs: train_epochs=(SETTINGS.train_epochs) number of train epochs
         :return: None
         """
         train_epochs = kwargs.get('train_epochs', CGNN_SETTINGS.train_epochs)
         for it in range(train_epochs):
 
-            _, G_dist_loss_xcausesy_curr = self.sess.run(
-                [self.G_solver_xcausesy, self.G_dist_loss_xcausesy],
-                feed_dict={self.all_real_variables: data}
-            )
+            np.random.shuffle(data)
+            nb_batch = int(data.shape[0]/self.batch_size)
+
+            for bid in range(nb_batch):
+                train_batch = data[bid * self.batch_size:(bid + 1) * self.batch_size,:]
+
+                _, G_dist_loss_xcausesy_curr = self.sess.run([self.G_solver_xcausesy, self.G_dist_loss_xcausesy], feed_dict={self.all_real_variables: train_batch})
 
             if verbose:
                 if it % 100 == 0:
-                    print('Edge:{}, Run:{}, Iter:{}, score:{}'.
+                    print('Pair:{}, Run:{}, Iter:{}, score:{}'.
                           format(self.idx, self.run,
                                  it, G_dist_loss_xcausesy_curr))
 
-    def evaluate(self, data, verbose=True, **kwargs):
+    def evaluate(self, data, verbose=False, **kwargs):
         """ Test the model
 
         :param data: data corresponding to the graph
         :param verbose: verbose
-        :param kwargs: test_epochs=(CGNN_SETTINGS.test_epochs) number of test epochs
+        :param kwargs: test_epochs=(SETTINGS.test_epochs) number of test epochs
         :return: mean MMD loss value of the CGNN structure on the data
         """
         test_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.test_epochs)
-        sumMMD_tr = 0
+        sumMMD_te = 0
 
         for it in range(test_epochs):
 
-            MMD_tr = self.sess.run([self.G_dist_loss_xcausesy], feed_dict={
-                self.all_real_variables: data})
+            np.random.shuffle(data)
+            nb_batch = int(data.shape[0]/self.batch_size)
 
-            sumMMD_tr += MMD_tr[0]
+            for bid in range(nb_batch):
+                eval_batch = data[bid * self.batch_size:(bid + 1) * self.batch_size,:]
+                MMD_te = self.sess.run(self.G_dist_loss_xcausesy, feed_dict={self.all_real_variables: eval_batch})
+
+                sumMMD_te += MMD_te
 
             if verbose and it % 100 == 0:
-                print('Edge:{}, Run:{}, Iter:{}, score:{}'
-                      .format(self.idx, self.run, it, MMD_tr[0]))
+                print('Pair:{}, Run:{}, Iter:{}, score:{}'
+                          .format(self.idx, self.run, it, MMD_te))
 
         tf.reset_default_graph()
 
-        return sumMMD_tr / test_epochs
+        return sumMMD_te / test_epochs / nb_batch
+
 
     def generate(self, data, **kwargs):
 
@@ -219,7 +220,7 @@ def run_CGNN_tf(data, type_variables, graph, idx=0, run=0, with_confounders=Fals
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
     gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
-    #list_nodes = graph.list_nodes()
+    batch_size = kwargs.get('batch_size', CGNN_SETTINGS.batch_size)
 
     if(graph.skeleton is not None): 
         list_nodes = graph.skeleton.list_nodes()
@@ -228,20 +229,17 @@ def run_CGNN_tf(data, type_variables, graph, idx=0, run=0, with_confounders=Fals
 
     data, dim_variables = reshape_data(data, list_nodes, type_variables)
     data = data.astype('float32')
-    if (data.shape[0] > CGNN_SETTINGS.max_nb_points):
 
-        p = np.random.permutation(data.shape[0])
-        data = data[p[:int(CGNN_SETTINGS.max_nb_points)], :]
+    batch_size = min(data.shape[0], batch_size)
+
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
-            model = CGNN_tf(data.shape[0], dim_variables,
-                            graph, run, idx, with_confounders, **kwargs)
+            model = CGNN_tf(batch_size, dim_variables, graph, run, idx, with_confounders, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN_tf(data.shape[0], dim_variables,
-                        graph, run, idx, with_confounders, **kwargs)
+        model = CGNN_tf(batch_size, dim_variables, graph, run, idx, with_confounders, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 
