@@ -24,13 +24,13 @@ class ConfigSettings(object):
 
     def __init__(self):  # Define here the default values of the parameters
         super(ConfigSettings, self).__init__()
-        self.NB_JOBS = 2
+        self.NB_JOBS = 8
         self.GPU = True
-        self.NB_GPU = 2
+        self.NB_GPU = 4
         self.GPU_OFFSET = 0
         self.GPU_LIST = [i for i in range(
             self.GPU_OFFSET, self.GPU_OFFSET + self.NB_GPU)]
-        self.autoset_config = False
+        self.autoset_config = True
         self.verbose = True
         self.r_is_available = False
         self.threshold_UMG = 0.15
