@@ -210,10 +210,10 @@ def tf_run_instance(a, b, idx, run, **kwargs):
     gpu = kwargs.get('gpu', SETTINGS.GPU)
     gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
 
-    if (a.shape[0] > CGNN_SETTINGS.max_nb_points):
+    if (a.shape[0] > 1500):
         p = np.random.permutation(a.shape[0])
-        a = a[p[:int(CGNN_SETTINGS.max_nb_points)], :]
-        b = b[p[:int(CGNN_SETTINGS.max_nb_points)], :]
+        a = a[p[:int(1500)], :]
+        b = b[p[:int(1500)], :]
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
