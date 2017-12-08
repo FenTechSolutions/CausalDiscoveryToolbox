@@ -14,7 +14,9 @@ output = CGNN.predict(data, skeleton)
 
 An example of application on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](LUCAS_example/Discovery_LUCAS.ipynb)
 
-**A More detailed documentation will be soon released**
+## Documentation 
+
+[Check the documentation here](documentation.md)
 
 ## Project structure
 
