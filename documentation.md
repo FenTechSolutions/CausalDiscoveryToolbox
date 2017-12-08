@@ -20,7 +20,9 @@ cdt package
 |     |- Mutual information based (MIRegression, Adjusted Mutual Information, Normalized mutual information)
 |
 |- generators
-|
+|  |- RandomGraphFromData (Generate a random graph similar to inputdata)
+|  |- RandomGraphGenerator (Generates a random graph, can generate pairs of variables)
+|  |- generate_graph_with_structure (generates a graph with a fixed structure)
 |
 |- causality
 |  |- graph (methods for graph inference)
@@ -43,10 +45,29 @@ cdt package
    |- Graph -> defines the DirectedGraph and UndirectedGraph class (see below)
   
 ```
+
 ## Hardware and algorithm settings
+The toolbox has a SETTINGS class as well as a CGNN_SETTINGS class that define respectively the hardware settings and the CGNN algorithm settings. Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**. 
+
+These parameters are accessible and overridable via accessing the class : 
+
+```python
+import cdt
+cdt.SETTINGS
+cdt.CGNN_SETTINGS
+```
+
+Moreover, the hardware parameters are detected and defined automatically (including number of GPUs, CPUs, available optional packages) at the **import** of the package using the **cdt.utils.Settings.autoset_settings** method, run at startup. 
 
 ## The graph class
+The whole package revolves around using the **DirectedGraph** and the **UndirectedGraph** classes that define how the graph has to be processed in the package. Those classes are accessible via :
 
+```python
+import cdt
+cdt.DirectedGraph
+cdt.UndirectedGraph
+```
+These classes are defined under the **cdt.utils.Graph.py** file. 
 
 
 
