@@ -10,10 +10,10 @@ cdt package
 |
 |- independence
 |  |- skeleton (Infering the skeleton from data, and removing spurious connections)
-|     |- Lasso variants (Randomized Lasso[1], Glasso[2], HSICLasso[3])
-|     |- FSGNN (CGNN variant for feature selection)
-|     |- Network deconvolution[4]
-|     |- Skeleton recovery using feature selection algorithms (RFECV[5], LinearSVR[6], RRelief[7], ARD[8,9], DecisionTree)
+|  |  |- Lasso variants (Randomized Lasso[1], Glasso[2], HSICLasso[3])
+|  |  |- FSGNN (CGNN variant for feature selection)
+|  |  |- Network deconvolution[4]
+|  |  |- Skeleton recovery using feature selection algorithms (RFECV[5], LinearSVR[6], RRelief[7], ARD[8,9], DecisionTree)
 |  |- stats (pairwise methods for dependency)
 |     |- Correlation (Pearson, Spearman, KendallTau)
 |     |- Kernel based (NormalizedHSIC[10])
@@ -26,8 +26,8 @@ cdt package
 |
 |- causality
 |  |- graph (methods for graph inference)
-|     |- CGNN[12] method (In tensorflow, pytorch version needs revision)
-|     |- PC[13] (using a the rpy2 R wrapper, Needs validation)
+|  |  |- CGNN[12] method (In tensorflow, pytorch version needs revision)
+|  |  |- PC[13] (using a the rpy2 R wrapper, Needs validation)
 |  |- pairwise (methods for pairwise inference)
 |     |- ANM[14] (Additive Noise Model)
 |     |- IGCI[15] (Information Geometric Causal Inference)
