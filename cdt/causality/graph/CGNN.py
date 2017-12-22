@@ -19,10 +19,7 @@ from ..pairwise.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, Fourier_MMD_Loss_tf, TTestCriterion
 from ...utils.Settings import SETTINGS, CGNN_SETTINGS
 from ...utils.Formats import reshape_data
-if SETTINGS.torch is not None:
-    from .CGNN_th import run_CGNN_th
-else:
-    run_CGNN_th = None
+run_CGNN_th = None
 
 
 def init(size, **kwargs):
@@ -49,17 +46,23 @@ class CGNN_tf(object):
         :param kwargs: use_Fast_MMD=(CGNN_SETTINGS.use_Fast_MMD) use fast MMD option, Fourier Approx.
         :param kwargs: nb_vectors_approx_MMD=(CGNN_SETTINGS.nb_vectors_approx_MMD) nb vectors
         """
-        learning_rate = kwargs.get('learning_rate', CGNN_SETTINGS.learning_rate)
+        learning_rate = kwargs.get(
+            'learning_rate', CGNN_SETTINGS.learning_rate)
         h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
         use_Fast_MMD = kwargs.get('use_Fast_MMD', CGNN_SETTINGS.use_Fast_MMD)
+<<<<<<< HEAD
         nb_vectors_approx_MMD = kwargs.get('nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
         kernel = kwargs.get('kernel', CGNN_SETTINGS.kernel)
+=======
+        nb_vectors_approx_MMD = kwargs.get(
+            'nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
+>>>>>>> 40462b175c696ee304a482f29d35bcb17d9da8a4
 
         self.run = run
         self.idx = idx
         self.batch_size = batch_size
 
-        if(graph.skeleton is not None): 
+        if(graph.skeleton is not None):
             list_nodes = graph.skeleton.list_nodes()
         else:
             list_nodes = graph.list_nodes()
@@ -69,7 +72,8 @@ class CGNN_tf(object):
         for i in list_nodes:
             tot_dim += dim_variables[i]
 
-        self.all_real_variables = tf.placeholder(tf.float32, shape=[None, tot_dim])
+        self.all_real_variables = tf.placeholder(
+            tf.float32, shape=[None, tot_dim])
 
         generated_variables = {}
         theta_G = []
@@ -78,7 +82,8 @@ class CGNN_tf(object):
             list_edges = graph.skeleton.list_edges()
             confounder_variables = {}
             for edge in list_edges:
-                noise_variable = tf.random_normal([batch_size, 1], mean=0, stddev=1)
+                noise_variable = tf.random_normal(
+                    [batch_size, 1], mean=0, stddev=1)
                 confounder_variables[edge[0], edge[1]] = noise_variable
                 confounder_variables[edge[1], edge[0]] = noise_variable
 
@@ -96,17 +101,20 @@ class CGNN_tf(object):
 
                     if(with_confounders):
                         neighboorhood = graph.skeleton.neighbors(var)
-                        W_in = tf.Variable(init([n_parents + len(neighboorhood) + 1, h_layer_dim], **kwargs))
+                        W_in = tf.Variable(
+                            init([n_parents + len(neighboorhood) + 1, h_layer_dim], **kwargs))
                     else:
                         W_in = tf.Variable(
                             init([n_parents + 1, h_layer_dim], **kwargs))
 
                     b_in = tf.Variable(init([h_layer_dim], **kwargs))
-                    W_out = tf.Variable(init([h_layer_dim, dim_variables[var]], **kwargs))
+                    W_out = tf.Variable(
+                        init([h_layer_dim, dim_variables[var]], **kwargs))
                     b_out = tf.Variable(init([dim_variables[var]], **kwargs))
 
                     input_v = [generated_variables[i] for i in par]
-                    input_v.append(tf.random_normal([batch_size, 1], mean=0, stddev=1))
+                    input_v.append(tf.random_normal(
+                        [batch_size, 1], mean=0, stddev=1))
 
                     if(with_confounders):
                         for i in neighboorhood:
@@ -131,11 +139,18 @@ class CGNN_tf(object):
         self.all_generated_variables = tf.concat(listvariablegraph, 1)
 
         if(use_Fast_MMD):
-            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(self.all_real_variables, self.all_generated_variables, nb_vectors_approx_MMD)
+            self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(
+                self.all_real_variables, self.all_generated_variables, nb_vectors_approx_MMD)
         else:
+<<<<<<< HEAD
             self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables, kernel)
+=======
+            self.G_dist_loss_xcausesy = MMD_loss_tf(
+                self.all_real_variables, self.all_generated_variables)
+>>>>>>> 40462b175c696ee304a482f29d35bcb17d9da8a4
 
-        self.G_solver_xcausesy = (tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
+        self.G_solver_xcausesy = (tf.train.AdamOptimizer(
+            learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
 
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
@@ -155,12 +170,14 @@ class CGNN_tf(object):
         for it in range(train_epochs):
 
             np.random.shuffle(data)
-            nb_batch = int(data.shape[0]/self.batch_size)
+            nb_batch = int(data.shape[0] / self.batch_size)
 
             for bid in range(nb_batch):
-                train_batch = data[bid * self.batch_size:(bid + 1) * self.batch_size,:]
+                train_batch = data[bid *
+                                   self.batch_size:(bid + 1) * self.batch_size, :]
 
-                _, G_dist_loss_xcausesy_curr = self.sess.run([self.G_solver_xcausesy, self.G_dist_loss_xcausesy], feed_dict={self.all_real_variables: train_batch})
+                _, G_dist_loss_xcausesy_curr = self.sess.run(
+                    [self.G_solver_xcausesy, self.G_dist_loss_xcausesy], feed_dict={self.all_real_variables: train_batch})
 
             if verbose:
                 if it % 100 == 0:
@@ -182,22 +199,23 @@ class CGNN_tf(object):
         for it in range(test_epochs):
 
             np.random.shuffle(data)
-            nb_batch = int(data.shape[0]/self.batch_size)
+            nb_batch = int(data.shape[0] / self.batch_size)
 
             for bid in range(nb_batch):
-                eval_batch = data[bid * self.batch_size:(bid + 1) * self.batch_size,:]
-                MMD_te = self.sess.run(self.G_dist_loss_xcausesy, feed_dict={self.all_real_variables: eval_batch})
+                eval_batch = data[bid *
+                                  self.batch_size:(bid + 1) * self.batch_size, :]
+                MMD_te = self.sess.run(self.G_dist_loss_xcausesy, feed_dict={
+                                       self.all_real_variables: eval_batch})
 
                 sumMMD_te += MMD_te
 
             if verbose and it % 100 == 0:
                 print('Pair:{}, Run:{}, Iter:{}, score:{}'
-                          .format(self.idx, self.run, it, MMD_te))
+                      .format(self.idx, self.run, it, MMD_te))
 
         tf.reset_default_graph()
 
         return sumMMD_te / test_epochs / nb_batch
-
 
     def generate(self, data, **kwargs):
 
@@ -223,7 +241,7 @@ def run_CGNN_tf(data, type_variables, graph, idx=0, run=0, with_confounders=Fals
     gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
     batch_size = kwargs.get('batch_size', CGNN_SETTINGS.batch_size)
 
-    if(graph.skeleton is not None): 
+    if(graph.skeleton is not None):
         list_nodes = graph.skeleton.list_nodes()
     else:
         list_nodes = graph.list_nodes()
@@ -233,14 +251,15 @@ def run_CGNN_tf(data, type_variables, graph, idx=0, run=0, with_confounders=Fals
 
     batch_size = min(data.shape[0], batch_size)
 
-
     if gpu:
         with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
-            model = CGNN_tf(batch_size, dim_variables, graph, run, idx, with_confounders, **kwargs)
+            model = CGNN_tf(batch_size, dim_variables, graph,
+                            run, idx, with_confounders, **kwargs)
             model.train(data, **kwargs)
             return model.evaluate(data, **kwargs)
     else:
-        model = CGNN_tf(batch_size, dim_variables, graph, run, idx, with_confounders, **kwargs)
+        model = CGNN_tf(batch_size, dim_variables, graph,
+                        run, idx, with_confounders, **kwargs)
         model.train(data, **kwargs)
         return model.evaluate(data, **kwargs)
 
@@ -338,42 +357,50 @@ def eval_new_graph_configuration(test_graph, globalscore, best_structure_scores,
     nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
     nb_runs = kwargs.get("nb_runs", CGNN_SETTINGS.NB_RUNS)
     nb_max_runs = kwargs.get("nb_max_runs", CGNN_SETTINGS.NB_MAX_RUNS)
-    ttest_threshold = kwargs.get("ttest_threshold", CGNN_SETTINGS.ttest_threshold)
+    ttest_threshold = kwargs.get(
+        "ttest_threshold", CGNN_SETTINGS.ttest_threshold)
 
-    ttest_criterion = TTestCriterion(max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
+    ttest_criterion = TTestCriterion(
+        max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
     configuration_scores = []
 
     accept_new_config = False
 
     while ttest_criterion.loop(configuration_scores[:len(best_structure_scores)], best_structure_scores[:len(configuration_scores)]):
 
-        result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, type_variables, test_graph, idx_pair, run, with_confounders, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
+        result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, type_variables, test_graph, idx_pair,
+                                                                           run, with_confounders, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
 
-        complexity_score = CGNN_SETTINGS.complexity_graph_param * len(test_graph.list_edges(order_by_weight=False,return_weights=False))
-        configuration_scores.extend([(i + complexity_score) for i in result_pairs if np.isfinite(i)])
+        complexity_score = CGNN_SETTINGS.complexity_graph_param * \
+            len(test_graph.list_edges(order_by_weight=False, return_weights=False))
+        configuration_scores.extend(
+            [(i + complexity_score) for i in result_pairs if np.isfinite(i)])
 
     score_network = np.mean(configuration_scores)
 
     print("Current score : " + str(score_network))
     print("Best score : " + str(globalscore))
-    print("P-value after {} runs : {}".format(ttest_criterion.iter, ttest_criterion.p_value))
- 
+    print("P-value after {} runs : {}".format(ttest_criterion.iter,
+                                              ttest_criterion.p_value))
+
     if score_network < globalscore:
 
         if len(configuration_scores) < nb_max_runs:
-            
-            result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, type_variables, test_graph, idx_pair, run, with_confounders, **kwargs) for run in range(len(configuration_scores), nb_max_runs - len(configuration_scores)))
 
-            complexity_score = CGNN_SETTINGS.complexity_graph_param * len(test_graph.list_edges(order_by_weight=False,return_weights=False))
-            configuration_scores.extend([(i + complexity_score) for i in result_pairs if np.isfinite(i)])
+            result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, type_variables, test_graph, idx_pair, run,
+                                                                               with_confounders, **kwargs) for run in range(len(configuration_scores), nb_max_runs - len(configuration_scores)))
+
+            complexity_score = CGNN_SETTINGS.complexity_graph_param * \
+                len(test_graph.list_edges(
+                    order_by_weight=False, return_weights=False))
+            configuration_scores.extend(
+                [(i + complexity_score) for i in result_pairs if np.isfinite(i)])
 
         globalscore = np.mean(configuration_scores)
         best_structure_scores = configuration_scores
         accept_new_config = True
 
     return score_network, globalscore, best_structure_scores, accept_new_config
-
-
 
 
 def hill_climbing_with_removal(graph, data,  run_cgnn_function, type_variables, with_confounders=False, **kwargs):
@@ -389,17 +416,21 @@ def hill_climbing_with_removal(graph, data,  run_cgnn_function, type_variables, 
     nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
     nb_runs = kwargs.get("nb_runs", CGNN_SETTINGS.NB_RUNS)
     nb_max_runs = kwargs.get("nb_max_runs", CGNN_SETTINGS.NB_MAX_RUNS)
-    ttest_threshold = kwargs.get("ttest_threshold", CGNN_SETTINGS.ttest_threshold)
+    ttest_threshold = kwargs.get(
+        "ttest_threshold", CGNN_SETTINGS.ttest_threshold)
     nb_max_loop = kwargs.get("nb_max_loop", CGNN_SETTINGS.nb_max_loop)
 
     loop = 0
     tested_configurations = [graph.dict_nw()]
     improvement = True
 
-    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(data, type_variables, graph, -1, run, with_confounders, **kwargs) for run in range(nb_max_runs))
-    
-    complexity_score = CGNN_SETTINGS.complexity_graph_param *len(graph.list_edges(order_by_weight=False, return_weights=False))
-    best_structure_scores = [(i + complexity_score) for i in result_pairs if np.isfinite(i)]
+    result_pairs = Parallel(n_jobs=nb_jobs)(delayed(run_cgnn_function)(
+        data, type_variables, graph, -1, run, with_confounders, **kwargs) for run in range(nb_max_runs))
+
+    complexity_score = CGNN_SETTINGS.complexity_graph_param * \
+        len(graph.list_edges(order_by_weight=False, return_weights=False))
+    best_structure_scores = [(i + complexity_score)
+                             for i in result_pairs if np.isfinite(i)]
     score_network = np.mean(best_structure_scores)
 
     globalscore = score_network
@@ -415,14 +446,14 @@ def hill_climbing_with_removal(graph, data,  run_cgnn_function, type_variables, 
             edge = list_edges_to_evaluate[idx_pair]
 
             print(edge)
-            print(graph.list_edges(order_by_weight=False,return_weights=False))
+            print(graph.list_edges(order_by_weight=False, return_weights=False))
 
             globalscore_save = globalscore
 
             # If edge already oriented in the graph
-            if([edge[0], edge[1]] in graph.list_edges(order_by_weight=False,return_weights=False) or [edge[1], edge[0]] in graph.list_edges(order_by_weight=False,return_weights=False)):
+            if([edge[0], edge[1]] in graph.list_edges(order_by_weight=False, return_weights=False) or [edge[1], edge[0]] in graph.list_edges(order_by_weight=False, return_weights=False)):
 
-                if([edge[0], edge[1]] in graph.list_edges(order_by_weight=False,return_weights=False)):
+                if([edge[0], edge[1]] in graph.list_edges(order_by_weight=False, return_weights=False)):
                     node1 = edge[0]
                     node2 = edge[1]
                 else:
@@ -434,52 +465,62 @@ def hill_climbing_with_removal(graph, data,  run_cgnn_function, type_variables, 
                 test_graph.reverse_edge(node1, node2)
 
                 if (test_graph.is_cyclic() or test_graph.dict_nw() in tested_configurations):
-                    print("No evaluation for edge " +  str(node1) + " -> " + str(node2))
+                    print("No evaluation for edge " +
+                          str(node1) + " -> " + str(node2))
                 else:
-                    print("Reverse Edge " + str(node1) + " -> " + str(node2) + " in evaluation")
+                    print("Reverse Edge " + str(node1) +
+                          " -> " + str(node2) + " in evaluation")
                     tested_configurations.append(test_graph.dict_nw())
 
-                    score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(test_graph, globalscore, best_structure_scores, idx_pair, data, run_cgnn_function, type_variables, with_confounders, **kwargs)
-                        
+                    score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(
+                        test_graph, globalscore, best_structure_scores, idx_pair, data, run_cgnn_function, type_variables, with_confounders, **kwargs)
+
                     if(accept_new_config):
 
                         graph.reverse_edge(node1, node2)
                         improvement = True
-                        print("Edge " + str(node1) + "->" + str(node2) + " got reversed !")
+                        print("Edge " + str(node1) + "->" +
+                              str(node2) + " got reversed !")
 
                         node = node1
                         node1 = node2
                         node2 = node
                     else:
-                        print("Edge " + str(node1) + "->" + str(node2) + " not reversed")
+                        print("Edge " + str(node1) + "->" +
+                              str(node2) + " not reversed")
 
                 # Test suppression
                 test_graph = deepcopy(graph)
                 test_graph.remove_edge(node1, node2)
 
                 if (test_graph.dict_nw() in tested_configurations):
-                    print("Removing already evaluated for edge " + str(node1) + " -> " + str(node2))
+                    print("Removing already evaluated for edge " +
+                          str(node1) + " -> " + str(node2))
                 else:
-                    print("Removing edge " + str(node1) + " -> " + str(node2) + " in evaluation")
+                    print("Removing edge " + str(node1) +
+                          " -> " + str(node2) + " in evaluation")
                     tested_configurations.append(test_graph.dict_nw())
 
-                    score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
-                    
+                    score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(
+                        test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
+
                     if accept_new_config:
                         graph.remove_edge(node1, node2)
                         improvement = True
-                        print("Edge " + str(node1) + " -> " + str(node2) + " got removed !")
+                        print("Edge " + str(node1) + " -> " +
+                              str(node2) + " got removed !")
                     else:
                         # We keep the edge and its score is set to (score_network - globalscore)
-                        print("Edge " + str(node1) + " -> " + str(node2) + " not removed. Score edge : " + str(score_network - globalscore))
-                        graph.add(node1, node2, score_network - globalscore_save)
+                        print("Edge " + str(node1) + " -> " + str(node2) +
+                              " not removed. Score edge : " + str(score_network - globalscore))
+                        graph.add(node1, node2, score_network -
+                                  globalscore_save)
 
             # Eval if an edge is added
             else:
 
                 node1 = edge[0]
                 node2 = edge[1]
-
 
                 # Test add edge sens node1 -> node2
                 test_graph = deepcopy(graph)
@@ -488,18 +529,22 @@ def hill_climbing_with_removal(graph, data,  run_cgnn_function, type_variables, 
                 accept_new_config = False
 
                 if (test_graph.is_cyclic() or test_graph.dict_nw() in tested_configurations):
-                    print("No addition possible for " + str(node1) + " -> " + str(node2))
+                    print("No addition possible for " +
+                          str(node1) + " -> " + str(node2))
                 else:
-                    print("Addition of edge " + str(node1) + " -> " + str(node2) + " in evaluation :")
+                    print("Addition of edge " + str(node1) +
+                          " -> " + str(node2) + " in evaluation :")
                     tested_configurations.append(test_graph.dict_nw())
 
-                    score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
+                    score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(
+                        test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
 
                     if accept_new_config:
                         score_edge = globalscore_save - score_network
                         graph.add(node1, node2, score_edge)
                         improvement = True
-                        print("Edge " + str(node1) + " -> " + str(node2) + " is added with score : " + str(score_edge) + " !")
+                        print("Edge " + str(node1) + " -> " + str(node2) +
+                              " is added with score : " + str(score_edge) + " !")
 
                 if(accept_new_config):
 
@@ -509,22 +554,28 @@ def hill_climbing_with_removal(graph, data,  run_cgnn_function, type_variables, 
                     test_graph.add(node2, node1)
 
                     if (test_graph.is_cyclic() or test_graph.dict_nw() in tested_configurations):
-                        print("No evaluation for edge " + str(node1) + " -> " + str(node2))
+                        print("No evaluation for edge " +
+                              str(node1) + " -> " + str(node2))
                     else:
-                        print("Reverse Edge " + str(node1) + " -> " + str(node2) + " in evaluation")
+                        print("Reverse Edge " + str(node1) +
+                              " -> " + str(node2) + " in evaluation")
                         tested_configurations.append(test_graph.dict_nw())
 
-                        score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
-                        
+                        score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(
+                            test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
+
                         if(accept_new_config):
                             score_edge = globalscore_save - score_network
                             graph.remove_edge(node1, node2)
                             graph.add(node2, node1, score_edge)
                             improvement = True
-                            print("Edge " + str(node1) + "->" + str(node2) + " got reversed !")
-                            print("Score edge " + str(node2) + " -> " + str(node1) + ": " + str(score_edge))
+                            print("Edge " + str(node1) + "->" +
+                                  str(node2) + " got reversed !")
+                            print("Score edge " + str(node2) + " -> " +
+                                  str(node1) + ": " + str(score_edge))
                         else:
-                            print("Edge " + str(node1) + "->" + str(node2) + " not reversed")
+                            print("Edge " + str(node1) + "->" +
+                                  str(node2) + " not reversed")
                 else:
 
                     # Test add edge sens node2 -> node1
@@ -532,21 +583,26 @@ def hill_climbing_with_removal(graph, data,  run_cgnn_function, type_variables, 
                     test_graph.add(node2, node1)
 
                     if (test_graph.is_cyclic() or test_graph.dict_nw() in tested_configurations):
-                        print("No addition possible for edge " + str(node2) + " -> " + str(node1))
+                        print("No addition possible for edge " +
+                              str(node2) + " -> " + str(node1))
                     else:
-                        print("Addition of edge " + str(node2) + " -> " + str(node1) + " in evaluation :")
+                        print("Addition of edge " + str(node2) +
+                              " -> " + str(node1) + " in evaluation :")
                         tested_configurations.append(test_graph.dict_nw())
 
-                        score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
-                        
+                        score_network, globalscore, best_structure_scores, accept_new_config = eval_new_graph_configuration(
+                            test_graph, globalscore, best_structure_scores, idx_pair, data,  run_cgnn_function, type_variables, with_confounders, **kwargs)
+
                         if(accept_new_config):
 
                             score_edge = globalscore_save - score_network
                             graph.add(node2, node1, score_edge)
                             improvement = True
-                            print("Edge " + str(node2) + " -> " + str(node1) + " is added with score : " + str(score_edge) + " !")
+                            print("Edge " + str(node2) + " -> " + str(node1) +
+                                  " is added with score : " + str(score_edge) + " !")
                         else:
-                           print("Edge not added: " + str(node1) + " | " + str(node2))    
+                            print("Edge not added: " +
+                                  str(node1) + " | " + str(node2))
 
     return graph
 
@@ -676,7 +732,6 @@ class CGNN(GraphModel):
 
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
-
 
         return alg_dic[alg](dag, data, self.infer_graph,
                             type_variables=type_variables,
