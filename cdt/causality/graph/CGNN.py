@@ -50,13 +50,8 @@ class CGNN_tf(object):
             'learning_rate', CGNN_SETTINGS.learning_rate)
         h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
         use_Fast_MMD = kwargs.get('use_Fast_MMD', CGNN_SETTINGS.use_Fast_MMD)
-<<<<<<< HEAD
         nb_vectors_approx_MMD = kwargs.get('nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
         kernel = kwargs.get('kernel', CGNN_SETTINGS.kernel)
-=======
-        nb_vectors_approx_MMD = kwargs.get(
-            'nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
->>>>>>> 40462b175c696ee304a482f29d35bcb17d9da8a4
 
         self.run = run
         self.idx = idx
@@ -142,12 +137,8 @@ class CGNN_tf(object):
             self.G_dist_loss_xcausesy = Fourier_MMD_Loss_tf(
                 self.all_real_variables, self.all_generated_variables, nb_vectors_approx_MMD)
         else:
-<<<<<<< HEAD
             self.G_dist_loss_xcausesy = MMD_loss_tf(self.all_real_variables, self.all_generated_variables, kernel)
-=======
-            self.G_dist_loss_xcausesy = MMD_loss_tf(
-                self.all_real_variables, self.all_generated_variables)
->>>>>>> 40462b175c696ee304a482f29d35bcb17d9da8a4
+
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
