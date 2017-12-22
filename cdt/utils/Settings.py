@@ -57,6 +57,7 @@ class CGNNSettings(object):
                  "init_weights",
                  "ttest_threshold",
                  "nb_max_loop",
+                 "kernel",
                  "nb_run_feature_selection",
                  "regul_param",
                  "nb_epoch_train_feature_selection",
@@ -84,6 +85,8 @@ class CGNNSettings(object):
         self.complexity_graph_param = 0.00005
         self.ttest_threshold = 0.01
         self.nb_max_loop = 3
+
+        self.kernel = "RBF"
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1

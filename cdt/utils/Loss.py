@@ -15,24 +15,49 @@ if SETTINGS.torch is not None:
 bandwiths_gamma = [0.005, 0.05, 0.25, 0.5, 1, 5, 50]
 
 
-def MMD_loss_tf(xy_true, xy_pred):
+def MMD_loss_tf(xy_true, xy_pred, kernel="RBF"):
+
     N, _ = xy_pred.get_shape().as_list()
 
-    X = tf.concat([xy_pred, xy_true], 0)
-    XX = tf.matmul(X, tf.transpose(X))
-    X2 = tf.reduce_sum(X * X, 1, keep_dims=True)
-    exponent = -2 * XX + X2 + tf.transpose(X2)
+    if(kernel == "GMM"):
 
-    s1 = tf.constant(1.0 / N, shape=[N, 1])
-    s2 = -tf.constant(1.0 / N, shape=[N, 1])
-    s = tf.concat([s1, s2], 0)
-    S = tf.matmul(s, tf.transpose(s))
+        print("coucou")
 
-    loss = 0
+        X = tf.concat([xy_pred, xy_true], 0)
 
-    for i in bandwiths_gamma:
-        kernel_val = tf.exp(-i * exponent)
-        loss += tf.reduce_sum(S * kernel_val)
+        X_unstacked = tf.unstack(X, axis = 1)
+        list_unstacked  = []
+        for t in X_unstacked :
+            list_unstacked.append(tf.reshape(t, [2*N,1]))
+
+        X = tf.concat([i for c in [[tf.abs(tf.maximum(j, 0)), tf.abs(tf.minimum(j, 0))] for j in list_unstacked] for i in c], axis = 1)
+        X = tf.expand_dims(X,1)
+        X_t = tf.transpose(X, perm=[1, 0, 2])
+
+        s1 = tf.constant(1.0 / N, shape=[N, 1])
+        s2 = -tf.constant(1.0 / N, shape=[N, 1])
+        s = tf.concat([s1, s2], 0)
+        S = tf.matmul(s, tf.transpose(s))
+
+        loss = tf.reduce_sum(S*tf.div(tf.reduce_sum(tf.minimum(X, X_t), axis=2),tf.reduce_sum(tf.maximum(X, X_t), axis=2)))
+
+    elif(kernel == "RBF"):
+
+        X = tf.concat([xy_pred, xy_true], 0)
+        XX = tf.matmul(X, tf.transpose(X))
+        X2 = tf.reduce_sum(X * X, 1, keep_dims=True)
+        exponent = -2 * XX + X2 + tf.transpose(X2)
+
+        s1 = tf.constant(1.0 / N, shape=[N, 1])
+        s2 = -tf.constant(1.0 / N, shape=[N, 1])
+        s = tf.concat([s1, s2], 0)
+        S = tf.matmul(s, tf.transpose(s))
+
+        loss = 0
+
+        for i in bandwiths_gamma:
+            kernel_val = tf.exp(-i * exponent)
+            loss += tf.reduce_sum(S * kernel_val)
 
     return loss
 

@@ -57,6 +57,8 @@ class GNN_tf(object):
         nb_vectors_approx_MMD = kwargs.get(
             'nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
 
+        kernel = kwargs.get('kernel', CGNN_SETTINGS.kernel)
+
         self.run = run
         self.pair = pair
         self.X = tf.placeholder(tf.float32, shape=[None, dim_variables_a])
@@ -86,7 +88,7 @@ class GNN_tf(object):
                     [self.X, self.Y], 1), tf.concat([self.X, out_y], 1), nb_vectors_approx_MMD)
             else:
                 self.G_dist_loss_xcausesy = MMD_tf(
-                    tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1))
+                    tf.concat([self.X, self.Y], 1), tf.concat([self.X, out_y], 1), kernel)
 
         else:
 
@@ -125,11 +127,9 @@ class GNN_tf(object):
                 out_y = tf.nn.softmax(tf.matmul(hid_y, Wy_out) + by_out)
 
             if (use_Fast_MMD):
-                self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat(
-                    [self.X, self.Y], 1), tf.concat([out_x, out_y], 1), nb_vectors_approx_MMD)
+                self.G_dist_loss_xcausesy = Fourier_MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1), nb_vectors_approx_MMD)
             else:
-                self.G_dist_loss_xcausesy = MMD_tf(
-                    tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1))
+                self.G_dist_loss_xcausesy = MMD_tf(tf.concat([self.X, self.Y], 1), tf.concat([out_x, out_y], 1), kernel)
 
         self.G_solver_xcausesy = (tf.train.AdamOptimizer(
             learning_rate=learning_rate).minimize(self.G_dist_loss_xcausesy, var_list=theta_G))
@@ -210,10 +210,6 @@ def tf_run_instance(a, b, idx, run, **kwargs):
     gpu = kwargs.get('gpu', SETTINGS.GPU)
     gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
 
-    if (a.shape[0] > CGNN_SETTINGS.max_nb_points):
-        p = np.random.permutation(a.shape[0])
-        a = a[p[:int(CGNN_SETTINGS.max_nb_points)], :]
-        b = b[p[:int(CGNN_SETTINGS.max_nb_points)], :]
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
