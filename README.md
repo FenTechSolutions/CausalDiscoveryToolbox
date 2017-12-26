@@ -9,7 +9,8 @@ The CGNN can be used using :
 
 ```python
 from cdt.causality.graph import CGNN
-output = CGNN.predict(data, skeleton)
+cgnn = CGNN()
+output = cgnn.predict(data, skeleton)
 ```
 
 An example of application on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](LUCAS_example/Discovery_LUCAS.ipynb)
