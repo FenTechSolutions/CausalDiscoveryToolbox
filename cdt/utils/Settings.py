@@ -88,9 +88,6 @@ class CGNNSettings(object):
 
         self.kernel = "RBF"
 
-
-
-
         # specific for FSGNN
         self.nb_run_feature_selection = 1
         self.nb_epoch_train_feature_selection = 2000
@@ -110,6 +107,8 @@ def autoset_settings(set_var):
     """
     try:
         devices = ast.literal_eval(os.environ["CUDA_VISIBLE_DEVICES"])
+        if type(devices) != list and type(devices) != tuple:
+            devices = [devices]
         if len(devices) != 0:
             set_var.GPU_LIST = devices
             set_var.GPU = True
