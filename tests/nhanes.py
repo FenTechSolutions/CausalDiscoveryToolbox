@@ -4,25 +4,27 @@ import pandas as pd
 
 
 #Hardware parameters
-cdt.SETTINGS.GPU = False
-cdt.SETTINGS.NB_JOBS = 1
+cdt.SETTINGS.GPU = True
+cdt.SETTINGS.NB_JOBS = 4
+cdt.SETTINGS.GPU_LIST = ["0", "1"]
+
 #Settings for CGNN
 cdt.CGNN_SETTINGS.use_Fast_MMD = False
-cdt.CGNN_SETTINGS.NB_RUNS = 1
-cdt.CGNN_SETTINGS.NB_MAX_RUNS = 1
+cdt.CGNN_SETTINGS.NB_RUNS = 8
+cdt.CGNN_SETTINGS.NB_MAX_RUNS = 32
 
 #Settings for Feature Selection
 cdt.CGNN_SETTINGS.nb_run_feature_selection = 1
-cdt.CGNN_SETTINGS.regul_param = 0.006
+cdt.CGNN_SETTINGS.regul_param = 0.05
 cdt.SETTINGS.threshold_UMG = 0.16
 
-cdt.CGNN_SETTINGS.nb_epoch_train_feature_selection = 1
-cdt.CGNN_SETTINGS.nb_epoch_eval_weights = 1
+cdt.CGNN_SETTINGS.nb_epoch_train_feature_selection = 2000
+cdt.CGNN_SETTINGS.nb_epoch_eval_weights = 500
 
-cdt.CGNN_SETTINGS.train_epochs = 1
-cdt.CGNN_SETTINGS.test_epochs = 1
+cdt.CGNN_SETTINGS.train_epochs = 1000
+cdt.CGNN_SETTINGS.test_epochs = 500
 
-cdt.CGNN_SETTINGS.max_nb_points = 10
+cdt.CGNN_SETTINGS.max_nb_points = 500
 
 
 
@@ -57,13 +59,13 @@ type_variables["bmi_two_class"] = "Categorical"
 
 
 
-Fsgnn = FSGNN()
-start_time = time.time()
-ugraph = Fsgnn.create_skeleton_from_data(data)
-print("--- Execution time : %s seconds ---" % (time.time() - start_time))
-ugraph.plot()
+#Fsgnn = FSGNN()
+#start_time = time.time()
+#ugraph = Fsgnn.create_skeleton_from_data(data)
+#print("--- Execution time : %s seconds ---" % (time.time() - start_time))
+#ugraph.plot()
 # List results
-pd.DataFrame(ugraph.list_edges())
+#pd.DataFrame(ugraph.list_edges())
 
 
 from cdt.causality.graph import CGNN
@@ -71,9 +73,13 @@ from cdt.causality.graph import CGNN
 
 
 
+
 Cgnn = CGNN(backend="TensorFlow")
 start_time = time.time()
-dgraph = Cgnn.predict(data, graph=ugraph, type_variables = type_variables)
+#dgraph = Cgnn.predict(data, graph=ugraph, type_variables = type_variables)
+
+dgraph = Cgnn.create_graph_from_data(data,type_variables = type_variables)
+
 print("--- Execution time : %s seconds ---" % (time.time() - start_time))
 
 # Plot the output graph

@@ -19,6 +19,9 @@ from ..pairwise.GNN import GNN
 from ...utils.Loss import MMD_loss_tf, Fourier_MMD_Loss_tf, TTestCriterion
 from ...utils.Settings import SETTINGS, CGNN_SETTINGS
 from ...utils.Formats import reshape_data
+from ...utils.Graph import UndirectedGraph
+from ...utils.Graph import DirectedGraph
+
 run_CGNN_th = None
 
 
@@ -147,7 +150,7 @@ class CGNN_tf(object):
         self.sess = tf.Session(config=config)
         self.sess.run(tf.global_variables_initializer())
 
-    def train(self, data, verbose=False, **kwargs):
+    def train(self, data, verbose=True, **kwargs):
         """ Train the initialized model
 
         :param data: data corresponding to the graph
@@ -166,7 +169,7 @@ class CGNN_tf(object):
                           format(self.idx, self.run,
                                  it, G_dist_loss_xcausesy_curr))
 
-    def evaluate(self, data, verbose=False, **kwargs):
+    def evaluate(self, data, verbose=True, **kwargs):
         """ Test the model
 
         :param data: data corresponding to the graph
@@ -684,10 +687,22 @@ class CGNN(GraphModel):
             print('No backend known as {}'.format(self.backend))
             raise ValueError
 
-    def create_graph_from_data(self, data):
+    def create_graph_from_data(self, data, **kwargs):
 
-        raise ValueError(
-            "The CGNN model is not able to model the graph directly from raw data")
+        ugraph = UndirectedGraph()
+
+        for node1 in data.columns.values:
+            for node2 in data.columns.values:
+                if(node1 != node2):
+                    ugraph.add(node1,node2)
+        
+        graph = DirectedGraph()
+        graph.skeleton = ugraph
+        
+        print(ugraph)
+        print(graph)
+
+        return hill_climbing_with_removal(graph, data, self.infer_graph, **kwargs)
 
     def orient_directed_graph(self, data, dag, alg='HC', **kwargs):
         """ Improve a directed acyclic graph using CGNN
