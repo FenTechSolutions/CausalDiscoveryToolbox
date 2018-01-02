@@ -36,7 +36,7 @@ def init(size, **kwargs):
 
 
 class GNN_tf(object):
-    def __init__(self, N, run=0, pair=0, **kwargs):
+    def __init__(self, N, dim_variables_a, dim_variables_b, run=0, pair=0, **kwargs):
         """ Build the tensorflow graph, the first column is set as the cause and the second as the effect
 
         :param N: Number of examples to generate
@@ -47,8 +47,7 @@ class GNN_tf(object):
         :param kwargs: use_Fast_MMD=(CGNN_SETTINGS.use_Fast_MMD) use fast MMD option
         :param kwargs: nb_vectors_approx_MMD=(CGNN_SETTINGS.nb_vectors_approx_MMD) nb vectors
         """
-        dim_variables_a = kwargs.get("dim_variables_a", 1)
-        dim_variables_b = kwargs.get("dim_variables_b", 1)
+
 
         h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
         learning_rate = kwargs.get(
@@ -58,6 +57,9 @@ class GNN_tf(object):
             'nb_vectors_approx_MMD', CGNN_SETTINGS.nb_vectors_approx_MMD)
 
         kernel = kwargs.get('kernel', CGNN_SETTINGS.kernel)
+
+        print("dim_variables_a " + str(dim_variables_a))
+        print("dim_variables_b " + str(dim_variables_b))
 
         self.run = run
         self.pair = pair
@@ -188,13 +190,13 @@ class GNN_tf(object):
         return avg_score / test_epochs
 
 
-def tf_evalcausalscore_pairwise(a, b, idx, run, **kwargs):
-    GNN = GNN_tf(a.shape[0], run, idx, **kwargs)
+def tf_evalcausalscore_pairwise(a, b, dim_variables_a, dim_variables_b, idx, run, **kwargs):
+    GNN = GNN_tf(a.shape[0], dim_variables_a, dim_variables_b, run, idx, **kwargs)
     GNN.train(a, b, **kwargs)
     return GNN.evaluate(a, b, **kwargs)
 
 
-def tf_run_instance(a, b, idx, run, **kwargs):
+def tf_run_instance(a, b, dim_variables_a, dim_variables_b, idx, run, **kwargs):
     """ Execute the CGNN, by init, train and eval either on CPU or GPU
 
     :param m: data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect
@@ -210,23 +212,21 @@ def tf_run_instance(a, b, idx, run, **kwargs):
     gpu = kwargs.get('gpu', SETTINGS.GPU)
     gpu_list = kwargs.get('gpu_list', SETTINGS.GPU_LIST)
 
-    if (a.shape[0] > 1500):
+    if (a.shape[0] > CGNN_SETTINGS.max_nb_points):
         p = np.random.permutation(a.shape[0])
-        a = a[p[:int(1500)], :]
-        b = b[p[:int(1500)], :]
-
+        a = a[p[:int(CGNN_SETTINGS.max_nb_points)], :]
+        b = b[p[:int(CGNN_SETTINGS.max_nb_points)], :]
 
     if gpu:
         with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
-            XY = tf_evalcausalscore_pairwise(
-                a, b, idx, run, **kwargs)
+            XY = tf_evalcausalscore_pairwise(a, b,  dim_variables_a, dim_variables_b, idx, run, **kwargs)
+
         with tf.device('/gpu:' + str(gpu_list[run % len(gpu_list)])):
-            YX = tf_evalcausalscore_pairwise(
-                b, a, idx, run, **kwargs)
+            YX = tf_evalcausalscore_pairwise(b, a, dim_variables_b, dim_variables_a, idx, run, **kwargs)
             return [XY, YX]
     else:
-        return [tf_evalcausalscore_pairwise(a, b, idx, run, **kwargs),
-                tf_evalcausalscore_pairwise(b, a,  idx, run, **kwargs)]
+        return [tf_evalcausalscore_pairwise(a, b, dim_variables_a, dim_variables_b, idx, run, **kwargs),
+                tf_evalcausalscore_pairwise(b, a, dim_variables_b, dim_variables_a, idx, run, **kwargs)]
 
 
 class GNN(PairwiseModel):
@@ -235,11 +235,11 @@ class GNN(PairwiseModel):
     and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
     """
 
-    def __init__(self, backend="TensorFlow"):
+    def __init__(self, backend="TensorFlow", **kwargs):
         super(GNN, self).__init__()
         self.backend = backend
 
-    def predict_proba(self, a, b, idx=0, **kwargs):
+    def predict_proba(self, a, b, dim_variables_a, dim_variables_b, idx=0, **kwargs):
 
         backend_alg_dic = {"PyTorch": th_run_instance,
                            "TensorFlow": tf_run_instance}
@@ -250,6 +250,7 @@ class GNN(PairwiseModel):
         nb_max_runs = kwargs.get("nb_max_runs", CGNN_SETTINGS.NB_MAX_RUNS)
         verbose = kwargs.get("verbose", SETTINGS.verbose)
         ttest_threshold = kwargs.get("ttest_threshold", CGNN_SETTINGS.ttest_threshold)
+
 
         a = a.astype('float32')
         b = b.astype('float32')
@@ -263,7 +264,7 @@ class GNN(PairwiseModel):
 
 
         while ttest_criterion.loop(AB, BA):
-            result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(a, b, idx, run, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
+            result_pair = Parallel(n_jobs=nb_jobs)(delayed(backend_alg_dic[self.backend])(a, b, dim_variables_a, dim_variables_b, idx, run, **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
 
@@ -295,7 +296,7 @@ class GNN(PairwiseModel):
             a = scale(row['A'].reshape((len(row['A']), 1)))
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
-            pred.append(self.predict_proba(a, b, idx, dim_variables_a = 1, dim_variables_b = 1, **kwargs))
+            pred.append(self.predict_proba(a, b,  1, 1, idx, **kwargs))
 
             if printout is not None:
                 res.append([row['SampleID'], pred[-1][0], pred[-1][1]])
@@ -321,24 +322,35 @@ class GNN(PairwiseModel):
 
         deletion = kwargs.get("deletion", False)
         printout = kwargs.get("printout", None)
+
         type_variables = kwargs.get("type_variables", None)
         if type_variables is None:
             type_variables = {}
             for node in df_data.columns:
                 type_variables[node] = "Numerical"
 
+        print(type_variables)
+
+
         for edge in edges:
             a, b, c = edge
 
-            data_a, dim_variables_a = reshape_data(
-                df_data, [a], type_variables)
-            data_b, dim_variables_b = reshape_data(
-                df_data, [b], type_variables)
+            data_a, dim_variables_a = reshape_data(df_data, [a], type_variables)
+            data_b, dim_variables_b = reshape_data(df_data, [b], type_variables)
+
+            print("data_a")
+            print(data_a.shape[1])
+            print(dim_variables_a)
+            print("data_b")
+            print(data_b.shape[1])
+            print(dim_variables_b)
+
 
             dim_variables_a = dim_variables_a[a]
             dim_variables_b = dim_variables_b[b]
 
-            weight, p_val = self.predict_proba(data_a, data_b, idx , dim_variables_a = dim_variables_a, dim_variables_b = dim_variables_b,**kwargs)
+            weight, p_val = self.predict_proba(data_a, data_b, dim_variables_a, dim_variables_b,  idx , **kwargs)
+
 
             if weight > 0:  # a causes b
                 graph.add(a, b, weight)

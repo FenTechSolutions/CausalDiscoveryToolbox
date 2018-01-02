@@ -65,7 +65,7 @@ class CGNNSettings(object):
                  "use_Fast_MMD",
                  "nb_vectors_approx_MMD",
                  "complexity_graph_param",
-                 "batch_size",
+                 "max_nb_points",
                  "max_parents_block",
                  "asymmetry_param")
 
@@ -75,7 +75,7 @@ class CGNNSettings(object):
         self.NB_MAX_RUNS = 32
         self.learning_rate = 0.01
         self.init_weights = 0.05
-        self.batch_size = 1000
+        self.max_nb_points = 1500
         self.h_layer_dim = 20
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
@@ -87,6 +87,9 @@ class CGNNSettings(object):
         self.nb_max_loop = 3
 
         self.kernel = "RBF"
+
+
+
 
         # specific for FSGNN
         self.nb_run_feature_selection = 1

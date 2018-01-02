@@ -103,16 +103,16 @@ def eval_feature_selection_score(df_data, target):
                     it, G_dist_loss_curr, complexity_curr))
                
 
-                W_in_curr = np.abs(W_in_curr)
-                mean_weights = np.mean(W_in_curr, axis=1)
-                mean_weights = mean_weights / np.sum(mean_weights)
-
-                maxlist = np.sort(list(mean_weights))[::-1]
-                argmaxlist = np.argsort(mean_weights)[::-1]
-
-                for i in range(min(10, n_features)):
-                    print(list_features[argmaxlist[i]])
-                    print(maxlist[i])
+                # W_in_curr = np.abs(W_in_curr)
+                # mean_weights = np.mean(W_in_curr, axis=1)
+                # mean_weights = mean_weights / np.sum(mean_weights)
+                #
+                # maxlist = np.sort(list(mean_weights))[::-1]
+                # argmaxlist = np.argsort(mean_weights)[::-1]
+                #
+                # for i in range(min(10, n_features)):
+                #     print(list_features[argmaxlist[i]])
+                #     print(maxlist[i])
 
     for it in range(CGNN_SETTINGS.test_epochs):
 
@@ -134,7 +134,9 @@ def run_feature_selection(df_data, idx, target):
 
     if (df_data.shape[0] > CGNN_SETTINGS.max_nb_points):
         p = np.random.permutation(df_data.shape[0])
-        df_data = df_data[p[:int(CGNN_SETTINGS.max_nb_points)], :]
+        df_data = df_data.loc[p[:int(CGNN_SETTINGS.max_nb_points)]]
+
+    print(df_data.shape[0])
 
     if SETTINGS.GPU:
         with tf.device('/gpu:' + str(SETTINGS.GPU_LIST[idx % len(SETTINGS.GPU_LIST)])):
