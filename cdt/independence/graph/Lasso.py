@@ -44,11 +44,11 @@ class RandomizedLasso_model(FeatureSelectionModel):
         alpha = kwargs.get("alpha", 'aic')
         scaling = kwargs.get("scaling", 0.5)
         sample_fraction = kwargs.get("sample_fraction", 0.75)
-        n_resampling = kwargs.get("n_resampling", 200)
+        n_resampling = kwargs.get("n_resampling", 10)
 
         randomized_lasso = RandomizedLasso(alpha=alpha, scaling=scaling, sample_fraction=sample_fraction,
                                            n_resampling=n_resampling)
-        randomized_lasso.fit(df_features.as_matrix(), df_target.as_matrix())
+        randomized_lasso.fit(df_features.as_matrix(), np.ravel(df_target.as_matrix()))
 
         return randomized_lasso.scores_
 
