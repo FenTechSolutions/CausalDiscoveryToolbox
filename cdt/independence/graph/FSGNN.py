@@ -37,7 +37,8 @@ def eval_feature_selection_score(df_data, target):
     data_features = data_features.as_matrix()
     data_target = data_target.as_matrix()
 
-    data_features = data_features.reshape(data_features.shape[0], data_features.shape[1])
+    data_features = data_features.reshape(
+        data_features.shape[0], data_features.shape[1])
     data_target = data_target.reshape(data_target.shape[0], 1)
 
     n_features = len(list_features)
@@ -53,7 +54,8 @@ def eval_feature_selection_score(df_data, target):
     W_out = tf.Variable(init([CGNN_SETTINGS.h_layer_dim, 1]))
     b_out = tf.Variable(init([1]))
 
-    input_ = tf.concat([all_parent_variables, tf.random_normal([N, 1], mean=0, stddev=1)], 1)
+    input_ = tf.concat(
+        [all_parent_variables, tf.random_normal([N, 1], mean=0, stddev=1)], 1)
     output = tf.nn.relu(tf.matmul(input_, W_input) + b_in)
     output = tf.matmul(output, W_out) + b_out
 
@@ -61,25 +63,17 @@ def eval_feature_selection_score(df_data, target):
     all_real_variables = tf.concat([all_parent_variables, target_variable], 1)
 
     if (CGNN_SETTINGS.use_Fast_MMD):
-        G_dist_loss = Fourier_MMD_tf(all_real_variables, all_generated_variables, CGNN_SETTINGS.nb_vectors_approx_MMD)
+        G_dist_loss = Fourier_MMD_tf(
+            all_real_variables, all_generated_variables, CGNN_SETTINGS.nb_vectors_approx_MMD)
     else:
         G_dist_loss = MMD_loss_tf(all_real_variables, all_generated_variables)
 
-
-    
-    
-    print("CGNN_SETTINGS.regul_param " + str(CGNN_SETTINGS.regul_param))
-
-
-
+    # print("CGNN_SETTINGS.regul_param " + str(CGNN_SETTINGS.regul_param))
     model_complexity = tf.reduce_sum(tf.abs(W_in))
-
     G_global_loss = G_dist_loss + CGNN_SETTINGS.regul_param * model_complexity
-
-
-    print("CGNN_SETTINGS.learning_rate " + str(CGNN_SETTINGS.learning_rate))
-
-    G_solver = tf.train.AdamOptimizer(learning_rate=CGNN_SETTINGS.learning_rate).minimize(G_global_loss)
+    # print("CGNN_SETTINGS.learning_rate " + str(CGNN_SETTINGS.learning_rate))
+    G_solver = tf.train.AdamOptimizer(
+        learning_rate=CGNN_SETTINGS.learning_rate).minimize(G_global_loss)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
@@ -97,11 +91,10 @@ def eval_feature_selection_score(df_data, target):
 
         if verbose:
 
-            if (it % 100 == 0):
+            if (it % 300 == 0):
 
                 print('PIter:{}, score:{}, model complexity:{} '.format(
                     it, G_dist_loss_curr, complexity_curr))
-               
 
                 # W_in_curr = np.abs(W_in_curr)
                 # mean_weights = np.mean(W_in_curr, axis=1)
@@ -151,7 +144,7 @@ class FSGNN(DeconvolutionModel):
     def __init__(self):
         super(FSGNN, self).__init__()
 
-    def run_FS(self,df_data, idx, target):
+    def run_FS(self, df_data, idx, target):
         df_data = pd.DataFrame(scale(df_data), columns=df_data.columns)
         return run_feature_selection(df_data, idx, target)
 
@@ -199,10 +192,3 @@ class FSGNN(DeconvolutionModel):
                                   data.columns.values[j], matrix_results[i, j])
 
         return graph
-
-
-
-
-
-
-

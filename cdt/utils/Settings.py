@@ -19,8 +19,7 @@ class ConfigSettings(object):
                  "autoset_config",
                  "verbose",
                  "r_is_available",
-                 "torch",
-                 "threshold_UMG",)
+                 "torch")
 
     def __init__(self):  # Define here the default values of the parameters
         super(ConfigSettings, self).__init__()
@@ -33,7 +32,6 @@ class ConfigSettings(object):
         self.autoset_config = True
         self.verbose = True
         self.r_is_available = False
-        self.threshold_UMG = 0.15
 
         try:
             import torch
@@ -67,7 +65,8 @@ class CGNNSettings(object):
                  "complexity_graph_param",
                  "max_nb_points",
                  "max_parents_block",
-                 "asymmetry_param")
+                 "asymmetry_param",
+                 "threshold_UMG")
 
     def __init__(self):
         super(CGNNSettings, self).__init__()
@@ -79,7 +78,7 @@ class CGNNSettings(object):
         self.h_layer_dim = 20
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
-
+        self.threshold_UMG = 0.15
         self.train_epochs = 1000
         self.test_epochs = 500
         self.complexity_graph_param = 0.00005
