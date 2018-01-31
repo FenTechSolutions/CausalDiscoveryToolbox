@@ -58,8 +58,8 @@ class GNN_tf(object):
 
         kernel = kwargs.get('kernel', CGNN_SETTINGS.kernel)
 
-        print("dim_variables_a " + str(dim_variables_a))
-        print("dim_variables_b " + str(dim_variables_b))
+        # print("dim_variables_a " + str(dim_variables_a))
+        # print("dim_variables_b " + str(dim_variables_b))
 
         self.run = run
         self.pair = pair
@@ -141,7 +141,7 @@ class GNN_tf(object):
         self.sess = tf.Session(config=config)
         self.sess.run(tf.global_variables_initializer())
 
-    def train(self, a, b, verbose=True, **kwargs):
+    def train(self, a, b, **kwargs):
         """ Train the GNN model
 
         :param data: data corresponding to the graph
@@ -150,7 +150,8 @@ class GNN_tf(object):
         :return: None
         """
         train_epochs = kwargs.get('train_epochs', CGNN_SETTINGS.train_epochs)
-
+        verbose = kwargs.get('verbose', SETTINGS.verbose)
+        
         for it in range(train_epochs):
             _, G_dist_loss_xcausesy_curr = self.sess.run(
                 [self.G_solver_xcausesy, self.G_dist_loss_xcausesy],
@@ -163,7 +164,7 @@ class GNN_tf(object):
                           format(self.pair, self.run,
                                  it, G_dist_loss_xcausesy_curr))
 
-    def evaluate(self, a, b, verbose=True, **kwargs):
+    def evaluate(self, a, b, **kwargs):
         """ Test the model
 
         :param data: data corresponding to the graph
@@ -172,6 +173,7 @@ class GNN_tf(object):
         :return: mean MMD loss value of the CGNN structure on the data
         """
         test_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.test_epochs)
+        verbose = kwargs.get('verbose', SETTINGS.verbose)
         avg_score = 0
 
         for it in range(test_epochs):
@@ -338,12 +340,12 @@ class GNN(PairwiseModel):
             data_a, dim_variables_a = reshape_data(df_data, [a], type_variables)
             data_b, dim_variables_b = reshape_data(df_data, [b], type_variables)
 
-            print("data_a")
-            print(data_a.shape[1])
-            print(dim_variables_a)
-            print("data_b")
-            print(data_b.shape[1])
-            print(dim_variables_b)
+            #print("data_a")
+            #print(data_a.shape[1])
+            #print(dim_variables_a)
+            #print("data_b")
+            #print(data_b.shape[1])
+            #print(dim_variables_b)
 
 
             dim_variables_a = dim_variables_a[a]

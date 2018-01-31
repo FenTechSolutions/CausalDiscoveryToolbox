@@ -91,7 +91,7 @@ def eval_feature_selection_score(df_data, target):
 
         if verbose:
 
-            if (it % 300 == 0):
+            if (it % 600 == 0):
 
                 print('PIter:{}, score:{}, model complexity:{} '.format(
                     it, G_dist_loss_curr, complexity_curr))
@@ -186,7 +186,7 @@ class FSGNN(DeconvolutionModel):
 
                 if (j > i):
 
-                    if(matrix_results[i, j] > SETTINGS.threshold_UMG):
+                    if(matrix_results[i, j] > CGNN_SETTINGS.threshold_UMG):
 
                         graph.add(data.columns.values[i],
                                   data.columns.values[j], matrix_results[i, j])

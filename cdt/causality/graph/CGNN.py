@@ -234,7 +234,7 @@ def run_CGNN_tf(data, graph, idx=0, run=0, **kwargs):
     data, dim_variables = reshape_data(data, list_nodes, type_variables)
     data = data.astype('float32')
 
-    print(dim_variables)
+    # print(dim_variables)
 
     if (data.shape[0] > CGNN_SETTINGS.max_nb_points):
         p = np.random.permutation(data.shape[0])
