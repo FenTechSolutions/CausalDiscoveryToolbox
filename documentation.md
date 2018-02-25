@@ -3,7 +3,7 @@
 
 ## General package structure
 The following figure shows how the package and its algorithms are structured
-**The references will be soon added**
+
 
 ```
 cdt package

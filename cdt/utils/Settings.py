@@ -19,7 +19,7 @@ class ConfigSettings(object):
                  "autoset_config",
                  "verbose",
                  "r_is_available",
-                 "torch")
+                 "tensorflow_is_available")
 
     def __init__(self):  # Define here the default values of the parameters
         super(ConfigSettings, self).__init__()
@@ -34,13 +34,11 @@ class ConfigSettings(object):
         self.r_is_available = False
 
         try:
-            import torch
-            from torch.autograd import Variable
-            # Remaining package install only reserve namespace
-            self.torch = torch
+            import tensorflow
+            self.tensorflow_is_available = True
         except ImportError as e:
-            warnings.warn("Torch not available : {}".format(e))
-            self.torch = None
+            warnings.warn("Tensorflow not available : {}".format(e))
+            self.tensorflow_is_available = False
         if self.autoset_config:
             self = autoset_settings(self)
 
