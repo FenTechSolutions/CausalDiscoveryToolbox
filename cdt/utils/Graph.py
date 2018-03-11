@@ -226,7 +226,7 @@ class Graph(object):
 class DirectedGraph(Graph):
     """ Graph data structure, directed. """
 
-    def __init__(self, df=None, adjacency_matrix=False, skeleton=False):
+    def __init__(self, df=None, adjacency_matrix=False, skeleton=None):
         self.skeleton = skeleton
         self.score_node = {}
 

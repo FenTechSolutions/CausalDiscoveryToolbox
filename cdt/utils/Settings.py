@@ -19,8 +19,7 @@ class ConfigSettings(object):
                  "autoset_config",
                  "verbose",
                  "r_is_available",
-                 "torch",
-                 "threshold_UMG",)
+                 "tensorflow_is_available")
 
     def __init__(self):  # Define here the default values of the parameters
         super(ConfigSettings, self).__init__()
@@ -33,16 +32,13 @@ class ConfigSettings(object):
         self.autoset_config = True
         self.verbose = True
         self.r_is_available = False
-        self.threshold_UMG = 0.15
 
         try:
-            import torch
-            from torch.autograd import Variable
-            # Remaining package install only reserve namespace
-            self.torch = torch
+            import tensorflow
+            self.tensorflow_is_available = True
         except ImportError as e:
-            warnings.warn("Torch not available : {}".format(e))
-            self.torch = None
+            warnings.warn("Tensorflow not available : {}".format(e))
+            self.tensorflow_is_available = False
         if self.autoset_config:
             self = autoset_settings(self)
 
@@ -65,9 +61,10 @@ class CGNNSettings(object):
                  "use_Fast_MMD",
                  "nb_vectors_approx_MMD",
                  "complexity_graph_param",
-                 "batch_size",
+                 "max_nb_points",
                  "max_parents_block",
-                 "asymmetry_param")
+                 "asymmetry_param",
+                 "threshold_UMG")
 
     def __init__(self):
         super(CGNNSettings, self).__init__()
@@ -75,11 +72,11 @@ class CGNNSettings(object):
         self.NB_MAX_RUNS = 32
         self.learning_rate = 0.01
         self.init_weights = 0.05
-        self.batch_size = 1000
+        self.max_nb_points = 1500
         self.h_layer_dim = 20
         self.use_Fast_MMD = False
         self.nb_vectors_approx_MMD = 100
-
+        self.threshold_UMG = 0.15
         self.train_epochs = 1000
         self.test_epochs = 500
         self.complexity_graph_param = 0.00005
@@ -107,6 +104,8 @@ def autoset_settings(set_var):
     """
     try:
         devices = ast.literal_eval(os.environ["CUDA_VISIBLE_DEVICES"])
+        if type(devices) != list and type(devices) != tuple:
+            devices = [devices]
         if len(devices) != 0:
             set_var.GPU_LIST = devices
             set_var.GPU = True

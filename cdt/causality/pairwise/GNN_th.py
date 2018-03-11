@@ -13,36 +13,42 @@ from ...utils.Formats import reshape_data
 
 
 class GNN_th(th.nn.Module):
-    def __init__(self, **kwargs):
+    def __init__(self, batch_size, **kwargs):
         """
         Build the Torch graph
-        :param kwargs: h_layer_dim=(CGNN_SETTINGS.h_layer_dim) Number of units in the hidden layer
+        :param batch_size: size of the batch going to be fed to the model
+        :param kwargs: h_layer_dim=(CGNN_SETTINGS.h_layer_dim)
+                       Number of units in the hidden layer
+        :param kwargs: gpu=(SETTINGS.GPU), if GPU is used for computations
+        :param kwargs: gpu_no=(0), GPU ID
         """
         super(GNN_th, self).__init__()
         h_layer_dim = kwargs.get('h_layer_dim', CGNN_SETTINGS.h_layer_dim)
-        self.s1 = th.nn.Linear(1, h_layer_dim)
-        self.s2 = th.nn.Linear(h_layer_dim, 1)
-
+        gpu = kwargs.get('gpu', SETTINGS.GPU)
+        gpu_no = kwargs.get('gpu_no', 0)
         self.l1 = th.nn.Linear(2, h_layer_dim)
         self.l2 = th.nn.Linear(h_layer_dim, 1)
+        self.noise = Variable(th.FloatTensor(
+            batch_size, 1), requires_grad=False)
+        if gpu:
+            self.noise = self.noise.cuda(gpu_no)
         self.act = th.nn.ReLU()
-        # ToDo : Init parameters
 
-    def forward(self, x1, x2):
+    def forward(self, x):
         """
         Pass data through the net structure
-        :param x: input data: shape (:,2)
+        :param x: input data: shape (:,1)
         :type x: torch.Variable
         :return: output of the shallow net
         :rtype: torch.Variable
 
         """
-        x = self.s2(self.act(self.s1(x1)))
-        y = self.act(self.l1(th.cat([x, x2], 1)))
-        return x, self.l2(y)
+        self.noise.normal_()
+        y = self.act(self.l1(th.cat([x, self.noise], 1)))
+        return self.l2(y)
 
 
-def run_GNN_th(m, pair, run, **kwargs):
+def run_GNN_th(m, pair=0, run=0, **kwargs):
     """ Train and eval the GNN on a pair
 
     :param m: Matrix containing cause at m[:,0],
@@ -51,29 +57,28 @@ def run_GNN_th(m, pair, run, **kwargs):
     :param pair: Number of the pair
     :param run: Number of the run
     :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used
-    :param kwargs: train_epochs=(CGNN_SETTINGS.nb_epoch_train) number of train epochs
-    :param kwargs: test_epochs=(CGNN_SETTINGS.nb_epoch_test) number of test epochs
-    :param kwargs: learning_rate=(CGNN_SETTINGS.learning_rate) learning rate of the optimizer
+
+    :param kwargs: test_epochs=(CGNN_SETTINGS.nb_epoch_test) test epochs
+    :param kwargs: train_epochs=(CGNN_SETTINGS.nb_epoch_train) train epochs
+    :param kwargs: learning_rate=(CGNN_SETTINGS.learning_rate)
     :return: Value of the evaluation after training
     :rtype: float
     """
     gpu = kwargs.get('gpu', SETTINGS.GPU)
+    gpu_no = kwargs.get('gpu_no', 0)
     train_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.train_epochs)
     test_epochs = kwargs.get('test_epochs', CGNN_SETTINGS.test_epochs)
     learning_rate = kwargs.get('learning_rate', CGNN_SETTINGS.learning_rate)
 
-    target = Variable(th.from_numpy(m))
-    # x = Variable(th.from_numpy(m[:, [0]]))
-    # y = Variable(th.from_numpy(m[:, [1]]))
-    e = Variable(th.FloatTensor(m.shape[0], 1))
-    es = Variable(th.FloatTensor(m.shape[0], 1))
-    GNN = GNN_th(**kwargs)
+    m = m.astype('float32')
+    inputx = Variable(th.from_numpy(m[:, 0]))
+    target = Variable(th.from_numpy(m[:, 1]))
+    GNN = GNN_th(m.shape[0], **kwargs)
 
     if gpu:
-        target = target.cuda()
-        e = e.cuda()
-        es = es.cuda()
-        GNN = GNN.cuda()
+        target = target.cuda(gpu_no)
+        inputx = inputx.cuda(gpu_no)
+        GNN = GNN.cuda(gpu_no)
 
     criterion = MMD_th(m.shape[0], cuda=gpu)
 
@@ -83,11 +88,9 @@ def run_GNN_th(m, pair, run, **kwargs):
 
     for i in range(train_epochs):
         optim.zero_grad()
-        e.data.normal_()
-        es.data.normal_()
-        pred = GNN(es, e)
-
-        loss = criterion(target, th.cat(pred, 1))
+        pred = GNN(inputx)
+        loss = criterion(th.cat([inputx, target], 1),
+                         th.cat([inputx, pred], 1))
         loss.backward()
         optim.step()
 
@@ -100,10 +103,9 @@ def run_GNN_th(m, pair, run, **kwargs):
 
     # Evaluate
     for i in range(test_epochs):
-        e.data.normal_()
-        es.data.normal_()
-        pred = GNN(es, e)
-        loss = criterion(target, th.cat(pred, 1))
+        pred = GNN(inputx)
+        loss = criterion(th.cat([inputx, target], 1),
+                         th.cat([inputx, pred], 1))
 
         # print statistics
         running_loss += loss.data[0]
@@ -143,3 +145,9 @@ def th_run_instance(m, pair_idx=0, run=0, **kwargs):
         YX = run_GNN_th(m, pair_idx, run, **kwargs)
 
     return [XY, YX]
+
+
+# Test
+if __name__ == "__main__":
+    print("Testing GNN, torch...")
+    raise NotImplementedError
