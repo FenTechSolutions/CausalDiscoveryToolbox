@@ -1,8 +1,9 @@
-"""
-Build random graphs based on unlabelled data
+"""Build random graphs based on unlabelled data.
+
 Author : Diviyan Kalainathan & Olivier Goudet
 Date: 17/6/17
 """
+import numpy as np
 import pandas as pd
 from copy import deepcopy
 from ..utils.Graph import DirectedGraph
@@ -29,6 +30,7 @@ class RandomGraphFromData(object):
         self.data = df_data
         self.resimulated_data = None
         self.matrix_criterion = None
+        corr = np.zeros((len(self.data.columns), len(self.data.columns)))
         self.llinks = None
         self.simulator = simulator
         self.full_graph_simulation = full_graph_simulation
@@ -40,21 +42,20 @@ class RandomGraphFromData(object):
             print('Not Yet Implemented')
             raise NotImplementedError
 
-    def find_dependencies(self, threshold=0.1):
-        """ Find dependencies in the dataset out of the dataset
+            def find_dependencies(self, threshold=0.1):
+                """ Find dependencies in the dataset out of the dataset
 
-        :param threshold: threshold of the independence test
-        """
-        if self.matrix_criterion:
-            corr = np.absolute(self.criterion(self.data.as_matrix()))
-            np.fill_diagonal(corr, 0.)
-        else:
-            corr = np.zeros((len(self.data.columns), len(self.data.columns)))
-            for idxi, i in enumerate(self.data.columns[:-1]):
-                for idxj, j in enumerate(self.data.columns[idxi + 1:]):
-                    corr[idxi, idxj] = np.absolute(
-                        self.criterion(self.data[i], self.data[j]))
-                    corr[idxj, idxi] = corr[idxi, idxj]
+                :param threshold: threshold of the independence test
+                """
+                if self.matrix_criterion:
+                    corr = np.absolute(self.criterion(self.data.as_matrix()))
+                    np.fill_diagonal(corr, 0.)
+                else:
+                    for idxi, i in enumerate(self.data.columns[:-1]):
+                        for idxj, j in enumerate(self.data.columns[idxi + 1:]):
+                            corr[idxi, idxj] = np.absolute(
+                                self.criterion(self.data[i], self.data[j]))
+                            corr[idxj, idxi] = corr[idxi, idxj]
 
         self.llinks = [(self.data.columns[i], self.data.columns[j])
                        for i in range(len(self.data.columns) - 1)

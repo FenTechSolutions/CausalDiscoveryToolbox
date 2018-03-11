@@ -1,0 +1,144 @@
+"""Cyclic Graph Generator.
+
+Generates a cross-sectional dataset out of a cyclic FCM.
+Author : Olivier Goudet and Diviyan Kalainathan
+"""
+
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import scale
+import numpy as np
+import pandas as pd
+import networkx as nx
+from .causal_mechanisms import (LinearMechanism,
+                                Polynomial_Mechanism,
+                                SigmoidAM_Mechanism,
+                                SigmoidMix_Mechanism,
+                                GaussianProcessAdd_Mechanism,
+                                GaussianProcessMix_Mechanism,
+                                gaussian_cause)
+
+
+class InvalidGraphError(Exception):
+    """Error for the case if the generated graph is considered as invalid."""
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class CyclicGenerator(object):
+    """
+    Generates a cross-sectional dataset out of a cyclic FCM.
+    """
+    def __init__(self, causal_mechanism,
+                 initial_variable_generator=gaussian_cause,
+                 points=500, nodes=20, timesteps=0, parents_max=5):
+        """
+        :params:
+        param:initial_variable_generator(points): init variables of the graph
+        param:causal_mechanism(causes): generating causes in the graph to
+            choose between: ['linear', 'polynomial', 'sigmoid_add',
+            'sigmoid_mix', 'gp_add', 'gp_mix']
+
+        """
+
+        self.mechanism = {'linear': LinearMechanism,
+                          'polynomial': Polynomial_Mechanism,
+                          'sigmoid_add': SigmoidAM_Mechanism,
+                          'sigmoid_mix': SigmoidMix_Mechanism,
+                          'gp_add': GaussianProcessAdd_Mechanism,
+                          'gp_mix': GaussianProcessMix_Mechanism}[causal_mechanism]
+        self.data = pd.DataFrame(None, columns=["V{}".format(i) for i in range(nodes)])
+        self.nodes = nodes
+        if timesteps == 0:
+            self.timesteps = np.inf
+        else:
+            self.timesteps = timesteps
+        self.points = points
+        self.adjacency_matrix = np.zeros((nodes, nodes))
+        self.parents_max = parents_max
+        self.initial_generator = initial_variable_generator
+        self.cfunctions = None
+
+    def init_variables(self, verbose=False):
+        """Redefine the causes of the graph."""
+        # Resetting adjacency matrix
+        for i in range(self.nodes):
+            for j in np.random.choice(range(self.nodes),
+                                      np.random.randint(
+                                          0, self.parents_max + 1),
+                                      replace=False):
+                if i != j:
+                    self.adjacency_matrix[j, i] = 1
+
+        try:
+            if not any([sum(self.adjacency_matrix[:, i]) ==
+                        self.parents_max for i in range(self.nodes)]):
+                raise InvalidGraphError
+
+            g = nx.DiGraph(self.adjacency_matrix)
+            if not list(nx.simple_cycles(g)):
+                raise InvalidGraphError
+
+            if not any(len(i) == 2 for i in nx.simple_cycles(g)):
+                raise InvalidGraphError
+
+        except InvalidGraphError:
+            if verbose:
+                print("Regenerating, graph non valid...")
+            self.init_variables()
+
+        if verbose:
+            print("Matrix generated ! \
+              Number of cycles: {}".format(len(list(nx.simple_cycles(g)))))
+
+        for i in range(self.nodes):
+            self.data.iloc[:, i] = scale(self.initial_generator(self.points))
+
+        # Mechanisms
+        self.cfunctions = [self.mechanism(int(sum(self.adjacency_matrix[:, i])),
+                                          self.points) for i in range(self.nodes)]
+
+    def generate(self, nb_steps=100, averaging=50, rescale=True):
+        """Generate data from an FCM containing cycles."""
+        if self.cfunctions is None:
+            self.init_variables()
+        new_df = pd.DataFrame()
+        causes = [[c for c in np.nonzero(self.adjacency_matrix[:, j])[0]]
+                  for j in range(self.nodes)]
+        values = [[] for i in range(self.nodes)]
+
+        for i in range(nb_steps):
+            for j in range(self.nodes):
+                new_df["V" + str(j)] = self.cfunctions[j](self.data.iloc[:, causes[j]].as_matrix(), nb_steps)[:, 0]
+                if rescale:
+                    new_df["V" + str(j)] = scale(new_df["V" + str(j)])
+                if i > nb_steps-averaging:
+                    values[j].append(new_df["V" + str(j)])
+            self.data = new_df
+        self.data = pd.DataFrame(np.array([np.mean(values[i], axis=0)
+                                           for i in range(self.nodes)]).transpose(),
+                                 columns=["V{}".format(j) for j in range(self.nodes)])
+
+        return self.data
+
+    def to_csv(self, fname_radical, **kwargs):
+        """
+        Save data to the csv format by default, in two separate files.
+
+        Optional keyword arguments can be passed to pandas.
+        """
+        if self.data is not None:
+            self.data.to_csv(fname_radical+'_data.csv', **kwargs)
+            pd.DataFrame(self.adjacency_matrix).to_csv(fname_radical+'_target.csv', **kwargs)
+
+        else:
+            raise InvalidGraphError("Graph has not yet been generated. \
+                                    Use self.generate() to do so.")
+
+
+if __name__ == "__main__":
+    print("Testing cyclic graph generator...")
+    raise(NotImplemented)
