@@ -31,14 +31,13 @@ class LinearMechanism(object):
     def __call__(self, causes, nb_step):
         # Additive only, for now
 
-        effect = np.zeros((self.points,1))
+        effect = np.zeros((self.points, 1))
         # Compute each cause's contribution
         for par in range(causes.shape[1]):
-            effect[:,0] = effect[:,0] + self.coefflist[par]*causes[:,par]
-        effect[:,0] = effect[:,0] + self.noise[:,0]
+            effect[:, 0] = effect[:, 0] + self.coefflist[par]*causes[:, par]
+        effect[:, 0] = effect[:, 0] + self.noise[:, 0]
 
         return effect
-
 
 
 class SigmoidAM_Mechanism(object):
@@ -50,31 +49,28 @@ class SigmoidAM_Mechanism(object):
 
         self.a = np.random.exponential(1/4) + 1
         ber = bernoulli.rvs(0.5)
-        self.b = ber * np.random.uniform(-2,-0.5) + (1-ber)*np.random.uniform(0.5,2)
-        self.c = np.random.uniform(-2,2)
-
-
+        self.b = ber * np.random.uniform(-2, -0.5) + (1-ber)*np.random.uniform(0.5, 2)
+        self.c = np.random.uniform(-2, 2)
         self.noise = 0.1*np.random.randn(points, 1)
 
-    def mechanism(self,x):
-
+    def mechanism(self, x):
         result = np.\
             zeros((self.points, 1))
         for i in range(self.points):
 
-            result[i,0] = self.a * self.b*(x[i]+ self.c)/(1+abs(self.b*(x[i]+ self.c)))
+            result[i, 0] = self.a * self.b * (x[i] + self.c) / (1 + abs(self.b * (x[i] + self.c)))
 
         return result
 
-    def __call__(self, causes,nb_step):
+    def __call__(self, causes, nb_step):
         # Additive only, for now
 
-        effect = np.zeros((self.points,1))
+        effect = np.zeros((self.points, 1))
         # Compute each cause's contribution
         for par in range(causes.shape[1]):
-            effect[:,0] = effect[:,0] + self.mechanism(causes[:,par])[:,0]
+            effect[:, 0] = effect[:, 0] + self.mechanism(causes[:, par])[:, 0]
 
-        effect[:,0] = effect[:,0] + self.noise[:,0]
+        effect[:, 0] = effect[:, 0] + self.noise[:, 0]
 
         return effect
 
@@ -88,14 +84,12 @@ class SigmoidMix_Mechanism(object):
 
         self.a = np.random.exponential(1/4) + 1
         ber = bernoulli.rvs(0.5)
-        self.b = ber * np.random.uniform(-2,-0.5) + (1-ber)*np.random.uniform(0.5,2)
-        self.c = np.random.uniform(-2,2)
+        self.b = ber * np.random.uniform(-2, -0.5) + (1-ber)*np.random.uniform(0.5, 2)
+        self.c = np.random.uniform(-2, 2)
 
         self.noise = 0.1*np.random.randn(points, 1)
 
-
-    def mechanism(self,causes):
-
+    def mechanism(self, causes):
         result = np.zeros((self.points, 1))
         for i in range(self.points):
             pre_add_effect = 0
@@ -103,8 +97,8 @@ class SigmoidMix_Mechanism(object):
                 pre_add_effect += causes[i, c]
             pre_add_effect += self.noise[i]
 
-            result[i, 0] = self.a * self.b* \
-            (pre_add_effect + self.c)/(1 +abs(self.b*(pre_add_effect + self.c)))
+            result[i, 0] = self.a * self.b * \
+                (pre_add_effect + self.c)/(1 + abs(self.b*(pre_add_effect + self.c)))
 
         return result
 
@@ -115,10 +109,7 @@ class SigmoidMix_Mechanism(object):
         # Compute each cause's contribution
 
         effect[:, 0] = self.mechanism(causes)[:, 0]
-
-
         return effect
-
 
 
 class Polynomial_Mechanism(object):
@@ -134,53 +125,41 @@ class Polynomial_Mechanism(object):
             self.coefflist = []
             for j in range(self.d + 1):
                 self.coefflist.append(random.random())
-
-
             self.polycause.append(self.coefflist)
 
         self.ber = bernoulli.rvs(0.5)
         self.noise = 0.1*np.random.randn(points, 1)
 
-    def mechanism(self,x,par):
+    def mechanism(self, x, par):
 
         list_coeff = self.polycause[par]
-
         result = np.zeros((self.points, 1))
         for i in range(self.points):
             for j in range(self.d+1):
-                result[i,0] += list_coeff[j]*np.power(x[i],j)
-
-            result[i, 0] = min(result[i,0],1)
+                result[i, 0] += list_coeff[j]*np.power(x[i], j)
+            result[i, 0] = min(result[i, 0], 1)
             result[i, 0] = max(result[i, 0], -1)
 
         return result
 
-    def __call__(self, causes,nb_step):
+    def __call__(self, causes, nb_step):
         # Additive only, for now
-
-
-        effect = np.zeros((self.points,1))
+        effect = np.zeros((self.points, 1))
         # Compute each cause's contribution
         for par in range(causes.shape[1]):
-            effect[:,0] = effect[:,0] + self.mechanism(causes[:,par], par)[:,0]
+            effect[:, 0] = effect[:, 0] + self.mechanism(causes[:, par], par)[:, 0]
 
-        if(self.ber > 0 and causes.shape[1] > 0 ):
-            effect[:,0] = effect[:,0]* self.noise[:,0]
+        if(self.ber > 0 and causes.shape[1] > 0):
+            effect[:, 0] = effect[:, 0] * self.noise[:, 0]
         else:
-            effect[:, 0] = effect[:, 0]+ self.noise[:, 0]
-
+            effect[:, 0] = effect[:, 0] + self.noise[:, 0]
 
         return effect
 
 
-
-
-
-
 def computeGaussKernel(x):
-    xnorm = np.power(euclidean_distances(x,x),2)
+    xnorm = np.power(euclidean_distances(x, x), 2)
     return np.exp(-xnorm / (2.0))
-
 
 
 class GaussianProcessAdd_Mechanism(object):
@@ -192,17 +171,17 @@ class GaussianProcessAdd_Mechanism(object):
 
         self.noise = 0.1*np.random.randn(points, 1)
 
-    def mechanism(self,x,nb_step):
+    def mechanism(self, x, nb_step):
 
-        x= np.reshape(x, (x.shape[0],1))
+        x = np.reshape(x, (x.shape[0], 1))
 
         if(nb_step < 5):
             cov = computeGaussKernel(x)
-            mean = np.zeros((1,self.points))[0,:]
+            mean = np.zeros((1, self.points))[0, :]
             y = np.random.multivariate_normal(mean, cov)
         elif(nb_step == 5):
             cov = computeGaussKernel(x)
-            mean = np.zeros((1,self.points))[0,:]
+            mean = np.zeros((1, self.points))[0, :]
             y = np.random.multivariate_normal(mean, cov)
             self.gpr = GaussianProcessRegressor()
             self.gpr.fit(x, y)
@@ -212,18 +191,17 @@ class GaussianProcessAdd_Mechanism(object):
 
         return y
 
-    def __call__(self, causes,nb_step):
+    def __call__(self, causes, nb_step):
         # Additive only, for now
 
-        effect = np.zeros((self.points,1))
+        effect = np.zeros((self.points, 1))
         # Compute each cause's contribution
         for par in range(causes.shape[1]):
-            effect[:,0] = effect[:,0] + self.mechanism(causes[:,par],nb_step)
+            effect[:, 0] = effect[:, 0] + self.mechanism(causes[:, par], nb_step)
 
-        effect[:,0] = effect[:,0] + self.noise[:,0]
+        effect[:, 0] = effect[:, 0] + self.noise[:, 0]
 
         return effect
-
 
 
 class GaussianProcessMix_Mechanism(object):
@@ -234,17 +212,17 @@ class GaussianProcessMix_Mechanism(object):
         self.points = points
         self.noise = 0.1*np.random.randn(points, 1)
 
-    def mechanism(self,x,nb_step):
+    def mechanism(self, x, nb_step):
 
         x = np.reshape(x, (x.shape[0], x.shape[1]))
 
         if(nb_step < 2):
             cov = computeGaussKernel(x)
-            mean = np.zeros((1,self.points))[0,:]
+            mean = np.zeros((1, self.points))[0, :]
             y = np.random.multivariate_normal(mean, cov)
         elif(nb_step == 2):
             cov = computeGaussKernel(x)
-            mean = np.zeros((1,self.points))[0,:]
+            mean = np.zeros((1, self.points))[0, :]
             y = np.random.multivariate_normal(mean, cov)
             self.gpr = GaussianProcessRegressor()
             self.gpr.fit(x, y)
@@ -254,14 +232,14 @@ class GaussianProcessMix_Mechanism(object):
 
         return y
 
-    def __call__(self, causes,nb_step):
+    def __call__(self, causes, nb_step):
         # Additive only, for now
 
-        effect = np.zeros((self.points,1))
+        effect = np.zeros((self.points, 1))
         # Compute each cause's contribution
         if(causes.shape[1] > 0):
-            mix = np.hstack((causes,self.noise))
-            effect[:,0] = self.mechanism(mix,nb_step)
+            mix = np.hstack((causes, self.noise))
+            effect[:, 0] = self.mechanism(mix, nb_step)
         else:
             effect[:, 0] = self.mechanism(self.noise, nb_step)
 
@@ -278,8 +256,7 @@ def gmm_cause(n, k=4, p1=2, p2=2):
 
 
 def gaussian_cause(n):
-    return np.random.randn(n,1)[:,0]
-
+    return np.random.randn(n, 1)[:, 0]
 
 
 def noise(n, v):

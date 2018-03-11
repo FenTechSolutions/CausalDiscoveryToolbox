@@ -1,6 +1,6 @@
-"""Cyclic Graph Generator.
+"""Acyclic Graph Generator.
 
-Generates a cross-sectional dataset out of a cyclic FCM.
+Generates a dataset out of an acyclic FCM.
 Author : Olivier Goudet and Diviyan Kalainathan
 """
 
@@ -14,14 +14,14 @@ from .causal_mechanisms import (LinearMechanism,
                                 SigmoidMix_Mechanism,
                                 GaussianProcessAdd_Mechanism,
                                 GaussianProcessMix_Mechanism,
-                                gaussian_cause)
+                                gmm_cause)
 
 
-class CyclicGraphGenerator(object):
+class AcyclicGraphGenerator(object):
     """Generates a cross-sectional dataset out of a cyclic FCM."""
 
     def __init__(self, causal_mechanism,
-                 initial_variable_generator=gaussian_cause,
+                 initial_variable_generator=gmm_cause,
                  points=500, nodes=20, timesteps=0, parents_max=5):
         """
         :params:
@@ -30,7 +30,7 @@ class CyclicGraphGenerator(object):
             choose between: ['linear', 'polynomial', 'sigmoid_add',
             'sigmoid_mix', 'gp_add', 'gp_mix']
         """
-        super(CyclicGraphGenerator, self).__init__()
+        super(AcyclicGraphGenerator, self).__init__()
         self.mechanism = {'linear': LinearMechanism,
                           'polynomial': Polynomial_Mechanism,
                           'sigmoid_add': SigmoidAM_Mechanism,
@@ -53,57 +53,37 @@ class CyclicGraphGenerator(object):
     def init_variables(self, verbose=False):
         """Redefine the causes of the graph."""
         # Resetting adjacency matrix
-        for i in range(self.nodes):
-            for j in np.random.choice(range(self.nodes),
-                                      np.random.randint(
-                                          0, self.parents_max + 1),
+        for i in range(self.nodes-1):
+            for j in np.random.choice(range(i+1, self.nodes),
+                                      np.random.randint(0, min([self.parents_max,
+                                                                self.nodes-i])),
                                       replace=False):
                 if i != j:
-                    self.adjacency_matrix[j, i] = 1
+                    self.adjacency_matrix[i, j] = 1
 
         try:
             assert any([sum(self.adjacency_matrix[:, i]) ==
                         self.parents_max for i in range(self.nodes)])
             self.g = nx.DiGraph(self.adjacency_matrix)
-            assert list(nx.simple_cycles(self.g))
-            assert any(len(i) == 2 for i in nx.simple_cycles(self.g))
+            assert not list(nx.simple_cycles(self.g))
 
         except AssertionError:
             if verbose:
                 print("Regenerating, graph non valid...")
             self.init_variables()
 
-        if verbose:
-            print("Matrix generated ! \
-              Number of cycles: {}".format(len(list(nx.simple_cycles(self.g)))))
-
-        for i in range(self.nodes):
-            self.data.iloc[:, i] = scale(self.initial_generator(self.points))
-
         # Mechanisms
         self.cfunctions = [self.mechanism(int(sum(self.adjacency_matrix[:, i])),
-                                          self.points) for i in range(self.nodes)]
+                                          self.points)
+                           if sum(self.adjacency_matrix[:, i])
+                           else self.initial_generator for i in range(self.nodes)]
 
     def generate(self, nb_steps=100, averaging=50, rescale=True):
         """Generate data from an FCM containing cycles."""
         if self.cfunctions is None:
             self.init_variables()
-        new_df = pd.DataFrame()
-        causes = [[c for c in np.nonzero(self.adjacency_matrix[:, j])[0]]
-                  for j in range(self.nodes)]
-        values = [[] for i in range(self.nodes)]
 
-        for i in range(nb_steps):
-            for j in range(self.nodes):
-                new_df["V" + str(j)] = self.cfunctions[j](self.data.iloc[:, causes[j]].as_matrix(), nb_steps)[:, 0]
-                if rescale:
-                    new_df["V" + str(j)] = scale(new_df["V" + str(j)])
-                if i > nb_steps-averaging:
-                    values[j].append(new_df["V" + str(j)])
-            self.data = new_df
-        self.data = pd.DataFrame(np.array([np.mean(values[i], axis=0)
-                                           for i in range(self.nodes)]).transpose(),
-                                 columns=["V{}".format(j) for j in range(self.nodes)])
+        # ToDo
 
         return self.g, self.data
 
@@ -123,5 +103,5 @@ class CyclicGraphGenerator(object):
 
 
 if __name__ == "__main__":
-    print("Testing cyclic graph generator...")
+    print("Testing acyclic graph generator...")
     raise(NotImplemented)
