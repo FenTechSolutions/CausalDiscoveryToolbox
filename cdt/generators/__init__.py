@@ -1,3 +1,2 @@
-# from .generate_graph_from_data import RandomGraphFromData
 from .cyclic_graph_generator import CyclicGraphGenerator
 from .acyclic_graph_generator import AcyclicGraphGenerator

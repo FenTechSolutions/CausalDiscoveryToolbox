@@ -1,5 +1,6 @@
-"""
-Defining a set of classes that represent causal functions/ mechanisms.
+"""Defining a set of classes that represent causal functions/ mechanisms.
+
+Author: Diviyan Kalainathan
 """
 
 import random
@@ -54,6 +55,7 @@ class SigmoidAM_Mechanism(object):
         self.noise = 0.1*np.random.randn(points, 1)
 
     def mechanism(self, x):
+        """Mechanism function."""
         result = np.\
             zeros((self.points, 1))
         for i in range(self.points):
@@ -91,6 +93,7 @@ class SigmoidMix_Mechanism(object):
         self.noise = 0.1*np.random.randn(points, 1)
 
     def mechanism(self, causes):
+        """Mechanism function."""
         result = np.zeros((self.points, 1))
         for i in range(self.points):
             pre_add_effect = 0
@@ -132,7 +135,7 @@ class Polynomial_Mechanism(object):
         self.noise = 0.1*np.random.randn(points, 1)
 
     def mechanism(self, x, par):
-
+        """Mechanism function."""
         list_coeff = self.polycause[par]
         result = np.zeros((self.points, 1))
         for i in range(self.points):
@@ -159,6 +162,7 @@ class Polynomial_Mechanism(object):
 
 
 def computeGaussKernel(x):
+    """Compute the gaussian kernel on a 1D vector."""
     xnorm = np.power(euclidean_distances(x, x), 2)
     return np.exp(-xnorm / (2.0))
 
@@ -175,7 +179,7 @@ class GaussianProcessAdd_Mechanism(object):
         self.nb_step = 0
 
     def mechanism(self, x):
-        """Run the mechanism."""
+        """Mechanism function."""
         self.nb_step += 1
         x = np.reshape(x, (x.shape[0], 1))
 
@@ -219,6 +223,7 @@ class GaussianProcessMix_Mechanism(object):
         self.nb_step = 0
 
     def mechanism(self, x):
+        """Mechanism function."""
         self.nb_step += 1
         x = np.reshape(x, (x.shape[0], x.shape[1]))
 
@@ -252,6 +257,7 @@ class GaussianProcessMix_Mechanism(object):
 
 
 def gmm_cause(n, k=4, p1=2, p2=2):
+    """Init a root cause with a Gaussian Mixture Model."""
     g = GMM(k)
     g.means_ = p1 * np.random.randn(k, 1)
     g.covars_ = np.power(abs(p2 * np.random.randn(k, 1) + 1), 2)
@@ -261,9 +267,11 @@ def gmm_cause(n, k=4, p1=2, p2=2):
 
 
 def gaussian_cause(n):
+    """Init a root cause with a Gaussian."""
     return np.random.randn(n, 1)[:, 0]
 
 
 def noise(n, v):
+    """Init a noise variable."""
     return v * np.random.rand(1) * np.random.randn(n, 1) + random.sample([2, -2], 1)
     # np.random.randint(-1,1)

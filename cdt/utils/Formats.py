@@ -1,25 +1,27 @@
-"""
-Formatting functions
+"""Formatting and import functions.
+
 Author: Diviyan Kalainathan
 Date : 2/06/17
 
 """
-from pandas import DataFrame, read_csv, get_dummies
-from numpy import array, concatenate
+from pandas import DataFrame, read_csv
+from numpy import array
 from sklearn.preprocessing import scale as scaler
+import networkx as nx
 
 
-def CCEPC_PairsFileReader(filename, scale=True):
-    """ Converts a ChaLearn Cause effect pairs challenge format into numpy.ndarray
+def read_causal_pairs(filename, scale=True, **kwargs):
+    """Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.
 
-    :param filename:
+    :param filename: Name fo the file read
     :type filename: str
+    :param scale: Scale the data
+    :param kwargs: parameters to be passed to pandas.read_csv
     :return: Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))
     :rtype: pandas.DataFrame
     """
-
     def convert_row(row, scale):
-        """ Convert a CCEPC row into numpy.ndarrays
+        """Convert a CCEPC row into numpy.ndarrays.
 
         :param row:
         :type row: pandas.Series
@@ -44,7 +46,7 @@ def CCEPC_PairsFileReader(filename, scale=True):
             b = scaler(b)
         return row['SampleID'], a, b
 
-    data = read_csv(filename)
+    data = read_csv(filename, **kwargs)
     conv_data = []
 
     for idx, row in data.iterrows():
@@ -53,24 +55,40 @@ def CCEPC_PairsFileReader(filename, scale=True):
     return df
 
 
-def reshape_data(df_data, list_variables, type_variables):
+def read_adjacency_matrix(filename, directed=True, **kwargs):
+    """Read a file (containing an adjacency matrix) and convert it into a directed or undirected networkx graph.
 
-    list_array = []
+    :param filename: file to read
+    :param directed: Return directed graph
+    :param kwargs: extra parameters to be passed to pandas.read_csv
+    """
+    data = read_csv(filename, **kwargs)
+    if directed:
+        return nx.relabel_nodes(nx.DiGraph(data.values),
+                                {idx: i for idx, i in enumerate(data.columns)})
+    else:
+        return nx.relabel_nodes(nx.Graph(data.values),
+                                {idx: i for idx, i in enumerate(data.columns)})
 
-    dim_variables = {}
 
-    for var in list_variables:
-        if (type_variables[var] == "Categorical"):
-            data = df_data[var].values
-            data = get_dummies(data).as_matrix()
-            data = data.reshape(data.shape[0], data.shape[1])
+def read_list_edges(filename, directed=True, **kwargs):
+    """Read a file (containing list of edges) and convert it into a directed or undirected networkx graph.
 
-        elif (type_variables[var] == "Numerical"):
-            data = scaler(df_data[var].values)
-            data = data.reshape(data.shape[0], 1)
+    :param filename: file to be read, per default columns=Cause,Effect
+    :param directed:
+    :param kwargs:
+    """
+    data = read_csv(filename, **kwargs)
+    if directed:
+        graph = nx.DiGraph()
+    else:
+        graph = nx.Graph()
 
-        dim_variables[var] = data.shape[1]
+    for idx, row in data.iterrows():
+        try:
+            score = row["Score"]
+        except KeyError:
+            score = 1
+        graph.add_edge(row['Cause'], row["Effect"], weight=score)
 
-        list_array.append(data)
-
-    return concatenate(list_array, axis=1), dim_variables
+    return graph
