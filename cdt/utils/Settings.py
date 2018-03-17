@@ -1,7 +1,7 @@
-"""
-Settings file for CGNN algorithm
+"""Settings file for the Causal Discovery Toolbox.
+
 Defining all global variables
-Authors : Anonymous Author
+Author : Diviyan Kalainathan
 Date : 8/05/2017
 """
 import ast
@@ -10,7 +10,17 @@ import warnings
 import multiprocessing
 
 
+def message_warning(msg, *a):
+    """Ignore everything except the message."""
+    return str(msg) + '\n'
+
+
+warnings.formatwarning = message_warning
+
+
 class ConfigSettings(object):
+    """Defining the class for the hardware/high level settings of the CDT."""
+
     __slots__ = ("NB_JOBS",  # Number of parallel jobs runnable
                  "GPU",  # True if GPU is available
                  "NB_GPU",  # Number of available GPUs (Not used if autoset)
@@ -18,10 +28,10 @@ class ConfigSettings(object):
                  "GPU_LIST",  # List of CUDA_VISIBLE_DEVICES
                  "autoset_config",
                  "verbose",
-                 "r_is_available",
-                 "tensorflow_is_available")
+                 "r_is_available")
 
-    def __init__(self):  # Define here the default values of the parameters
+    def __init__(self):
+        """Define here the default values of the parameters."""
         super(ConfigSettings, self).__init__()
         self.NB_JOBS = 8
         self.GPU = True
@@ -33,72 +43,68 @@ class ConfigSettings(object):
         self.verbose = True
         self.r_is_available = False
 
-        try:
-            import tensorflow
-            self.tensorflow_is_available = True
-        except ImportError as e:
-            warnings.warn("Tensorflow not available : {}".format(e))
-            self.tensorflow_is_available = False
         if self.autoset_config:
             self = autoset_settings(self)
 
+# DEPRECATED :  The CGNN SETTINGS will be integrated in the CGNN file.
 
-class CGNNSettings(object):
-    __slots__ = ("h_layer_dim",
-                 "train_epochs",
-                 "test_epochs",
-                 "NB_RUNS",
-                 "NB_MAX_RUNS",
-                 "learning_rate",
-                 "init_weights",
-                 "ttest_threshold",
-                 "nb_max_loop",
-                 "kernel",
-                 "nb_run_feature_selection",
-                 "regul_param",
-                 "nb_epoch_train_feature_selection",
-                 "nb_epoch_eval_weights",
-                 "use_Fast_MMD",
-                 "nb_vectors_approx_MMD",
-                 "complexity_graph_param",
-                 "max_nb_points",
-                 "max_parents_block",
-                 "asymmetry_param",
-                 "threshold_UMG")
 
-    def __init__(self):
-        super(CGNNSettings, self).__init__()
-        self.NB_RUNS = 8
-        self.NB_MAX_RUNS = 32
-        self.learning_rate = 0.01
-        self.init_weights = 0.05
-        self.max_nb_points = 1500
-        self.h_layer_dim = 20
-        self.use_Fast_MMD = False
-        self.nb_vectors_approx_MMD = 100
-        self.threshold_UMG = 0.15
-        self.train_epochs = 1000
-        self.test_epochs = 500
-        self.complexity_graph_param = 0.00005
-        self.ttest_threshold = 0.01
-        self.nb_max_loop = 3
-
-        self.kernel = "RBF"
-
-        # specific for FSGNN
-        self.nb_run_feature_selection = 1
-        self.nb_epoch_train_feature_selection = 2000
-        self.nb_epoch_eval_weights = 500
-        self.regul_param = 0.004
-
-        # specific for blockwise CGNN
-        self.max_parents_block = 5
-        self.asymmetry_param = 0.0001
+# class CGNNSettings(object):
+#     __slots__ = ("h_layer_dim",
+#                  "train_epochs",
+#                  "test_epochs",
+#                  "NB_RUNS",
+#                  "NB_MAX_RUNS",
+#                  "learning_rate",
+#                  "init_weights",
+#                  "ttest_threshold",
+#                  "nb_max_loop",
+#                  "kernel",
+#                  "nb_run_feature_selection",
+#                  "regul_param",
+#                  "nb_epoch_train_feature_selection",
+#                  "nb_epoch_eval_weights",
+#                  "use_Fast_MMD",
+#                  "nb_vectors_approx_MMD",
+#                  "complexity_graph_param",
+#                  "max_nb_points",
+#                  "max_parents_block",
+#                  "asymmetry_param",
+#                  "threshold_UMG")
+#
+#     def __init__(self):
+#         super(CGNNSettings, self).__init__()
+#         self.NB_RUNS = 8
+#         self.NB_MAX_RUNS = 32
+#         self.learning_rate = 0.01
+#         self.init_weights = 0.05
+#         self.max_nb_points = 1500
+#         self.h_layer_dim = 20
+#         self.use_Fast_MMD = False
+#         self.nb_vectors_approx_MMD = 100
+#         self.threshold_UMG = 0.15
+#         self.train_epochs = 1000
+#         self.test_epochs = 500
+#         self.complexity_graph_param = 0.00005
+#         self.ttest_threshold = 0.01
+#         self.nb_max_loop = 3
+#
+#         self.kernel = "RBF"
+#
+#         # specific for FSGNN
+#         self.nb_run_feature_selection = 1
+#         self.nb_epoch_train_feature_selection = 2000
+#         self.nb_epoch_eval_weights = 500
+#         self.regul_param = 0.004
+#
+#         # specific for blockwise CGNN
+#         self.max_parents_block = 5
+#         self.asymmetry_param = 0.0001
 
 
 def autoset_settings(set_var):
-    """
-    Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.
+    """Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.
+
     Return default config if variable not set.
     :param set_var: Variable to set. Must be of type ConfigSettings
     """
@@ -115,7 +121,7 @@ def autoset_settings(set_var):
             raise KeyError
     except KeyError:
         warnings.warn(
-            "No GPU automatically detected. Set SETTINGS.GPU to false," +
+            "No GPU automatically detected. Setting SETTINGS.GPU to false," +
             "SETTINGS.GPU_LIST to [], and SETTINGS.NB_JOBS to cpu_count.")
         set_var.GPU = False
         set_var.GPU_LIST = []
@@ -125,4 +131,3 @@ def autoset_settings(set_var):
 
 
 SETTINGS = ConfigSettings()
-CGNN_SETTINGS = CGNNSettings()

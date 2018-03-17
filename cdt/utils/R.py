@@ -1,5 +1,14 @@
+"""Loading R packages by using the rpy2 wrapper."""
 import warnings
 from .Settings import SETTINGS
+
+
+def message_warning(msg, *a):
+    """Ignore everything except the message."""
+    return str(msg) + '\n'
+
+
+warnings.formatwarning = message_warning
 
 
 class DefaultRPackages(object):
@@ -39,6 +48,7 @@ def load_r_wrapper():
 
 def default_translation(rname):
     return rname.replace('.', '_')
+
 
 RPackages = DefaultRPackages()
 load_r_wrapper()
