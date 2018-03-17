@@ -23,8 +23,6 @@ class ConfigSettings(object):
 
     __slots__ = ("NB_JOBS",  # Number of parallel jobs runnable
                  "GPU",  # True if GPU is available
-                 "NB_GPU",  # Number of available GPUs (Not used if autoset)
-                 "GPU_OFFSET",  # First index of GPU (Not used if autoset)
                  "GPU_LIST",  # List of CUDA_VISIBLE_DEVICES
                  "autoset_config",
                  "verbose",
