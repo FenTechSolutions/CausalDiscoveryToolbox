@@ -1,5 +1,5 @@
-"""
-Implementation of Losses
+"""Implementation of Losses.
+
 Author : Diviyan Kalainathan & Olivier Goudet
 Date : 09/03/2017
 """
@@ -12,90 +12,6 @@ import torch as th
 from torch.autograd import Variable
 
 bandwiths_gamma = [0.005, 0.05, 0.25, 0.5, 1, 5, 50]
-
-if SETTINGS.tensorflow_is_available:
-    import tensorflow as tf
-
-    def MMD_loss_tf(xy_true, xy_pred, kernel="RBF"):
-
-        N, _ = xy_pred.get_shape().as_list()
-
-        if(kernel == "GMM"):
-
-            X = tf.concat([xy_pred, xy_true], 0)
-
-            X_unstacked = tf.unstack(X, axis=1)
-            list_unstacked = []
-            for t in X_unstacked:
-                list_unstacked.append(tf.reshape(t, [2 * N, 1]))
-
-            X = tf.concat([i for c in [[tf.abs(tf.maximum(j, 0)), tf.abs(
-                tf.minimum(j, 0))] for j in list_unstacked] for i in c], axis=1)
-            X = tf.expand_dims(X, 1)
-            X_t = tf.transpose(X, perm=[1, 0, 2])
-
-            s1 = tf.constant(1.0 / N, shape=[N, 1])
-            s2 = -tf.constant(1.0 / N, shape=[N, 1])
-            s = tf.concat([s1, s2], 0)
-            S = tf.matmul(s, tf.transpose(s))
-
-            loss = tf.reduce_sum(S * tf.div(tf.reduce_sum(tf.minimum(X, X_t),
-                                                          axis=2), tf.reduce_sum(tf.maximum(X, X_t), axis=2)))
-
-        elif(kernel == "RBF"):
-
-            X = tf.concat([xy_pred, xy_true], 0)
-            XX = tf.matmul(X, tf.transpose(X))
-            X2 = tf.reduce_sum(X * X, 1, keep_dims=True)
-            exponent = -2 * XX + X2 + tf.transpose(X2)
-
-            s1 = tf.constant(1.0 / N, shape=[N, 1])
-            s2 = -tf.constant(1.0 / N, shape=[N, 1])
-            s = tf.concat([s1, s2], 0)
-            S = tf.matmul(s, tf.transpose(s))
-
-            loss = 0
-
-            for i in bandwiths_gamma:
-                kernel_val = tf.exp(-i * exponent)
-                loss += tf.reduce_sum(S * kernel_val)
-
-        return loss
-
-    def rp(k, s, d):
-        return tf.transpose(tf.concat([tf.concat([2 * si * tf.random_normal([k, d], mean=0, stddev=1) for si in s], axis=0),
-                                       tf.random_uniform([k * len(s), 1], minval=0, maxval=2 * np.pi)], axis=1))
-
-    def f1(x, wz, N):
-        ones = tf.ones((N, 1))
-        x_ones = tf.concat([x, ones], axis=1)
-        mult = tf.matmul(x_ones, wz)
-
-        return tf.cos(mult)
-
-    def Fourier_MMD_Loss_tf(xy_true, xy_pred, nb_vectors_approx_MMD):
-        N, nDim = xy_pred.get_shape().as_list()
-
-        wz = rp(nb_vectors_approx_MMD, bandwiths_gamma, nDim)
-
-        e1 = tf.sqrt(2 / nb_vectors_approx_MMD) * \
-            tf.reduce_mean(f1(xy_true, wz, N), axis=0)
-        e2 = tf.sqrt(2 / nb_vectors_approx_MMD) * \
-            tf.reduce_mean(f1(xy_pred, wz, N), axis=0)
-
-        return tf.reduce_sum((e1 - e2) ** 2)
-
-    def MomentMatchingLoss_tf(xy_true, xy_pred, nb_moment=1):
-        """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
-
-        """
-        loss = 0
-        for i in range(1, nb_moment):
-            mean_pred = tf.reduce_mean(xy_pred ** i, 0)
-            mean_true = tf.reduce_mean(xy_true ** i, 0)
-            loss += tf.sqrt(tf.reduce_sum((mean_true - mean_pred) ** 2))  # L2
-
-        return loss
 
 
 class TTestCriterion(object):
@@ -169,12 +85,13 @@ class MMD_loss_th(th.nn.Module):
 
 
 class MomentMatchingLoss_th(th.nn.Module):
-    """ k-moments loss, k being a parameter. These moments are raw moments and not normalized
+    """k-moments loss, k being a parameter.
 
+    These moments are raw moments and not normalized.
     """
 
     def __init__(self, n_moments=1):
-        """ Initialize the loss model
+        """Initialize the loss model.
 
         :param n_moments: number of moments
         """
@@ -182,13 +99,12 @@ class MomentMatchingLoss_th(th.nn.Module):
         self.moments = n_moments
 
     def forward(self, pred, target):
-        """ Compute the loss model
+        """Compute the loss model.
 
         :param pred: predicted Variable
         :param target: Target Variable
         :return: Loss
         """
-
         loss = Variable(th.FloatTensor([0]))
         for i in range(1, self.moments):
             mk_pred = th.mean(th.pow(pred, i), 0)
