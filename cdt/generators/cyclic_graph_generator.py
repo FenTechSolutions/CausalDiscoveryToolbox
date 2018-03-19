@@ -23,10 +23,10 @@ class CyclicGraphGenerator(object):
     def __init__(self, causal_mechanism,
                  initial_variable_generator=gaussian_cause,
                  points=500, nodes=20, timesteps=0, parents_max=5):
-        """
-        :params:
-        @param:initial_variable_generator(points): init variables of the graph
-        @param:causal_mechanism(causes): generating causes in the graph to
+        """Generate an cyclic graph, given a causal mechanism.
+
+        :param initial_variable_generator: init variables of the graph
+        :param causal_mechanism: generating causes in the graph to
             choose between: ['linear', 'polynomial', 'sigmoid_add',
             'sigmoid_mix', 'gp_add', 'gp_mix']
         """
