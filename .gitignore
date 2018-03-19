@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.xml
+.ipynb_checkpoints
 *~
 \#*
 *\#
@@ -51,4 +52,3 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
-

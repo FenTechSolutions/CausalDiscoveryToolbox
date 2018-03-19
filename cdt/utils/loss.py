@@ -35,52 +35,42 @@ class TTestCriterion(object):
             return False
 
 
-class MMD_loss_th(th.nn.Module):
-    def __init__(self, input_size, cuda=False):
-        super(MMD_loss_th, self).__init__()
-        self.bandwiths = [0.01, 0.1, 1, 5, 20, 50, 100]
-        self.cuda = cuda
-        if self.cuda:
-            s1 = th.cuda.FloatTensor(input_size, 1).fill_(1)
-            s2 = s1.clone()
-            s = th.cat([s1.div(input_size),
-                        s2.div(-input_size)], 0)
+class MMDloss(th.nn.Module):
+    """Maximum Mean Discrepancy Metric to compare empirical distributions.
 
-        else:
-            s = th.cat([(th.ones([input_size, 1])).div(input_size),
-                        (th.ones([input_size, 1])).div(-input_size)], 0)
+    Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.
+    """
+
+    def __init__(self, gpu=False, gpu_id=-1):
+        """Init the model."""
+        super(MMDloss, self).__init__()
+        self.bandwiths = [0.01, 0.1, 1, 10, 100]
+
+        if gpu and gpu_id == -1:
+            gpu_id = SETTINGS.GPU_LIST[0]
+        s = th.cat([(th.ones([input_size, 1])).div(input_size),
+                    (th.ones([input_size, 1])).div(-input_size)], 0)
 
         self.S = s.mm(s.t())
-        self.S = Variable(self.S)
+        self.S = Variable(self.S, requires_grad=False)
 
-    def forward(self, var_input, var_pred, var_true=None):
+        if gpu:
+            self.S = self.S.cuda(gpu_id)
 
-        # MMD Loss
-        if var_true is None:
-            X = th.cat([var_input, var_pred], 0)
-        else:
-            X = th.cat([th.cat([var_input, var_pred], 1),
-                        th.cat([var_input, var_true], 1)], 0)
+    def forward(self, x, y):
+        """Compute the MMD statistic between x and y."""
+        X = th.cat([x, y], 0)
         # dot product between all combinations of rows in 'X'
-        XX = X.mm(X.t())
-
+        XX = X @ X.t()
         # dot product of rows with themselves
-        X2 = (X.mul(X)).sum(dim=1)
-
+        # Old code : X2 = (X * X).sum(dim=1)
+        X2 = XX.diag().unsqueeze(0)
         # exponent entries of the RBF kernel (without the sigma) for each
         # combination of the rows in 'X'
-        # -0.5 * (x^Tx - 2*x^Ty + y^Ty)
-        exponent = XX.sub((X2.mul(0.5)).expand_as(XX)) - \
-            (((X2.t()).mul(0.5)).expand_as(XX))
+        # -0.5 * (i^Ti - 2*i^Tj + j^Tj)
+        exponent = XX - 0.5 * (X2.expand_as(XX) + X2.t().expand_as(XX))
 
-        if self.cuda:
-            lossMMD = Variable(th.cuda.FloatTensor([0]))
-        else:
-            lossMMD = Variable(th.zeros(1))
-        for i in range(len(self.bandwiths)):
-            kernel_val = exponent.mul(1. / self.bandwiths[i]).exp()
-            lossMMD.add_((self.S.mul(kernel_val)).sum())
-
+        lossMMD = th.sum(self.S * sum([(exponent * (1./bandwith)).exp() for bandwith in self.bandwiths]))
         return lossMMD.sqrt()
 
 
