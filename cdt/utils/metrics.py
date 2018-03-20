@@ -45,5 +45,10 @@ def SID(target, pred):
     Ref:  Structural Intervention Distance (SID) for Evaluating Causal Graphs,
     Jonas Peters, Peter Bühlmann, https://arxiv.org/abs/1306.1043
     """
-    raise NotImplemented
+    nodes = list(target.nodes())
+    pathmatrix = np.array([[nx.has_path(target, i, j) if i != j
+                            else True for j in nodes] for i in nodes])
+    gp_undir = np.array(nx.adjacency_matrix(pred, nodes, weight=None).todense())
+    gp_undir = gp_undir * gp_undir.transpose()
+    
     return 0
