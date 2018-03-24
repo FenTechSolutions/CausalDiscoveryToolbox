@@ -33,11 +33,10 @@ class ConfigSettings(object):
         """Define here the default values of the parameters."""
         super(ConfigSettings, self).__init__()
         self.NB_JOBS = 8
-        self.GPU = True
+        self.GPU = False
         self.GPU_LIST = []
         self.autoset_config = True
         self.verbose = True
-        self.r_is_available = False
 
         if self.autoset_config:
             self = autoset_settings(self)
@@ -61,17 +60,20 @@ def autoset_settings(set_var):
 
         elif set_var.GPU:
             set_var.GPU_LIST = [0]
+            set_var.NB_JOBS = len(devices)
         else:
             raise KeyError
         print("Detecting CUDA devices : {}".format(devices))
 
     except KeyError:
-        warnings.warn(
-            "No GPU automatically detected." +
-            "SETTINGS.GPU_LIST to [], and SETTINGS.NB_JOBS to cpu_count.")
-        set_var.GPU = False
-        set_var.GPU_LIST = []
-        set_var.NB_JOBS = multiprocessing.cpu_count()
+        if set_var.GPU:
+            warnings.warn("GPU detected but no GPU ID. Setting SETTINGS.GPU_LIST to [0]")
+        else:
+            warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to False, " +
+                          "SETTINGS.GPU_LIST to [], and SETTINGS.NB_JOBS to cpu_count.")
+            set_var.GPU = False
+            set_var.GPU_LIST = []
+            set_var.NB_JOBS = multiprocessing.cpu_count()
 
     return set_var
 

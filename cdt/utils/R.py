@@ -1,6 +1,12 @@
-"""Loading R packages by using the rpy2 wrapper."""
+"""Loading R packages by using subprocess.
+
+Checking if the packages are available
+Author: Diviyan Kalainathan
+"""
+
 import warnings
-from .Settings import SETTINGS
+import os
+from subprocess import call, DEVNULL
 
 
 def message_warning(msg, *a):
@@ -12,43 +18,26 @@ warnings.formatwarning = message_warning
 
 
 class DefaultRPackages(object):
+    """Define the packages to be tested for import."""
+
     __slots__ = ("pcalg",
                  "kpcalg",
-                 "minet",
                  "bnlearn")
 
-    def __init__(self):  # Define here the default values of the parameters
-        self.pcalg = None
-        self.minet = None
-        self.kpcalg = None
-        self.bnlearn = None
+    def __init__(self):
+        """Init the values of the packages."""
+        self.pcalg = False
+        self.kpcalg = False
+        self.bnlearn = False
 
 
-def load_r_wrapper():
-    try:
-        import rpy2
-        try:
-            import readline
-            import rpy2.robjects
-            from rpy2.robjects.packages import importr
-            import rpy2.robjects.numpy2ri
-            rpy2.robjects.numpy2ri.activate()
-            RPackages.minet = importr('minet')
-            RPackages.pcalg = importr("pcalg")
-            RPackages.kpcalg = importr("kpcalg")
-            RPackages.bnlearn = importr("bnlearn")
-            SETTINGS.r_is_available = True
-        except rpy2.rinterface.RRuntimeError as e:
-            SETTINGS.r_is_available = False
-            warnings.warn("R wrapper is not available : {}".format(e))
-    except ImportError as e:
-        SETTINGS.r_is_available = False
-        warnings.warn("R wrapper is not available : {}".format(e))
-
-
-def default_translation(rname):
-    return rname.replace('.', '_')
+def check_R_packages(packages):
+    """Execute a subprocess to check the packages' availability."""
+    for i in packages.__slots__:
+        setattr(packages, i,
+                not bool(call("Rscript --vanilla {}/R_scripts/test_{}.R".format(os.path.dirname(os.path.realpath(__file__)), i),
+                              shell=True, stdout=DEVNULL, stderr=DEVNULL)))
 
 
 RPackages = DefaultRPackages()
-load_r_wrapper()
+check_R_packages(RPackages)
