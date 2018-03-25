@@ -4,9 +4,12 @@ Author: Diviyan Kalainathan
 Date : 20/09
 """
 
+import os
 import numpy as np
 import networkx as nx
+from shutil import rmtree
 from sklearn.metrics import auc, precision_recall_curve
+from .R import launch_R_script, RPackages
 
 
 def precision_recall(target, pred):
@@ -45,10 +48,35 @@ def SID(target, pred):
     Ref:  Structural Intervention Distance (SID) for Evaluating Causal Graphs,
     Jonas Peters, Peter Bühlmann, https://arxiv.org/abs/1306.1043
     """
-    nodes = list(target.nodes())
-    pathmatrix = np.array([[nx.has_path(target, i, j) if i != j
-                            else True for j in nodes] for i in nodes])
-    gp_undir = np.array(nx.adjacency_matrix(pred, nodes, weight=None).todense())
-    gp_undir = gp_undir * gp_undir.transpose()
-    
-    return 0
+    if not RPackages.SID:
+        raise ImportError("SID R package is not available. Please check your installation.")
+
+    if type(target) == nx.DiGraph:
+        true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
+        predictions = np.array(nx.adjacency_matrix(pred, target.nodes(), weight=None).todense())
+    elif type(target) == np.ndarray:
+        true_labels = target
+        predictions = pred
+    else:
+        raise TypeError("Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.")
+
+    os.makedirs('/tmp/cdt_SID/')
+
+    def retrieve_result():
+        return np.loadtxt('/tmp/cdt_SID/result.csv')
+
+    try:
+        np.savetxt('/tmp/cdt_SID/target.csv', true_labels, delimiter=',')
+        np.savetxt('/tmp/cdt_SID/pred.csv', predictions, delimiter=',')
+        sid_score = launch_R_script("{}/R_templates/sid.R".format(os.path.dirname(os.path.realpath(__file__))),
+                                    {"{target}": '/tmp/cdt_SID/target.csv',
+                                     "{prediction}": '/tmp/cdt_SID/pred.csv',
+                                     "{result}": '/tmp/cdt_SID/result.csv'},
+                                    output_function=retrieve_result)
+    # Cleanup
+    except Exception as e:
+        rmtree('/tmp/cdt_SID')
+        raise e
+
+    rmtree('/tmp/cdt_SID')
+    return sid_score

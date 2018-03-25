@@ -36,6 +36,14 @@ class DefaultRPackages(object):
         self.D2C = False
         self.SID = False
 
+    def __repr__(self):
+        """Representation."""
+        return str(["{}: {}".format(i, getattr(self, i)) for i in self.__slots__])
+
+    def __str__(self):
+        """For print purposes."""
+        return str(["{}: {}".format(i, getattr(self, i)) for i in self.__slots__])
+
 
 def check_R_packages(packages):
     """Execute a subprocess to check the packages' availability."""
@@ -45,7 +53,7 @@ def check_R_packages(packages):
                                          {"{package}": i}, verbose=False)))
 
 
-def launch_R_script(template, arguments, verbose=True):
+def launch_R_script(template, arguments, output_function=None, verbose=True):
     """Launch an R script, starting from a template and replacing text in file before execution."""
     os.makedirs('/tmp/cdt_R_scripts/')
     try:
@@ -54,14 +62,22 @@ def launch_R_script(template, arguments, verbose=True):
 
         with fileinput.FileInput(scriptpath, inplace=True) as file:
             for line in file:
+                mline = line
                 for elt in arguments:
-                    print(line.replace(elt, arguments[elt]), end='')
+                    mline = mline.replace(elt, arguments[elt])
+                print(mline, end='')
+
         if verbose:
-            output = call("Rscript --vanilla {}".format(scriptpath),
-                          shell=True)
+            out = call("Rscript --vanilla {}".format(scriptpath),
+                       shell=True)
         else:
-            output = call("Rscript --vanilla {}".format(scriptpath),
-                          shell=True, stdout=DEVNULL, stderr=DEVNULL)
+            out = call("Rscript --vanilla {}".format(scriptpath),
+                       shell=True, stdout=DEVNULL, stderr=DEVNULL)
+
+        if output_function is None:
+            output = out
+        else:
+            output = output_function()
 
     # Cleaning up
     except Exception as e:
