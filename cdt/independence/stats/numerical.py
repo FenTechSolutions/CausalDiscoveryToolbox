@@ -1,5 +1,5 @@
-"""
-Dependency criteria for Numerical data
+"""Dependency criteria for Numerical data.
+
 Author: Diviyan Kalainathan
 Date: 1/06/2017
 
@@ -9,6 +9,7 @@ import numpy as np
 import scipy.stats as sp
 from .model import IndependenceModel
 from sklearn.feature_selection import mutual_info_regression
+
 
 def rbf_dot2(p1, p2, deg):
     if p1.ndim == 1:
