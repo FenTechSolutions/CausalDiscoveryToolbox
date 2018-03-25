@@ -95,7 +95,7 @@ class NetworkDeconvolution(DeconvolutionModel):
         '''
         y = stat.mquantiles(mat[:], prob=[1 - alpha])
         th = mat >= y
-        mat_th = mat * th;
+        mat_th = mat * th
 
         '''
         making the matrix symetric if already not
@@ -128,22 +128,21 @@ class NetworkDeconvolution(DeconvolutionModel):
          displying direct weights
         '''
         if control == 0:
-            ind_edges = (mat_th > 0) * 1.0;
-            ind_nonedges = (mat_th == 0) * 1.0;
-            m1 = np.max(np.max(mat * ind_nonedges));
-            m2 = np.min(np.min(mat_new1));
-            mat_new2 = (mat_new1 + np.max(m1 - m2, 0)) * ind_edges + (mat * ind_nonedges);
+            ind_edges = (mat_th > 0) * 1.0
+            ind_nonedges = (mat_th == 0) * 1.0
+            m1 = np.max(np.max(mat * ind_nonedges))
+            m2 = np.min(np.min(mat_new1))
+            mat_new2 = (mat_new1 + np.max(m1 - m2, 0)) * ind_edges + (mat * ind_nonedges)
         else:
-            m2 = np.min(np.min(mat_new1));
-            mat_new2 = (mat_new1 + np.max(-m2, 0));
+            m2 = np.min(np.min(mat_new1))
+            mat_new2 = (mat_new1 + np.max(-m2, 0))
 
         '''
         ***********************************
          linearly mapping the deconvolved matrix to be between 0 and 1
         '''
-        m1 = np.min(np.min(mat_new2));
-        m2 = np.max(np.max(mat_new2));
-        mat_nd = (mat_new2 - m1) / (m2 - m1);
+        m1 = np.min(np.min(mat_new2))
+        m2 = np.max(np.max(mat_new2))
+        mat_nd = (mat_new2 - m1) / (m2 - m1)
 
         return mat_nd
-
