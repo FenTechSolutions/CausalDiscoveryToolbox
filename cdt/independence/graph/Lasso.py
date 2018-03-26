@@ -1,5 +1,5 @@
-"""
-Build undirected graph out of raw data
+"""Build undirected graph out of raw data.
+
 Author: Diviyan Kalainathan
 Date: 1/06/17
 

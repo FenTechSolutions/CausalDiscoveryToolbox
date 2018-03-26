@@ -1,5 +1,6 @@
-__author__ = 'makotoy'
+"""Utils for the HSICLasso implementation."""
 
+__author__ = 'makotoy'
 import numpy as np
 
 
@@ -78,7 +79,7 @@ def hsiclasso(Xin, Yin, numFeat=5, ykernel='Gauss'):
 
     # Nonnegative Lars
     # Inactive set
-    I = list(range(0, d))
+    Il = list(range(0, d))
     A = []
     beta = np.zeros((d, 1))
 
@@ -87,7 +88,7 @@ def hsiclasso(Xin, Yin, numFeat=5, ykernel='Gauss'):
     j = c.argmax()
     C = c[j]
     A.append(j)
-    I.remove(j)
+    Il.remove(j)
 
     inc_path = True
     k = 0
@@ -101,11 +102,11 @@ def hsiclasso(Xin, Yin, numFeat=5, ykernel='Gauss'):
         tmp = float(sum(c[A])) / float(len(A))
 
         s = np.ones((len(A), 1))
-        #w = np.linalg.solve(np.dot(X[:,A].transpose(),X[:,A])+1e-10*np.eye(len(A)),s)
+        # w = np.linalg.solve(np.dot(X[:,A].transpose(),X[:,A])+1e-10*np.eye(len(A)),s)
         w = np.dot(np.linalg.pinv(np.dot(X[:, A].transpose(), X[:, A])), s)
         XtXw = np.dot(X.transpose(), np.dot(X[:, A], w))
 
-        gamma1 = (C - c[I]) / (XtXw[A[0]] - XtXw[I])
+        gamma1 = (C - c[Il]) / (XtXw[A[0]] - XtXw[Il])
         gamma2 = -beta[A] / (w + 1e-10)
         gamma3 = np.zeros((1, 1))
         gamma3[0] = c[A[0]] / (XtXw[A[0]] + 1e-10)
@@ -129,8 +130,8 @@ def hsiclasso(Xin, Yin, numFeat=5, ykernel='Gauss'):
 
         XtXbeta = np.dot(X.transpose(), np.dot(X, beta))
         c = Xty - XtXbeta
-        j = np.argmax(c[I])
-        C = max(c[I])
+        j = np.argmax(c[Il])
+        C = max(c[Il])
 
         k += 1
         if inc_path:
@@ -142,8 +143,8 @@ def hsiclasso(Xin, Yin, numFeat=5, ykernel='Gauss'):
                 lam[0, k] = C[0]
         # print mu,t,len(I)
         if lassocond is 0:
-            A.append(I[j])
-            I.remove(I[j])
+            A.append(Il[j])
+            Il.remove(Il[j])
 
         # print tmp
 

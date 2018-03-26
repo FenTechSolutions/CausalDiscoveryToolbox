@@ -1,7 +1,6 @@
-"""
-Feature selection model with generative models
-Author : Olivier Goudet
+"""Feature selection model with generative models.
 
+Author : Olivier Goudet
 """
 import tensorflow as tf
 import os
