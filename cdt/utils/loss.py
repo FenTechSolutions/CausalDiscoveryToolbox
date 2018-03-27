@@ -41,7 +41,7 @@ class MMDloss(th.nn.Module):
     Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.
     """
 
-    def __init__(self, gpu=False, gpu_id=-1):
+    def __init__(self, input_size, gpu=False, gpu_id=-1):
         """Init the model."""
         super(MMDloss, self).__init__()
         self.bandwiths = [0.01, 0.1, 1, 10, 100]

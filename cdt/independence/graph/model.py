@@ -33,26 +33,29 @@ class FeatureSelectionModel(GraphSkeletonModel):
         """For one variable, predict its neighbours."""
         raise NotImplementedError
 
+    def run_feature_selection(self, df_data, target, idx, **kwargs):
+        """Run feature selection for one node."""
+        list_features = list(df_data.columns.values)
+        list_features.remove(target)
+        df_target = pd.DataFrame(df_data[target], columns=[target])
+        df_features = df_data[list_features]
+
+        return self.predict_features(df_features, df_target, idx, **kwargs)
+
     def predict(self, df_data, threshold=0.05, **kwargs):
         """Get the skeleton of the graph from raw data.
 
         :param df_data: data to construct a graph from
         """
-        def run_feature_selection(self, df_data, target, idx, **kwargs):
-            list_features = list(df_data.columns.values)
-            list_features.remove(target)
-            df_target = pd.DataFrame(df_data[target], columns=[target])
-            df_features = df_data[list_features]
-            scores = self.predict_features(df_features, df_target, idx, **kwargs)
-
-            return scores
-
         nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
         list_nodes = list(df_data.columns.values)
 
         result_feature_selection = Parallel(n_jobs=nb_jobs)(delayed(self.run_feature_selection)
-                                                            (df_data, node, idx, **kwargs) for idx, node in enumerate(list_nodes))
+                                                            (df_data, node, idx, **kwargs)
+                                                            for idx, node in enumerate(list_nodes))
 
+        for idx, i in enumerate(result_feature_selection):
+            i.insert(idx, 0)
         matrix_results = np.array(result_feature_selection)
         matrix_results *= matrix_results.transpose()
         matrix_results.fill_diagonal(0)

@@ -4,13 +4,14 @@ Author: Diviyan Kalainathan
 Date: 1/06/17
 
 """
+import networkx as nx
 from sklearn.covariance import GraphLasso
-from .model import DeconvolutionModel, FeatureSelectionModel
+from .model import GraphSkeletonModel, FeatureSelectionModel
 from sklearn.linear_model import RandomizedLasso
 from .HSICLasso import *
 
 
-class Glasso(DeconvolutionModel):
+class Glasso(GraphSkeletonModel):
     """Apply Glasso to find an adjacency matrix
 
     Ref : ToDo - P.Buhlmann
@@ -30,12 +31,13 @@ class Glasso(DeconvolutionModel):
         max_iter = kwargs.get('max_iter', 2000)
         edge_model = GraphLasso(alpha=alpha, max_iter=max_iter)
         edge_model.fit(data.as_matrix())
-        return edge_model.get_precision()
+
+        return nx.relabel_nodes(nx.DiGraph(edge_model.get_precision()),
+                                {idx: i for idx, i in enumerate(data.columns)})
 
 
 class RandomizedLasso_model(FeatureSelectionModel):
-    """ RandomizedLasso from scikit-learn
-    """
+    """RandomizedLasso from scikit-learn."""
 
     def __init__(self):
         super(RandomizedLasso_model, self).__init__()
