@@ -2,4 +2,5 @@
 Or Optimization of graphs with pre-oriented graphs"""
 
 from .CGNN import CGNN
+from .SAM import SAM
 from .PC import PC

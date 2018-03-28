@@ -1,6 +1,7 @@
-"""
-PC algorithm by C.Glymour & P.Sprites (REF, 2000)
-Imported from the Pcalg package, with the rpy2 R wrapper.
+"""PC algorithm by C.Glymour & P.Sprites (REF, 2000).
+
+Imported from the Pcalg package.
+Author = Diviyan Kalainathan
 """
 from ...utils.Settings import SETTINGS
 from ...utils.R import RPackages, default_translation
@@ -82,22 +83,21 @@ class PC(GraphModel):
         indepMethod = kwargs.get("indepMethod", "Default")
         # print(datashape, indepMethod)
 
-        args= {
-               "indepTest": kwargs.get("indepTest", RPackages.pcalg.gaussCItest),
-               "alpha": kwargs.get("alpha", 0.1),
-               "p": datashape[1],
-               "fixedGaps": np.zeros((datashape[1],)*2),
-               "fixedEdges": np.zeros((datashape[1],)*2),
-               "NAdelete": kwargs.get("NAdelete", True),
-               "m.max": kwargs.get("mmax", r("Inf")),
-               "u2pd": kwargs.get("u2pd", "relaxed"),
-               "skel.method": kwargs.get("skelmethod", "stable"),
-               "conservative": kwargs.get("conservative", False),
-               "maj.rule": kwargs.get("majrule", True),
-               "solve.confl": kwargs.get("solveconfl", False),
-               "numCores": kwargs.get("nb_jobs", SETTINGS.NB_JOBS),
-               "verbose": kwargs.get("verbose", SETTINGS.verbose)
-               }
+        args = {"indepTest": kwargs.get("indepTest", RPackages.pcalg.gaussCItest),
+                "alpha": kwargs.get("alpha", 0.1),
+                "p": datashape[1],
+                "fixedGaps": np.zeros((datashape[1],)*2),
+                "fixedEdges": np.zeros((datashape[1],)*2),
+                "NAdelete": kwargs.get("NAdelete", True),
+                "m.max": kwargs.get("mmax", r("Inf")),
+                "u2pd": kwargs.get("u2pd", "relaxed"),
+                "skel.method": kwargs.get("skelmethod", "stable"),
+                "conservative": kwargs.get("conservative", False),
+                "maj.rule": kwargs.get("majrule", True),
+                "solve.confl": kwargs.get("solveconfl", False),
+                "numCores": kwargs.get("nb_jobs", SETTINGS.NB_JOBS),
+                "verbose": kwargs.get("verbose", SETTINGS.verbose)
+                }
 
         if indepMethod == "Default":
             # print("OK")
