@@ -44,7 +44,7 @@ class FSGNN_model(th.nn.Module):
             output = output.cuda(gpuno)
 
         criterion = MMDloss(input_size=x.size()[0], gpu=gpu, gpu_id=gpuno)
-        # if batch_size == -1:
+        # if batch_size == -1:raise NotImplementedError
         #     batch_size = x.size()[0]
         # Printout value
         # data_iterator = th.utils.data.DataLoader(x, batch_size=batch_size,
@@ -63,10 +63,18 @@ class FSGNN_model(th.nn.Module):
         return list(output.cpu().numpy())
 
 
-def run_FSGNN(data, target):
-    return 0
-
-
 class FSGNN(FeatureSelectionModel):
+    """Feature Selection using MMD and Generative Neural Networks."""
+
     def __init__(self):
+        """Init the model."""
         super(FSGNN, self).__init__()
+
+    def predict_features(df_features, df_target, idx=0, **kwargs):
+        """For one variable, predict its neighbours."""
+        nh = kwargs.get('nh', 20)
+        x = th.FloatTensor(scale(df_features.as_matrix()))
+        y = th.FloatTensor(scale(df_target.as_matrix()))
+        model = FSGNN_model([x.size()[1], nh, 1], **kwargs)
+
+        return model.train(x, y, **kwargs)
