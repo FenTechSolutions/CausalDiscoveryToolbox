@@ -1,4 +1,5 @@
-""" Information Geometric Causal Inference (IGCI) model from
+"""Information Geometric Causal Inference (IGCI) model.
+
 P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
 K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
 Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
@@ -17,7 +18,7 @@ standard_scale = StandardScaler()
 
 
 def eval_entropy(x):
-    """ Evaluate the entropy of the input variable
+    """Evaluate the entropy of the input variable.
 
     :param x: input variable 1D
     :return: entropy of x
@@ -33,18 +34,8 @@ def eval_entropy(x):
     return hx
 
 
-def diff_entropy_estimator(x, y):
-    """ Entropy estimator for causal inference
-
-    :param x: input variable x 1D
-    :param y: input variable y 1D
-    :return: Return value of the IGCI model >0 if x->y otherwise if return <0
-    """
-    return eval_entropy(y) - eval_entropy(x)
-
-
 def integral_approx_estimator(x, y):
-    """ Integral approximation estimator for causal inference
+    """Integral approximation estimator for causal inference.
 
     :param x: input variable x 1D
     :param y: input variable y 1D
@@ -66,38 +57,21 @@ def integral_approx_estimator(x, y):
     return (a - b)/len(x)
 
 
-def gaussian_scale(x):
-    """ Standard scale
-
-    :param x: Input variable
-    :return: scaled input variable
-    """
-    return standard_scale.fit_transform(x)
-
-
-def uniform_scale(x):
-    """ Min-Max scale
-
-    :param x: Input variable
-    :return: scaled input variable
-    """
-    return min_max_scale.fit_transform(x)
-
-
 class IGCI(PairwiseModel):
-    """ Information Geometric Causal Inference (IGCI) model from
+    """Information Geometric Causal Inference (IGCI) model.
+
     P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
     K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
     Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
     http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf
-
     """
+
     def __init__(self):
-        """ Initialize the IGCI model """
+        """.Initialize the IGCI model."""
         super(IGCI, self).__init__()
 
     def predict_proba(self, a, b, **kwargs):
-        """ Evaluate a pair using the IGCI model
+        """Evaluate a pair using the IGCI model.
 
         :param a: Input variable 1D
         :param b: Input variable 1D
@@ -105,8 +79,9 @@ class IGCI(PairwiseModel):
                         estimator: method used to evaluate the pairs (entropy or integral)}
         :return: Return value of the IGCI model >0 if a->b otherwise if return <0
         """
-        estimators = {'entropy': diff_entropy_estimator, 'integral': integral_approx_estimator}
-        ref_measures = {'gaussian': gaussian_scale, 'uniform': uniform_scale, 'None': lambda x: x}
+        estimators = {'entropy': lambda x, y: eval_entropy(y) - eval_entropy(x), 'integral': integral_approx_estimator}
+        ref_measures = {'gaussian': lambda x: standard_scale.fit_transform(x),
+                        'uniform': lambda x: min_max_scale.fit_transform(x), 'None': lambda x: x}
 
         ref_measure = ref_measures[kwargs.get('refMeasure', 'gaussian')]
         estimator = estimators[kwargs.get('estimator', 'entropy')]

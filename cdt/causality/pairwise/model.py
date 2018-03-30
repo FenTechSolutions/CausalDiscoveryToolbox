@@ -3,24 +3,35 @@ Pairwise causal models base class
 Author: Diviyan Kalainathan
 Date : 7/06/2017
 """
-from ...utils.Graph import DirectedGraph
+import networkx as nx
 from sklearn.preprocessing import scale
 from pandas import DataFrame
 
 
 class PairwiseModel(object):
-    """ Base class for all pairwise causal inference models
+    """Base class for all pairwise causal inference models
 
     Usage for undirected/directed graphs and CEPC df format.
     """
 
     def __init__(self):
-        """ Init. """
+        """Init."""
         super(PairwiseModel, self).__init__()
 
+    def predict(self, x, *args, **kwargs):
+        """Generic predict method."""
+        if len(args) > 0:
+            if type(args[0]) == nx.Graph or type(args[0]) == nx.DiGraph:
+                return self.orient_graph(x, *args, **kwargs)
+            else:
+                return self.predict_proba(x, *args, **kwargs)
+        elif type(x) == DataFrame:
+            return self.predict_dataset(x, *args, **kwargs)
+
     def predict_proba(self, a, b, idx=0, **kwargs):
-        """ Prediction method for pairwise causal inference.
-        predict is meant to be overridden in all subclasses
+        """Prediction method for pairwise causal inference.
+
+        predict_proba is meant to be overridden in all subclasses
 
         :param a: Variable 1
         :param b: Variable 2
@@ -30,7 +41,7 @@ class PairwiseModel(object):
         raise NotImplementedError
 
     def predict_dataset(self, x, **kwargs):
-        """ Causal prediction of a pairwise dataset (x,y)
+        """Causal prediction of a pairwise dataset (x,y).
 
         :param x: Pairwise dataset
         :param printout: print regularly predictions
@@ -54,40 +65,47 @@ class PairwiseModel(object):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, umg, **kwargs):
-        """ Orient an undirected graph using the pairwise method defined by the subclass
-        Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
+    def orient_graph(self, df_data, graph, printout=None, **kwargs):
+        """Orient an undirected graph using the pairwise method defined by the subclass.
 
+        Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
         :param df_data: dataset
         :param umg: UndirectedGraph
         :param printout: print regularly predictions
         :return: Directed graph w/ weights
         :rtype: DirectedGraph
         """
+        if type(graph) == nx.DiGraph:
+            edges = [a for a in list(graph.edges) if (a[1], a[0]) in list(graph.edges)]
+            oriented_edges = [a for a in list(graph.edges) if (a[1], a[0]) not in list(graph.edges)]
+            for a in edges:
+                if (a[1], a[0]) in list(graph.edges):
+                    edges.remove(a)
+            output = nx.DiGraph()
+            for i in oriented_edges:
+                output.add_edge(*i)
 
-        deletion = kwargs.get("deletion", False)
-        printout = kwargs.get("printout", None)
-        edges = umg.get_list_edges_without_duplicate()
-        graph = DirectedGraph(skeleton=umg)
+        elif type(graph) == nx.Graph:
+            edges = list(graph.edges)
+            output = nx.DiGraph()
+
+        else:
+            raise TypeError("Data type not understood.")
+
         res = []
         idx = 0
 
-        for edge in edges:
-            a, b, c = edge
+        for a, b in edges:
             weight = self.predict_proba(
-                scale(df_data[a].as_matrix()), scale(df_data[b].as_matrix()), idx)
+                df_data[a].as_matrix(), df_data[b].as_matrix(), idx, **kwargs)
             if weight > 0:  # a causes b
-                graph.add(a, b, weight)
+                output.add_edge(a, b, weight=weight)
             else:
-                graph.add(b, a, abs(weight))
+                output.add_edge(b, a, weight=abs(weight))
             if printout is not None:
                 res.append([str(a) + '-' + str(b), weight])
                 DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
                     printout, index=False)
 
             idx += 1
-        if not deletion:
-            graph.remove_cycles_without_deletion()
-        else:
-            graph.remove_cycles()
-        return graph
+        return output

@@ -13,10 +13,10 @@ from .model import PairwiseModel
 
 
 class NCC_model(th.nn.Module):
-    """ NCC model structure """
+    """NCC model structure."""
 
     def __init__(self, n_hiddens=20):
-        """ Init the NCC structure with the number of hidden units
+        """Init the NCC structure with the number of hidden units.
 
         :param n_hiddens: Number of hidden units
         :type n_hiddens: int
@@ -29,7 +29,7 @@ class NCC_model(th.nn.Module):
         self.l2 = th.nn.Linear(n_hiddens, 1)
 
     def forward(self, x):
-        """ Passing data through the network
+        """Passing data through the network.
 
         :param x: 2d tensor containing both (x,y) Variables
         :return: output of the net
@@ -42,7 +42,7 @@ class NCC_model(th.nn.Module):
 
 
 class NCC(PairwiseModel):
-    """Neural Causation Coefficient
+    """Neural Causation Coefficient.
 
     Infer causal relationships between pairs of variables
     Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
@@ -55,7 +55,7 @@ class NCC(PairwiseModel):
         self.model = None
 
     def fit(self, x_tr, y_tr):
-        """ Fit the NCC model
+        """Fit the NCC model.
 
         :param x_tr: CEPC-format DataFrame containing pairs of variables
         :param y_tr: array containing targets
@@ -85,7 +85,7 @@ class NCC(PairwiseModel):
             opt.step()
 
     def predict_proba(self, a, b):
-        """ Infer causal directions using the trained NCC pairwise model
+        """Infer causal directions using the trained NCC pairwise model.
 
         :param a: Variable 1
         :param b: Variable 2

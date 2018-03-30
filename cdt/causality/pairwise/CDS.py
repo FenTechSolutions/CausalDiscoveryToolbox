@@ -114,7 +114,6 @@ class CDS(PairwiseModel):
                                     dtype=float)
 
                 else:
-                    print("OK22")
                     cyx = Counter(yx)
                     pyxa = [cyx[i] for i in yrange]
                     pyxax = np.array([0] * (ny - 1) + pyxa + [0] * (ny - 1), dtype=float)
