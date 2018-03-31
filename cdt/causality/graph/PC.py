@@ -8,8 +8,8 @@ import warnings
 import numpy as np
 import networkx as nx
 from shutil import rmtree
-from pandas import DataFrame
 from .model import GraphModel
+from pandas import DataFrame, read_csv
 from ...utils.Settings import SETTINGS
 from ...utils.R import RPackages, launch_R_script
 
@@ -69,11 +69,12 @@ class PC(GraphModel):
                           '{EDGES}': '/tmp/cdt_pc/fixededges.csv',
                           '{GAPS}': '/tmp/cdt_pc/fixedgaps.csv',
                           '{CITEST}': self.CI_tests['gaussian'],
-                          '{METHOD_INDEP}': self.CI_tests['pcalg'],
+                          '{METHOD_INDEP}': self.method_indep['pcalg'],
                           '{SELMAT}': 'NULL',
                           '{DIRECTED}': 'TRUE',
                           '{SETOPTIONS}': 'NULL',
                           '{ALPHA}': '',
+                          '{VERBOSE}': 'FALSE',
                           '{OUTPUT}': '/tmp/cdt_pc/result.csv'}
 
     def orient_undirected_graph(self, data, graph, CItest="gaussian",
@@ -82,9 +83,15 @@ class PC(GraphModel):
         """Run PC on an undirected graph."""
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.CI_tests[CItest]
-        self.arguments['{METHOD_INDEP}'] = self.CI_tests[method_indep],
+        self.arguments['{METHOD_INDEP}'] = self.method_indep[method_indep],
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(alpha)
+        self.arguments['{NJOBS}'] = str(njobs)
+
+        if verbose:
+            self.arguments['{VERBOSE}'] = 'TRUE'
+        else:
+            self.arguments['{VERBOSE}'] = 'FALSE'
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
         fg = DataFrame(1 - fe.as_matrix())
@@ -95,7 +102,7 @@ class PC(GraphModel):
         results = self.run_pc(data, fixedEdges=fe, fixedGaps=fg)
 
         return nx.relabel_nodes(nx.DiGraph(results),
-                                {idx: i for idx, i in data.columns})
+                                {idx: i for idx, i in enumerate(data.columns)})
 
     def orient_directed_graph(self, data, graph, *args, **kwargs):
         """Run PC on a directed_graph."""
@@ -117,14 +124,20 @@ class PC(GraphModel):
         """
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.CI_tests[CItest]
-        self.arguments['{METHOD_INDEP}'] = self.CI_tests[method_indep],
+        self.arguments['{METHOD_INDEP}'] = self.method_indep[method_indep],
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(alpha)
+        self.arguments['{NJOBS}'] = str(njobs)
+
+        if verbose:
+            self.arguments['{VERBOSE}'] = 'TRUE'
+        else:
+            self.arguments['{VERBOSE}'] = 'FALSE'
 
         results = self.run_pc(data)
 
         return nx.relabel_nodes(nx.DiGraph(results),
-                                {idx: i for idx, i in data.columns})
+                                {idx: i for idx, i in enumerate(data.columns)})
 
     def run_pc(self, data, fixedEdges=None, fixedGaps=None):
         """Setting up and running pc with all arguments."""
@@ -145,7 +158,7 @@ class PC(GraphModel):
         os.makedirs('/tmp/cdt_pc/')
 
         def retrieve_result():
-            return np.loadtxt('/tmp/cdt_pc/result.csv', delimiter=',')
+            return read_csv('/tmp/cdt_pc/result.csv', delimiter=',').as_matrix()
 
         try:
             data.to_csv('/tmp/cdt_pc/data.csv', header=False, index=False)
@@ -153,7 +166,6 @@ class PC(GraphModel):
                 fixedGaps.to_csv('/tmp/cdt_pc/fixedgaps.csv', header=False, index=False)
                 fixedEdges.to_csv('/tmp/cdt_pc/fixededges.csv', header=False, index=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
-
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
 

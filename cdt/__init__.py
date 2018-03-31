@@ -4,7 +4,7 @@ Additionally, it offers many utilities for graphs types.
 It is CUDA-compatible for the most computationally expensive algorithms.
 """
 
-# import cdt.causality
+import cdt.causality
 import cdt.independence
 import cdt.generators
 from cdt.utils import loss

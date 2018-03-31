@@ -2,6 +2,7 @@
 
 library('pcalg')
 library('kpcalg')
+library('methods')
 
 runPC <- function(X, suffStat, parentsOf, alpha, variableSelMat, setOptions,
                   directed, verbose,fixedEdges,fixedGaps,
@@ -50,7 +51,7 @@ runPC <- function(X, suffStat, parentsOf, alpha, variableSelMat, setOptions,
   list(resList = result, resMat = pcmat)
 }
 
- dataset <- read.csv(file={FILE}, sep=",");
+ dataset <- read.csv(file='{FILE}', sep=",");
 
 variableSelMat = {SELMAT}  # NULL
 directed = {DIRECTED}  # TRUE
@@ -59,14 +60,14 @@ setOptions = {SETOPTIONS} # NULL
 parentsOf = 1:ncol(dataset)
 alpha <- {ALPHA} # 0.01
 if ({SKELETON}){
-  fixedGaps <- read.csv(file={GAPS}, sep=",") # NULL
-  fixedEdges <- read.csv(file={EDGES}, sep=",") # NULL
+  fixedGaps <- read.csv(file='{GAPS}', sep=",") # NULL
+  fixedEdges <- read.csv(file='{EDGES}', sep=",") # NULL
 }else{
   fixedGaps = NULL
   fixedEdges = NULL
 }
-result <- runPC(MyData, suffStat = NULL, parentsOf, alpha,
+result <- runPC(dataset, suffStat = NULL, parentsOf, alpha,
                variableSelMat, setOptions,
                directed, verbose, fixedEdges, fixedGaps, CI_test)
 
-write.csv(result$resMat,row.names = FALSE, file = {OUTPUT});
+write.csv(result$resMat,row.names = FALSE, file = '{OUTPUT}');
