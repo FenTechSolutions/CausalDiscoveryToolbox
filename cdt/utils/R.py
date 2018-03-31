@@ -83,7 +83,9 @@ def launch_R_script(template, arguments, output_function=None, verbose=True):
     except Exception as e:
         rmtree('/tmp/cdt_R_scripts/')
         raise e
-
+    except KeyboardInterrupt:
+        rmtree('/tmp/cdt_R_scripts/')
+        raise KeyboardInterrupt
     rmtree('/tmp/cdt_R_scripts/')
     return output
 

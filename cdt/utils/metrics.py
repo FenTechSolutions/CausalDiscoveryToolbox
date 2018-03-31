@@ -77,6 +77,9 @@ def SID(target, pred):
     except Exception as e:
         rmtree('/tmp/cdt_SID')
         raise e
+    except KeyboardInterrupt:
+        rmtree('/tmp/cdt_SID/')
+        raise KeyboardInterrupt
 
     rmtree('/tmp/cdt_SID')
     return sid_score

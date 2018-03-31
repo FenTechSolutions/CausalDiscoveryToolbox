@@ -174,6 +174,8 @@ class PC(GraphModel):
         except Exception as e:
             rmtree('/tmp/cdt_pc')
             raise e
-
+        except KeyboardInterrupt:
+            rmtree('/tmp/cdt_pc/')
+            raise KeyboardInterrupt
         rmtree('/tmp/cdt_pc')
         return pc_result
