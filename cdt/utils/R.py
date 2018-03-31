@@ -7,7 +7,7 @@ Author: Diviyan Kalainathan
 import os
 import warnings
 import fileinput
-from subprocess import call, DEVNULL
+import subprocess
 from shutil import copy, rmtree
 
 
@@ -67,16 +67,16 @@ def launch_R_script(template, arguments, output_function=None, verbose=True):
                     mline = mline.replace(elt, arguments[elt])
                 print(mline, end='')
 
-        if verbose:
-            out = call("Rscript --vanilla {}".format(scriptpath),
-                       shell=True)
-        else:
-            out = call("Rscript --vanilla {}".format(scriptpath),
-                       shell=True, stdout=DEVNULL, stderr=DEVNULL)
-
         if output_function is None:
-            output = out
+            output = subprocess.call("Rscript --vanilla {}".format(scriptpath), shell=True,
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
+            if verbose:
+                process = subprocess.Popen("Rscript --vanilla {}".format(scriptpath), shell=True)
+            else:
+                process = subprocess.Popen("Rscript --vanilla {}".format(scriptpath), shell=True,
+                                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            process.wait()
             output = output_function()
 
     # Cleaning up

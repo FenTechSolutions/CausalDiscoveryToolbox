@@ -59,10 +59,10 @@ class PC(GraphModel):
                          "hsic": "kpcalg::kernelCItest",
                          "discrete": "pcalg::disCItest",
                          "binary": "pcalg::binCItest"}
-        self.method_indep = {'dcc': "dcc",
-                             'hsic_gamma': "hsic.gamma",
-                             'hsic_perm': "hsic.perm",
-                             'hsic_clus': "hsic.clus",
+        self.method_indep = {'dcc': "data=X, ic.method=\"dcc\"",
+                             'hsic_gamma': "data=X, ic.method=\"hsic.gamma\"",
+                             'hsic_perm': "data=X, ic.method=\"hsic.perm\"",
+                             'hsic_clus': "data=X, ic.method=\"hsic.clus\"",
                              'pcalg': "C = cor(X), n = nrow(X)"}
         self.arguments = {'{FILE}': '/tmp/cdt_pc/data.csv',
                           '{SKELETON}': 'FALSE',
@@ -83,7 +83,7 @@ class PC(GraphModel):
         """Run PC on an undirected graph."""
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.CI_tests[CItest]
-        self.arguments['{METHOD_INDEP}'] = self.method_indep[method_indep],
+        self.arguments['{METHOD_INDEP}'] = self.method_indep[method_indep]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(alpha)
         self.arguments['{NJOBS}'] = str(njobs)
@@ -124,7 +124,7 @@ class PC(GraphModel):
         """
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.CI_tests[CItest]
-        self.arguments['{METHOD_INDEP}'] = self.method_indep[method_indep],
+        self.arguments['{METHOD_INDEP}'] = self.method_indep[method_indep]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(alpha)
         self.arguments['{NJOBS}'] = str(njobs)
@@ -133,7 +133,6 @@ class PC(GraphModel):
             self.arguments['{VERBOSE}'] = 'TRUE'
         else:
             self.arguments['{VERBOSE}'] = 'FALSE'
-
         results = self.run_pc(data)
 
         return nx.relabel_nodes(nx.DiGraph(results),
