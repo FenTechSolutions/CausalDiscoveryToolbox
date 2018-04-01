@@ -58,11 +58,8 @@ class GES(GraphModel):
                                 verbose=False, **kwargs):
         """Run GES on an undirected graph."""
         # Building setup w/ arguments.
-
-        if verbose:
-            self.arguments['{VERBOSE}'] = 'TRUE'
-        else:
-            self.arguments['{VERBOSE}'] = 'FALSE'
+        self.arguments['{VERBOSE}'] = str(verbose).upper()
+        self.arguments['{SCORE}'] = self.scores[score]
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
         fg = DataFrame(1 - fe.as_matrix())
@@ -86,10 +83,8 @@ class GES(GraphModel):
         """
         # Building setup w/ arguments.
         self.arguments['{SCORE}'] = self.scores[score]
-        if verbose:
-            self.arguments['{VERBOSE}'] = 'TRUE'
-        else:
-            self.arguments['{VERBOSE}'] = 'FALSE'
+        self.arguments['{VERBOSE}'] = str(verbose).upper()
+
         results = self.run_ges(data, verbose=verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
@@ -111,8 +106,8 @@ class GES(GraphModel):
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
 
-            pc_result = launch_R_script("{}/R_templates/ges.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                        self.arguments, output_function=retrieve_result, verbose=verbose)
+            ges_result = launch_R_script("{}/R_templates/ges.R".format(os.path.dirname(os.path.realpath(__file__))),
+                                         self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
             rmtree('/tmp/cdt_ges')
@@ -121,4 +116,4 @@ class GES(GraphModel):
             rmtree('/tmp/cdt_ges/')
             raise KeyboardInterrupt
         rmtree('/tmp/cdt_ges')
-        return pc_result
+        return ges_result

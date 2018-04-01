@@ -26,7 +26,8 @@ class DefaultRPackages(object):
                  "kpcalg",
                  "bnlearn",
                  "D2C",
-                 "SID")
+                 "SID",
+                 "CAM")
 
     def __init__(self):
         """Init the values of the packages."""
@@ -35,6 +36,7 @@ class DefaultRPackages(object):
         self.bnlearn = False
         self.D2C = False
         self.SID = False
+        self.CAM = False
 
     def __repr__(self):
         """Representation."""

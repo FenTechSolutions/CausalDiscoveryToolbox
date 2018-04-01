@@ -5,7 +5,6 @@ Author = Diviyan Kalainathan
 """
 import os
 import warnings
-import numpy as np
 import networkx as nx
 from shutil import rmtree
 from .model import GraphModel
@@ -87,15 +86,11 @@ class PC(GraphModel):
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(alpha)
         self.arguments['{NJOBS}'] = str(njobs)
-
-        if verbose:
-            self.arguments['{VERBOSE}'] = 'TRUE'
-        else:
-            self.arguments['{VERBOSE}'] = 'FALSE'
+        self.arguments['{VERBOSE}'] = str(verbose).upper()
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
         fg = DataFrame(1 - fe.as_matrix())
-        
+
         results = self.run_pc(data, fixedEdges=fe, fixedGaps=fg, verbose=verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
@@ -125,11 +120,8 @@ class PC(GraphModel):
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(alpha)
         self.arguments['{NJOBS}'] = str(njobs)
+        self.arguments['{VERBOSE}'] = str(verbose).upper()
 
-        if verbose:
-            self.arguments['{VERBOSE}'] = 'TRUE'
-        else:
-            self.arguments['{VERBOSE}'] = 'FALSE'
         results = self.run_pc(data, verbose=verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
