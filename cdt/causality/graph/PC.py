@@ -95,11 +95,8 @@ class PC(GraphModel):
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
         fg = DataFrame(1 - fe.as_matrix())
-        fe = fe.replace(1, 'TRUE')
-        fe = fe.replace(0, 'FALSE')
-        fg = fg.replace(1, 'TRUE')
-        fg = fg.replace(0, 'FALSE')
-        results = self.run_pc(data, fixedEdges=fe, fixedGaps=fg)
+        
+        results = self.run_pc(data, fixedEdges=fe, fixedGaps=fg, verbose=verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
                                 {idx: i for idx, i in enumerate(data.columns)})
@@ -133,12 +130,12 @@ class PC(GraphModel):
             self.arguments['{VERBOSE}'] = 'TRUE'
         else:
             self.arguments['{VERBOSE}'] = 'FALSE'
-        results = self.run_pc(data)
+        results = self.run_pc(data, verbose=verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
                                 {idx: i for idx, i in enumerate(data.columns)})
 
-    def run_pc(self, data, fixedEdges=None, fixedGaps=None):
+    def run_pc(self, data, fixedEdges=None, fixedGaps=None, verbose=True):
         """Setting up and running pc with all arguments."""
         # Checking coherence of arguments
         if (self.arguments['{CITEST}'] == self.CI_tests['hsic']
@@ -162,14 +159,14 @@ class PC(GraphModel):
         try:
             data.to_csv('/tmp/cdt_pc/data.csv', header=False, index=False)
             if fixedGaps is not None and fixedEdges is not None:
-                fixedGaps.to_csv('/tmp/cdt_pc/fixedgaps.csv', header=False, index=False)
-                fixedEdges.to_csv('/tmp/cdt_pc/fixededges.csv', header=False, index=False)
+                fixedGaps.to_csv('/tmp/cdt_pc/fixedgaps.csv', index=False, header=False)
+                fixedEdges.to_csv('/tmp/cdt_pc/fixededges.csv', index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
 
             pc_result = launch_R_script("{}/R_templates/pc.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                        self.arguments, output_function=retrieve_result)
+                                        self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
             rmtree('/tmp/cdt_pc')

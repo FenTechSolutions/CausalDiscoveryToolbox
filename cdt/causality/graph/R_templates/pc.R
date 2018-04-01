@@ -60,8 +60,13 @@ setOptions = {SETOPTIONS} # NULL
 parentsOf = 1:ncol(dataset)
 alpha <- {ALPHA} # 0.01
 if ({SKELETON}){
-  fixedGaps <- read.csv(file='{GAPS}', sep=",") # NULL
-  fixedEdges <- read.csv(file='{EDGES}', sep=",") # NULL
+  fixedGaps <- read.csv(file='{GAPS}', sep=",", header=FALSE) # NULL
+  fixedEdges <- read.csv(file='{EDGES}', sep=",", header=FALSE) # NULL
+  fixedGaps = (data.matrix(fixedGaps))
+  fixedEdges = (data.matrix(fixedEdges))
+  rownames(fixedGaps) <- colnames(fixedGaps)
+  rownames(fixedEdges) <- colnames(fixedEdges)
+
 }else{
   fixedGaps = NULL
   fixedEdges = NULL
