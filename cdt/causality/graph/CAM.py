@@ -8,7 +8,7 @@ import warnings
 import networkx as nx
 from shutil import rmtree
 from .model import GraphModel
-from pandas import DataFrame, read_csv
+from pandas import read_csv
 from ...utils.Settings import SETTINGS
 from ...utils.R import RPackages, launch_R_script
 
