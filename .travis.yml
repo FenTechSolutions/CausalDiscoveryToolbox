@@ -14,6 +14,7 @@ install:
   - if [[ `python3 -c 'import sys ; print(".".join([str(i) for i in sys.version_info[:][:2]]))'` == '3.5' ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.3.1-cp35-cp35m-linux_x86_64.whl; fi
   - if [[ `python3 -c 'import sys ; print(".".join([str(i) for i in sys.version_info[:][:2]]))'` == '3.6' ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.3.1-cp36-cp36m-linux_x86_64.whl; fi
   - pip3 install -r requirements.txt
+  - pip3 install pytest
 # command to run tests
 script:
   - python setup.py install
