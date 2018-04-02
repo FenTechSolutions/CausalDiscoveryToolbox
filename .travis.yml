@@ -15,8 +15,8 @@ install:
   - if [[ `python3 -c 'import sys ; print(".".join([str(i) for i in sys.version_info[:][:2]]))'` == '3.6' ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.3.1-cp36-cp36m-linux_x86_64.whl; fi
   - pip3 install -r requirements.txt
   - pip3 install pytest
+  - pip3 install .
+  - python3 setup.py install
 # command to run tests
 script:
-  - python3 setup.py install
-  - pip3 install .
   - pytest
