@@ -1,0 +1,21 @@
+# Setting up automatic travis test build.
+
+branches:
+  only:
+  - dev
+
+language: python
+python:
+  - "3.5"
+  - "3.6"
+  # PyPy versions
+  - "pypy3.5"
+# command to install dependencies
+install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.3.1-cp35-cp35m-linux_x86_64.whl; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.3.1-cp36-cp36m-linux_x86_64.whl; fi
+  - pip install -r requirements.txt
+# command to run tests
+script:
+  - python setup.py install
+  # pytest
