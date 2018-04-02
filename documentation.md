@@ -65,15 +65,9 @@ cdt.CGNN_SETTINGS
 Moreover, the hardware parameters are detected and defined automatically (including number of GPUs, CPUs, available optional packages) at the **import** of the package using the **cdt.utils.Settings.autoset_settings** method, run at startup.
 
 ## The graph class
-The whole package revolves around using the **DirectedGraph** and the **UndirectedGraph** classes that define how the graph has to be processed in the package. Those classes are accessible via :
+The whole package revolves around using the **DiGraph** and **Graph** classes from the **networkx** package.
 
-```python
-import cdt
-cdt.DirectedGraph
-cdt.UndirectedGraph
-```
-These classes are defined under the **cdt.utils.Graph.py** file.
-
+## References
 
 - [1] Wang, S., Nan, B., Rosset, S., & Zhu, J. (2011). Random lasso. The annals of applied statistics, 5(1), 468.
 - [2] Friedman, J., Hastie, T., & Tibshirani, R. (2008). Sparse inverse covariance estimation with the graphical lasso. Biostatistics, 9(3), 432-441.
