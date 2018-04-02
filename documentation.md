@@ -52,14 +52,13 @@ cdt package
 ```
 
 ## Hardware and algorithm settings
-The toolbox has a SETTINGS class as well as a CGNN_SETTINGS class that define respectively the hardware settings and the CGNN algorithm settings. Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**.
+The toolbox has a SETTINGS class that defines the hardware settings . Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**.
 
 These parameters are accessible and overridable via accessing the class :
 
 ```python
 import cdt
 cdt.SETTINGS
-cdt.CGNN_SETTINGS
 ```
 
 Moreover, the hardware parameters are detected and defined automatically (including number of GPUs, CPUs, available optional packages) at the **import** of the package using the **cdt.utils.Settings.autoset_settings** method, run at startup.
