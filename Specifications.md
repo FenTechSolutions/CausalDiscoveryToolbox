@@ -1,6 +1,6 @@
 # Specifications of the Causal Discovery Toolbox
 
-## Subpackages 
+## Subpackages
 
 1. Independence
    1. Statistical tests
@@ -8,51 +8,56 @@
        * Spearman's correlation [_OK_]
        * Kendall's tau [_OK_]
        * Mutual Information Regression [_OK_]
-       * Normalized HSIC [_OK_] 
-       * Adjusted Mutual Information [_OK_] 
+       * Normalized HSIC [_OK_]
+       * Adjusted Mutual Information [_OK_]
        * Normalized Mutual Information [_OK_]
-       
+
    2. Skeleton recovery
        * FSGNN **[_Validate_]**
        * Glasso [_OK_]
-       * HSIC Lasso **[_Develop Class_]** **[_Validate_]**
-       * minet (Mrnet, ARACNe, CLR) **[_Develop Wrapper_]** **[_Validate_]**
+       * HSIC Lasso [_OK_]
+       * minet (Mrnet, ARACNe, CLR) [_OK_]
        * Network Deconvolution [_OK_]
-       * Feature Selection Models **[_Validate_]**
-       
+       * Feature Selection Models [_OK_]
+
 2. Causality
    1. Pairwise inference
-      
+
       * IGCI **[_Validate_]**
       * PNL **[_Develop_]** **[_Validate_]**
       * GPI **[_Develop_]** **[_Validate_]**
-      * GNN **[_Validate tf & th_]** - Experiments launched
+      * GNN **[_Validate_]**
       * ANM [_OK_]
       * CDS [_OK_]
       * Bivariate Fit [_OK_]
       * RCC [_OK_]
-      * NCC **[_Validate_]** 
-  
+      * NCC **[_Validate_]**
+
    2. Cofounder detection **[_Develop_]**
    3. Graph inference:
-      * CGNN **[_Validate tf & th_]** - Experiments launched
-      * Other (Lingam?) **[_Develop_]** 
-      * Bayesian Methods **[_Develop_]** (Interface w/ **bnlearn** ?)
+      * CGNN **[_Develop & Validate_]**
+      * CAM [_OK_]
+      * SAM [_OK_]
+      * PC [_OK_]
+      * GES [_OK_]
+      * GIES [_OK_]
+      * LiNGAM [_OK_]
+      * MMHC **[_Develop & Validate_]**
+      * GS **[_Develop & Validate_]**
+      * D2C **[_Develop & Validate_]**
+      * CCD **[_Develop & Validate_]**
 
-3. Time-series **[_Develop_]** 
+3. Time-series **[_Develop_]**
 4. Utils :
-   * Graph Class and operations [_OK_] 
-   * Graph visualisation **[_Develop_]** **[_Validate_]**
-   * Log info ? 
+   * Graph Dagify **[_Develop_]** **[_Validate_]**
+   * Log info ?
    * Import datasets **[_Develop_]** **[_Validate_]**
    * Dataset generator :
        * Random Graph [_OK_]
-       * Graph from data [_OK_]
-   * Loading pretrained models **[_Develop_]** **[_Validate_]**
-   * Metrics **[_Develop_]** **[_Validate_]**
+   * Metrics [_OK_]
    * Losses **[_Validate_]**
    * Settings [_OK_]
-	  
+
 5. Auto-Causality **[_Develop_]** **[_Validate_]**
 
 ## Types and important notes
@@ -70,21 +75,21 @@ In order to do that, some types might have to be implemented:
 
 Including all R packages
 
-**~~The Matlab software base might have to be ported to python~~** 
+**~~The Matlab software base might have to be ported to python~~**
 (Too much dependencies already introduced + Not having to pay for Matlab software )
 
 The bnlearn package might be used using an R wrapper (rpy2) **[ToDo]**
 
-**Testing hypothesis/ simplifying assumptions ?** 
+**Testing hypothesis/ simplifying assumptions ?**
 
 How can we do it on a new dataset?
 Modify dataset to get ou of the simplifying assumptions case
-Datasets types for simplifying assumptions and types of variables? 
+Datasets types for simplifying assumptions and types of variables?
 
 **Types of variables**
 
 Continous, Categorical, Binary? **[ToDo] : Now only numerical is supported**
 
-**Warn User of satisfiability of assumptions/ applicability of algorithms [Long term objective]** 
+**Warn User of satisfiability of assumptions/ applicability of algorithms [Long term objective]**
 
-**Load Pretrained models** 
+**Load Pretrained models**
