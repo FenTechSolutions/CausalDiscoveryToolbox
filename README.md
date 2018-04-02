@@ -3,6 +3,7 @@
 Package for causal inference in graphs and in the pairwise settings for Python>3.5. Tools for graph structure recovery and dependencies are included.
 
 [![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
+![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 
