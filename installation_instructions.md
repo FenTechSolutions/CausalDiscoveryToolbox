@@ -32,31 +32,30 @@ If not, you can install it with the command (Debian distribution):
 ```
 $ sudo apt-get install python3 python3-pip python3-wheel
 ```
-## Install tensorflow
-As some of the key algorithms in the _cdt_ package use the TensorFlow package, it is required to install it. If you possess cuda-enabled GPUs to perform computations, you can install TensorFlow with the command : 
-```	
-$ pip install tensorflow-gpu
-```	
-If you don't possess any compatible GPU, install the CPU-version of TensorFlow : 
-```
-$ pip install tensorflow 
-```
-## Install the python requirements and the _cdt_ package
-After having installed tensorflow, we can proceed to install the _cdt_ package : 
-```
+## Install PyTorch
+As some of the key algorithms in the _cdt_ package use the PyTorch package, it is required to install it. 
+Check out their website to install the PyTorch version suited to your hardware configuration: http://pytorch.org
+
+## Install the CausalDiscoveryToolboxPackage
+```sh
 $ git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git  # Download the package 
 $ cd CausalDiscoveryToolbox
 $ pip install -r requirements.txt  # Install the requirements
 $ python setup.py install develop --user
 ```
-**The package is then up and running ! You can run most of the algorithms in the CausalDiscoveryToolbox, you might get warnings: some additional features are not available, but you can just ignore them**
+**The package is then up and running ! You can run most of the algorithms in the CausalDiscoveryToolbox, you might get warnings: some additional features are not available**
 
-## Additional : Pytorch
-[Not yet functional, in development]
+From now on, you can import the library using :
+```python
+import cdt
+```
+Check out the package structure and more info on the package itself [here](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/documentation.md).  
 
-## Additional : R wrapper and R libraries
-[In development]
-In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, minet while using the _cdt_ framework, it is required to install R as well as the wrapper package rpy2.
+## Additional : R and R libraries
+In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, ... while using the _cdt_ framework, it is required to install R.
+
+Using bioconductor (https://www.bioconductor.org/) might be an easier alternative to install all packages.
+Check out the [r-requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt) to see all the packages used by the toolbox.
 
 <!-- python>=3.5 -->
 
