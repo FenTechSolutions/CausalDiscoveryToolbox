@@ -10,7 +10,7 @@ except ImportError:
 
 def setup_package():
     setup(name='cdt',
-          version='0.1',
+          version='0.2',
           description='A Toolbox for causal graph inference',
           url='https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox',
           author='Diviyan Kalainathan',
