@@ -17,5 +17,5 @@ install:
   - pip3 install pytest
 # command to run tests
 script:
-  - python setup.py install
+  - python3 setup.py install
   - pytest
