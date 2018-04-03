@@ -73,7 +73,7 @@ class NormMI(IndependenceModel):
 
     def __init__(self):
         """Init the model."""
-        super(AdjMI, self).__init__()
+        super(NormMI, self).__init__()
 
     def predict(self, a, b, **kwargs):
         """Perform the independence test.
