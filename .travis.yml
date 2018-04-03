@@ -14,7 +14,8 @@ before_install:
   - sudo apt-get install libgmp3-dev
   - sudo apt-get install build-essential
   - sudo apt-get install libv8-3.14-dev
-  - sudo Rscript -e 'install.packages(c("V8"),repos="http://cran.us.r-project.org")'
+  - sudo Rscript -e 'install.packages(c("V8","sfsmisc","clue","randomForest","lattice"),repos="http://cran.us.r-project.org")'
+
   - sudo Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite(c("CAM", "SID", "bnlearn", "pcalg", "kpcalg", "D2C"))'
 
 install:
