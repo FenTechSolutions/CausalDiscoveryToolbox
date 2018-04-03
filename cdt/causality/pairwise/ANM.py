@@ -1,5 +1,5 @@
-"""
-Additive Noise Model
+"""Additive Noise Model.
+
 Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,
   "Nonlinear causal discovery with additive noise models", NIPS 2009
 """
@@ -90,36 +90,36 @@ def normalized_hsic(x, y):
 
 
 class ANM(PairwiseModel):
-    """ Additive Noise model to infer causal relationships.
+    """Additive Noise model to infer causal relationships.
 
     Assuming that x->y then if the data follows an additive noise model, there is y=f(x)+e
     e being a noise variable and f a deterministic function. The causal inference bases itself on the independence
     between x and e.
     It is proven that in such case if the data is generated using an additive noise model, the model would only be able
     to fit in the true causal direction.
-    Ref:
+    Ref: https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf
 
     """
 
     def __init__(self):
+        """Init the model."""
         super(ANM, self).__init__()
 
     def predict_proba(self, a, b):
-        """ Prediction method for pairwise causal inference using the ANM model.
+        """Prediction method for pairwise causal inference using the ANM model.
 
         :param a: Variable 1
         :param b: Variable 2
         :return: (Value : 1 if a->b and -1 if b->a)
         :rtype: float
         """
-
         a = scale(a).reshape((-1, 1))
         b = scale(b).reshape((-1, 1))
 
         return self.anm_score(b, a) - self.anm_score(a, b)
 
     def anm_score(self, x, y):
-        """ Computes the fitness score of the ANM model in the x->y direction
+        """Compute the fitness score of the ANM model in the x->y direction.
 
         :param x: Input, seen as cause
         :param y: Input, seen as effect

@@ -1,21 +1,14 @@
 # Causal Discovery Toolbox
 
-Package for causal inference in graphs and in the pairwise settings. Tools for graph structure recovery and dependencies are included. 
+Package for causal inference in graphs and in the pairwise settings for Python>3.5. Tools for graph structure recovery and dependencies are included.
 
-It implements the CGNN algorithm from the paper :
-1. [**Learning Functional Causal Models with Generative Neural Networks**](https://arxiv.org/abs/1709.05321), Olivier Goudet, Diviyan Kalainathan, Philippe Caillou, David Lopez-Paz, Isabelle Guyon, Michèle Sebag, Aris Tritas, Paola Tubaro.
+[![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 
-The CGNN can be used using :
+It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 
-```python
-from cdt.causality.graph import CGNN
-cgnn = CGNN()
-output = cgnn.predict(data, skeleton)
-```
+An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](examples/Discovery_LUCAS.ipynb)
 
-An example of application on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](LUCAS_example/Discovery_LUCAS.ipynb)
-
-## Documentation 
+## Documentation
 
 [Check the documentation here](documentation.md)
 
@@ -26,6 +19,3 @@ An example of application on the LUCAS dataset (on Lung cancer) using CGNNs can 
 ## Installation
 
 [Check the installation instructions here](installation_instructions.md)
-
-
-

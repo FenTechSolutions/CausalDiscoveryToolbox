@@ -1,3 +1,6 @@
-minet
 pcalg
 kpcalg
+bnlearn
+SID
+CAM
+D2C

@@ -1,11 +1,6 @@
 numpy
 scipy
 scikit-learn
-skrebate
 joblib
 pandas
-tensorflow
 networkx
-toposort
-pymprog
-

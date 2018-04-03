@@ -9,8 +9,8 @@ import numpy as np
 import itertools
 import warnings
 import torch as th
+from torch.autograd import Variable
 from copy import deepcopy
-from th.autograd import Variable
 from joblib import Parallel, delayed
 from .model import GraphModel
 from ..pairwise.GNN import GNN
@@ -49,32 +49,51 @@ class CGNN_block(th.nn.Module):
 class CGNN_model(th.nn.Module):
     """Class for one CGNN instance."""
 
-    def __init__(self, graph, batch_size, nh=20, gpu=False, gpu_id=0):
+    def __init__(self, graph, batch_size, nh=20, gpu=False, gpu_id=0, confounding=False, initial_graph=None):
         """Init the model by creating the blocks and extracting the topological order."""
         super(CGNN_model, self).__init__()
         nodes = list(graph.nodes())
         self.topological_order = [nodes.index(i) for i in nx.topological_sort(graph)]
-        self.adjacency_matrix = nx.adj_matrix(graph, weight=None).todense()
-
+        self.adjacency_matrix = nx.adj_matrix(graph).todense()
+        self.confounding = confounding
+        if initial_graph is None:
+            initial_graph = graph
+            self.i_adj_matrix = self.adjacency_matrix
+        else:
+            self.i_adj_matrix = nx.adj_matrix(initial_graph).todense()
         self.blocks = th.nn.ModuleList()
         self.generated = [None for i in range(self.adjacency_matrix.shape[0])]
         self.noise = Variable(th.zeros(batch_size, self.adjacency_matrix.shape[0]))
+        self.corr_noise = dict([[(i, j), Variable(th.zeros(batch_size, 1))] for i, j
+                                in zip(*np.nonzero(self.i_adj_matrix)) if i < j])
         self.criterion = MMDloss(batch_size, gpu=gpu, gpu_id=gpu_id)
         self.score = th.FloatTensor([0])
         if gpu:
             self.noise = self.noise.cuda(gpu_id)
             self.score = self.score.cuda(gpu_id)
+            for i in self.corr_noise:
+                self.corr_noise[i] = self.corr_noise[i].cuda(gpu_id)
 
         for i in range(self.adjacency_matrix.shape[0]):
-            self.blocks.append(CGNN_block(sum(self.adjacency_matrix[:, i] + 1, nh, 1)))
+            if not confounding:
+                self.blocks.append(CGNN_block(sum(self.adjacency_matrix[:, i]) + 1, nh, 1))
+            else:
+                self.blocks.append(CGNN_block(sum(self.i_adj_matrix[:, i]) + sum(self.adjacency_matrix[:, i]) + 1, nh, 1))
 
     def forward(self):
         """Generate according to the topological order of the graph."""
         self.noise.data.normal_()
-        for i in self.topological_order:
-            self.generated[i] = self.blocks[i](th.cat([v for c in [
-                                               [self.generated[j] for j in np.nonzero(self.adjacency_matrix[:, i])[0]],
-                                               [self.noise[:, i]]] for v in c]), 1)
+        if not self.confounding:
+            for i in self.topological_order:
+                self.generated[i] = self.blocks[i](th.cat([v for c in [
+                                                   [self.generated[j] for j in np.nonzero(self.adjacency_matrix[:, i])[0]],
+                                                   [self.noise[:, i]]] for v in c]), 1)
+        else:
+            for i in self.topological_order:
+                self.generated[i] = self.blocks[i](th.cat([v for c in [
+                                                   [self.generated[j] for j in np.nonzero(self.adjacency_matrix[:, i])[0]],
+                                                   [self.corr_noise[min(i, j), max(i, j)] for j in np.nonzero(self.i_adj_matrix[:, i])[0]]
+                                                   [self.noise[:, i]]] for v in c]), 1)
         return th.cat(self.generated, 1)
 
     def run(self, data, lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True, idx=0):
@@ -101,7 +120,7 @@ def graph_evaluation(data, graph, nb_runs=16, gpu=False, gpu_id=0, **kwargs):
     if gpu:
         obs = obs.cuda(gpu_id)
     cgnn = CGNN_model(graph, data.shape[0], **kwargs)
-    return cgnn.run(data, **kwargs)
+    return cgnn.run(obs, **kwargs)
 
 
 def parallel_graph_evaluation(data, graph, nb_runs=16,
