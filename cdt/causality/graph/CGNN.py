@@ -9,6 +9,7 @@ import numpy as np
 import itertools
 import warnings
 import torch as th
+from copy import deepcopy
 from th.autograd import Variable
 from joblib import Parallel, delayed
 from .model import GraphModel
@@ -53,7 +54,7 @@ class CGNN_model(th.nn.Module):
         super(CGNN_model, self).__init__()
         nodes = list(graph.nodes())
         self.topological_order = [nodes.index(i) for i in nx.topological_sort(graph)]
-        self.adjacency_matrix = nx.adj_matrix(graph).todense()
+        self.adjacency_matrix = nx.adj_matrix(graph, weight=None).todense()
 
         self.blocks = th.nn.ModuleList()
         self.generated = [None for i in range(self.adjacency_matrix.shape[0])]
@@ -77,6 +78,7 @@ class CGNN_model(th.nn.Module):
         return th.cat(self.generated, 1)
 
     def run(self, data, lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True, idx=0):
+        """Run the CGNN on a given graph."""
         optim = th.optim.Adam(self.parameters(), lr=lr)
         self.score.zero_()
 
@@ -94,6 +96,7 @@ class CGNN_model(th.nn.Module):
 
 
 def graph_evaluation(data, graph, nb_runs=16, gpu=False, gpu_id=0, **kwargs):
+    """Evaluate a graph taking account of the hardware."""
     obs = Variable(th.FloatTensor(data))
     if gpu:
         obs = obs.cuda(gpu_id)
@@ -101,7 +104,9 @@ def graph_evaluation(data, graph, nb_runs=16, gpu=False, gpu_id=0, **kwargs):
     return cgnn.run(data, **kwargs)
 
 
-def parallel_graph_evaluation(data, graph, nb_runs=16, nb_jobs=len(SETTINGS.GPU_LIST), **kwargs):
+def parallel_graph_evaluation(data, graph, nb_runs=16,
+                              nb_jobs=SETTINGS.NB_JOBS, **kwargs):
+    """Parallelize the various runs of CGNN to evaluate a graph."""
     if nb_runs == 1:
         return graph_evaluation(data, graph, **kwargs)
     else:
@@ -111,16 +116,56 @@ def parallel_graph_evaluation(data, graph, nb_runs=16, nb_jobs=len(SETTINGS.GPU_
         return np.mean(output)
 
 
-def hill_climbing():
-    pass
+def hill_climbing(data, graph, **kwargs):
+    """Hill Climbing optimization: the greediest possible algorithm."""
+    tested_candidates = [nx.adj_matrix(graph, weight=None)]
+    best_score = parallel_graph_evaluation(data, graph, ** kwargs)
+    best_candidate = graph
+    can_improve = True
+    while can_improve:
+        can_improve = False
+        for (i, j) in best_candidate.edges():
+            test_graph = deepcopy(best_candidate)
+            test_graph.remove_edge(i, j)
+            test_graph.add_edge(j, i)
+            tadjmat = nx.adj_matrix(test_graph, weight=None)
+            if (nx.is_directed_acyclic_graph(test_graph) and tadjmat not in tested_candidates):
+                tested_candidates.append(tadjmat)
+                score = parallel_graph_evaluation(data, test_graph, **kwargs)
+                if score < best_score:
+                    can_improve = True
+                    best_candidate = test_graph
+                    best_score = score
+                    break
+    return best_candidate
 
 
 def hill_climbing_with_removal():
     pass
 
 
-def exploratory_hill_climbing():
-    pass
+def exploratory_hill_climbing(data, graph, proba=0.1, decay=0.95, max_trials=20, **kwargs):
+    """Hill climbing with a bit more exploration."""
+    tested_candidates = [nx.adj_matrix(graph, weight=None)]
+    best_score = parallel_graph_evaluation(data, graph, ** kwargs)
+    best_candidate = graph
+    can_improve = True
+    while can_improve:
+        can_improve = False
+        for (i, j) in best_candidate.edges():
+            test_graph = deepcopy(best_candidate)
+            test_graph.remove_edge(i, j)
+            test_graph.add_edge(j, i)
+            tadjmat = nx.adj_matrix(test_graph, weight=None)
+            if (nx.is_directed_acyclic_graph(test_graph) and tadjmat not in tested_candidates):
+                tested_candidates.append(tadjmat)
+                score = parallel_graph_evaluation(data, test_graph, **kwargs)
+                if score < best_score:
+                    can_improve = True
+                    best_candidate = test_graph
+                    best_score = score
+                    break
+    return best_candidate
 
 
 def tabu_search():
@@ -139,7 +184,7 @@ class CGNN(GraphModel):
         super(CGNN, self).__init__()
 
     def create_graph_from_data(self, data, **kwargs):
-
+        """Use CGNN to create a graph from scratch."""
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")
 
@@ -165,7 +210,7 @@ class CGNN(GraphModel):
                           {idx: i for idx, i in enumerate(data.columns)})
 
     def orient_directed_graph(self, data, dag, alg='HC', **kwargs):
-        """ Improve a directed acyclic graph using CGNN
+        """Improve a directed acyclic graph using CGNN.
 
         :param data: data
         :param dag: directed acyclic graph to optimize
@@ -173,20 +218,18 @@ class CGNN(GraphModel):
         :param log: Save logs of the execution
         :return: improved directed acyclic graph
         """
-
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
 
         return alg_dic[alg](dag, data, self.infer_graph, **kwargs)
 
     def orient_undirected_graph(self, data, umg, **kwargs):
-        """ Orient the undirected graph using GNN and apply CGNN to improve the graph
+        """Orient the undirected graph using GNN and apply CGNN to improve the graph.
 
         :param data: data
         :param umg: undirected acyclic graph
         :return: directed acyclic graph
         """
-
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
 
