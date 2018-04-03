@@ -10,7 +10,7 @@ from cdt.independence.stats import (AdjMI, NormMI, PearsonCorrelation,
 
 
 def init():
-    return pd.read_csv('{}/../datasets/Example_graph_numdata.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, 5]
+    return pd.read_csv('{}/../datasets/Example_graph_numdata.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, :5]
 
 
 def test_statistical_methods():
