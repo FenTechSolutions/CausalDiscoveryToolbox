@@ -15,7 +15,7 @@ before_install:
   - sudo apt-get install build-essential
   - sudo apt-get install libv8-3.14-dev
   - sudo Rscript -e 'install.packages(c("V8"),repos="http://cran.us.r-project.org")'
-  - sudo Rscript -e "source("https://bioconductor.org/biocLite.R"); biocLite(c("CAM", "SID", "bnlearn", "pcalg", "kpcalg", "D2C"))"
+  - sudo Rscript -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("CAM", "SID", "bnlearn", "pcalg", "kpcalg", "D2C"))'
 
 install:
   - if [[ `python3 -c 'import sys ; print(".".join([str(i) for i in sys.version_info[:][:2]]))'` == '3.5' ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.3.1-cp35-cp35m-linux_x86_64.whl; fi
