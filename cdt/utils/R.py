@@ -11,7 +11,7 @@ import subprocess
 from shutil import copy, rmtree
 
 
-def message_warning(msg, *a):
+def message_warning(msg, *a, **kwargs):
     """Ignore everything except the message."""
     return str(msg) + '\n'
 

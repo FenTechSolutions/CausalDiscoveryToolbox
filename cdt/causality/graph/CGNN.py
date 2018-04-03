@@ -18,7 +18,7 @@ from ...utils.loss import MMDloss
 from ...utils.Settings import SETTINGS
 
 
-def message_warning(msg, *a):
+def message_warning(msg, *a, **kwargs):
     """Ignore everything except the message."""
     return str(msg) + '\n'
 

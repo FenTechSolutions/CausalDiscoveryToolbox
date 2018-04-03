@@ -9,7 +9,6 @@ import torch as th
 import networkx as nx
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-from matplotlib import pyplot as plt
 from joblib import Parallel, delayed
 from .model import GraphModel
 
@@ -164,6 +163,7 @@ class SAM_generators(th.nn.Module):
 
 def plot_curves(i_batch, adv_loss, gen_loss, l1_reg, cols):
     """Plot SAM's various losses."""
+    from matplotlib import pyplot as plt
     if i_batch == 0:
         try:
             ax.clear()
@@ -203,6 +203,7 @@ def plot_curves(i_batch, adv_loss, gen_loss, l1_reg, cols):
 
 def plot_gen(epoch, batch, generated_variables, pairs_to_plot=[[0, 1]]):
     """Plot generated pairs of variables."""
+    from matplotlib import pyplot as plt
     if epoch == 0:
         plt.ion()
     plt.clf()

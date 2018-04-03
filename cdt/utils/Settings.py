@@ -11,7 +11,7 @@ import multiprocessing
 import torch as th
 
 
-def message_warning(msg, *a):
+def message_warning(msg, *a, **kwargs):
     """Ignore everything except the message."""
     return str(msg) + '\n'
 

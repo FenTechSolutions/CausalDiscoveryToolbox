@@ -13,7 +13,7 @@ from ...utils.Settings import SETTINGS
 from ...utils.R import RPackages, launch_R_script
 
 
-def message_warning(msg, *a):
+def message_warning(msg, *a, **kwargs):
     """Ignore everything except the message."""
     return str(msg) + '\n'
 
