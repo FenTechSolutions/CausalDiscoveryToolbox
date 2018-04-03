@@ -10,6 +10,10 @@ python:
   - "3.6"
 # command to install dependencies
 before_install:
+  - sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
+  - gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
+  - gpg -a --export E084DAB9 | sudo apt-key add -
+  - sudo apt-get update
   - sudo apt-get install r-base
   - sudo apt-get install libgmp3-dev
   - sudo apt-get install build-essential
