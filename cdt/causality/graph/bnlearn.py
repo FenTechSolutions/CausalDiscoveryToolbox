@@ -162,7 +162,14 @@ class BNlearnAlgorithm(GraphModel):
 
 
 class GS(BNlearnAlgorithm):
-    """Grow-Shrink algorithm."""
+    """Grow-Shrink algorithm.
+
+    Margaritis D (2003).
+    Learning Bayesian Network Model Structure from Data
+    . Ph.D. thesis, School
+    of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report
+    CMU-CS-03-153
+    """
 
     def __init__(self):
         """Init the model."""
@@ -171,7 +178,12 @@ class GS(BNlearnAlgorithm):
 
 
 class IAMB(BNlearnAlgorithm):
-    """IAMB algorithm."""
+    """IAMB algorithm.
+
+    Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   "Algorithms  for  Large  Scale  Markov  Blanket
+    Discovery".  In "Proceedings of the Sixteenth International Florida Artificial Intelligence Research
+    Society Conference", pp. 376-381. AAAI Press.
+    """
 
     def __init__(self):
         """Init the model."""
@@ -180,7 +192,12 @@ class IAMB(BNlearnAlgorithm):
 
 
 class Fast_IAMB(BNlearnAlgorithm):
-    """Fast IAMB algorithm."""
+    """Fast IAMB algorithm.
+
+    Yaramakala S, Margaritis D (2005).  "Speculative Markov Blanket Discovery for Optimal Feature
+    Selection".  In "ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-
+    ing", pp. 809-812. IEEE Computer Society.
+    """
 
     def __init__(self):
         """Init the model."""
@@ -189,7 +206,12 @@ class Fast_IAMB(BNlearnAlgorithm):
 
 
 class Inter_IAMB(BNlearnAlgorithm):
-    """Inter IAMB algorithm."""
+    """Inter IAMB algorithm.
+
+    Yaramakala S, Margaritis D (2005).  "Speculative Markov Blanket Discovery for Optimal Feature
+    Selection".  In "ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-
+    ing", pp. 809-812. IEEE Computer Society.
+    """
 
     def __init__(self):
         """Init the model."""
@@ -198,7 +220,15 @@ class Inter_IAMB(BNlearnAlgorithm):
 
 
 class MMPC(BNlearnAlgorithm):
-    """Max-Min Parents-Children algorithm."""
+    """Max-Min Parents-Children algorithm.
+
+    Tsamardinos I, Aliferis CF, Statnikov A (2003). "Time and Sample Efficient Discovery of Markov
+    Blankets and Direct Causal Relations".  In "KDD ’03:  Proceedings of the Ninth ACM SIGKDD
+    International Conference on Knowledge Discovery and Data Mining", pp. 673-678. ACM.
+    Tsamardinos I, Brown LE, Aliferis CF (2006).  "The Max-Min Hill-Climbing Bayesian Network
+    Structure Learning Algorithm".
+    Machine Learning,65(1), 31-78.
+    """
 
     def __init__(self):
         """Init the model."""
@@ -207,7 +237,13 @@ class MMPC(BNlearnAlgorithm):
 
 
 class Hinton_PC(BNlearnAlgorithm):
-    """SI-Hinton PC algorithm."""
+    """SI-Hinton PC algorithm.
+
+    Aliferis FC, Statnikov A, Tsamardinos I, Subramani M, Koutsoukos XD (2010).  "Local Causal
+    and Markov Blanket Induction for Causal Discovery and Feature Selection for Classification Part I:
+    Algorithms and Empirical Evaluation".
+    Journal of Machine Learning Research,11, 171-234
+    """
 
     def __init__(self):
         """Init the model."""
