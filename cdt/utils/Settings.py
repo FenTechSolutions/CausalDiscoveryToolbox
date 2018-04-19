@@ -49,16 +49,19 @@ def autoset_settings(set_var):
     :param set_var: Variable to set. Must be of type ConfigSettings
     """
     try:
-        if th.cuda.is_available():
-            set_var.GPU = True
         devices = ast.literal_eval(os.environ["CUDA_VISIBLE_DEVICES"])
         if type(devices) != list and type(devices) != tuple:
             devices = [devices]
         if len(devices) != 0:
+            set_var.GPU = True
             set_var.GPU_LIST = list(range(len(devices)))
             set_var.NB_JOBS = len(devices)
 
         elif set_var.GPU:
+            """2 lines below: Hotfix of incompatibility between
+            multiple torch.cuda init through joblib."""
+            # if th.cuda.is_available():
+            #     set_var.GPU = True
             set_var.GPU_LIST = [0]
             set_var.NB_JOBS = len(devices)
         else:
