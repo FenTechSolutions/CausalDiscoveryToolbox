@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.pairwise.GNN &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme-link.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.causality.html">Causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.independence.html">Independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.pairwise.GNN</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.pairwise.GNN</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;GNN : Generative Neural Networks for causal inference (pairwise).</span>
+
+<span class="sd">Authors : Olivier Goudet &amp; Diviyan Kalainathan</span>
+<span class="sd">Ref: Causal Generative Neural Networks (https://arxiv.org/abs/1711.08936)</span>
+<span class="sd">Date : 10/05/2017</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span><span class="p">,</span> <span class="n">TTestCriterion</span>
+<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="k">import</span> <span class="n">Variable</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">PairwiseModel</span>
+
+
+<div class="viewcode-block" id="GNN_model"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.GNN.GNN_model">[docs]</a><span class="k">class</span> <span class="nc">GNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Torch model for the GNN structure.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">GPU</span><span class="p">,</span> <span class="n">gpu_id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build the Torch graph.</span>
+
+<span class="sd">        :param batch_size: size of the batch going to be fed to the model</span>
+<span class="sd">        :param kwargs: h_layer_dim=(CGNN_SETTINGS.h_layer_dim)</span>
+<span class="sd">                       Number of units in the hidden layer</span>
+<span class="sd">        :param kwargs: gpu=(SETTINGS.GPU), if GPU is used for computations</span>
+<span class="sd">        :param kwargs: gpu_no=(0), GPU ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GNN_model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nh</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l2</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">MMDloss</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span> <span class="n">gpu_id</span><span class="o">=</span><span class="n">gpu_id</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GNN_model.forward"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.GNN.GNN_model.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass data through the net structure.</span>
+
+<span class="sd">        :param x: input data: shape (:,1)</span>
+<span class="sd">        :type x: torch.Variable</span>
+<span class="sd">        :return: output of the shallow net</span>
+<span class="sd">        :rtype: torch.Variable</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">normal_</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">],</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GNN_model.run"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.GNN.GNN_model.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the GNN on a pair x,y of FloatTensor data.&quot;&quot;&quot;</span>
+        <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+        <span class="n">running_loss</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">teloss</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">):</span>
+            <span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">train_epochs</span><span class="p">:</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">teloss</span> <span class="o">+=</span> <span class="n">running_loss</span>
+
+            <span class="c1"># print statistics</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">300</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Idx:</span><span class="si">{}</span><span class="s1"> ; score:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span>
+                      <span class="nb">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">running_loss</span><span class="p">))</span>
+                <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="n">teloss</span> <span class="o">/</span> <span class="n">test_epochs</span></div></div>
+
+
+<div class="viewcode-block" id="GNN_instance"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.GNN.GNN_instance">[docs]</a><span class="k">def</span> <span class="nf">GNN_instance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">GPU</span><span class="p">,</span> <span class="n">gpu_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run an instance of GNN, testing causal direction.</span>
+
+<span class="sd">    :param m: data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect</span>
+<span class="sd">    :param pair_idx: print purposes</span>
+<span class="sd">    :param run: numner of the run (for GPU dispatch)</span>
+<span class="sd">    :param kwargs: gpu=(SETTINGS.GPU) True if GPU is used</span>
+<span class="sd">    :param kwargs: nb_gpu=(SETTINGS.NB_GPU) Number of available GPUs</span>
+<span class="sd">    :param kwargs: gpu_offset=(SETTINGS.GPU_OFFSET) number of gpu offsets</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">inputx</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">xy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">xy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="n">GNNXY</span> <span class="o">=</span> <span class="n">GNN_model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span> <span class="n">gpu_id</span><span class="o">=</span><span class="n">gpu_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">GNNYX</span> <span class="o">=</span> <span class="n">GNN_model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span> <span class="n">gpu_id</span><span class="o">=</span><span class="n">gpu_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_id</span><span class="p">)</span>
+        <span class="n">inputx</span> <span class="o">=</span> <span class="n">inputx</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_id</span><span class="p">)</span>
+        <span class="n">GNNXY</span> <span class="o">=</span> <span class="n">GNNXY</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_id</span><span class="p">)</span>
+        <span class="n">GNNYX</span> <span class="o">=</span> <span class="n">GNNYX</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_id</span><span class="p">)</span>
+    <span class="n">XY</span> <span class="o">=</span> <span class="n">GNNXY</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">inputx</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">YX</span> <span class="o">=</span> <span class="n">GNNYX</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">inputx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">XY</span><span class="p">,</span> <span class="n">YX</span><span class="p">]</span></div>
+
+
+<span class="c1"># Test</span>
+<div class="viewcode-block" id="GNN"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.GNN.GNN">[docs]</a><span class="k">class</span> <span class="nc">GNN</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Shallow Generative Neural networks.</span>
+
+<span class="sd">    Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural network</span>
+<span class="sd">    and a MMD loss. The causal direction is considered as the &quot;best-fit&quot; between the two directions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GNN.predict_proba"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.GNN.GNN.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">nb_runs</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">nb_jobs</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">NB_JOBS</span><span class="p">,</span>
+                      <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">ttest_threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                      <span class="n">nb_max_runs</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run multiple times GNN to estimate the causal direction.&quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ttest_criterion</span> <span class="o">=</span> <span class="n">TTestCriterion</span><span class="p">(</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="n">nb_max_runs</span><span class="p">,</span> <span class="n">runs_per_iter</span><span class="o">=</span><span class="n">nb_runs</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">ttest_threshold</span><span class="p">)</span>
+
+        <span class="n">AB</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">BA</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">AB</span><span class="p">,</span> <span class="n">BA</span><span class="p">):</span>
+            <span class="n">result_pair</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">nb_jobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">()(</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span> <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span> <span class="o">+</span> <span class="n">nb_runs</span><span class="p">))</span>
+            <span class="n">AB</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
+            <span class="n">BA</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P-value after </span><span class="si">{}</span><span class="s2"> runs : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
+                                                      <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">p_value</span><span class="p">))</span>
+
+        <span class="n">score_AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">AB</span><span class="p">)</span>
+        <span class="n">score_BA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">BA</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">score_BA</span> <span class="o">-</span> <span class="n">score_AB</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">score_BA</span> <span class="o">+</span> <span class="n">score_AB</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Testing GNN..&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

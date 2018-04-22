@@ -1,0 +1,1029 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.pairwise package &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">cdt.causality.pairwise package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.ANM">cdt.causality.pairwise.ANM module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.Bivariate_fit">cdt.causality.pairwise.Bivariate_fit module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.CDS">cdt.causality.pairwise.CDS module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.GNN">cdt.causality.pairwise.GNN module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.IGCI">cdt.causality.pairwise.IGCI module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.Jarfo">cdt.causality.pairwise.Jarfo module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.NCC">cdt.causality.pairwise.NCC module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.RCC">cdt.causality.pairwise.RCC module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise.model">cdt.causality.pairwise.model module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.pairwise">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>cdt.causality.pairwise package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/cdt.causality.pairwise.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cdt-causality-pairwise-package">
+<h1>cdt.causality.pairwise package<a class="headerlink" href="#cdt-causality-pairwise-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html">cdt.causality.pairwise.Jarfo_model package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#module-cdt.causality.pairwise.Jarfo_model.data_io">cdt.causality.pairwise.Jarfo_model.data_io module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#cdt-causality-pairwise-jarfo-model-estimator-module">cdt.causality.pairwise.Jarfo_model.estimator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#cdt-causality-pairwise-jarfo-model-features-module">cdt.causality.pairwise.Jarfo_model.features module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#module-cdt.causality.pairwise.Jarfo_model.hsic">cdt.causality.pairwise.Jarfo_model.hsic module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#module-cdt.causality.pairwise.Jarfo_model.predict">cdt.causality.pairwise.Jarfo_model.predict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#cdt-causality-pairwise-jarfo-model-train-module">cdt.causality.pairwise.Jarfo_model.train module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#module-cdt.causality.pairwise.Jarfo_model.util">cdt.causality.pairwise.Jarfo_model.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.causality.pairwise.Jarfo_model.html#module-cdt.causality.pairwise.Jarfo_model">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cdt.causality.pairwise.ANM">
+<span id="cdt-causality-pairwise-anm-module"></span><h2>cdt.causality.pairwise.ANM module<a class="headerlink" href="#module-cdt.causality.pairwise.ANM" title="Permalink to this headline">¶</a></h2>
+<p>Additive Noise Model.</p>
+<dl class="docutils">
+<dt>Ref <span class="classifier-delimiter">:</span> <span class="classifier">Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,</span></dt>
+<dd>“Nonlinear causal discovery with additive noise models”, NIPS 2009</dd>
+</dl>
+<dl class="class">
+<dt id="cdt.causality.pairwise.ANM.ANM">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.ANM.</code><code class="descname">ANM</code><a class="reference internal" href="../_modules/cdt/causality/pairwise/ANM.html#ANM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.ANM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<p>Additive Noise model to infer causal relationships.</p>
+<p>Assuming that x-&gt;y then if the data follows an additive noise model, there is y=f(x)+e
+e being a noise variable and f a deterministic function. The causal inference bases itself on the independence
+between x and e.
+It is proven that in such case if the data is generated using an additive noise model, the model would only be able
+to fit in the true causal direction.
+Ref: <a class="reference external" href="https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf">https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf</a></p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.ANM.ANM.anm_score">
+<code class="descname">anm_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/ANM.html#ANM.anm_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.ANM.anm_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the fitness score of the ANM model in the x-&gt;y direction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – Input, seen as cause</li>
+<li><strong>y</strong> – Input, seen as effect</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">CDS statistic between x_te and y_te</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.ANM.ANM.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/ANM.html#ANM.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.ANM.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prediction method for pairwise causal inference using the ANM model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Variable 1</li>
+<li><strong>b</strong> – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.ANM.FastHsicTestGamma">
+<code class="descclassname">cdt.causality.pairwise.ANM.</code><code class="descname">FastHsicTestGamma</code><span class="sig-paren">(</span><em>X, Y, sig=[-1, -1], maxpnt=200</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/ANM.html#FastHsicTestGamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.FastHsicTestGamma" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>This function implements the HSIC independence test using a Gamma approximation</dt>
+<dd>to the test threshold. Use at most maxpnt points to save time.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> – contains dx columns, m rows. Each row is an i.i.d sample</li>
+<li><strong>Y</strong> – contains dy columns, m rows. Each row is an i.i.d sample</li>
+<li><strong>sig</strong> – [0] (resp [1]) is kernel size for x(resp y) (set to median distance if -1)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">test statistic</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.ANM.normalized_hsic">
+<code class="descclassname">cdt.causality.pairwise.ANM.</code><code class="descname">normalized_hsic</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/ANM.html#normalized_hsic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.normalized_hsic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.ANM.rbf_dot">
+<code class="descclassname">cdt.causality.pairwise.ANM.</code><code class="descname">rbf_dot</code><span class="sig-paren">(</span><em>X</em>, <em>deg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/ANM.html#rbf_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.rbf_dot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.ANM.rbf_dot2">
+<code class="descclassname">cdt.causality.pairwise.ANM.</code><code class="descname">rbf_dot2</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>deg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/ANM.html#rbf_dot2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.rbf_dot2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.Bivariate_fit">
+<span id="cdt-causality-pairwise-bivariate-fit-module"></span><h2>cdt.causality.pairwise.Bivariate_fit module<a class="headerlink" href="#module-cdt.causality.pairwise.Bivariate_fit" title="Permalink to this headline">¶</a></h2>
+<p>Bivariate fit model
+Author : Olivier Goudet
+Date : 7/06/17</p>
+<dl class="class">
+<dt id="cdt.causality.pairwise.Bivariate_fit.BivariateFit">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.Bivariate_fit.</code><code class="descname">BivariateFit</code><span class="sig-paren">(</span><em>ffactor=2</em>, <em>maxdev=3</em>, <em>minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Bivariate_fit.BivariateFit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<p>Bivariate Fit model.
+Based itself on a best-fit criterion based on a regressor.</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.Bivariate_fit.BivariateFit.b_fit_score">
+<code class="descname">b_fit_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.b_fit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Bivariate_fit.BivariateFit.b_fit_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the cds statistic from variable 1 to variable 2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – Input, seen as cause</li>
+<li><strong>y</strong> – Input, seen as effect</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">CDS statistic between x_te and y_te</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.Bivariate_fit.BivariateFit.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Bivariate_fit.BivariateFit.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infer causal relationships between 2 variables x_te and y_te using the CDS statistic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Input variable 1</li>
+<li><strong>b</strong> – Input variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.CDS">
+<span id="cdt-causality-pairwise-cds-module"></span><h2>cdt.causality.pairwise.CDS module<a class="headerlink" href="#module-cdt.causality.pairwise.CDS" title="Permalink to this headline">¶</a></h2>
+<p>Conditional Distribution Similarity Statistic
+Used to infer causal directions
+Author : José A.R. Fonollosa
+Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
+<dl class="class">
+<dt id="cdt.causality.pairwise.CDS.CDS">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.CDS.</code><code class="descname">CDS</code><span class="sig-paren">(</span><em>ffactor=2</em>, <em>maxdev=3</em>, <em>minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#CDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.CDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<p>Conditional Distribution Similarity Statistic</p>
+<p>Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
+The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).
+Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.CDS.CDS.cds_score">
+<code class="descname">cds_score</code><span class="sig-paren">(</span><em>x_te</em>, <em>y_te</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#CDS.cds_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.CDS.cds_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the cds statistic from variable 1 to variable 2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x_te</strong> – Input, seen as cause</li>
+<li><strong>y_te</strong> – Input, seen as effect</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">CDS statistic between x_te and y_te</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.CDS.CDS.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#CDS.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.CDS.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infer causal relationships between 2 variables x_te and y_te using the CDS statistic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Input variable 1</li>
+<li><strong>b</strong> – Input variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.CDS.count_unique">
+<code class="descclassname">cdt.causality.pairwise.CDS.</code><code class="descname">count_unique</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#count_unique"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.count_unique" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.CDS.discretized_sequence">
+<code class="descclassname">cdt.causality.pairwise.CDS.</code><code class="descname">discretized_sequence</code><span class="sig-paren">(</span><em>x</em>, <em>tx</em>, <em>ffactor</em>, <em>maxdev</em>, <em>norm=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#discretized_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.discretized_sequence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.CDS.discretized_sequences">
+<code class="descclassname">cdt.causality.pairwise.CDS.</code><code class="descname">discretized_sequences</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>ffactor=3</em>, <em>maxdev=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#discretized_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.discretized_sequences" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.CDS.discretized_values">
+<code class="descclassname">cdt.causality.pairwise.CDS.</code><code class="descname">discretized_values</code><span class="sig-paren">(</span><em>x</em>, <em>tx</em>, <em>ffactor</em>, <em>maxdev</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#discretized_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.discretized_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.CDS.len_discretized_values">
+<code class="descclassname">cdt.causality.pairwise.CDS.</code><code class="descname">len_discretized_values</code><span class="sig-paren">(</span><em>x</em>, <em>tx</em>, <em>ffactor</em>, <em>maxdev</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#len_discretized_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.len_discretized_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.CDS.numerical">
+<code class="descclassname">cdt.causality.pairwise.CDS.</code><code class="descname">numerical</code><span class="sig-paren">(</span><em>tp</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/CDS.html#numerical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.numerical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.GNN">
+<span id="cdt-causality-pairwise-gnn-module"></span><h2>cdt.causality.pairwise.GNN module<a class="headerlink" href="#module-cdt.causality.pairwise.GNN" title="Permalink to this headline">¶</a></h2>
+<p>GNN : Generative Neural Networks for causal inference (pairwise).</p>
+<p>Authors : Olivier Goudet &amp; Diviyan Kalainathan
+Ref: Causal Generative Neural Networks (<a class="reference external" href="https://arxiv.org/abs/1711.08936">https://arxiv.org/abs/1711.08936</a>)
+Date : 10/05/2017</p>
+<dl class="class">
+<dt id="cdt.causality.pairwise.GNN.GNN">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.GNN.</code><code class="descname">GNN</code><a class="reference internal" href="../_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.GNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<p>Shallow Generative Neural networks.</p>
+<p>Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural network
+and a MMD loss. The causal direction is considered as the “best-fit” between the two directions</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.GNN.GNN.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>nb_runs=6</em>, <em>nb_jobs=4</em>, <em>idx=0</em>, <em>verbose=True</em>, <em>ttest_threshold=0.01</em>, <em>nb_max_runs=16</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/GNN.html#GNN.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.GNN.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run multiple times GNN to estimate the causal direction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.GNN.GNN_instance">
+<code class="descclassname">cdt.causality.pairwise.GNN.</code><code class="descname">GNN_instance</code><span class="sig-paren">(</span><em>x</em>, <em>idx=0</em>, <em>gpu=False</em>, <em>gpu_id=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/GNN.html#GNN_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.GNN_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an instance of GNN, testing causal direction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>m</strong> – data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect</li>
+<li><strong>pair_idx</strong> – print purposes</li>
+<li><strong>run</strong> – numner of the run (for GPU dispatch)</li>
+<li><strong>kwargs</strong> – gpu=(SETTINGS.GPU) True if GPU is used</li>
+<li><strong>kwargs</strong> – nb_gpu=(SETTINGS.NB_GPU) Number of available GPUs</li>
+<li><strong>kwargs</strong> – gpu_offset=(SETTINGS.GPU_OFFSET) number of gpu offsets</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.pairwise.GNN.GNN_model">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.GNN.</code><code class="descname">GNN_model</code><span class="sig-paren">(</span><em>batch_size</em>, <em>nh=20</em>, <em>gpu=False</em>, <em>gpu_id=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/GNN.html#GNN_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.GNN_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Torch model for the GNN structure.</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.GNN.GNN_model.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/GNN.html#GNN_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.GNN_model.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass data through the net structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>torch.Variable</em>) – input data: shape (:,1)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output of the shallow net</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">torch.Variable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.GNN.GNN_model.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>lr=0.01</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/GNN.html#GNN_model.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.GNN_model.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the GNN on a pair x,y of FloatTensor data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.IGCI">
+<span id="cdt-causality-pairwise-igci-module"></span><h2>cdt.causality.pairwise.IGCI module<a class="headerlink" href="#module-cdt.causality.pairwise.IGCI" title="Permalink to this headline">¶</a></h2>
+<p>Information Geometric Causal Inference (IGCI) model.</p>
+<p>P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
+K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
+Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
+<a class="reference external" href="http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf">http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf</a></p>
+<p>Adapted by Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.causality.pairwise.IGCI.IGCI">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.IGCI.</code><code class="descname">IGCI</code><a class="reference internal" href="../_modules/cdt/causality/pairwise/IGCI.html#IGCI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI.IGCI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<p>Information Geometric Causal Inference (IGCI) model.</p>
+<p>P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
+K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
+Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
+<a class="reference external" href="http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf">http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf</a></p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.IGCI.IGCI.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/IGCI.html#IGCI.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI.IGCI.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate a pair using the IGCI model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Input variable 1D</li>
+<li><strong>b</strong> – Input variable 1D</li>
+<li><strong>kwargs</strong> – {refMeasure: Scaling method (gaussian, integral or None),
+estimator: method used to evaluate the pairs (entropy or integral)}</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Return value of the IGCI model &gt;0 if a-&gt;b otherwise if return &lt;0</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.IGCI.eval_entropy">
+<code class="descclassname">cdt.causality.pairwise.IGCI.</code><code class="descname">eval_entropy</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/IGCI.html#eval_entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI.eval_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the entropy of the input variable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> – input variable 1D</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">entropy of x</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.IGCI.integral_approx_estimator">
+<code class="descclassname">cdt.causality.pairwise.IGCI.</code><code class="descname">integral_approx_estimator</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/IGCI.html#integral_approx_estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI.integral_approx_estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integral approximation estimator for causal inference.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – input variable x 1D</li>
+<li><strong>y</strong> – input variable y 1D</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Return value of the IGCI model &gt;0 if x-&gt;y otherwise if return &lt;0</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.Jarfo">
+<span id="cdt-causality-pairwise-jarfo-module"></span><h2>cdt.causality.pairwise.Jarfo module<a class="headerlink" href="#module-cdt.causality.pairwise.Jarfo" title="Permalink to this headline">¶</a></h2>
+<p>Jarfo causal inference model
+Author : José AR Fonollosa
+Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
+<dl class="class">
+<dt id="cdt.causality.pairwise.Jarfo.Jarfo">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.Jarfo.</code><code class="descname">Jarfo</code><a class="reference internal" href="../_modules/cdt/causality/pairwise/Jarfo.html#Jarfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.Jarfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.Jarfo.Jarfo.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df</em>, <em>tar</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.Jarfo.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.Jarfo.Jarfo.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.Jarfo.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prediction method for pairwise causal inference.</p>
+<p>predict_proba is meant to be overridden in all subclasses</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Variable 1</li>
+<li><strong>b</strong> – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">probability (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.NCC">
+<span id="cdt-causality-pairwise-ncc-module"></span><h2>cdt.causality.pairwise.NCC module<a class="headerlink" href="#module-cdt.causality.pairwise.NCC" title="Permalink to this headline">¶</a></h2>
+<p>Neural Causation Coefficient
+Author : David Lopez-Paz
+Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,</p>
+<blockquote>
+<div>“Discovering Causal Signals in Images”, CVPR 2017.</div></blockquote>
+<dl class="class">
+<dt id="cdt.causality.pairwise.NCC.NCC">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.NCC.</code><code class="descname">NCC</code><a class="reference internal" href="../_modules/cdt/causality/pairwise/NCC.html#NCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.NCC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<p>Neural Causation Coefficient.</p>
+<p>Infer causal relationships between pairs of variables
+Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
+“Discovering Causal Signals in Images”, CVPR 2017.</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.NCC.NCC.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>x_tr</em>, <em>y_tr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/NCC.html#NCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.NCC.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the NCC model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x_tr</strong> – CEPC-format DataFrame containing pairs of variables</li>
+<li><strong>y_tr</strong> – array containing targets</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.NCC.NCC.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/NCC.html#NCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.NCC.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infer causal directions using the trained NCC pairwise model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Variable 1</li>
+<li><strong>b</strong> – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">probability (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.pairwise.NCC.NCC_model">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.NCC.</code><code class="descname">NCC_model</code><span class="sig-paren">(</span><em>n_hiddens=20</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/NCC.html#NCC_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.NCC_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>NCC model structure.</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.NCC.NCC_model.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/NCC.html#NCC_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.NCC_model.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Passing data through the network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> – 2d tensor containing both (x,y) Variables</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output of the net</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.RCC">
+<span id="cdt-causality-pairwise-rcc-module"></span><h2>cdt.causality.pairwise.RCC module<a class="headerlink" href="#module-cdt.causality.pairwise.RCC" title="Permalink to this headline">¶</a></h2>
+<p>Randomized Causation Coefficient Model.</p>
+<p>Author : David Lopez-Paz
+Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,</p>
+<blockquote>
+<div>“Towards a Learning Theory of Cause-Effect Inference”, ICML 2015.</div></blockquote>
+<dl class="class">
+<dt id="cdt.causality.pairwise.RCC.RCC">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.RCC.</code><code class="descname">RCC</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.pairwise.model.PairwiseModel" title="cdt.causality.pairwise.model.PairwiseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.pairwise.model.PairwiseModel</span></code></a></p>
+<p>Randomized Causation Coefficient model.</p>
+<dl class="docutils">
+<dt>Ref <span class="classifier-delimiter">:</span> <span class="classifier">Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,</span></dt>
+<dd>“Towards a Learning Theory of Cause-Effect Inference”, ICML 2015.</dd>
+</dl>
+<dl class="method">
+<dt id="cdt.causality.pairwise.RCC.RCC.featurize">
+<code class="descname">featurize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC.featurize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC.featurize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.RCC.RCC.featurize_row">
+<code class="descname">featurize_row</code><span class="sig-paren">(</span><em>row</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC.featurize_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC.featurize_row" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.RCC.RCC.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>x_tr</em>, <em>y_tr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model on pairwise data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x_tr</strong> (<em>pandas.DataFrame</em>) – Input data - CEPC-format DataFrame containing pairs of variables</li>
+<li><strong>y_tr</strong> (<em>pandas.DataFrame</em>) – Targets</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.RCC.RCC.fit_ftdata">
+<code class="descname">fit_ftdata</code><span class="sig-paren">(</span><em>x_ft</em>, <em>y_ft</em>, <em>x_ab</em>, <em>y_ab</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC.fit_ftdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC.fit_ftdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model with featurized data as input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x_ft</strong> – x_featurized</li>
+<li><strong>y_ft</strong> – y_featurized</li>
+<li><strong>x_ab</strong> – x_inverse_featurized</li>
+<li><strong>y_ab</strong> – y_inverse_featurized</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.RCC.RCC.predict_dataset">
+<code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>x_te</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC.predict_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict causal directions of a dataset. With input data as (X,Y).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>-1 is Y-&gt;X</dt>
+<dd>1 is X-&gt;Y
+# 0 is independent/confounding</dd>
+</dl>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x_te</strong> (<em>pandas.DataFrame</em>) – Inputdata - CEPC-format DataFrame containing pairs of variables</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Array containing probabilities of predictions</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.RCC.RCC.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infer causal directions using the trained RCC model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Variable 1</li>
+<li><strong>b</strong> – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">probability (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.RCC.RCC.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>x_tr</em>, <em>y_tr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#RCC.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.RCC.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Featurize the data with the randomized coefficients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x_tr</strong> (<em>pandas.DataFrame</em>) – Inputdata - CEPC-format DataFrame containing pairs of variables</li>
+<li><strong>y_tr</strong> (<em>pandas.DataFrame</em><em> or </em><em>array</em>) – Targets</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Featurized data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.RCC.f1">
+<code class="descclassname">cdt.causality.pairwise.RCC.</code><code class="descname">f1</code><span class="sig-paren">(</span><em>x</em>, <em>w</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#f1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.f1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.RCC.rp">
+<code class="descclassname">cdt.causality.pairwise.RCC.</code><code class="descname">rp</code><span class="sig-paren">(</span><em>k</em>, <em>s</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#rp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.rp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.pairwise.RCC.score">
+<code class="descclassname">cdt.causality.pairwise.RCC.</code><code class="descname">score</code><span class="sig-paren">(</span><em>y</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/RCC.html#score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise.model">
+<span id="cdt-causality-pairwise-model-module"></span><h2>cdt.causality.pairwise.model module<a class="headerlink" href="#module-cdt.causality.pairwise.model" title="Permalink to this headline">¶</a></h2>
+<p>Pairwise causal models base class
+Author: Diviyan Kalainathan
+Date : 7/06/2017</p>
+<dl class="class">
+<dt id="cdt.causality.pairwise.model.PairwiseModel">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.model.</code><code class="descname">PairwiseModel</code><a class="reference internal" href="../_modules/cdt/causality/pairwise/model.html#PairwiseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for all pairwise causal inference models</p>
+<p>Usage for undirected/directed graphs and CEPC df format.</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.orient_graph">
+<code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/model.html#PairwiseModel.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.orient_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient an undirected graph using the pairwise method defined by the subclass.</p>
+<p>Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
+:param df_data: dataset
+:param umg: UndirectedGraph
+:param printout: print regularly predictions
+:return: Directed graph w/ weights
+:rtype: DirectedGraph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>x</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic predict method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.predict_dataset">
+<code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>x</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causal prediction of a pairwise dataset (x,y).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>cepc_df format</em>) – Pairwise dataset</li>
+<li><strong>printout</strong> – print regularly predictions</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">predictions probabilities</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prediction method for pairwise causal inference.</p>
+<p>predict_proba is meant to be overridden in all subclasses</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – Variable 1</li>
+<li><strong>b</strong> – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">probability (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.pairwise">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cdt.causality.pairwise" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

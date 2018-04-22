@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.generators package &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">cdt.generators package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-cdt.generators.acyclic_graph_generator">cdt.generators.acyclic_graph_generator module</a></li>
+<li><a class="reference internal" href="#module-cdt.generators.causal_mechanisms">cdt.generators.causal_mechanisms module</a></li>
+<li><a class="reference internal" href="#module-cdt.generators.cyclic_graph_generator">cdt.generators.cyclic_graph_generator module</a></li>
+<li><a class="reference internal" href="#module-cdt.generators">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>cdt.generators package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/cdt.generators.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cdt-generators-package">
+<h1>cdt.generators package<a class="headerlink" href="#cdt-generators-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cdt.generators.acyclic_graph_generator">
+<span id="cdt-generators-acyclic-graph-generator-module"></span><h2>cdt.generators.acyclic_graph_generator module<a class="headerlink" href="#module-cdt.generators.acyclic_graph_generator" title="Permalink to this headline">¶</a></h2>
+<p>Acyclic Graph Generator.</p>
+<p>Generates a dataset out of an acyclic FCM.
+Author : Olivier Goudet and Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator">
+<em class="property">class </em><code class="descclassname">cdt.generators.acyclic_graph_generator.</code><code class="descname">AcyclicGraphGenerator</code><span class="sig-paren">(</span><em>causal_mechanism</em>, <em>initial_variable_generator=&lt;function gmm_cause&gt;</em>, <em>points=500</em>, <em>nodes=20</em>, <em>timesteps=0</em>, <em>parents_max=5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/acyclic_graph_generator.html#AcyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Generates a cross-sectional dataset out of a cyclic FCM.</p>
+<dl class="method">
+<dt id="cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>nb_steps=100</em>, <em>averaging=50</em>, <em>rescale=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/acyclic_graph_generator.html#AcyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate data from an FCM containing cycles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator.init_variables">
+<code class="descname">init_variables</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/acyclic_graph_generator.html#AcyclicGraphGenerator.init_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator.init_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redefine the causes of the graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator.to_csv">
+<code class="descname">to_csv</code><span class="sig-paren">(</span><em>fname_radical</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/acyclic_graph_generator.html#AcyclicGraphGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.acyclic_graph_generator.AcyclicGraphGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data to the csv format by default, in two separate files.</p>
+<p>Optional keyword arguments can be passed to pandas.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.generators.causal_mechanisms">
+<span id="cdt-generators-causal-mechanisms-module"></span><h2>cdt.generators.causal_mechanisms module<a class="headerlink" href="#module-cdt.generators.causal_mechanisms" title="Permalink to this headline">¶</a></h2>
+<p>Defining a set of classes that represent causal functions/ mechanisms.</p>
+<p>Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.generators.causal_mechanisms.GaussianProcessAdd_Mechanism">
+<em class="property">class </em><code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">GaussianProcessAdd_Mechanism</code><span class="sig-paren">(</span><em>ncauses</em>, <em>points</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#GaussianProcessAdd_Mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.GaussianProcessAdd_Mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cdt.generators.causal_mechanisms.GaussianProcessAdd_Mechanism.mechanism">
+<code class="descname">mechanism</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#GaussianProcessAdd_Mechanism.mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.GaussianProcessAdd_Mechanism.mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mechanism function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.generators.causal_mechanisms.GaussianProcessMix_Mechanism">
+<em class="property">class </em><code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">GaussianProcessMix_Mechanism</code><span class="sig-paren">(</span><em>ncauses</em>, <em>points</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#GaussianProcessMix_Mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.GaussianProcessMix_Mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cdt.generators.causal_mechanisms.GaussianProcessMix_Mechanism.mechanism">
+<code class="descname">mechanism</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#GaussianProcessMix_Mechanism.mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.GaussianProcessMix_Mechanism.mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mechanism function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.generators.causal_mechanisms.LinearMechanism">
+<em class="property">class </em><code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">LinearMechanism</code><span class="sig-paren">(</span><em>ncauses</em>, <em>points</em>, <em>d=4</em>, <em>noise_coeff=0.7</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#LinearMechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.LinearMechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Linear mechanism, where Effect = alpha*Cause + Noise.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.generators.causal_mechanisms.Polynomial_Mechanism">
+<em class="property">class </em><code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">Polynomial_Mechanism</code><span class="sig-paren">(</span><em>ncauses</em>, <em>points</em>, <em>d=2</em>, <em>noise_coeff=0.7</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#Polynomial_Mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.Polynomial_Mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cdt.generators.causal_mechanisms.Polynomial_Mechanism.mechanism">
+<code class="descname">mechanism</code><span class="sig-paren">(</span><em>x</em>, <em>par</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#Polynomial_Mechanism.mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.Polynomial_Mechanism.mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mechanism function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.generators.causal_mechanisms.SigmoidAM_Mechanism">
+<em class="property">class </em><code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">SigmoidAM_Mechanism</code><span class="sig-paren">(</span><em>ncauses</em>, <em>points</em>, <em>d=4</em>, <em>noise_coeff=0.7</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#SigmoidAM_Mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.SigmoidAM_Mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cdt.generators.causal_mechanisms.SigmoidAM_Mechanism.mechanism">
+<code class="descname">mechanism</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#SigmoidAM_Mechanism.mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.SigmoidAM_Mechanism.mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mechanism function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.generators.causal_mechanisms.SigmoidMix_Mechanism">
+<em class="property">class </em><code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">SigmoidMix_Mechanism</code><span class="sig-paren">(</span><em>ncauses</em>, <em>points</em>, <em>d=4</em>, <em>noise_coeff=0.7</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#SigmoidMix_Mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.SigmoidMix_Mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cdt.generators.causal_mechanisms.SigmoidMix_Mechanism.mechanism">
+<code class="descname">mechanism</code><span class="sig-paren">(</span><em>causes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#SigmoidMix_Mechanism.mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.SigmoidMix_Mechanism.mechanism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mechanism function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.generators.causal_mechanisms.computeGaussKernel">
+<code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">computeGaussKernel</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#computeGaussKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.computeGaussKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the gaussian kernel on a 1D vector.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.generators.causal_mechanisms.gaussian_cause">
+<code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">gaussian_cause</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#gaussian_cause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.gaussian_cause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init a root cause with a Gaussian.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.generators.causal_mechanisms.gmm_cause">
+<code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">gmm_cause</code><span class="sig-paren">(</span><em>n</em>, <em>k=4</em>, <em>p1=2</em>, <em>p2=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#gmm_cause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.gmm_cause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init a root cause with a Gaussian Mixture Model.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.generators.causal_mechanisms.noise">
+<code class="descclassname">cdt.generators.causal_mechanisms.</code><code class="descname">noise</code><span class="sig-paren">(</span><em>n</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/causal_mechanisms.html#noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.causal_mechanisms.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init a noise variable.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.generators.cyclic_graph_generator">
+<span id="cdt-generators-cyclic-graph-generator-module"></span><h2>cdt.generators.cyclic_graph_generator module<a class="headerlink" href="#module-cdt.generators.cyclic_graph_generator" title="Permalink to this headline">¶</a></h2>
+<p>Cyclic Graph Generator.</p>
+<p>Generates a cross-sectional dataset out of a cyclic FCM.
+Author : Olivier Goudet and Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.generators.cyclic_graph_generator.CyclicGraphGenerator">
+<em class="property">class </em><code class="descclassname">cdt.generators.cyclic_graph_generator.</code><code class="descname">CyclicGraphGenerator</code><span class="sig-paren">(</span><em>causal_mechanism</em>, <em>initial_variable_generator=&lt;function gaussian_cause&gt;</em>, <em>points=500</em>, <em>nodes=20</em>, <em>timesteps=0</em>, <em>parents_max=5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/cyclic_graph_generator.html#CyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.cyclic_graph_generator.CyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Generates a cross-sectional dataset out of a cyclic FCM.</p>
+<dl class="method">
+<dt id="cdt.generators.cyclic_graph_generator.CyclicGraphGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>nb_steps=100</em>, <em>averaging=50</em>, <em>rescale=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/cyclic_graph_generator.html#CyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.cyclic_graph_generator.CyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate data from an FCM containing cycles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.generators.cyclic_graph_generator.CyclicGraphGenerator.init_variables">
+<code class="descname">init_variables</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/cyclic_graph_generator.html#CyclicGraphGenerator.init_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.cyclic_graph_generator.CyclicGraphGenerator.init_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redefine the causes of the graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.generators.cyclic_graph_generator.CyclicGraphGenerator.to_csv">
+<code class="descname">to_csv</code><span class="sig-paren">(</span><em>fname_radical</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/generators/cyclic_graph_generator.html#CyclicGraphGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.generators.cyclic_graph_generator.CyclicGraphGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data to the csv format by default, in two separate files.</p>
+<p>Optional keyword arguments can be passed to pandas.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.generators">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cdt.generators" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

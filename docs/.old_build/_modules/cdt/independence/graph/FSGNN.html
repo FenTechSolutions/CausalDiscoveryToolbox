@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.independence.graph.FSGNN &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.independence.graph.FSGNN</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.independence.graph.FSGNN</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Feature selection model with generative models.</span>
+
+<span class="sd">Algorithm between SAM and CGNN</span>
+<span class="sd">Author : Diviyan Kalainathan &amp; Olivier Goudet</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="k">import</span> <span class="n">Variable</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">FeatureSelectionModel</span>
+<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span>
+
+
+<div class="viewcode-block" id="FSGNN_model"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.FSGNN.FSGNN_model">[docs]</a><span class="k">class</span> <span class="nc">FSGNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">activation_function</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FSGNN_model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">dropout</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout</span><span class="p">))</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">())</span>
+
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FSGNN_model.forward"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.FSGNN.FSGNN_model.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FSGNN_model.train"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.FSGNN.FSGNN_model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># batch_size=-1,</span>
+              <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gpuno</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">xtr</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">ytr</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">xtr</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpuno</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpuno</span><span class="p">)</span>
+
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">MMDloss</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">,</span> <span class="n">gpu_id</span><span class="o">=</span><span class="n">gpuno</span><span class="p">)</span>
+        <span class="c1"># if batch_size == -1:raise NotImplementedError</span>
+        <span class="c1">#     batch_size = x.size()[0]</span>
+        <span class="c1"># Printout value</span>
+        <span class="c1"># data_iterator = th.utils.data.DataLoader(x, batch_size=batch_size,</span>
+        <span class="c1">#                                          shuffle=True)</span>
+        <span class="c1"># TRAIN</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">):</span>
+            <span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">xtr</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">ytr</span><span class="p">)</span> <span class="o">+</span> <span class="n">l1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="c1"># Train the discriminator</span>
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;=</span> <span class="n">train_epochs</span><span class="p">:</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="FSGNN"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.FSGNN.FSGNN">[docs]</a><span class="k">class</span> <span class="nc">FSGNN</span><span class="p">(</span><span class="n">FeatureSelectionModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Feature Selection using MMD and Generative Neural Networks.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FSGNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="FSGNN.predict_features"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.FSGNN.FSGNN.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;For one variable, predict its neighbours.&quot;&quot;&quot;</span>
+        <span class="n">nh</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nh&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">df_features</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">df_target</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()))</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">FSGNN_model</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

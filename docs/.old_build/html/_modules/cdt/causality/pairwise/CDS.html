@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.pairwise.CDS &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme-link.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.causality.html">Causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.independence.html">Independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.pairwise.CDS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.pairwise.CDS</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Conditional Distribution Similarity Statistic</span>
+<span class="sd">Used to infer causal directions</span>
+<span class="sd">Author : José A.R. Fonollosa</span>
+<span class="sd">Ref : Fonollosa, José AR, &quot;Conditional distribution variability measures for causality detection&quot;, 2016.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">PairwiseModel</span>
+
+<span class="n">BINARY</span> <span class="o">=</span> <span class="s2">&quot;Binary&quot;</span>
+<span class="n">CATEGORICAL</span> <span class="o">=</span> <span class="s2">&quot;Categorical&quot;</span>
+<span class="n">NUMERICAL</span> <span class="o">=</span> <span class="s2">&quot;Numerical&quot;</span>
+
+
+<div class="viewcode-block" id="count_unique"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.count_unique">[docs]</a><span class="k">def</span> <span class="nf">count_unique</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span></div>
+
+
+<div class="viewcode-block" id="numerical"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.numerical">[docs]</a><span class="k">def</span> <span class="nf">numerical</span><span class="p">(</span><span class="n">tp</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">tp</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span>
+    <span class="k">return</span> <span class="n">tp</span> <span class="o">==</span> <span class="n">NUMERICAL</span></div>
+
+
+<div class="viewcode-block" id="len_discretized_values"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.len_discretized_values">[docs]</a><span class="k">def</span> <span class="nf">len_discretized_values</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">ffactor</span><span class="p">,</span> <span class="n">maxdev</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">discretized_values</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">ffactor</span><span class="p">,</span> <span class="n">maxdev</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="discretized_values"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.discretized_values">[docs]</a><span class="k">def</span> <span class="nf">discretized_values</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">ffactor</span><span class="p">,</span> <span class="n">maxdev</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">numerical</span><span class="p">(</span><span class="n">tx</span><span class="p">)</span> <span class="ow">and</span> <span class="n">count_unique</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ffactor</span> <span class="o">*</span> <span class="n">maxdev</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">vmax</span> <span class="o">=</span> <span class="n">ffactor</span> <span class="o">*</span> <span class="n">maxdev</span>
+        <span class="n">vmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">ffactor</span> <span class="o">*</span> <span class="n">maxdev</span>
+        <span class="k">return</span> <span class="nb">range</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="discretized_sequence"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.discretized_sequence">[docs]</a><span class="k">def</span> <span class="nf">discretized_sequence</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">ffactor</span><span class="p">,</span> <span class="n">maxdev</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">norm</span> <span class="ow">or</span> <span class="p">(</span><span class="n">numerical</span><span class="p">(</span><span class="n">tx</span><span class="p">)</span> <span class="ow">and</span> <span class="n">count_unique</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">len_discretized_values</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">ffactor</span><span class="p">,</span> <span class="n">maxdev</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">norm</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">xf</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">maxdev</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xf</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">xf</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">ffactor</span><span class="p">)</span>
+        <span class="n">vmax</span> <span class="o">=</span> <span class="n">ffactor</span> <span class="o">*</span> <span class="n">maxdev</span>
+        <span class="n">vmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">ffactor</span> <span class="o">*</span> <span class="n">maxdev</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">vmax</span><span class="p">]</span> <span class="o">=</span> <span class="n">vmax</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">vmin</span><span class="p">]</span> <span class="o">=</span> <span class="n">vmin</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="discretized_sequences"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.discretized_sequences">[docs]</a><span class="k">def</span> <span class="nf">discretized_sequences</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ffactor</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">maxdev</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">discretized_sequence</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;Numerical&quot;</span><span class="p">,</span> <span class="n">ffactor</span><span class="p">,</span> <span class="n">maxdev</span><span class="p">),</span> <span class="n">discretized_sequence</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;Numerical&quot;</span><span class="p">,</span> <span class="n">ffactor</span><span class="p">,</span>
+                                                                                       <span class="n">maxdev</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CDS"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.CDS">[docs]</a><span class="k">class</span> <span class="nc">CDS</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Conditional Distribution Similarity Statistic</span>
+
+<span class="sd">    Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.</span>
+<span class="sd">    The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</span>
+<span class="sd">    Ref : Fonollosa, José AR, &quot;Conditional distribution variability measures for causality detection&quot;, 2016.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ffactor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxdev</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">minc</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CDS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ffactor</span> <span class="o">=</span> <span class="n">ffactor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxdev</span> <span class="o">=</span> <span class="n">maxdev</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minc</span> <span class="o">=</span> <span class="n">minc</span>
+
+<div class="viewcode-block" id="CDS.predict_proba"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.CDS.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Infer causal relationships between 2 variables x_te and y_te using the CDS statistic</span>
+
+<span class="sd">        :param a: Input variable 1</span>
+<span class="sd">        :param b: Input variable 2</span>
+<span class="sd">        :return: (Value : 1 if a-&gt;b and -1 if b-&gt;a)</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_score</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_score</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CDS.cds_score"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.CDS.CDS.cds_score">[docs]</a>    <span class="k">def</span> <span class="nf">cds_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_te</span><span class="p">,</span> <span class="n">y_te</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Computes the cds statistic from variable 1 to variable 2</span>
+
+<span class="sd">        :param x_te: Input, seen as cause</span>
+<span class="sd">        :param y_te: Input, seen as effect</span>
+<span class="sd">        :return: CDS statistic between x_te and y_te</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xd</span><span class="p">,</span> <span class="n">yd</span> <span class="o">=</span> <span class="n">discretized_sequences</span><span class="p">(</span><span class="n">x_te</span><span class="p">,</span>  <span class="n">y_te</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">ffactor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxdev</span><span class="p">)</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">xd</span><span class="p">)</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">yd</span><span class="p">)</span>
+        <span class="n">yrange</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cy</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">yrange</span><span class="p">)</span>
+        <span class="n">py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">yrange</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">py</span> <span class="o">=</span> <span class="n">py</span> <span class="o">/</span> <span class="n">py</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">pyx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cx</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">cx</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="p">:</span>
+                <span class="n">yx</span> <span class="o">=</span> <span class="n">y_te</span><span class="p">[</span><span class="n">xd</span> <span class="o">==</span> <span class="n">a</span><span class="p">]</span>
+                <span class="c1"># if not numerical(ty):</span>
+                <span class="c1">#     cyx = Counter(yx)</span>
+                <span class="c1">#     pyxa = np.array([cyx[i] for i in yrange], dtype=float)</span>
+                <span class="c1">#     pyxa.sort()</span>
+                <span class="k">if</span> <span class="n">count_unique</span><span class="p">(</span><span class="n">y_te</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">len_discretized_values</span><span class="p">(</span><span class="n">y_te</span><span class="p">,</span> <span class="s2">&quot;Numerical&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffactor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxdev</span><span class="p">):</span>
+
+                    <span class="n">yx</span> <span class="o">=</span> <span class="p">(</span><span class="n">yx</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">yx</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y_te</span><span class="p">)</span>
+                    <span class="n">yx</span> <span class="o">=</span> <span class="n">discretized_sequence</span><span class="p">(</span><span class="n">yx</span><span class="p">,</span> <span class="s2">&quot;Numerical&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffactor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxdev</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">cyx</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">yx</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+                    <span class="n">pyxa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cyx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">discretized_values</span><span class="p">(</span><span class="n">y_te</span><span class="p">,</span> <span class="s2">&quot;Numerical&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffactor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxdev</span><span class="p">)],</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cyx</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">yx</span><span class="p">)</span>
+                    <span class="n">pyxa</span> <span class="o">=</span> <span class="p">[</span><span class="n">cyx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">yrange</span><span class="p">]</span>
+                    <span class="n">pyxax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">pyxa</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                    <span class="n">xcorr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">py</span> <span class="o">*</span> <span class="n">pyxax</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">ny</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+                    <span class="n">imax</span> <span class="o">=</span> <span class="n">xcorr</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">xcorr</span><span class="p">))</span>
+                    <span class="n">pyxa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ny</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">imax</span><span class="p">)</span> <span class="o">+</span> <span class="n">pyxa</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">imax</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">pyxa</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="n">cx</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                <span class="n">pyxa</span> <span class="o">=</span> <span class="n">pyxa</span> <span class="o">/</span> <span class="n">pyxa</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+                <span class="n">pyx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyxa</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pyx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="n">pyx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pyx</span><span class="p">)</span>
+        <span class="n">pyx</span> <span class="o">=</span> <span class="n">pyx</span> <span class="o">-</span> <span class="n">pyx</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">pyx</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

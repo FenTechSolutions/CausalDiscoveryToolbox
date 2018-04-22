@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.pairwise.RCC &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.pairwise.RCC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.pairwise.RCC</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Randomized Causation Coefficient Model.</span>
+
+<span class="sd">Author : David Lopez-Paz</span>
+<span class="sd">Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,</span>
+<span class="sd">     &quot;Towards a Learning Theory of Cause-Effect Inference&quot;, ICML 2015.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span> <span class="k">as</span> <span class="n">CLF</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">auc</span>
+<span class="kn">import</span> <span class="nn">pandas</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">PairwiseModel</span>
+
+
+<div class="viewcode-block" id="rp"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.rp">[docs]</a><span class="k">def</span> <span class="nf">rp</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">si</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]),</span>
+                      <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="f1"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.f1">[docs]</a><span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)))),</span> <span class="n">w</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="score"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.score">[docs]</a><span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">auc</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="n">auc</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">p</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="RCC"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC">[docs]</a><span class="k">class</span> <span class="nc">RCC</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Randomized Causation Coefficient model.</span>
+
+<span class="sd">    Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,</span>
+<span class="sd">     &quot;Towards a Learning Theory of Cause-Effect Inference&quot;, ICML 2015.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the model w/ its parameters.</span>
+
+<span class="sd">        :param args: None</span>
+<span class="sd">        :param kwargs: {K: number of randomized coefficients,</span>
+<span class="sd">                        E: number of estimators,</span>
+<span class="sd">                        L: number of min samples leaves of the estimator</span>
+<span class="sd">                        max_depth: max depth of the model</span>
+<span class="sd">                        n_jobs: number of jobs to be run on parallel}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="mi">333</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;n_jobs&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;max_depth&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">E</span><span class="p">,</span> <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">,</span> <span class="s1">&#39;min_samples_leaf&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;n_jobs&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">wx</span> <span class="o">=</span> <span class="n">rp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wy</span> <span class="o">=</span> <span class="n">rp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wz</span> <span class="o">=</span> <span class="n">rp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf0</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf1</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="RCC.fit"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the model on pairwise data.</span>
+
+<span class="sd">        :param x_tr: Input data - CEPC-format DataFrame containing pairs of variables</span>
+<span class="sd">        :param y_tr: Targets</span>
+<span class="sd">        :type x_tr: pandas.DataFrame</span>
+<span class="sd">        :type y_tr: pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">x_ab</span><span class="p">,</span> <span class="n">y_ab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_ftdata</span><span class="p">(</span><span class="n">x_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">x_ab</span><span class="p">,</span> <span class="n">y_ab</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RCC.fit_ftdata"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC.fit_ftdata">[docs]</a>    <span class="k">def</span> <span class="nf">fit_ftdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_ft</span><span class="p">,</span> <span class="n">y_ft</span><span class="p">,</span> <span class="n">x_ab</span><span class="p">,</span> <span class="n">y_ab</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the model with featurized data as input.</span>
+
+<span class="sd">        :param x_ft: x_featurized</span>
+<span class="sd">        :param y_ft: y_featurized</span>
+<span class="sd">        :param x_ab: x_inverse_featurized</span>
+<span class="sd">        :param y_ab: y_inverse_featurized</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf0</span> <span class="o">=</span> <span class="n">CLF</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_ft</span><span class="p">,</span> <span class="n">y_ft</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># causal or confounded?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf1</span> <span class="o">=</span> <span class="n">CLF</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_ab</span><span class="p">,</span> <span class="n">y_ab</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># causal or anticausal?</span></div>
+
+<div class="viewcode-block" id="RCC.featurize_row"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC.featurize_row">[docs]</a>    <span class="k">def</span> <span class="nf">featurize_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">])[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">])[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">f1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wx</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f1</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wy</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f1</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">wz</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="RCC.featurize"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC.featurize">[docs]</a>    <span class="k">def</span> <span class="nf">featurize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">ft_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ft_data_rev</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">ft_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">featurize_row</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+            <span class="n">ft_data_rev</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">featurize_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ft_data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ft_data_rev</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="RCC.transform"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Featurize the data with the randomized coefficients.</span>
+
+<span class="sd">        :param x_tr: Inputdata - CEPC-format DataFrame containing pairs of variables</span>
+<span class="sd">        :param y_tr: Targets</span>
+<span class="sd">        :type x_tr: pandas.DataFrame</span>
+<span class="sd">        :type y_tr: pandas.DataFrame or array</span>
+<span class="sd">        :return: Featurized data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurize</span><span class="p">(</span><span class="n">x_tr</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">x_ab</span><span class="p">,</span> <span class="n">y_ab</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">y_tr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">y_tr</span><span class="p">)</span> <span class="o">==</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+                <span class="n">y_tr</span> <span class="o">=</span> <span class="n">y_tr</span><span class="p">[</span><span class="s1">&#39;Target&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+            <span class="n">y_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">y_tr</span><span class="p">,</span> <span class="o">-</span><span class="n">y_tr</span><span class="p">))</span>
+
+            <span class="n">x_ab</span> <span class="o">=</span> <span class="n">x_tr</span><span class="p">[(</span><span class="n">y_tr</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">y_tr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="n">y_ab</span> <span class="o">=</span> <span class="n">y_tr</span><span class="p">[(</span><span class="n">y_tr</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">y_tr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Featurize Finished !&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">x_ab</span><span class="p">,</span> <span class="n">y_ab</span></div>
+
+<div class="viewcode-block" id="RCC.predict_dataset"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC.predict_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_te</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict causal directions of a dataset. With input data as (X,Y).</span>
+
+<span class="sd">            -1 is Y-&gt;X</span>
+<span class="sd">             1 is X-&gt;Y</span>
+<span class="sd">             # 0 is independent/confounding</span>
+
+<span class="sd">        :param x_te: Inputdata - CEPC-format DataFrame containing pairs of variables</span>
+<span class="sd">        :type x_te: pandas.DataFrame</span>
+<span class="sd">        :return: Array containing probabilities of predictions</span>
+<span class="sd">        :rtype: numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model has to be trained before doing any predictions&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+
+        <span class="n">x_te</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_te</span><span class="p">)</span>
+        <span class="n">p_te</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf0</span><span class="o">.</span><span class="n">predict_dataset</span><span class="p">(</span><span class="n">x_te</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf1</span><span class="o">.</span><span class="n">predict_dataset</span><span class="p">(</span><span class="n">x_te</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">p_te</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_te</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">p_te</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">p_te</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">p_te</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">:])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">p_te</span></div>
+
+<div class="viewcode-block" id="RCC.predict_proba"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.RCC.RCC.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Infer causal directions using the trained RCC model.</span>
+
+<span class="sd">        :param a: Variable 1</span>
+<span class="sd">        :param b: Variable 2</span>
+<span class="sd">        :return: probability (Value : 1 if a-&gt;b and -1 if b-&gt;a)</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model has to be trained before doing any predictions&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">f1</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wx</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f1</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wy</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">f1</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">wz</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="n">p_te</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf0</span><span class="o">.</span><span class="n">predict_dataset</span><span class="p">(</span><span class="n">d</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf1</span><span class="o">.</span><span class="n">predict_dataset</span><span class="p">(</span><span class="n">d</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p_te</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.graph.GIES &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.graph.GIES</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.graph.GIES</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;GIES algorithm.</span>
+
+<span class="sd">Imported from the Pcalg package.</span>
+<span class="sd">Author: Diviyan Kalainathan</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">read_csv</span>
+<span class="kn">from</span> <span class="nn">...utils.R</span> <span class="k">import</span> <span class="n">RPackages</span><span class="p">,</span> <span class="n">launch_R_script</span>
+
+
+<div class="viewcode-block" id="message_warning"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.GIES.message_warning">[docs]</a><span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ignore everything except the message.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">message_warning</span>
+
+
+<div class="viewcode-block" id="GIES"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.GIES.GIES">[docs]</a><span class="k">class</span> <span class="nc">GIES</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;GIES algorithm.</span>
+
+<span class="sd">    Ref:</span>
+<span class="sd">    .M. Chickering (2002).  Optimal structure identification with greedy search.</span>
+<span class="sd">    Journal of Machine Learning Research 3 , 507–554</span>
+
+<span class="sd">    A. Hauser and P. Bühlmann (2012). Characterization and greedy learning of</span>
+<span class="sd">    interventional Markov equivalence classes of directed acyclic graphs.</span>
+<span class="sd">    Journal of Machine Learning Research 13, 2409–2464.</span>
+
+<span class="sd">    P. Nandy, A. Hauser and M. Maathuis (2015). Understanding consistency in</span>
+<span class="sd">     hybrid causal structure learning.</span>
+<span class="sd">    arXiv preprint 1507.02608</span>
+
+<span class="sd">    P. Spirtes, C.N. Glymour, and R. Scheines (2000).</span>
+<span class="sd">    Causation, Prediction, and Search, MIT Press, Cambridge (MA)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model and its available arguments.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">pcalg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;R Package pcalg is not available.&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GIES</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="s1">&#39;GaussL0penIntScore&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;obs&#39;</span><span class="p">:</span> <span class="s1">&#39;GaussL0penObsScore&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;</span><span class="si">{FILE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_gies/data.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{GAPS}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_gies/fixedgaps.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{SCORE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;GaussL0penObsScore&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{OUTPUT}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_gies/result.csv&#39;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="GIES.orient_undirected_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.GIES.GIES.orient_undirected_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span>
+                                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run GIES on an undirected graph.&quot;&quot;&quot;</span>
+        <span class="c1"># Building setup w/ arguments.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SCORE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">[</span><span class="n">score</span><span class="p">]</span>
+
+        <span class="n">fe</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+        <span class="n">fg</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">fe</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">())</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_gies</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fixedGaps</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+                                <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="GIES.orient_directed_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.GIES.GIES.orient_directed_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_directed_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run GIES on a directed_graph.&quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;GIES is ran on the skeleton of the given graph.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orient_undirected_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GIES.create_graph_from_data"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.GIES.GIES.create_graph_from_data">[docs]</a>    <span class="k">def</span> <span class="nf">create_graph_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the GIES algorithm.</span>
+
+<span class="sd">        :param data: DataFrame containing the data</span>
+<span class="sd">        :param score: score used for gies. [&#39;obs&#39;, &#39;int&#39;]</span>
+<span class="sd">        :param verbose: if TRUE, detailed output is provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Building setup w/ arguments.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SCORE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">[</span><span class="n">score</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_gies</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+                                <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="GIES.run_gies"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.GIES.GIES.run_gies">[docs]</a>    <span class="k">def</span> <span class="nf">run_gies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fixedGaps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setting up and running GIES with all arguments.&quot;&quot;&quot;</span>
+        <span class="c1"># Run gies</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_gies/&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_gies/result.csv&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_gies/data.csv&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fixedGaps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fixedGaps</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_gies/fixedgaps.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FALSE&#39;</span>
+
+            <span class="n">gies_result</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/R_templates/gies.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># Cleanup</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_gies&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_gies/&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_gies&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gies_result</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

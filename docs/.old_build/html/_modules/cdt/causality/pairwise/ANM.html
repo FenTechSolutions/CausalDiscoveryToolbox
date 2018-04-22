@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.pairwise.ANM &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme-link.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.causality.html">Causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.independence.html">Independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.pairwise.ANM</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.pairwise.ANM</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Additive Noise Model.</span>
+
+<span class="sd">Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,</span>
+<span class="sd">  &quot;Nonlinear causal discovery with additive noise models&quot;, NIPS 2009</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.gaussian_process</span> <span class="k">import</span> <span class="n">GaussianProcessRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">PairwiseModel</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="rbf_dot2"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.ANM.rbf_dot2">[docs]</a><span class="k">def</span> <span class="nf">rbf_dot2</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">deg</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">p1</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">p1</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="n">p2</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+    <span class="n">size1</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">size2</span> <span class="o">=</span> <span class="n">p2</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p1</span> <span class="o">*</span> <span class="n">p1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p2</span> <span class="o">*</span> <span class="n">p2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size2</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">(</span><span class="n">size1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">+</span> <span class="n">R</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">H</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">deg</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">H</span></div>
+
+
+<div class="viewcode-block" id="rbf_dot"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.ANM.rbf_dot">[docs]</a><span class="k">def</span> <span class="nf">rbf_dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">deg</span><span class="p">):</span>
+    <span class="c1"># Set kernel size to median distance between points, if no kernel specified</span>
+    <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">+</span> <span class="n">Q</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">deg</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">H</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dists</span><span class="p">[</span><span class="n">dists</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">H</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">deg</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">H</span></div>
+
+
+<div class="viewcode-block" id="FastHsicTestGamma"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.ANM.FastHsicTestGamma">[docs]</a><span class="k">def</span> <span class="nf">FastHsicTestGamma</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">sig</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">maxpnt</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function implements the HSIC independence test using a Gamma approximation</span>
+<span class="sd">     to the test threshold. Use at most maxpnt points to save time.</span>
+
+<span class="sd">    :param X: contains dx columns, m rows. Each row is an i.i.d sample</span>
+<span class="sd">    :param Y: contains dy columns, m rows. Each row is an i.i.d sample</span>
+<span class="sd">    :param sig: [0] (resp [1]) is kernel size for x(resp y) (set to median distance if -1)</span>
+<span class="sd">    :return: test statistic</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">m</span> <span class="o">&gt;</span> <span class="n">maxpnt</span><span class="p">:</span>
+        <span class="n">indx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">:</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxpnt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="c1">#       indx = np.r_[0:maxpnt]</span>
+        <span class="n">Xm</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">Ym</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">Xm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Xm</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">Ym</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">m</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+
+    <span class="n">K</span> <span class="o">=</span> <span class="n">rbf_dot</span><span class="p">(</span><span class="n">Xm</span><span class="p">,</span> <span class="n">sig</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">rbf_dot</span><span class="p">(</span><span class="n">Ym</span><span class="p">,</span> <span class="n">sig</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">Kc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">H</span><span class="p">))</span>
+    <span class="n">Lc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">))</span>
+
+    <span class="n">testStat</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Kc</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">Lc</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">testStat</span><span class="p">):</span>
+        <span class="n">testStat</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">testStat</span></div>
+
+
+<div class="viewcode-block" id="normalized_hsic"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.ANM.normalized_hsic">[docs]</a><span class="k">def</span> <span class="nf">normalized_hsic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">FastHsicTestGamma</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">h</span></div>
+
+
+<div class="viewcode-block" id="ANM"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.ANM.ANM">[docs]</a><span class="k">class</span> <span class="nc">ANM</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Additive Noise model to infer causal relationships.</span>
+
+<span class="sd">    Assuming that x-&gt;y then if the data follows an additive noise model, there is y=f(x)+e</span>
+<span class="sd">    e being a noise variable and f a deterministic function. The causal inference bases itself on the independence</span>
+<span class="sd">    between x and e.</span>
+<span class="sd">    It is proven that in such case if the data is generated using an additive noise model, the model would only be able</span>
+<span class="sd">    to fit in the true causal direction.</span>
+<span class="sd">    Ref: https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ANM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ANM.predict_proba"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.ANM.ANM.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prediction method for pairwise causal inference using the ANM model.</span>
+
+<span class="sd">        :param a: Variable 1</span>
+<span class="sd">        :param b: Variable 2</span>
+<span class="sd">        :return: (Value : 1 if a-&gt;b and -1 if b-&gt;a)</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">anm_score</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">anm_score</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ANM.anm_score"><a class="viewcode-back" href="../../../../source/cdt.causality.pairwise.html#cdt.causality.pairwise.ANM.ANM.anm_score">[docs]</a>    <span class="k">def</span> <span class="nf">anm_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the fitness score of the ANM model in the x-&gt;y direction.</span>
+
+<span class="sd">        :param x: Input, seen as cause</span>
+<span class="sd">        :param y: Input, seen as effect</span>
+<span class="sd">        :return: CDS statistic between x_te and y_te</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">y_predict</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">indepscore</span> <span class="o">=</span> <span class="n">normalized_hsic</span><span class="p">(</span><span class="n">y_predict</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">indepscore</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

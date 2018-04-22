@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.independence.graph.HSICLasso &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.independence.graph.HSICLasso</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.independence.graph.HSICLasso</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utils for the HSICLasso implementation.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;makotoy&#39;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="kernel_Delta_norm"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.HSICLasso.kernel_Delta_norm">[docs]</a><span class="k">def</span> <span class="nf">kernel_Delta_norm</span><span class="p">(</span><span class="n">xin1</span><span class="p">,</span> <span class="n">xin2</span><span class="p">):</span>
+    <span class="n">n1</span> <span class="o">=</span> <span class="n">xin1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">xin2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">))</span>
+    <span class="n">ulist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">xin1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">ulist</span><span class="p">:</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xin1</span> <span class="o">==</span> <span class="n">ind</span><span class="p">))</span>
+        <span class="n">c2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xin2</span> <span class="o">==</span> <span class="n">ind</span><span class="p">))</span>
+        <span class="n">ind1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xin1</span> <span class="o">==</span> <span class="n">ind</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ind2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xin2</span> <span class="o">==</span> <span class="n">ind</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">K</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">ind2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">c1</span> <span class="o">/</span> <span class="n">c2</span>
+
+    <span class="k">return</span> <span class="n">K</span></div>
+
+
+<div class="viewcode-block" id="kernel_Delta"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.HSICLasso.kernel_Delta">[docs]</a><span class="k">def</span> <span class="nf">kernel_Delta</span><span class="p">(</span><span class="n">xin1</span><span class="p">,</span> <span class="n">xin2</span><span class="p">):</span>
+    <span class="n">n1</span> <span class="o">=</span> <span class="n">xin1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">xin2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">))</span>
+    <span class="n">ulist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">xin1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">ulist</span><span class="p">:</span>
+        <span class="n">ind1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xin1</span> <span class="o">==</span> <span class="n">ind</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ind2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xin2</span> <span class="o">==</span> <span class="n">ind</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">K</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">ind2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">K</span></div>
+
+
+<div class="viewcode-block" id="kernel_Gaussian"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.HSICLasso.kernel_Gaussian">[docs]</a><span class="k">def</span> <span class="nf">kernel_Gaussian</span><span class="p">(</span><span class="n">xin1</span><span class="p">,</span> <span class="n">xin2</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="n">n1</span> <span class="o">=</span> <span class="n">xin1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">xin2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">xin12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">xin1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">xin22</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">xin2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">dist2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">xin22</span><span class="p">,</span> <span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">xin12</span><span class="p">,</span> <span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                                              <span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xin1</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">xin2</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">dist2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">K</span></div>
+
+
+<div class="viewcode-block" id="hsiclasso"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.HSICLasso.hsiclasso">[docs]</a><span class="k">def</span> <span class="nf">hsiclasso</span><span class="p">(</span><span class="n">Xin</span><span class="p">,</span> <span class="n">Yin</span><span class="p">,</span> <span class="n">numFeat</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">ykernel</span><span class="o">=</span><span class="s1">&#39;Gauss&#39;</span><span class="p">):</span>
+
+    <span class="n">d</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">Xin</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Centering matrix</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="c1"># Normalization</span>
+    <span class="n">XX</span> <span class="o">=</span> <span class="n">Xin</span> <span class="o">/</span> <span class="p">(</span><span class="n">Xin</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.00001</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ykernel</span> <span class="o">==</span> <span class="s1">&#39;Gauss&#39;</span><span class="p">:</span>
+        <span class="n">YY</span> <span class="o">=</span> <span class="n">Yin</span> <span class="o">/</span> <span class="p">(</span><span class="n">Yin</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.00001</span><span class="p">)</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">kernel_Gaussian</span><span class="p">(</span><span class="n">YY</span><span class="p">,</span> <span class="n">YY</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">kernel_Delta_norm</span><span class="p">(</span><span class="n">Yin</span><span class="p">,</span> <span class="n">Yin</span><span class="p">)</span>
+
+    <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">))</span>
+
+    <span class="c1"># Preparing design matrix for HSIC Lars</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+    <span class="n">Xty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">Kx</span> <span class="o">=</span> <span class="n">kernel_Gaussian</span><span class="p">(</span><span class="n">XX</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">XX</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">Kx</span><span class="p">),</span> <span class="n">H</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">Xty</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">L</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># Nonnegative Lars</span>
+    <span class="c1"># Inactive set</span>
+    <span class="n">Il</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">XtXbeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">))</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Xty</span> <span class="o">-</span> <span class="n">XtXbeta</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">Il</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+    <span class="n">inc_path</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">inc_path</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">d</span><span class="p">))</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">d</span><span class="p">))</span>
+
+        <span class="n">path</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">A</span><span class="p">]))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mf">1e-9</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">numFeat</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">A</span><span class="p">]))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># w = np.linalg.solve(np.dot(X[:,A].transpose(),X[:,A])+1e-10*np.eye(len(A)),s)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">A</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">A</span><span class="p">])),</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">XtXw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">A</span><span class="p">],</span> <span class="n">w</span><span class="p">))</span>
+
+        <span class="n">gamma1</span> <span class="o">=</span> <span class="p">(</span><span class="n">C</span> <span class="o">-</span> <span class="n">c</span><span class="p">[</span><span class="n">Il</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">XtXw</span><span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">-</span> <span class="n">XtXw</span><span class="p">[</span><span class="n">Il</span><span class="p">])</span>
+        <span class="n">gamma2</span> <span class="o">=</span> <span class="o">-</span><span class="n">beta</span><span class="p">[</span><span class="n">A</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">)</span>
+        <span class="n">gamma3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">gamma3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">/</span> <span class="p">(</span><span class="n">XtXw</span><span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">)</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">gamma1</span><span class="p">,</span> <span class="n">gamma2</span><span class="p">)),</span> <span class="n">gamma3</span><span class="p">))</span>
+
+        <span class="n">gamma</span><span class="p">[</span><span class="n">gamma</span> <span class="o">&lt;=</span> <span class="mf">1e-9</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
+
+        <span class="n">beta</span><span class="p">[</span><span class="n">A</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="n">A</span><span class="p">]</span> <span class="o">+</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">w</span>
+
+        <span class="c1"># if t &gt; len(gamma1) and t &lt; (len(gamma1) + len(gamma2) + 1):</span>
+        <span class="c1">#     lassocond = 1</span>
+        <span class="c1">#     j = t - len(gamma1)</span>
+        <span class="c1">#     I.append(A[j])</span>
+        <span class="c1">#     A.remove(j)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     lassocond = 0</span>
+
+        <span class="n">lassocond</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">XtXbeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">))</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Xty</span> <span class="o">-</span> <span class="n">XtXbeta</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">Il</span><span class="p">])</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">Il</span><span class="p">])</span>
+
+        <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">inc_path</span><span class="p">:</span>
+            <span class="n">path</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">lam</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lam</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># print mu,t,len(I)</span>
+        <span class="k">if</span> <span class="n">lassocond</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">A</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Il</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">Il</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">Il</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+        <span class="c1"># print tmp</span>
+
+    <span class="k">if</span> <span class="n">inc_path</span><span class="p">:</span>
+        <span class="n">path_final</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">lam_final</span> <span class="o">=</span> <span class="n">lam</span><span class="p">[</span><span class="mi">0</span><span class="p">:(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">path_final</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">lam_final</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

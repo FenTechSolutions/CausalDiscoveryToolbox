@@ -1,0 +1,596 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.independence.stats package &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cdt.generators package" href="cdt.generators.html" />
+    <link rel="prev" title="cdt.independence.graph package" href="cdt.independence.graph.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cdt.causality.html">Causality</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cdt.independence.html">Independence</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cdt.independence.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cdt.independence.graph.html">cdt.independence.graph package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">cdt.independence.stats package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cdt.independence.stats.all_types">cdt.independence.stats.all_types module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cdt.independence.stats.model">cdt.independence.stats.model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cdt.independence.stats.numerical">cdt.independence.stats.numerical module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cdt.independence.stats">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cdt.independence.html#module-cdt.independence">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="cdt.independence.html">cdt.independence package</a> &raquo;</li>
+        
+      <li>cdt.independence.stats package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/cdt.independence.stats.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cdt-independence-stats-package">
+<h1>cdt.independence.stats package<a class="headerlink" href="#cdt-independence-stats-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cdt.independence.stats.all_types">
+<span id="cdt-independence-stats-all-types-module"></span><h2>cdt.independence.stats.all_types module<a class="headerlink" href="#module-cdt.independence.stats.all_types" title="Permalink to this headline">¶</a></h2>
+<p>Dependency criteria covering all types (Numerical, Categorical, Binary).</p>
+<p>Author: Diviyan Kalainathan
+Date: 1/06/2017</p>
+<dl class="class">
+<dt id="cdt.independence.stats.all_types.AdjMI">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.all_types.</code><code class="descname">AdjMI</code><a class="reference internal" href="../_modules/cdt/independence/stats/all_types.html#AdjMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.all_types.AdjMI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.independence.stats.model.IndependenceModel" title="cdt.independence.stats.model.IndependenceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.independence.stats.model.IndependenceModel</span></code></a></p>
+<p>Dependency criterion made of binning and mutual information.</p>
+<p>The dependency metric relies on using the clustering metric adjusted mutual information applied
+to binned variables using the Freedman Diaconis Estimator.
+Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, “Information theoretic measures for clusterings</p>
+<blockquote>
+<div>comparison: Variants, properties, normalization and correction for chance”, Journal of Machine Learning
+Research, Volume 11, Oct 2010.</div></blockquote>
+<dl class="docutils">
+<dt>Ref: Freedman, David and Diaconis, Persi, “On the histogram as a density estimator:L2 theory”,</dt>
+<dd>“Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete”, 1981, issn=1432-2064,
+doi=10.1007/BF01025868.</dd>
+</dl>
+<dl class="method">
+<dt id="cdt.independence.stats.all_types.AdjMI.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/all_types.html#AdjMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.all_types.AdjMI.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the independence test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+<li><strong>b</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dependency statistic (1=Highly dependent, 0=Not dependent)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.independence.stats.all_types.NormMI">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.all_types.</code><code class="descname">NormMI</code><a class="reference internal" href="../_modules/cdt/independence/stats/all_types.html#NormMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.all_types.NormMI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.independence.stats.model.IndependenceModel" title="cdt.independence.stats.model.IndependenceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.independence.stats.model.IndependenceModel</span></code></a></p>
+<p>Dependency criterion made of binning and mutual information.</p>
+<p>The dependency metric relies on using the clustering metric adjusted mutual information applied
+to binned variables using the Freedman Diaconis Estimator.
+Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, “Information theoretic measures for clusterings</p>
+<blockquote>
+<div>comparison: Variants, properties, normalization and correction for chance”, Journal of Machine Learning
+Research, Volume 11, Oct 2010.</div></blockquote>
+<dl class="docutils">
+<dt>Ref: Freedman, David and Diaconis, Persi, “On the histogram as a density estimator:L2 theory”,</dt>
+<dd>“Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete”, 1981, issn=1432-2064,
+doi=10.1007/BF01025868.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+<li><strong>b</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dependency statistic (1=Highly dependent, 0=Not dependent)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cdt.independence.stats.all_types.NormMI.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/all_types.html#NormMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.all_types.NormMI.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the independence test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+<li><strong>b</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dependency statistic (1=Highly dependent, 0=Not dependent)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.independence.stats.all_types.bin_variable">
+<code class="descclassname">cdt.independence.stats.all_types.</code><code class="descname">bin_variable</code><span class="sig-paren">(</span><em>var</em>, <em>bins='fd'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/all_types.html#bin_variable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.all_types.bin_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bin variables w/ normalization.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.independence.stats.model">
+<span id="cdt-independence-stats-model-module"></span><h2>cdt.independence.stats.model module<a class="headerlink" href="#module-cdt.independence.stats.model" title="Permalink to this headline">¶</a></h2>
+<p>Base class for dependence models.</p>
+<p>Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.independence.stats.model.IndependenceModel">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.model.</code><code class="descname">IndependenceModel</code><span class="sig-paren">(</span><em>predictor=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/model.html#IndependenceModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for independence and utilities to recover the undirected graph out of data.</p>
+<dl class="method">
+<dt id="cdt.independence.stats.model.IndependenceModel.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/model.html#IndependenceModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test dependence between variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – First Variable</li>
+<li><strong>b</strong> – Second Variable</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Proba independence score. A score close to 0 -&gt; independent</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.independence.stats.model.IndependenceModel.predict_undirected_graph">
+<code class="descname">predict_undirected_graph</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/model.html#IndependenceModel.predict_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a skeleton using a pairwise independence criterion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – Raw data table</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Undirected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">UndirectedGraph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.independence.stats.numerical">
+<span id="cdt-independence-stats-numerical-module"></span><h2>cdt.independence.stats.numerical module<a class="headerlink" href="#module-cdt.independence.stats.numerical" title="Permalink to this headline">¶</a></h2>
+<p>Dependency criteria for Numerical data.</p>
+<p>Author: Diviyan Kalainathan
+Date: 1/06/2017</p>
+<dl class="function">
+<dt id="cdt.independence.stats.numerical.FastHsicTestGamma">
+<code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">FastHsicTestGamma</code><span class="sig-paren">(</span><em>X, Y, sig=[-1, -1], maxpnt=200</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#FastHsicTestGamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.FastHsicTestGamma" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>This function implements the HSIC independence test using a Gamma approximation</dt>
+<dd>to the test threshold. Use at most maxpnt points to save time.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> – contains dx columns, m rows. Each row is an i.i.d sample</li>
+<li><strong>Y</strong> – contains dy columns, m rows. Each row is an i.i.d sample</li>
+<li><strong>sig</strong> – [0] (resp [1]) is kernel size for x(resp y) (set to median distance if -1)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">test statistic</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.independence.stats.numerical.KendallTau">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">KendallTau</code><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#KendallTau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.KendallTau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.independence.stats.model.IndependenceModel" title="cdt.independence.stats.model.IndependenceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.independence.stats.model.IndependenceModel</span></code></a></p>
+<dl class="method">
+<dt id="cdt.independence.stats.numerical.KendallTau.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#KendallTau.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.KendallTau.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test dependence between variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – First Variable</li>
+<li><strong>b</strong> – Second Variable</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Proba independence score. A score close to 0 -&gt; independent</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.independence.stats.numerical.MIRegression">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">MIRegression</code><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#MIRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.MIRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.independence.stats.model.IndependenceModel" title="cdt.independence.stats.model.IndependenceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.independence.stats.model.IndependenceModel</span></code></a></p>
+<dl class="method">
+<dt id="cdt.independence.stats.numerical.MIRegression.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#MIRegression.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.MIRegression.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test dependence between variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – First Variable</li>
+<li><strong>b</strong> – Second Variable</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Proba independence score. A score close to 0 -&gt; independent</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.independence.stats.numerical.NormalizedHSIC">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">NormalizedHSIC</code><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#NormalizedHSIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.NormalizedHSIC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.independence.stats.model.IndependenceModel" title="cdt.independence.stats.model.IndependenceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.independence.stats.model.IndependenceModel</span></code></a></p>
+<dl class="method">
+<dt id="cdt.independence.stats.numerical.NormalizedHSIC.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a, b, sig=[-1, -1], maxpnt=500</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#NormalizedHSIC.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.NormalizedHSIC.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test dependence between variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – First Variable</li>
+<li><strong>b</strong> – Second Variable</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Proba independence score. A score close to 0 -&gt; independent</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.independence.stats.numerical.PearsonCorrelation">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">PearsonCorrelation</code><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#PearsonCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.PearsonCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.independence.stats.model.IndependenceModel" title="cdt.independence.stats.model.IndependenceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.independence.stats.model.IndependenceModel</span></code></a></p>
+<dl class="method">
+<dt id="cdt.independence.stats.numerical.PearsonCorrelation.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#PearsonCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.PearsonCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test dependence between variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – First Variable</li>
+<li><strong>b</strong> – Second Variable</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Proba independence score. A score close to 0 -&gt; independent</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.independence.stats.numerical.SpearmanCorrelation">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">SpearmanCorrelation</code><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.SpearmanCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.independence.stats.model.IndependenceModel" title="cdt.independence.stats.model.IndependenceModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.independence.stats.model.IndependenceModel</span></code></a></p>
+<dl class="method">
+<dt id="cdt.independence.stats.numerical.SpearmanCorrelation.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.SpearmanCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test dependence between variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – First Variable</li>
+<li><strong>b</strong> – Second Variable</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Proba independence score. A score close to 0 -&gt; independent</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.independence.stats.numerical.rbf_dot">
+<code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">rbf_dot</code><span class="sig-paren">(</span><em>X</em>, <em>deg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#rbf_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.rbf_dot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.independence.stats.numerical.rbf_dot2">
+<code class="descclassname">cdt.independence.stats.numerical.</code><code class="descname">rbf_dot2</code><span class="sig-paren">(</span><em>p1</em>, <em>p2</em>, <em>deg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/independence/stats/numerical.html#rbf_dot2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.numerical.rbf_dot2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cdt.independence.stats">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cdt.independence.stats" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cdt.generators.html" class="btn btn-neutral float-right" title="cdt.generators package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cdt.independence.graph.html" class="btn btn-neutral" title="cdt.independence.graph package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

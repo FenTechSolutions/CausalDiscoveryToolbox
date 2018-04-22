@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Causal Discovery Toolbox &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation instructions" href="installation.html" />
+    <link rel="prev" title="Causal Discovery Toolbox: Index" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/cdt.causality.html">Causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/cdt.independence.html">Independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Causal Discovery Toolbox</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/readme.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="causal-discovery-toolbox">
+<h1>Causal Discovery Toolbox<a class="headerlink" href="#causal-discovery-toolbox" title="Permalink to this headline">¶</a></h1>
+<p># Causal Discovery Toolbox</p>
+<p>Package for causal inference in graphs and in the pairwise settings for Python&gt;=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.</p>
+<p>[![Build Status](<a class="reference external" href="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox">https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox</a>)
+[![Hex.pm](<a class="reference external" href="https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md">https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md</a>)
+[![Python.pm](<a class="reference external" href="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200">https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200</a>)](#)
+[![version](<a class="reference external" href="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200">https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200</a>)](#)</p>
+<p>It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.</p>
+<p>An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](examples/Discovery_LUCAS.ipynb)</p>
+<p>## Documentation</p>
+<p>[Check the documentation here](documentation.md)</p>
+<p>## Project structure</p>
+<p>[See here](Specifications.md)</p>
+<p>## Installation</p>
+<p>[Check the installation instructions here](installation_instructions.md)</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation instructions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Causal Discovery Toolbox: Index" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

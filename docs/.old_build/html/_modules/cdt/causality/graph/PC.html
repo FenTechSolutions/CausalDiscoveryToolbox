@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.graph.PC &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme-link.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.causality.html">Causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.independence.html">Independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.graph.PC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.graph.PC</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;PC algorithm by C.Glymour &amp; P.Sprites (REF, 2000).</span>
+
+<span class="sd">Imported from the Pcalg package.</span>
+<span class="sd">Author = Diviyan Kalainathan</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">read_csv</span>
+<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">...utils.R</span> <span class="k">import</span> <span class="n">RPackages</span><span class="p">,</span> <span class="n">launch_R_script</span>
+
+
+<div class="viewcode-block" id="message_warning"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.PC.message_warning">[docs]</a><span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ignore everything except the message.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">message_warning</span>
+
+
+<div class="viewcode-block" id="PC"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.PC.PC">[docs]</a><span class="k">class</span> <span class="nc">PC</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;PC algorithm by C.Glymour &amp; P.Sprites.</span>
+
+<span class="sd">    Ref:</span>
+<span class="sd">    D.Colombo and M.H. Maathuis (2014).</span>
+<span class="sd">    Order-independent constraint-based causal structure learning.</span>
+<span class="sd">    Journal of Machine Learning Research 15 3741-3782.</span>
+
+<span class="sd">    M. Kalisch, M. Maechler, D. Colombo, M.H. Maathuis and P. Buehlmann (2012).</span>
+<span class="sd">    Causal Inference Using Graphical Models with the R Package pcalg.</span>
+<span class="sd">    Journal of Statistical Software 47(11) 1–26, http://www.jstatsoft.org/v47/i11/</span>
+
+<span class="sd">    M. Kalisch and P. Buehlmann (2007).</span>
+<span class="sd">    Estimating high-dimensional directed acyclic graphs with the PC-algorithm.</span>
+<span class="sd">    JMLR 8 613-636.</span>
+
+<span class="sd">    J. Ramsey, J. Zhang and P. Spirtes (2006).</span>
+<span class="sd">    Adjacency-faithfulness and conservative causal inference.</span>
+<span class="sd">    In Proceedings of the 22nd Annual Conference on Uncertainty in Artificial</span>
+<span class="sd">    Intelligence. AUAI Press, Arlington, VA.</span>
+
+<span class="sd">    P. Spirtes, C. Glymour and R. Scheines (2000).</span>
+<span class="sd">    Causation, Prediction, and Search, 2nd edition. The MIT Press</span>
+
+<span class="sd">    Imported from the Pcalg package.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model and its available arguments.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">RPackages</span><span class="o">.</span><span class="n">pcalg</span> <span class="ow">and</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">kpcalg</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;R Package (k)pcalg is not available.&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">PC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CI_tests</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="s2">&quot;pcalg::gaussCItest&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;hsic&quot;</span><span class="p">:</span> <span class="s2">&quot;kpcalg::kernelCItest&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;discrete&quot;</span><span class="p">:</span> <span class="s2">&quot;pcalg::disCItest&quot;</span><span class="p">,</span>
+                         <span class="s2">&quot;binary&quot;</span><span class="p">:</span> <span class="s2">&quot;pcalg::binCItest&quot;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dcc&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">dcc</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+                             <span class="s1">&#39;hsic_gamma&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">hsic.gamma</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+                             <span class="s1">&#39;hsic_perm&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">hsic.perm</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+                             <span class="s1">&#39;hsic_clus&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">hsic.clus</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+                             <span class="s1">&#39;pcalg&#39;</span><span class="p">:</span> <span class="s2">&quot;C = cor(X), n = nrow(X)&quot;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;</span><span class="si">{FILE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_pc/data.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{EDGES}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_pc/fixededges.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{GAPS}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_pc/fixedgaps.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI_tests</span><span class="p">[</span><span class="s1">&#39;gaussian&#39;</span><span class="p">],</span>
+                          <span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">[</span><span class="s1">&#39;pcalg&#39;</span><span class="p">],</span>
+                          <span class="s1">&#39;</span><span class="si">{SELMAT}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;NULL&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{DIRECTED}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{SETOPTIONS}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;NULL&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{OUTPUT}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_pc/result.csv&#39;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="PC.orient_undirected_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.PC.PC.orient_undirected_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">CItest</span><span class="o">=</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
+                                <span class="n">method_indep</span><span class="o">=</span><span class="s1">&#39;pcalg&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                                <span class="n">njobs</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">NB_JOBS</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run PC on an undirected graph.&quot;&quot;&quot;</span>
+        <span class="c1"># Building setup w/ arguments.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI_tests</span><span class="p">[</span><span class="n">CItest</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">[</span><span class="n">method_indep</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{DIRECTED}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="n">fe</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+        <span class="n">fg</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">fe</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">())</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_pc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fixedEdges</span><span class="o">=</span><span class="n">fe</span><span class="p">,</span> <span class="n">fixedGaps</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+                                <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="PC.orient_directed_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.PC.PC.orient_directed_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_directed_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run PC on a directed_graph.&quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;PC is ran on the skeleton of the given graph.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orient_undirected_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PC.create_graph_from_data"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.PC.PC.create_graph_from_data">[docs]</a>    <span class="k">def</span> <span class="nf">create_graph_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">CItest</span><span class="o">=</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
+                               <span class="n">method_indep</span><span class="o">=</span><span class="s1">&#39;pcalg&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                               <span class="n">njobs</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">NB_JOBS</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the PC algorithm.</span>
+
+<span class="sd">        :param data: DataFrame containing the data</span>
+<span class="sd">        :param CItest: Predefined function for testing conditional independence.</span>
+<span class="sd">        :param method_indep: Method for CI.</span>
+<span class="sd">        :param alpha: significance level (number in (0, 1) for the individual conditional independence tests.</span>
+<span class="sd">        :param njobs: number of processor cores to use for parallel computation. Only available for</span>
+<span class="sd">        method = &quot;stable.fast&quot; (set as default).</span>
+<span class="sd">        :param verbose: if TRUE, detailed output is provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Building setup w/ arguments.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI_tests</span><span class="p">[</span><span class="n">CItest</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">[</span><span class="n">method_indep</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{DIRECTED}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_pc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+                                <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="PC.run_pc"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.PC.PC.run_pc">[docs]</a>    <span class="k">def</span> <span class="nf">run_pc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fixedEdges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fixedGaps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setting up and running pc with all arguments.&quot;&quot;&quot;</span>
+        <span class="c1"># Checking coherence of arguments</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI_tests</span><span class="p">[</span><span class="s1">&#39;hsic&#39;</span><span class="p">]</span>
+           <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">[</span><span class="s1">&#39;pcalg&#39;</span><span class="p">]):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Selected method for indep is unfit for the hsic test,&#39;</span>
+                          <span class="s1">&#39; setting the hsic.gamma method.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">[</span><span class="s1">&#39;hsic_gamma&#39;</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI_tests</span><span class="p">[</span><span class="s1">&#39;hsic&#39;</span><span class="p">]</span>
+              <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">[</span><span class="s1">&#39;pcalg&#39;</span><span class="p">]):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Selected method for indep is unfit for the selected test,&#39;</span>
+                          <span class="s1">&#39; setting the classic correlation-based method.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">[</span><span class="s1">&#39;pcalg&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Run PC</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc/&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc/result.csv&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc/data.csv&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fixedGaps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fixedEdges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fixedGaps</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc/fixedgaps.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">fixedEdges</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc/fixededges.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FALSE&#39;</span>
+
+            <span class="n">pc_result</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/R_templates/pc.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># Cleanup</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc/&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_pc&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pc_result</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

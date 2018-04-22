@@ -1,0 +1,521 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.utils package &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">cdt.utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-cdt.utils.R">cdt.utils.R module</a></li>
+<li><a class="reference internal" href="#module-cdt.utils.Settings">cdt.utils.Settings module</a></li>
+<li><a class="reference internal" href="#module-cdt.utils.loss">cdt.utils.loss module</a></li>
+<li><a class="reference internal" href="#module-cdt.utils.metrics">cdt.utils.metrics module</a></li>
+<li><a class="reference internal" href="#module-cdt.utils.read_file">cdt.utils.read_file module</a></li>
+<li><a class="reference internal" href="#module-cdt.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>cdt.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/cdt.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cdt-utils-package">
+<h1>cdt.utils package<a class="headerlink" href="#cdt-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cdt.utils.R">
+<span id="cdt-utils-r-module"></span><h2>cdt.utils.R module<a class="headerlink" href="#module-cdt.utils.R" title="Permalink to this headline">¶</a></h2>
+<p>Loading R packages by using subprocess.</p>
+<p>Checking if the packages are available
+Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.utils.R.DefaultRPackages">
+<em class="property">class </em><code class="descclassname">cdt.utils.R.</code><code class="descname">DefaultRPackages</code><a class="reference internal" href="../_modules/cdt/utils/R.html#DefaultRPackages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Define the packages to be tested for import.</p>
+<dl class="attribute">
+<dt id="cdt.utils.R.DefaultRPackages.CAM">
+<code class="descname">CAM</code><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.CAM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.R.DefaultRPackages.D2C">
+<code class="descname">D2C</code><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.D2C" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.R.DefaultRPackages.SID">
+<code class="descname">SID</code><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.SID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.R.DefaultRPackages.bnlearn">
+<code class="descname">bnlearn</code><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.bnlearn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.R.DefaultRPackages.kpcalg">
+<code class="descname">kpcalg</code><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.kpcalg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.R.DefaultRPackages.pcalg">
+<code class="descname">pcalg</code><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.pcalg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.R.check_R_packages">
+<code class="descclassname">cdt.utils.R.</code><code class="descname">check_R_packages</code><span class="sig-paren">(</span><em>packages</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/R.html#check_R_packages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.check_R_packages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a subprocess to check the packages’ availability.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.R.launch_R_script">
+<code class="descclassname">cdt.utils.R.</code><code class="descname">launch_R_script</code><span class="sig-paren">(</span><em>template</em>, <em>arguments</em>, <em>output_function=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/R.html#launch_R_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.launch_R_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch an R script, starting from a template and replacing text in file before execution.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.R.message_warning">
+<code class="descclassname">cdt.utils.R.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/R.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.Settings">
+<span id="cdt-utils-settings-module"></span><h2>cdt.utils.Settings module<a class="headerlink" href="#module-cdt.utils.Settings" title="Permalink to this headline">¶</a></h2>
+<p>Settings file for the Causal Discovery Toolbox.</p>
+<p>Defining all global variables
+Author : Diviyan Kalainathan
+Date : 8/05/2017</p>
+<dl class="class">
+<dt id="cdt.utils.Settings.ConfigSettings">
+<em class="property">class </em><code class="descclassname">cdt.utils.Settings.</code><code class="descname">ConfigSettings</code><a class="reference internal" href="../_modules/cdt/utils/Settings.html#ConfigSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Defining the class for the hardware/high level settings of the CDT.</p>
+<dl class="attribute">
+<dt id="cdt.utils.Settings.ConfigSettings.GPU">
+<code class="descname">GPU</code><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.GPU" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.Settings.ConfigSettings.GPU_LIST">
+<code class="descname">GPU_LIST</code><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.GPU_LIST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.Settings.ConfigSettings.NB_JOBS">
+<code class="descname">NB_JOBS</code><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.NB_JOBS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.Settings.ConfigSettings.autoset_config">
+<code class="descname">autoset_config</code><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.autoset_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.Settings.ConfigSettings.r_is_available">
+<code class="descname">r_is_available</code><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.r_is_available" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="cdt.utils.Settings.ConfigSettings.verbose">
+<code class="descname">verbose</code><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.verbose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.Settings.autoset_settings">
+<code class="descclassname">cdt.utils.Settings.</code><code class="descname">autoset_settings</code><span class="sig-paren">(</span><em>set_var</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/Settings.html#autoset_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.autoset_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.</p>
+<p>Return default config if variable not set.
+:param set_var: Variable to set. Must be of type ConfigSettings</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.Settings.message_warning">
+<code class="descclassname">cdt.utils.Settings.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/Settings.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.loss">
+<span id="cdt-utils-loss-module"></span><h2>cdt.utils.loss module<a class="headerlink" href="#module-cdt.utils.loss" title="Permalink to this headline">¶</a></h2>
+<p>Implementation of Losses.</p>
+<p>Author : Diviyan Kalainathan &amp; Olivier Goudet
+Date : 09/03/2017</p>
+<dl class="class">
+<dt id="cdt.utils.loss.MMDloss">
+<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">MMDloss</code><span class="sig-paren">(</span><em>input_size</em>, <em>gpu=False</em>, <em>gpu_id=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/loss.html#MMDloss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MMDloss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Maximum Mean Discrepancy Metric to compare empirical distributions.</p>
+<p>Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., &amp; Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.</p>
+<dl class="method">
+<dt id="cdt.utils.loss.MMDloss.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/loss.html#MMDloss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MMDloss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the MMD statistic between x and y.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.utils.loss.MomentMatchingLoss_th">
+<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">MomentMatchingLoss_th</code><span class="sig-paren">(</span><em>n_moments=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/loss.html#MomentMatchingLoss_th"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MomentMatchingLoss_th" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>k-moments loss, k being a parameter.</p>
+<p>These moments are raw moments and not normalized.</p>
+<dl class="method">
+<dt id="cdt.utils.loss.MomentMatchingLoss_th.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>pred</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/loss.html#MomentMatchingLoss_th.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MomentMatchingLoss_th.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the loss model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pred</strong> – predicted Variable</li>
+<li><strong>target</strong> – Target Variable</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Loss</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.utils.loss.TTestCriterion">
+<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">TTestCriterion</code><span class="sig-paren">(</span><em>max_iter</em>, <em>runs_per_iter</em>, <em>threshold=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/loss.html#TTestCriterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="cdt.utils.loss.TTestCriterion.loop">
+<code class="descname">loop</code><span class="sig-paren">(</span><em>xy</em>, <em>yx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/loss.html#TTestCriterion.loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion.loop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.metrics">
+<span id="cdt-utils-metrics-module"></span><h2>cdt.utils.metrics module<a class="headerlink" href="#module-cdt.utils.metrics" title="Permalink to this headline">¶</a></h2>
+<p>Evaluation metrics for graphs.</p>
+<p>Author: Diviyan Kalainathan
+Date : 20/09</p>
+<dl class="function">
+<dt id="cdt.utils.metrics.SHD">
+<code class="descclassname">cdt.utils.metrics.</code><code class="descname">SHD</code><span class="sig-paren">(</span><em>target</em>, <em>pred</em>, <em>double_for_anticausal=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/metrics.html#SHD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.SHD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Structural Hamming Distance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.metrics.SID">
+<code class="descclassname">cdt.utils.metrics.</code><code class="descname">SID</code><span class="sig-paren">(</span><em>target</em>, <em>pred</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/metrics.html#SID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.SID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Strutural Intervention Distance.</p>
+<p>Ref:  Structural Intervention Distance (SID) for Evaluating Causal Graphs,
+Jonas Peters, Peter Bühlmann, <a class="reference external" href="https://arxiv.org/abs/1306.1043">https://arxiv.org/abs/1306.1043</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.metrics.precision_recall">
+<code class="descclassname">cdt.utils.metrics.</code><code class="descname">precision_recall</code><span class="sig-paren">(</span><em>target</em>, <em>pred</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/metrics.html#precision_recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.precision_recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute (area under the PR curve, precision, recall), metric of evaluation for directed graphs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>predictions</strong> – Graph predicted, nx.DiGraph</li>
+<li><strong>target</strong> – Target, nx.DiGraph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(aupr, precision, recall)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.read_file">
+<span id="cdt-utils-read-file-module"></span><h2>cdt.utils.read_file module<a class="headerlink" href="#module-cdt.utils.read_file" title="Permalink to this headline">¶</a></h2>
+<p>Formatting and import functions.</p>
+<p>Author: Diviyan Kalainathan
+Date : 2/06/17</p>
+<dl class="function">
+<dt id="cdt.utils.read_file.read_adjacency_matrix">
+<code class="descclassname">cdt.utils.read_file.</code><code class="descname">read_adjacency_matrix</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/read_file.html#read_adjacency_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.read_file.read_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a file (containing an adjacency matrix) and convert it into a directed or undirected networkx graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> – file to read</li>
+<li><strong>directed</strong> – Return directed graph</li>
+<li><strong>kwargs</strong> – extra parameters to be passed to pandas.read_csv</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.read_file.read_causal_pairs">
+<code class="descclassname">cdt.utils.read_file.</code><code class="descname">read_causal_pairs</code><span class="sig-paren">(</span><em>filename</em>, <em>scale=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/read_file.html#read_causal_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.read_file.read_causal_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) – Name fo the file read</li>
+<li><strong>scale</strong> – Scale the data</li>
+<li><strong>kwargs</strong> – parameters to be passed to pandas.read_csv</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.read_file.read_list_edges">
+<code class="descclassname">cdt.utils.read_file.</code><code class="descname">read_list_edges</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/utils/read_file.html#read_list_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.read_file.read_list_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a file (containing list of edges) and convert it into a directed or undirected networkx graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> – file to be read, per default columns=Cause,Effect</li>
+<li><strong>directed</strong> – </li>
+<li><strong>kwargs</strong> – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cdt.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

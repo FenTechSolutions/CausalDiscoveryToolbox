@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.graph.bnlearn &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.graph.bnlearn</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.graph.bnlearn</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;BN learn algorithms.</span>
+
+<span class="sd">Imported from the bnlearn package.</span>
+<span class="sd">Author: Diviyan Kalainathan</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">read_csv</span>
+<span class="kn">from</span> <span class="nn">...utils.R</span> <span class="k">import</span> <span class="n">RPackages</span><span class="p">,</span> <span class="n">launch_R_script</span>
+
+
+<div class="viewcode-block" id="message_warning"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.message_warning">[docs]</a><span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ignore everything except the message.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">message_warning</span>
+
+
+<div class="viewcode-block" id="BNlearnAlgorithm"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm">[docs]</a><span class="k">class</span> <span class="nc">BNlearnAlgorithm</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;BNlearn algorithm.</span>
+
+<span class="sd">    Available tests:</span>
+<span class="sd">    • discrete case (categorical variables)</span>
+<span class="sd">        – mutual information: an information-theoretic distance measure.</span>
+<span class="sd">          It&#39;s proportional to the log-likelihood ratio (they differ by a 2n factor)</span>
+<span class="sd">          and is related to the deviance of the tested models. The asymptotic χ2 test</span>
+<span class="sd">          (mi and mi-adf,  with  adjusted  degrees  of  freedom), the Monte Carlo</span>
+<span class="sd">          permutation test (mc-mi), the sequential Monte Carlo permutation</span>
+<span class="sd">          test (smc-mi), and the semiparametric test (sp-mi) are implemented.</span>
+<span class="sd">        – shrinkage estimator for the mutual information (mi-sh): an improved</span>
+<span class="sd">          asymptotic χ2 test based on the James-Stein estimator for the mutual</span>
+<span class="sd">          information.</span>
+<span class="sd">        – Pearson’s X2 : the classical Pearson&#39;s X2 test for contingency tables.</span>
+<span class="sd">          The asymptotic χ2 test (x2 and x2-adf, with adjusted degrees of freedom),</span>
+<span class="sd">          the Monte Carlo permutation test (mc-x2), the sequential Monte Carlo</span>
+<span class="sd">          permutation test (smc-x2) and semiparametric test (sp-x2) are implemented.</span>
+
+<span class="sd">    • discrete case (ordered factors)</span>
+<span class="sd">        – Jonckheere-Terpstra : a trend test for ordinal variables.  The</span>
+<span class="sd">          asymptotic normal test (jt), the Monte Carlo permutation test (mc-jt)</span>
+<span class="sd">          and the sequential Monte Carlo permutation test (smc-jt) are implemented.</span>
+
+<span class="sd">    • continuous case (normal variables)</span>
+<span class="sd">        – linear  correlation:  Pearson’s  linear  correlation.   The  exact</span>
+<span class="sd">          Student’s  t  test  (cor),  the Monte Carlo permutation test (mc-cor)</span>
+<span class="sd">          and the sequential Monte Carlo permutation test (smc-cor) are implemented.</span>
+<span class="sd">        – Fisher’s Z: a transformation of the linear correlation with asymptotic</span>
+<span class="sd">          normal distribution. Used by commercial software (such as TETRAD II)</span>
+<span class="sd">          for the PC algorithm (an R implementation is present in the pcalg</span>
+<span class="sd">          package on CRAN). The asymptotic normal test (zf), the Monte Carlo</span>
+<span class="sd">          permutation test (mc-zf) and the sequential Monte Carlo permutation</span>
+<span class="sd">          test (smc-zf) are implemented.</span>
+<span class="sd">        – mutual information: an information-theoretic distance measure.  Again</span>
+<span class="sd">          it is proportional to the log-likelihood ratio (they differ by a 2n</span>
+<span class="sd">          factor). The asymptotic χ2 test (mi-g), the Monte Carlo permutation</span>
+<span class="sd">          test (mc-mi-g) and the sequential Monte Carlo permutation test</span>
+<span class="sd">          (smc-mi-g) are implemented.</span>
+
+<span class="sd">        – shrinkage estimator for the mutual information(mi-g-sh): an improved</span>
+<span class="sd">          asymptotic χ2 test based on the James-Stein estimator for the mutual</span>
+<span class="sd">          information.</span>
+
+<span class="sd">    • hybrid case (mixed discrete and normal variables)</span>
+<span class="sd">        – mutual information: an information-theoretic distance measure.  Again</span>
+<span class="sd">          it is proportionalto the log-likelihood ratio (they differ by a 2n</span>
+<span class="sd">          factor). Only the asymptotic χ2 test (mi-cg) is implemented.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">bnlearn</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;R Package bnlearn is not available.&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;</span><span class="si">{FILE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_bnlearn/data.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{WHITELIST}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_bnlearn/whitelist.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{BLACKLIST}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_bnlearn/blacklist.csv&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{SCORE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;NULL&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{OPTIM}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;0.05&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{BETA}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;NULL&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;</span><span class="si">{OUTPUT}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_bnlearn/result.csv&#39;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="BNlearnAlgorithm.orient_undirected_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="s1">&#39;NULL&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="s1">&#39;NULL&#39;</span><span class="p">,</span>
+                                <span class="n">optim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the algorithm on an undirected graph.&quot;&quot;&quot;</span>
+        <span class="c1"># Building setup w/ arguments.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SCORE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{BETA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{OPTIM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">optim</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="n">whitelist</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">graph</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">])</span>
+        <span class="n">blacklist</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">-</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                                 <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()),</span>
+                                                                 <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))))),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">])</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bnlearn</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span>
+                                   <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+                                <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="BNlearnAlgorithm.orient_directed_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_directed_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the algorithm on a directed_graph.&quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The algorithm is ran on the skeleton of the given graph.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orient_undirected_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BNlearnAlgorithm.create_graph_from_data"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data">[docs]</a>    <span class="k">def</span> <span class="nf">create_graph_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="s1">&#39;NULL&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="s1">&#39;NULL&#39;</span><span class="p">,</span>
+                               <span class="n">optim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the algorithm on data.</span>
+
+<span class="sd">        :param data: DataFrame containing the data</span>
+<span class="sd">        :param score: score used for bnlearn. [&#39;obs&#39;, &#39;int&#39;]</span>
+<span class="sd">        :param verbose: if TRUE, detailed output is provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Building setup w/ arguments.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SCORE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{BETA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{OPTIM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">optim</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bnlearn</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+                                <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="BNlearnAlgorithm.run_bnlearn"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm.run_bnlearn">[docs]</a>    <span class="k">def</span> <span class="nf">run_bnlearn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">blacklist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setting up and running bnlearn with all arguments.&quot;&quot;&quot;</span>
+        <span class="c1"># Run the algorithm</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn/&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn/result.csv&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn/data.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">blacklist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">whitelist</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn/whitelist.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">blacklist</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn/blacklist.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SKELETON}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FALSE&#39;</span>
+
+            <span class="n">bnlearn_result</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/R_templates/bnlearn.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># Cleanup</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn/&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_bnlearn&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bnlearn_result</span></div></div>
+
+
+<div class="viewcode-block" id="GS"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.GS">[docs]</a><span class="k">class</span> <span class="nc">GS</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Grow-Shrink algorithm.</span>
+
+<span class="sd">    Margaritis D (2003).</span>
+<span class="sd">    Learning Bayesian Network Model Structure from Data</span>
+<span class="sd">    . Ph.D. thesis, School</span>
+<span class="sd">    of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report</span>
+<span class="sd">    CMU-CS-03-153</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gs&#39;</span></div>
+
+
+<div class="viewcode-block" id="IAMB"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.IAMB">[docs]</a><span class="k">class</span> <span class="nc">IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;IAMB algorithm.</span>
+
+<span class="sd">    Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   &quot;Algorithms  for  Large  Scale  Markov  Blanket</span>
+<span class="sd">    Discovery&quot;.  In &quot;Proceedings of the Sixteenth International Florida Artificial Intelligence Research</span>
+<span class="sd">    Society Conference&quot;, pp. 376-381. AAAI Press.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IAMB</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;iamb&#39;</span></div>
+
+
+<div class="viewcode-block" id="Fast_IAMB"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.Fast_IAMB">[docs]</a><span class="k">class</span> <span class="nc">Fast_IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fast IAMB algorithm.</span>
+
+<span class="sd">    Yaramakala S, Margaritis D (2005).  &quot;Speculative Markov Blanket Discovery for Optimal Feature</span>
+<span class="sd">    Selection&quot;.  In &quot;ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-</span>
+<span class="sd">    ing&quot;, pp. 809-812. IEEE Computer Society.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Fast_IAMB</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fast.iamb&#39;</span></div>
+
+
+<div class="viewcode-block" id="Inter_IAMB"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.Inter_IAMB">[docs]</a><span class="k">class</span> <span class="nc">Inter_IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Inter IAMB algorithm.</span>
+
+<span class="sd">    Yaramakala S, Margaritis D (2005).  &quot;Speculative Markov Blanket Discovery for Optimal Feature</span>
+<span class="sd">    Selection&quot;.  In &quot;ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-</span>
+<span class="sd">    ing&quot;, pp. 809-812. IEEE Computer Society.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Inter_IAMB</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;inter.iamb&#39;</span></div>
+
+
+<div class="viewcode-block" id="MMPC"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.MMPC">[docs]</a><span class="k">class</span> <span class="nc">MMPC</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Max-Min Parents-Children algorithm.</span>
+
+<span class="sd">    Tsamardinos I, Aliferis CF, Statnikov A (2003). &quot;Time and Sample Efficient Discovery of Markov</span>
+<span class="sd">    Blankets and Direct Causal Relations&quot;.  In &quot;KDD ’03:  Proceedings of the Ninth ACM SIGKDD</span>
+<span class="sd">    International Conference on Knowledge Discovery and Data Mining&quot;, pp. 673-678. ACM.</span>
+<span class="sd">    Tsamardinos I, Brown LE, Aliferis CF (2006).  &quot;The Max-Min Hill-Climbing Bayesian Network</span>
+<span class="sd">    Structure Learning Algorithm&quot;.</span>
+<span class="sd">    Machine Learning,65(1), 31-78.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MMPC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;mmpc&#39;</span></div>
+
+
+<div class="viewcode-block" id="Hinton_PC"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.bnlearn.Hinton_PC">[docs]</a><span class="k">class</span> <span class="nc">Hinton_PC</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;SI-Hinton PC algorithm.</span>
+
+<span class="sd">    Aliferis FC, Statnikov A, Tsamardinos I, Subramani M, Koutsoukos XD (2010).  &quot;Local Causal</span>
+<span class="sd">    and Markov Blanket Induction for Causal Discovery and Feature Selection for Classification Part I:</span>
+<span class="sd">    Algorithms and Empirical Evaluation&quot;.</span>
+<span class="sd">    Journal of Machine Learning Research,11, 171-234</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Hinton_PC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;si.hinton.pc&#39;</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

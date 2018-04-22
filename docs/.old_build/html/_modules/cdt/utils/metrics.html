@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.utils.metrics &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme-link.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/cdt.causality.html">Causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/cdt.independence.html">Independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.utils.metrics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.utils.metrics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Evaluation metrics for graphs.</span>
+
+<span class="sd">Author: Diviyan Kalainathan</span>
+<span class="sd">Date : 20/09</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">auc</span><span class="p">,</span> <span class="n">precision_recall_curve</span>
+<span class="kn">from</span> <span class="nn">.R</span> <span class="k">import</span> <span class="n">launch_R_script</span><span class="p">,</span> <span class="n">RPackages</span>
+
+
+<div class="viewcode-block" id="precision_recall"><a class="viewcode-back" href="../../../source/cdt.utils.html#cdt.utils.metrics.precision_recall">[docs]</a><span class="k">def</span> <span class="nf">precision_recall</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute (area under the PR curve, precision, recall), metric of evaluation for directed graphs.</span>
+
+<span class="sd">    :param predictions: Graph predicted, nx.DiGraph</span>
+<span class="sd">    :param target: Target, nx.DiGraph</span>
+<span class="sd">    :return: (aupr, precision, recall)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_curve</span><span class="p">(</span>
+        <span class="n">true_labels</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">predictions</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+    <span class="n">aupr</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">recall</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">reorder</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aupr</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span></div>
+
+
+<div class="viewcode-block" id="SHD"><a class="viewcode-back" href="../../../source/cdt.utils.html#cdt.utils.metrics.SHD">[docs]</a><span class="k">def</span> <span class="nf">SHD</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">double_for_anticausal</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the Structural Hamming Distance.&quot;&quot;&quot;</span>
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">true_labels</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">double_for_anticausal</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">+</span> <span class="n">diff</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">diff</span><span class="p">[</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Ignoring the double edges.</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="SID"><a class="viewcode-back" href="../../../source/cdt.utils.html#cdt.utils.metrics.SID">[docs]</a><span class="k">def</span> <span class="nf">SID</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+    <span class="sa">u</span><span class="sd">&quot;&quot;&quot;Compute the Strutural Intervention Distance.</span>
+
+<span class="sd">    Ref:  Structural Intervention Distance (SID) for Evaluating Causal Graphs,</span>
+<span class="sd">    Jonas Peters, Peter Bühlmann, https://arxiv.org/abs/1306.1043</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;SID R package is not available. Please check your installation.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">==</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+        <span class="n">true_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">true_labels</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">pred</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.&quot;</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/result.csv&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span> <span class="n">true_labels</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">sid_score</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/R_templates/sid.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
+                                    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{target}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{prediction}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{result}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/result.csv&#39;</span><span class="p">},</span>
+                                    <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">)</span>
+    <span class="c1"># Cleanup</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
+
+    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sid_score</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1087 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.graph package &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">cdt.causality.graph package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.CAM">cdt.causality.graph.CAM module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.CGNN">cdt.causality.graph.CGNN module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.GES">cdt.causality.graph.GES module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.GIES">cdt.causality.graph.GIES module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.LiNGAM">cdt.causality.graph.LiNGAM module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.PC">cdt.causality.graph.PC module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.SAM">cdt.causality.graph.SAM module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.bnlearn">cdt.causality.graph.bnlearn module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph.model">cdt.causality.graph.model module</a></li>
+<li><a class="reference internal" href="#module-cdt.causality.graph">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>cdt.causality.graph package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/cdt.causality.graph.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cdt-causality-graph-package">
+<h1>cdt.causality.graph package<a class="headerlink" href="#cdt-causality-graph-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-cdt.causality.graph.CAM">
+<span id="cdt-causality-graph-cam-module"></span><h2>cdt.causality.graph.CAM module<a class="headerlink" href="#module-cdt.causality.graph.CAM" title="Permalink to this headline">¶</a></h2>
+<p>CAM algorithm.</p>
+<p>Imported from the Pcalg package.
+Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.causality.graph.CAM.CAM">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.CAM.</code><code class="descname">CAM</code><a class="reference internal" href="../_modules/cdt/causality/graph/CAM.html#CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.CAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>CAM algorithm.</p>
+<p>Ref:
+J. Peters, J. Mooij, D. Janzing, B. Sch”olkopf:
+Causal Discovery with Continuous Additive Noise Models,
+JMLR 15:2009-2053, 2014.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.CAM.CAM.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>score='nonlinear'</em>, <em>cutoff=0.001</em>, <em>variablesel=True</em>, <em>selmethod='gamboost'</em>, <em>pruning=False</em>, <em>prunmethod='gam'</em>, <em>njobs=4</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CAM.html#CAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.CAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the CAM algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – DataFrame containing the data</li>
+<li><strong>score</strong> – score used for CAM.</li>
+<li><strong>verbose</strong> – if TRUE, detailed output is provided.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.CAM.CAM.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CAM.html#CAM.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.CAM.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run CAM on a directed_graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.CAM.CAM.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>score='obs'</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CAM.html#CAM.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.CAM.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run CAM on an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.CAM.CAM.run_CAM">
+<code class="descname">run_CAM</code><span class="sig-paren">(</span><em>data</em>, <em>fixedGaps=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CAM.html#CAM.run_CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.CAM.run_CAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting up and running CAM with all arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CAM.message_warning">
+<code class="descclassname">cdt.causality.graph.CAM.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CAM.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.CGNN">
+<span id="cdt-causality-graph-cgnn-module"></span><h2>cdt.causality.graph.CGNN module<a class="headerlink" href="#module-cdt.causality.graph.CGNN" title="Permalink to this headline">¶</a></h2>
+<p>Causal Generative Neural Networks.</p>
+<p>Author : Olivier Goudet &amp; Diviyan Kalainathan
+Ref : Causal Generative Neural Networks (<a class="reference external" href="https://arxiv.org/abs/1711.08936">https://arxiv.org/abs/1711.08936</a>)
+Date : 09/5/17</p>
+<dl class="class">
+<dt id="cdt.causality.graph.CGNN.CGNN">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">CGNN</code><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>CGNN : Generate the whole causal graph and predict causal directions in the graph.</p>
+<p>Author : Olivier Goudet &amp; Diviyan Kalainathan
+Ref : Causal Generative Neural Networks (<a class="reference external" href="https://arxiv.org/abs/1711.08936">https://arxiv.org/abs/1711.08936</a>)</p>
+<dl class="method">
+<dt id="cdt.causality.graph.CGNN.CGNN.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use CGNN to create a graph from scratch.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.CGNN.CGNN.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>dag</em>, <em>alg='HC'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Improve a directed acyclic graph using CGNN.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – data</li>
+<li><strong>dag</strong> – directed acyclic graph to optimize</li>
+<li><strong>alg</strong> – type of algorithm</li>
+<li><strong>log</strong> – Save logs of the execution</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">improved directed acyclic graph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.CGNN.CGNN.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>umg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient the undirected graph using GNN and apply CGNN to improve the graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – data</li>
+<li><strong>umg</strong> – undirected acyclic graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">directed acyclic graph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.CGNN.CGNN_block">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">CGNN_block</code><span class="sig-paren">(</span><em>sizes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>CGNN ‘block’ which represents a FCM equation between a cause and its parents.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.CGNN.CGNN_block.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN_block.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN_block.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward through the network.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.CGNN.CGNN_model">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">CGNN_model</code><span class="sig-paren">(</span><em>graph</em>, <em>batch_size</em>, <em>nh=20</em>, <em>gpu=False</em>, <em>gpu_id=0</em>, <em>confounding=False</em>, <em>initial_graph=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Class for one CGNN instance.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.CGNN.CGNN_model.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN_model.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate according to the topological order of the graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.CGNN.CGNN_model.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>data</em>, <em>lr=0.01</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>verbose=True</em>, <em>idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#CGNN_model.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.CGNN_model.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the CGNN on a given graph.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CGNN.exploratory_hill_climbing">
+<code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">exploratory_hill_climbing</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>proba=0.1</em>, <em>decay=0.95</em>, <em>max_trials=20</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#exploratory_hill_climbing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.exploratory_hill_climbing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hill climbing with a bit more exploration.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CGNN.graph_evaluation">
+<code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">graph_evaluation</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>nb_runs=16</em>, <em>gpu=False</em>, <em>gpu_id=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#graph_evaluation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.graph_evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate a graph taking account of the hardware.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CGNN.hill_climbing">
+<code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">hill_climbing</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#hill_climbing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.hill_climbing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hill Climbing optimization: the greediest possible algorithm.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CGNN.hill_climbing_with_removal">
+<code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">hill_climbing_with_removal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#hill_climbing_with_removal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.hill_climbing_with_removal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CGNN.message_warning">
+<code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CGNN.parallel_graph_evaluation">
+<code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">parallel_graph_evaluation</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>nb_runs=16</em>, <em>nb_jobs=4</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#parallel_graph_evaluation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.parallel_graph_evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parallelize the various runs of CGNN to evaluate a graph.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.CGNN.tabu_search">
+<code class="descclassname">cdt.causality.graph.CGNN.</code><code class="descname">tabu_search</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/CGNN.html#tabu_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.tabu_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.GES">
+<span id="cdt-causality-graph-ges-module"></span><h2>cdt.causality.graph.GES module<a class="headerlink" href="#module-cdt.causality.graph.GES" title="Permalink to this headline">¶</a></h2>
+<p>GES algorithm.</p>
+<p>Imported from the Pcalg package.
+Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.causality.graph.GES.GES">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.GES.</code><code class="descname">GES</code><a class="reference internal" href="../_modules/cdt/causality/graph/GES.html#GES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.GES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>GES algorithm.</p>
+<p>Ref:
+D.M. Chickering (2002).  Optimal structure identification with greedy search.
+Journal of Machine Learning Research 3 , 507–554</p>
+<p>A. Hauser and P. Bühlmann (2012). Characterization and greedy learning of
+interventional Markov equivalence classes of directed acyclic graphs.
+Journal of Machine Learning Research 13, 2409–2464.</p>
+<ol class="upperalpha simple" start="16">
+<li>Nandy, A. Hauser and M. Maathuis (2015). Understanding consistency in</li>
+</ol>
+<blockquote>
+<div>hybrid causal structure learning.</div></blockquote>
+<p>arXiv preprint 1507.02608</p>
+<p>P. Spirtes, C.N. Glymour, and R. Scheines (2000).
+Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
+<dl class="method">
+<dt id="cdt.causality.graph.GES.GES.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>score='obs'</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GES.html#GES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.GES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the GES algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – DataFrame containing the data</li>
+<li><strong>score</strong> – score used for ges. [‘obs’, ‘int’]</li>
+<li><strong>verbose</strong> – if TRUE, detailed output is provided.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.GES.GES.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GES.html#GES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.GES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run GES on a directed_graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.GES.GES.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>score='obs'</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GES.html#GES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.GES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run GES on an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.GES.GES.run_ges">
+<code class="descname">run_ges</code><span class="sig-paren">(</span><em>data</em>, <em>fixedGaps=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GES.html#GES.run_ges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.GES.run_ges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting up and running ges with all arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.GES.message_warning">
+<code class="descclassname">cdt.causality.graph.GES.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GES.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.GIES">
+<span id="cdt-causality-graph-gies-module"></span><h2>cdt.causality.graph.GIES module<a class="headerlink" href="#module-cdt.causality.graph.GIES" title="Permalink to this headline">¶</a></h2>
+<p>GIES algorithm.</p>
+<p>Imported from the Pcalg package.
+Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.causality.graph.GIES.GIES">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.GIES.</code><code class="descname">GIES</code><a class="reference internal" href="../_modules/cdt/causality/graph/GIES.html#GIES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.GIES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>GIES algorithm.</p>
+<p>Ref:
+.M. Chickering (2002).  Optimal structure identification with greedy search.
+Journal of Machine Learning Research 3 , 507–554</p>
+<p>A. Hauser and P. Bühlmann (2012). Characterization and greedy learning of
+interventional Markov equivalence classes of directed acyclic graphs.
+Journal of Machine Learning Research 13, 2409–2464.</p>
+<ol class="upperalpha simple" start="16">
+<li>Nandy, A. Hauser and M. Maathuis (2015). Understanding consistency in</li>
+</ol>
+<blockquote>
+<div>hybrid causal structure learning.</div></blockquote>
+<p>arXiv preprint 1507.02608</p>
+<p>P. Spirtes, C.N. Glymour, and R. Scheines (2000).
+Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
+<dl class="method">
+<dt id="cdt.causality.graph.GIES.GIES.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>score='obs'</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GIES.html#GIES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.GIES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the GIES algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – DataFrame containing the data</li>
+<li><strong>score</strong> – score used for gies. [‘obs’, ‘int’]</li>
+<li><strong>verbose</strong> – if TRUE, detailed output is provided.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.GIES.GIES.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GIES.html#GIES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.GIES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run GIES on a directed_graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.GIES.GIES.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>score='obs'</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GIES.html#GIES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.GIES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run GIES on an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.GIES.GIES.run_gies">
+<code class="descname">run_gies</code><span class="sig-paren">(</span><em>data</em>, <em>fixedGaps=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GIES.html#GIES.run_gies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.GIES.run_gies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting up and running GIES with all arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.GIES.message_warning">
+<code class="descclassname">cdt.causality.graph.GIES.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/GIES.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.LiNGAM">
+<span id="cdt-causality-graph-lingam-module"></span><h2>cdt.causality.graph.LiNGAM module<a class="headerlink" href="#module-cdt.causality.graph.LiNGAM" title="Permalink to this headline">¶</a></h2>
+<p>LiNGAM algorithm.</p>
+<p>Imported from the Pcalg package.
+Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.causality.graph.LiNGAM.LiNGAM">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.LiNGAM.</code><code class="descname">LiNGAM</code><a class="reference internal" href="../_modules/cdt/causality/graph/LiNGAM.html#LiNGAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.LiNGAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>LiNGAM algorithm.</p>
+<p>Ref:</p>
+<dl class="method">
+<dt id="cdt.causality.graph.LiNGAM.LiNGAM.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/LiNGAM.html#LiNGAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.LiNGAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the LiNGAM algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – DataFrame containing the data</li>
+<li><strong>score</strong> – score used for LiNGAM.</li>
+<li><strong>verbose</strong> – if TRUE, detailed output is provided.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.LiNGAM.LiNGAM.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/LiNGAM.html#LiNGAM.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.LiNGAM.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run LiNGAM on a directed_graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.LiNGAM.LiNGAM.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>score='obs'</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/LiNGAM.html#LiNGAM.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.LiNGAM.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run LiNGAM on an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.LiNGAM.LiNGAM.run_LiNGAM">
+<code class="descname">run_LiNGAM</code><span class="sig-paren">(</span><em>data</em>, <em>fixedGaps=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/LiNGAM.html#LiNGAM.run_LiNGAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.LiNGAM.run_LiNGAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting up and running LiNGAM with all arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.LiNGAM.message_warning">
+<code class="descclassname">cdt.causality.graph.LiNGAM.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/LiNGAM.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.PC">
+<span id="cdt-causality-graph-pc-module"></span><h2>cdt.causality.graph.PC module<a class="headerlink" href="#module-cdt.causality.graph.PC" title="Permalink to this headline">¶</a></h2>
+<p>PC algorithm by C.Glymour &amp; P.Sprites (REF, 2000).</p>
+<p>Imported from the Pcalg package.
+Author = Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.causality.graph.PC.PC">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.PC.</code><code class="descname">PC</code><a class="reference internal" href="../_modules/cdt/causality/graph/PC.html#PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.PC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>PC algorithm by C.Glymour &amp; P.Sprites.</p>
+<p>Ref:
+D.Colombo and M.H. Maathuis (2014).
+Order-independent constraint-based causal structure learning.
+Journal of Machine Learning Research 15 3741-3782.</p>
+<p>M. Kalisch, M. Maechler, D. Colombo, M.H. Maathuis and P. Buehlmann (2012).
+Causal Inference Using Graphical Models with the R Package pcalg.
+Journal of Statistical Software 47(11) 1–26, <a class="reference external" href="http://www.jstatsoft.org/v47/i11/">http://www.jstatsoft.org/v47/i11/</a></p>
+<p>M. Kalisch and P. Buehlmann (2007).
+Estimating high-dimensional directed acyclic graphs with the PC-algorithm.
+JMLR 8 613-636.</p>
+<p>J. Ramsey, J. Zhang and P. Spirtes (2006).
+Adjacency-faithfulness and conservative causal inference.
+In Proceedings of the 22nd Annual Conference on Uncertainty in Artificial
+Intelligence. AUAI Press, Arlington, VA.</p>
+<p>P. Spirtes, C. Glymour and R. Scheines (2000).
+Causation, Prediction, and Search, 2nd edition. The MIT Press</p>
+<p>Imported from the Pcalg package.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.PC.PC.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>CItest='gaussian'</em>, <em>method_indep='pcalg'</em>, <em>alpha=0.01</em>, <em>njobs=4</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/PC.html#PC.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.PC.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the PC algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – DataFrame containing the data</li>
+<li><strong>CItest</strong> – Predefined function for testing conditional independence.</li>
+<li><strong>method_indep</strong> – Method for CI.</li>
+<li><strong>alpha</strong> – significance level (number in (0, 1) for the individual conditional independence tests.</li>
+<li><strong>njobs</strong> – number of processor cores to use for parallel computation. Only available for</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>method = “stable.fast” (set as default).
+:param verbose: if TRUE, detailed output is provided.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.PC.PC.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/PC.html#PC.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.PC.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run PC on a directed_graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.PC.PC.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>CItest='gaussian'</em>, <em>method_indep='pcalg'</em>, <em>alpha=0.01</em>, <em>njobs=4</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/PC.html#PC.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.PC.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run PC on an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.PC.PC.run_pc">
+<code class="descname">run_pc</code><span class="sig-paren">(</span><em>data</em>, <em>fixedEdges=None</em>, <em>fixedGaps=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/PC.html#PC.run_pc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.PC.run_pc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting up and running pc with all arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.PC.message_warning">
+<code class="descclassname">cdt.causality.graph.PC.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/PC.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.SAM">
+<span id="cdt-causality-graph-sam-module"></span><h2>cdt.causality.graph.SAM module<a class="headerlink" href="#module-cdt.causality.graph.SAM" title="Permalink to this headline">¶</a></h2>
+<p>Structural Agnostic Model.</p>
+<p>Author: Diviyan Kalainathan, Olivier Goudet
+Date: 09/3/2018</p>
+<dl class="class">
+<dt id="cdt.causality.graph.SAM.CNormalized_Linear">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">CNormalized_Linear</code><span class="sig-paren">(</span><em>in_features</em>, <em>out_features</em>, <em>bias=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#CNormalized_Linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.CNormalized_Linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Linear layer with column-wise normalized input matrix.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.CNormalized_Linear.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#CNormalized_Linear.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.CNormalized_Linear.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feed-forward through the network.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.CNormalized_Linear.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#CNormalized_Linear.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.CNormalized_Linear.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.SAM.SAM">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">SAM</code><span class="sig-paren">(</span><em>lr=0.1</em>, <em>dlr=0.1</em>, <em>l1=0.1</em>, <em>nh=200</em>, <em>dnh=200</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>batchsize=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>Structural Agnostic Model.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.SAM.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate a causal graph out of observational data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.SAM.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient a (partially directed) graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.SAM.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient a undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.SAM.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em>, <em>skeleton=None</em>, <em>nruns=6</em>, <em>njobs=1</em>, <em>gpus=0</em>, <em>verbose=True</em>, <em>plot=False</em>, <em>plot_generated_pair=False</em>, <em>return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute SAM on a dataset given a skeleton or not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – Observational data for estimation of causal relationships by SAM</li>
+<li><strong>skeleton</strong> – A priori knowledge about the causal relationships as an adjacency matrix.
+Can be fed either directed or undirected links.</li>
+<li><strong>nruns</strong> – Number of runs to be made for causal estimation.
+Recommended: &gt;=12 for optimal performance.</li>
+<li><strong>njobs</strong> – Numbers of jobs to be run in Parallel.
+Recommended: 1 if no GPU available, 2*number of GPUs else.</li>
+<li><strong>gpus</strong> – Number of available GPUs for the algorithm.</li>
+<li><strong>verbose</strong> – verbose mode</li>
+<li><strong>plot</strong> – Plot losses interactively. Not recommended if nruns&gt;1</li>
+<li><strong>plot_generated_pair</strong> – plots a generated pair interactively.  Not recommended if nruns&gt;1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Adjacency matrix (A) of the graph estimated by SAM,
+A[i,j] is the term of the ith variable for the jth generator.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.SAM.SAM_block">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">SAM_block</code><span class="sig-paren">(</span><em>sizes</em>, <em>zero_components=[]</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>SAM-Block: conditional generator.</p>
+<p>Generates one variable while selecting the parents. Uses filters to do so.
+One fixed filter and one with parameters on order to keep a fixed skeleton.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.SAM_block.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM_block.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM_block.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feed-forward the model.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.SAM.SAM_discriminator">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">SAM_discriminator</code><span class="sig-paren">(</span><em>sizes</em>, <em>zero_components=[]</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM_discriminator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM_discriminator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Discriminator for the SAM model.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.SAM_discriminator.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM_discriminator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM_discriminator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feed-forward the model.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.SAM.SAM_generators">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">SAM_generators</code><span class="sig-paren">(</span><em>data_shape</em>, <em>zero_components</em>, <em>nh=200</em>, <em>batch_size=-1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM_generators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM_generators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Ensemble of all the generators.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.SAM_generators.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#SAM_generators.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.SAM_generators.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feed-forward the model.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.SAM.plot_curves">
+<code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">plot_curves</code><span class="sig-paren">(</span><em>i_batch</em>, <em>adv_loss</em>, <em>gen_loss</em>, <em>l1_reg</em>, <em>cols</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#plot_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.plot_curves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot SAM’s various losses.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.SAM.plot_gen">
+<code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">plot_gen</code><span class="sig-paren">(</span><em>epoch, batch, generated_variables, pairs_to_plot=[[0, 1]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#plot_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.plot_gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot generated pairs of variables.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.SAM.run_SAM">
+<code class="descclassname">cdt.causality.graph.SAM.</code><code class="descname">run_SAM</code><span class="sig-paren">(</span><em>df_data</em>, <em>skeleton=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/SAM.html#run_SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.run_SAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the SAM model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df_data</strong> – Input data; either np.array or pd.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.bnlearn">
+<span id="cdt-causality-graph-bnlearn-module"></span><h2>cdt.causality.graph.bnlearn module<a class="headerlink" href="#module-cdt.causality.graph.bnlearn" title="Permalink to this headline">¶</a></h2>
+<p>BN learn algorithms.</p>
+<p>Imported from the bnlearn package.
+Author: Diviyan Kalainathan</p>
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">BNlearnAlgorithm</code><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.model.GraphModel" title="cdt.causality.graph.model.GraphModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.model.GraphModel</span></code></a></p>
+<p>BNlearn algorithm.</p>
+<p>Available tests:
+• discrete case (categorical variables)</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>– mutual information: an information-theoretic distance measure.</dt>
+<dd>It’s proportional to the log-likelihood ratio (they differ by a 2n factor)
+and is related to the deviance of the tested models. The asymptotic χ2 test
+(mi and mi-adf,  with  adjusted  degrees  of  freedom), the Monte Carlo
+permutation test (mc-mi), the sequential Monte Carlo permutation
+test (smc-mi), and the semiparametric test (sp-mi) are implemented.</dd>
+<dt>– shrinkage estimator for the mutual information (mi-sh): an improved</dt>
+<dd>asymptotic χ2 test based on the James-Stein estimator for the mutual
+information.</dd>
+<dt>– Pearson’s X2 <span class="classifier-delimiter">:</span> <span class="classifier">the classical Pearson’s X2 test for contingency tables.</span></dt>
+<dd>The asymptotic χ2 test (x2 and x2-adf, with adjusted degrees of freedom),
+the Monte Carlo permutation test (mc-x2), the sequential Monte Carlo
+permutation test (smc-x2) and semiparametric test (sp-x2) are implemented.</dd>
+</dl>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>discrete case (ordered factors)</dt>
+<dd><dl class="first last docutils">
+<dt>– Jonckheere-Terpstra <span class="classifier-delimiter">:</span> <span class="classifier">a trend test for ordinal variables.  The</span></dt>
+<dd>asymptotic normal test (jt), the Monte Carlo permutation test (mc-jt)
+and the sequential Monte Carlo permutation test (smc-jt) are implemented.</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>continuous case (normal variables)</dt>
+<dd><dl class="first last docutils">
+<dt>– linear  correlation:  Pearson’s  linear  correlation.   The  exact</dt>
+<dd>Student’s  t  test  (cor),  the Monte Carlo permutation test (mc-cor)
+and the sequential Monte Carlo permutation test (smc-cor) are implemented.</dd>
+<dt>– Fisher’s Z: a transformation of the linear correlation with asymptotic</dt>
+<dd>normal distribution. Used by commercial software (such as TETRAD II)
+for the PC algorithm (an R implementation is present in the pcalg
+package on CRAN). The asymptotic normal test (zf), the Monte Carlo
+permutation test (mc-zf) and the sequential Monte Carlo permutation
+test (smc-zf) are implemented.</dd>
+<dt>– mutual information: an information-theoretic distance measure.  Again</dt>
+<dd>it is proportional to the log-likelihood ratio (they differ by a 2n
+factor). The asymptotic χ2 test (mi-g), the Monte Carlo permutation
+test (mc-mi-g) and the sequential Monte Carlo permutation test
+(smc-mi-g) are implemented.</dd>
+<dt>– shrinkage estimator for the mutual information(mi-g-sh): an improved</dt>
+<dd>asymptotic χ2 test based on the James-Stein estimator for the mutual
+information.</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>hybrid case (mixed discrete and normal variables)</dt>
+<dd><dl class="first last docutils">
+<dt>– mutual information: an information-theoretic distance measure.  Again</dt>
+<dd>it is proportionalto the log-likelihood ratio (they differ by a 2n
+factor). Only the asymptotic χ2 test (mi-cg) is implemented.</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="method">
+<dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>score='NULL'</em>, <em>alpha=0.05</em>, <em>beta='NULL'</em>, <em>optim=False</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the algorithm on data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> – DataFrame containing the data</li>
+<li><strong>score</strong> – score used for bnlearn. [‘obs’, ‘int’]</li>
+<li><strong>verbose</strong> – if TRUE, detailed output is provided.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the algorithm on a directed_graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>score='NULL'</em>, <em>alpha=0.05</em>, <em>beta='NULL'</em>, <em>optim=False</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the algorithm on an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.run_bnlearn">
+<code class="descname">run_bnlearn</code><span class="sig-paren">(</span><em>data</em>, <em>whitelist=None</em>, <em>blacklist=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.run_bnlearn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.run_bnlearn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting up and running bnlearn with all arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.Fast_IAMB">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">Fast_IAMB</code><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#Fast_IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Fast_IAMB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="cdt.causality.graph.bnlearn.BNlearnAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.bnlearn.BNlearnAlgorithm</span></code></a></p>
+<p>Fast IAMB algorithm.</p>
+<p>Yaramakala S, Margaritis D (2005).  “Speculative Markov Blanket Discovery for Optimal Feature
+Selection”.  In “ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-
+ing”, pp. 809-812. IEEE Computer Society.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.GS">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">GS</code><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#GS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.GS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="cdt.causality.graph.bnlearn.BNlearnAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.bnlearn.BNlearnAlgorithm</span></code></a></p>
+<p>Grow-Shrink algorithm.</p>
+<p>Margaritis D (2003).
+Learning Bayesian Network Model Structure from Data
+. Ph.D. thesis, School
+of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report
+CMU-CS-03-153</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.Hinton_PC">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">Hinton_PC</code><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#Hinton_PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Hinton_PC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="cdt.causality.graph.bnlearn.BNlearnAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.bnlearn.BNlearnAlgorithm</span></code></a></p>
+<p>SI-Hinton PC algorithm.</p>
+<p>Aliferis FC, Statnikov A, Tsamardinos I, Subramani M, Koutsoukos XD (2010).  “Local Causal
+and Markov Blanket Induction for Causal Discovery and Feature Selection for Classification Part I:
+Algorithms and Empirical Evaluation”.
+Journal of Machine Learning Research,11, 171-234</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.IAMB">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">IAMB</code><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.IAMB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="cdt.causality.graph.bnlearn.BNlearnAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.bnlearn.BNlearnAlgorithm</span></code></a></p>
+<p>IAMB algorithm.</p>
+<p>Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   “Algorithms  for  Large  Scale  Markov  Blanket
+Discovery”.  In “Proceedings of the Sixteenth International Florida Artificial Intelligence Research
+Society Conference”, pp. 376-381. AAAI Press.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.Inter_IAMB">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">Inter_IAMB</code><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#Inter_IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Inter_IAMB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="cdt.causality.graph.bnlearn.BNlearnAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.bnlearn.BNlearnAlgorithm</span></code></a></p>
+<p>Inter IAMB algorithm.</p>
+<p>Yaramakala S, Margaritis D (2005).  “Speculative Markov Blanket Discovery for Optimal Feature
+Selection”.  In “ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-
+ing”, pp. 809-812. IEEE Computer Society.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.MMPC">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">MMPC</code><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#MMPC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.MMPC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="cdt.causality.graph.bnlearn.BNlearnAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdt.causality.graph.bnlearn.BNlearnAlgorithm</span></code></a></p>
+<p>Max-Min Parents-Children algorithm.</p>
+<p>Tsamardinos I, Aliferis CF, Statnikov A (2003). “Time and Sample Efficient Discovery of Markov
+Blankets and Direct Causal Relations”.  In “KDD ’03:  Proceedings of the Ninth ACM SIGKDD
+International Conference on Knowledge Discovery and Data Mining”, pp. 673-678. ACM.
+Tsamardinos I, Brown LE, Aliferis CF (2006).  “The Max-Min Hill-Climbing Bayesian Network
+Structure Learning Algorithm”.
+Machine Learning,65(1), 31-78.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.causality.graph.bnlearn.message_warning">
+<code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">message_warning</code><span class="sig-paren">(</span><em>msg</em>, <em>*a</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/bnlearn.html#message_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.message_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore everything except the message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph.model">
+<span id="cdt-causality-graph-model-module"></span><h2>cdt.causality.graph.model module<a class="headerlink" href="#module-cdt.causality.graph.model" title="Permalink to this headline">¶</a></h2>
+<p>Graph causal models base class.</p>
+<p>Author: Diviyan Kalainathan
+Date : 7/06/2017</p>
+<dl class="class">
+<dt id="cdt.causality.graph.model.GraphModel">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.model.</code><code class="descname">GraphModel</code><a class="reference internal" href="../_modules/cdt/causality/graph/model.html#GraphModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for all pairwise causal inference models.</p>
+<p>Usage for undirected/directed graphs and CEPC df format.</p>
+<dl class="method">
+<dt id="cdt.causality.graph.model.GraphModel.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/model.html#GraphModel.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infer a directed graph out of data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.model.GraphModel.orient_directed_graph">
+<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>dag</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/model.html#GraphModel.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re/Orient an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.model.GraphModel.orient_undirected_graph">
+<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>umg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/model.html#GraphModel.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient an undirected graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.graph.model.GraphModel.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdt/causality/graph/model.html#GraphModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient an undirected graph using the pairwise method defined by the subclass.</p>
+<p>Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
+:param df_data: data
+:param graph: UndirectedGraph or DirectedGraph or None
+:return: Directed graph w/ weights
+:rtype: DirectedGraph</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.causality.graph">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cdt.causality.graph" title="Permalink to this headline">¶</a></h2>
+<p>Find causal relationships and output a directed graph.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

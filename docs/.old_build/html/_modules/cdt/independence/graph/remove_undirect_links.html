@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.independence.graph.remove_undirect_links &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme-link.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.causality.html">Causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.independence.html">Independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.generators.html">Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/cdt.utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.independence.graph.remove_undirect_links</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.independence.graph.remove_undirect_links</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Algorithms to remove indirect links in undirected graphs.</span>
+
+<span class="sd">Author: Diviyan Kalainathan and gidonro [github]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">scipy.stats.mstats</span> <span class="k">as</span> <span class="nn">stat</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">linalg</span> <span class="k">as</span> <span class="n">LA</span>
+
+
+<div class="viewcode-block" id="network_deconvolution"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.remove_undirect_links.network_deconvolution">[docs]</a><span class="k">def</span> <span class="nf">network_deconvolution</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Python implementation/translation of network deconvolution by MIT-KELLIS LAB.</span>
+
+<span class="sd">    author:gidonro [Github username](https://github.com/gidonro/Network-Deconvolution)</span>
+<span class="sd">     LICENSE: MIT-KELLIS LAB</span>
+<span class="sd">     AUTHORS:</span>
+<span class="sd">        Algorithm was programmed by Soheil Feizi.</span>
+<span class="sd">        Paper authors are S. Feizi, D. Marbach,  M. M?©dard and M. Kellis</span>
+<span class="sd">    Python implementation: Gideon Rosenthal</span>
+
+<span class="sd">    REFERENCES:</span>
+<span class="sd">       For more details, see the following paper:</span>
+<span class="sd">        Network Deconvolution as a General Method to Distinguish</span>
+<span class="sd">        Direct Dependencies over Networks</span>
+<span class="sd">        By: Soheil Feizi, Daniel Marbach,  Muriel Médard and Manolis Kellis</span>
+<span class="sd">        Nature Biotechnology</span>
+
+<span class="sd">    --------------------------------------------------------------------------</span>
+<span class="sd">     ND.py network deconvolution</span>
+<span class="sd">    --------------------------------------------------------------------------</span>
+
+<span class="sd">    DESCRIPTION:</span>
+
+<span class="sd">     INPUT ARGUMENTS:</span>
+<span class="sd">     mat           Input matrix, if it is a square matrix, the program assumes</span>
+<span class="sd">                   it is a relevance matrix where mat(i,j) represents the similarity content</span>
+<span class="sd">                   between nodes i and j. Elements of matrix should be</span>
+<span class="sd">                   non-negative.</span>
+<span class="sd">     optional parameters:</span>
+<span class="sd">     beta          Scaling parameter, the program maps the largest absolute eigenvalue</span>
+<span class="sd">                   of the direct dependency matrix to beta. It should be</span>
+<span class="sd">                   between 0 and 1.</span>
+<span class="sd">     alpha         fraction of edges of the observed dependency matrix to be kept in</span>
+<span class="sd">                   deconvolution process.</span>
+<span class="sd">     control       if 0, displaying direct weights for observed</span>
+<span class="sd">                   interactions, if 1, displaying direct weights for both observed and</span>
+<span class="sd">                   non-observed interactions.</span>
+
+<span class="sd">     OUTPUT ARGUMENTS:</span>
+
+<span class="sd">     mat_nd        Output deconvolved matrix (direct dependency matrix). Its components</span>
+<span class="sd">                   represent direct edge weights of observed interactions.</span>
+<span class="sd">                   Choosing top direct interactions (a cut-off) depends on the application and</span>
+<span class="sd">                   is not implemented in this code.</span>
+
+<span class="sd">     To apply ND on regulatory networks, follow steps explained in Supplementary notes</span>
+<span class="sd">     1.4.1 and 2.1 and 2.3 of the paper.</span>
+<span class="sd">     In this implementation, input matrices are made symmetric.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">)</span>
+    <span class="n">control</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;control&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># ToDO : ASSERTS</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">beta</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;alpha must be in ]0, 1] and beta in [0, 1]&quot;</span><span class="p">)</span>
+
+    <span class="c1">#  Processing the input matrix, diagonal values are filtered</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Thresholding the input matrix</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">mquantiles</span><span class="p">(</span><span class="n">mat</span><span class="p">[:],</span> <span class="n">prob</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">])</span>
+    <span class="n">th</span> <span class="o">=</span> <span class="n">mat</span> <span class="o">&gt;=</span> <span class="n">y</span>
+    <span class="n">mat_th</span> <span class="o">=</span> <span class="n">mat</span> <span class="o">*</span> <span class="n">th</span>
+
+    <span class="c1"># Making the matrix symetric if already not</span>
+    <span class="n">mat_th</span> <span class="o">=</span> <span class="p">(</span><span class="n">mat_th</span> <span class="o">+</span> <span class="n">mat_th</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># Eigen decomposition</span>
+    <span class="n">Dv</span><span class="p">,</span> <span class="n">U</span> <span class="o">=</span> <span class="n">LA</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">mat_th</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">((</span><span class="n">Dv</span><span class="p">))</span>
+    <span class="n">lam_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">D</span><span class="p">)),</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">lam_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">D</span><span class="p">)),</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">lam_p</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">beta</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">lam_n</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">beta</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span>
+
+    <span class="c1"># network deconvolution</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
+
+    <span class="n">mat_new1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">LA</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">U</span><span class="p">)))</span>
+
+    <span class="c1"># Displying direct weights</span>
+
+    <span class="k">if</span> <span class="n">control</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ind_edges</span> <span class="o">=</span> <span class="p">(</span><span class="n">mat_th</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0</span>
+        <span class="n">ind_nonedges</span> <span class="o">=</span> <span class="p">(</span><span class="n">mat_th</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mat</span> <span class="o">*</span> <span class="n">ind_nonedges</span><span class="p">))</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mat_new1</span><span class="p">))</span>
+        <span class="n">mat_new2</span> <span class="o">=</span> <span class="p">(</span><span class="n">mat_new1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">m1</span> <span class="o">-</span> <span class="n">m2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="n">ind_edges</span> <span class="o">+</span> <span class="p">(</span><span class="n">mat</span> <span class="o">*</span> <span class="n">ind_nonedges</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mat_new1</span><span class="p">))</span>
+        <span class="n">mat_new2</span> <span class="o">=</span> <span class="p">(</span><span class="n">mat_new1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="o">-</span><span class="n">m2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1"># linearly mapping the deconvolved matrix to be between 0 and 1</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mat_new2</span><span class="p">))</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mat_new2</span><span class="p">))</span>
+    <span class="n">mat_nd</span> <span class="o">=</span> <span class="p">(</span><span class="n">mat_new2</span> <span class="o">-</span> <span class="n">m1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">m2</span> <span class="o">-</span> <span class="n">m1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mat_nd</span></div>
+
+
+<div class="viewcode-block" id="clr"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.remove_undirect_links.clr">[docs]</a><span class="k">def</span> <span class="nf">clr</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implementation of the Context Likelihood or Relatedness Network algorithm.</span>
+
+<span class="sd">    Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey</span>
+<span class="sd">    Wierzbowski, Guillaume Cottarel, Simon Kasif, James J. Collins, and Timothy</span>
+<span class="sd">    S. Gardner. Large-scale mapping and validation of escherichia coli</span>
+<span class="sd">    transcriptional regulation from a compendium of expression profiles.</span>
+<span class="sd">    PLoS Biology, 2007</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">Id</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">mu_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">sigma_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">Id</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">mu_i</span><span class="p">,</span> <span class="n">sigma_i</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">z_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">Id</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">Id</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">z_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">Id</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">Id</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">z_i</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">z_j</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">R</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>  <span class="c1"># Symmetric</span>
+
+    <span class="k">return</span> <span class="n">R</span></div>
+
+
+<div class="viewcode-block" id="aracne"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.remove_undirect_links.aracne">[docs]</a><span class="k">def</span> <span class="nf">aracne</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implementation of the ARACNE algorithm.</span>
+
+<span class="sd">    Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context</span>
+<span class="sd">    Adam A Margolin, Ilya Nemenman, Katia Basso, Chris Wiggins, Gustavo Stolovitzky, Riccardo Dalla Favera and Andrea Califano</span>
+<span class="sd">    DOI: https://doi.org/10.1186/1471-2105-7-S1-S7</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">I0</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;I0&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># No default thresholding</span>
+    <span class="n">W0</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;W0&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+
+    <span class="c1"># thresholding</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">m</span> <span class="o">&gt;</span> <span class="n">I0</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Finding triplets and filtering them</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">triplet</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]]</span>
+                <span class="n">min_index</span><span class="p">,</span> <span class="n">min_value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">triplet</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">min_value</span> <span class="o">&lt;</span> <span class="n">W0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">min_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+                    <span class="k">elif</span> <span class="n">min_index</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">return</span> <span class="n">m</span></div>
+
+
+<div class="viewcode-block" id="remove_indirect_links"><a class="viewcode-back" href="../../../../source/cdt.independence.graph.html#cdt.independence.graph.remove_undirect_links.remove_indirect_links">[docs]</a><span class="k">def</span> <span class="nf">remove_indirect_links</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="s2">&quot;aracne&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Apply deconvolution to a graph.</span>
+
+<span class="sd">    :param g: nx.Graph to apply deconvolution to</span>
+<span class="sd">    :param alg: choose which algorithm to use to apply deconvolution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;aracne&quot;</span><span class="p">:</span> <span class="n">aracne</span><span class="p">,</span>
+           <span class="s2">&quot;nd&quot;</span><span class="p">:</span> <span class="n">network_deconvolution</span><span class="p">,</span>
+           <span class="s2">&quot;clr&quot;</span><span class="p">:</span> <span class="n">clr</span><span class="p">}[</span><span class="n">alg</span><span class="p">]</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">alg</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)),</span>
+                            <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))})</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

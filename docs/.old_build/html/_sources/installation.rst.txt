@@ -1,0 +1,5 @@
+
+Installation instructions
+====================================================
+
+.. include:: ../installation_instructions.md

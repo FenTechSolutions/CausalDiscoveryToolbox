@@ -1,0 +1,650 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.causality.graph.SAM &mdash; Causal Discovery Toolbox 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.causality.graph.SAM</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.causality.graph.SAM</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Structural Agnostic Model.</span>
+
+<span class="sd">Author: Diviyan Kalainathan, Olivier Goudet</span>
+<span class="sd">Date: 09/3/2018</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="k">import</span> <span class="n">Variable</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
+
+
+<div class="viewcode-block" id="CNormalized_Linear"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.CNormalized_Linear">[docs]</a><span class="k">class</span> <span class="nc">CNormalized_Linear</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Linear layer with column-wise normalized input matrix.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the layer.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CNormalized_Linear</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_features</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CNormalized_Linear.reset_parameters"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.CNormalized_Linear.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the parameters.&quot;&quot;&quot;</span>
+        <span class="n">stdv</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="n">stdv</span><span class="p">,</span> <span class="n">stdv</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="n">stdv</span><span class="p">,</span> <span class="n">stdv</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CNormalized_Linear.forward"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.CNormalized_Linear.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Feed-forward through the network.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()))</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;For print purposes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> \
+            <span class="o">+</span> <span class="s1">&#39;in_features=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">)</span> \
+            <span class="o">+</span> <span class="s1">&#39;, out_features=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">)</span> \
+            <span class="o">+</span> <span class="s1">&#39;, bias=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span></div>
+
+
+<div class="viewcode-block" id="SAM_discriminator"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM_discriminator">[docs]</a><span class="k">class</span> <span class="nc">SAM_discriminator</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Discriminator for the SAM model.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">zero_components</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the SAM discriminator.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SAM_discriminator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sht</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;shortcut&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">activation_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_function&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">)</span>
+        <span class="n">activation_argument</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_argument&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">batch_norm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_norm&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">dropout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dropout&quot;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">batch_norm</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">dropout</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">activation_argument</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">(</span><span class="n">activation_argument</span><span class="p">))</span>
+
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+        <span class="c1"># print(self.layers)</span>
+
+<div class="viewcode-block" id="SAM_discriminator.forward"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM_discriminator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Feed-forward the model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SAM_block"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM_block">[docs]</a><span class="k">class</span> <span class="nc">SAM_block</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;SAM-Block: conditional generator.</span>
+
+<span class="sd">    Generates one variable while selecting the parents. Uses filters to do so.</span>
+<span class="sd">    One fixed filter and one with parameters on order to keep a fixed skeleton.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">zero_components</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a generator.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SAM_block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">gpu</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">gpu_no</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gpu_no&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">activation_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_function&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">)</span>
+        <span class="n">activation_argument</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_argument&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">batch_norm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_norm&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CNormalized_Linear</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">batch_norm</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">activation_argument</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">(</span><span class="n">activation_argument</span><span class="p">))</span>
+
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+        <span class="c1"># Filtering the unconnected nodes.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">zero_components</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fs_filter</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SAM_block.forward"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM_block.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Feed-forward the model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">*</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">fs_filter</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="SAM_generators"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM_generators">[docs]</a><span class="k">class</span> <span class="nc">SAM_generators</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ensemble of all the generators.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SAM_generators</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">gpu</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">gpu_no</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gpu_no&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">data_shape</span>
+
+        <span class="c1"># building the computation graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="p">[</span><span class="n">Variable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+
+        <span class="c1"># Init all the blocks</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SAM_block</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">zero_components</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+<div class="viewcode-block" id="SAM_generators.forward"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM_generators.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Feed-forward the model.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">:</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">normal_</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generated_variables</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">](</span>
+            <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated_variables</span></div></div>
+
+
+<div class="viewcode-block" id="plot_curves"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.plot_curves">[docs]</a><span class="k">def</span> <span class="nf">plot_curves</span><span class="p">(</span><span class="n">i_batch</span><span class="p">,</span> <span class="n">adv_loss</span><span class="p">,</span> <span class="n">gen_loss</span><span class="p">,</span> <span class="n">l1_reg</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot SAM&#39;s various losses.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+    <span class="k">if</span> <span class="n">i_batch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">adv_plt</span><span class="p">)),</span> <span class="n">adv_plt</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Discriminator&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">adv_plt</span><span class="p">)),</span> <span class="n">gen_plt</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                    <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Generators&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">adv_plt</span><span class="p">)),</span> <span class="n">l1_plt</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;L1-Regularization&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+            <span class="n">adv_plt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adv_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">gen_plt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gen_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cols</span><span class="p">)</span>
+            <span class="n">l1_plt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l1_reg</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Epoch&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Losses&quot;</span><span class="p">)</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>
+
+            <span class="n">adv_plt</span> <span class="o">=</span> <span class="p">[</span><span class="n">adv_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">gen_plt</span> <span class="o">=</span> <span class="p">[</span><span class="n">gen_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cols</span><span class="p">]</span>
+            <span class="n">l1_plt</span> <span class="o">=</span> <span class="p">[</span><span class="n">l1_reg</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">adv_plt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adv_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">gen_plt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gen_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="n">l1_plt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l1_reg</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="plot_gen"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.plot_gen">[docs]</a><span class="k">def</span> <span class="nf">plot_gen</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">generated_variables</span><span class="p">,</span> <span class="n">pairs_to_plot</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]):</span>
+    <span class="sd">&quot;&quot;&quot;Plot generated pairs of variables.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pairs_to_plot</span><span class="p">:</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">generated_variables</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(</span>
+        <span class="p">),</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Y -&gt; X&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span>
+            <span class="p">:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">generated_variables</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;X -&gt; Y&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">batch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span>
+            <span class="p">:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;original data&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run_SAM"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.run_SAM">[docs]</a><span class="k">def</span> <span class="nf">run_SAM</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Execute the SAM model.</span>
+
+<span class="sd">    :param df_data: Input data; either np.array or pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gpu</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">gpu_no</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gpu_no&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">train_epochs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;train_epochs&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">test_epochs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;test_epochs&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">lr_gen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lr_gen&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">lr_disc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lr_disc&#39;</span><span class="p">,</span> <span class="n">lr_gen</span><span class="p">)</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">regul_param</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;regul_param&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">dnh</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dnh&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">plot</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plot&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">plot_generated_pair</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plot_generated_pair&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">d_str</span> <span class="o">=</span> <span class="s2">&quot;Epoch: </span><span class="si">{}</span><span class="s2"> -- Disc: </span><span class="si">{}</span><span class="s2"> -- Gen: </span><span class="si">{}</span><span class="s2"> -- L1: </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">list_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">df_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_data</span><span class="p">[</span><span class="n">list_nodes</span><span class="p">])</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">list_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">df_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+    <span class="c1"># Get the list of indexes to ignore</span>
+    <span class="k">if</span> <span class="n">skeleton</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">zero_components</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">)]</span>
+        <span class="n">skel</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">skel</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">())):</span>
+            <span class="n">zero_components</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zero_components</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">)]</span>
+    <span class="n">sam</span> <span class="o">=</span> <span class="n">SAM_generators</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Begin UGLY</span>
+    <span class="n">activation_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_function&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;activation_function&quot;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">discriminator_sam</span> <span class="o">=</span> <span class="n">SAM_discriminator</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">cols</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">activation_function</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">,</span>
+        <span class="n">activation_argument</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;activation_function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_function</span>
+    <span class="c1"># End of UGLY</span>
+
+    <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+        <span class="n">sam</span> <span class="o">=</span> <span class="n">sam</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span>
+        <span class="n">discriminator_sam</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span>
+
+    <span class="c1"># Select parameters to optimize : ignore the non connected nodes</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
+    <span class="n">g_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">sam</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_gen</span><span class="p">)</span>
+    <span class="n">d_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
+        <span class="n">discriminator_sam</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_disc</span><span class="p">)</span>
+
+    <span class="n">true_variable</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span>
+        <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">false_variable</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span>
+        <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">causal_filters</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+        <span class="n">true_variable</span> <span class="o">=</span> <span class="n">true_variable</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span>
+        <span class="n">false_variable</span> <span class="o">=</span> <span class="n">false_variable</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span>
+        <span class="n">causal_filters</span> <span class="o">=</span> <span class="n">causal_filters</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">gpu_no</span><span class="p">)</span>
+
+    <span class="n">data_iterator</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># TRAIN</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i_batch</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_iterator</span><span class="p">):</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">batch_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">[:,</span> <span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">)]</span>
+
+            <span class="n">g_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">d_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="c1"># Train the discriminator</span>
+            <span class="n">generated_variables</span> <span class="o">=</span> <span class="n">sam</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">disc_losses</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">gen_losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+                <span class="n">generator_output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">v</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="n">batch_vectors</span><span class="p">[:</span> <span class="n">i</span><span class="p">],</span> <span class="p">[</span>
+                    <span class="n">generated_variables</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                    <span class="n">batch_vectors</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># 1. Train discriminator on fake</span>
+                <span class="n">disc_output_detached</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span>
+                    <span class="n">generator_output</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+                <span class="n">disc_output</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span><span class="n">generator_output</span><span class="p">)</span>
+                <span class="n">disc_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">criterion</span><span class="p">(</span><span class="n">disc_output_detached</span><span class="p">,</span> <span class="n">false_variable</span><span class="p">))</span>
+
+                <span class="c1"># 2. Train the generator :</span>
+                <span class="n">gen_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">criterion</span><span class="p">(</span><span class="n">disc_output</span><span class="p">,</span> <span class="n">true_variable</span><span class="p">))</span>
+
+            <span class="n">true_output</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">adv_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">disc_losses</span><span class="p">)</span><span class="o">/</span><span class="n">cols</span> <span class="o">+</span> \
+                <span class="n">criterion</span><span class="p">(</span><span class="n">true_output</span><span class="p">,</span> <span class="n">true_variable</span><span class="p">)</span>
+            <span class="n">gen_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">gen_losses</span><span class="p">)</span>
+
+            <span class="n">adv_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">d_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+            <span class="c1"># 3. Compute filter regularization</span>
+            <span class="n">filters</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">fs_filter</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sam</span><span class="o">.</span><span class="n">blocks</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">l1_reg</span> <span class="o">=</span> <span class="n">regul_param</span> <span class="o">*</span> <span class="n">filters</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">gen_loss</span> <span class="o">+</span> <span class="n">l1_reg</span>
+
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">200</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i_batch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">d_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span>
+                                                  <span class="n">adv_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                  <span class="n">gen_loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span>
+                                                  <span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cols</span><span class="p">,</span>
+                                                  <span class="n">l1_reg</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+            <span class="c1"># STORE ASSYMETRY values for output</span>
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">train_epochs</span><span class="p">:</span>
+                <span class="n">causal_filters</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">g_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+                <span class="n">plot_curves</span><span class="p">(</span><span class="n">i_batch</span><span class="p">,</span> <span class="n">adv_loss</span><span class="p">,</span> <span class="n">gen_loss</span><span class="p">,</span> <span class="n">l1_reg</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">plot_generated_pair</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">200</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">plot_gen</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">generated_variables</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">causal_filters</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">test_epochs</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SAM"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM">[docs]</a><span class="k">class</span> <span class="nc">SAM</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Structural Agnostic Model.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dlr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                 <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">batchsize</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init and parametrize the SAM model.</span>
+
+<span class="sd">        :param lr: Learning rate of the generators</span>
+<span class="sd">        :param dlr: Learning rate of the discriminator</span>
+<span class="sd">        :param l1: L1 penalization on the causal filters</span>
+<span class="sd">        :param nh: Number of hidden units in the generators&#39; hidden layers</span>
+<span class="sd">        :param dnh: Number of hidden units in the discriminator&#39;s hidden layer$</span>
+<span class="sd">        :param train_epochs: Number of training epochs</span>
+<span class="sd">        :param test_epochs: Number of test epochs (saving and averaging the causal filters)</span>
+<span class="sd">        :param batchsize: Size of the batches to be fed to the SAM model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SAM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dlr</span> <span class="o">=</span> <span class="n">dlr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">l1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nh</span> <span class="o">=</span> <span class="n">nh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dnh</span> <span class="o">=</span> <span class="n">dnh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">train_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">test_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span> <span class="o">=</span> <span class="n">batchsize</span>
+
+<div class="viewcode-block" id="SAM.predict"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot_generated_pair</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_list_results</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute SAM on a dataset given a skeleton or not.</span>
+
+<span class="sd">        :param data: Observational data for estimation of causal relationships by SAM</span>
+<span class="sd">        :param skeleton: A priori knowledge about the causal relationships as an adjacency matrix.</span>
+<span class="sd">                         Can be fed either directed or undirected links.</span>
+<span class="sd">        :param nruns: Number of runs to be made for causal estimation.</span>
+<span class="sd">                      Recommended: &gt;=12 for optimal performance.</span>
+<span class="sd">        :param njobs: Numbers of jobs to be run in Parallel.</span>
+<span class="sd">                      Recommended: 1 if no GPU available, 2*number of GPUs else.</span>
+<span class="sd">        :param gpus: Number of available GPUs for the algorithm.</span>
+<span class="sd">        :param verbose: verbose mode</span>
+<span class="sd">        :param plot: Plot losses interactively. Not recommended if nruns&gt;1</span>
+<span class="sd">        :param plot_generated_pair: plots a generated pair interactively.  Not recommended if nruns&gt;1</span>
+<span class="sd">        :return: Adjacency matrix (A) of the graph estimated by SAM,</span>
+<span class="sd">                A[i,j] is the term of the ith variable for the jth generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_out</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">run_SAM</span><span class="p">)(</span><span class="n">data</span><span class="p">,</span>
+                                                           <span class="n">skeleton</span><span class="o">=</span><span class="n">skeleton</span><span class="p">,</span>
+                                                           <span class="n">lr_gen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">lr_disc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dlr</span><span class="p">,</span>
+                                                           <span class="n">regul_param</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dnh</span><span class="p">,</span>
+                                                           <span class="n">gpu</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">gpus</span><span class="p">),</span> <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span>
+                                                           <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span><span class="p">,</span>
+                                                           <span class="n">plot</span><span class="o">=</span><span class="n">plot</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">gpu_no</span><span class="o">=</span><span class="n">idx</span> <span class="o">%</span> <span class="nb">max</span><span class="p">(</span><span class="n">gpus</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                                          <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nruns</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">return_list_results</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">list_out</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">list_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">list_out</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">W</span> <span class="o">+=</span> <span class="n">w</span>
+            <span class="n">W</span> <span class="o">/=</span> <span class="n">nruns</span>
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">W</span><span class="p">),</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="SAM.orient_directed_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM.orient_directed_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_directed_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Orient a (partially directed) graph.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SAM.orient_undirected_graph"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM.orient_undirected_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Orient a undirected graph.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SAM.create_graph_from_data"><a class="viewcode-back" href="../../../../source/cdt.causality.graph.html#cdt.causality.graph.SAM.SAM.create_graph_from_data">[docs]</a>    <span class="k">def</span> <span class="nf">create_graph_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Estimate a causal graph out of observational data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.2.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>
