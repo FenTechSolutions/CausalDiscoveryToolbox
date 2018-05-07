@@ -31,19 +31,14 @@ class FSGNN_model(th.nn.Module):
         self.layers(x)
 
     def train(self, x, y, lr=0.01, l1=0.1,  # batch_size=-1,
-              train_epochs=1000, test_epochs=1000, gpu=False, gpuno=0,
+              train_epochs=1000, test_epochs=1000, device=SETTINGS.default_device,
               verbose=False):
         optim = th.optim.Adam(self.parameters(), lr=lr)
         output = th.zeros(x.size()[1])
-        xtr = Variable(x)
-        ytr = Variable(y)
-        noise = Variable(th.randn(xtr.size()))
-        output = th.zeros(x.size()[1])
-        if gpu:
-            noise = noise.cuda(gpuno)
-            output = output.cuda(gpuno)
+        noise = Variable(th.randn(x.size())).to(device)
+        output = th.zeros(x.size()[1]).to(device)
 
-        criterion = MMDloss(input_size=x.shape[0], gpu=gpu, gpu_id=gpuno)
+        criterion = MMDloss(input_size=x.shape[0], device=device)
         # if batch_size == -1:raise NotImplementedError
         #     batch_size = x.size()[0]
         # Printout value
@@ -52,9 +47,9 @@ class FSGNN_model(th.nn.Module):
         # TRAIN
         for epoch in range(train_epochs + test_epochs):
             optim.zero_grad()
-            gen = self.layers(xtr)
+            gen = self.layers(x)
             # print(gen)
-            loss = criterion(gen, ytr) + l1*self.layers[0].weight.abs().sum()
+            loss = criterion(gen, y) + l1*self.layers[0].weight.abs().sum()
             # Train the discriminator
             if verbose and not epoch % 200:
                 print("Epoch: {} ; Loss: {}".format(epoch, loss.item()))
@@ -75,15 +70,15 @@ class FSGNN(FeatureSelectionModel):
 
     def predict_features(self, df_features, df_target, nh=20, idx=0, dropout=0.,
                          activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  # batch_size=-1,
-                         train_epochs=1000, test_epochs=1000, gpu=False,
-                         gpu_id=0, verbose=False):
+                         train_epochs=1000, test_epochs=1000, device=SETTINGS.default_device,
+                         verbose=False):
         """For one variable, predict its neighbours."""
-        x = th.FloatTensor(scale(df_features.as_matrix()))
-        y = th.FloatTensor(scale(df_target.as_matrix()))
+        x = th.FloatTensor(scale(df_features.as_matrix())).to(device)
+        y = th.FloatTensor(scale(df_target.as_matrix())).to(device)
         model = FSGNN_model([x.size()[1], nh, 1],
                             dropout=dropout,
                             activation_function=activation_function)
 
         return model.train(x, y, lr=0.01, l1=0.1,  # batch_size=-1,
                            train_epochs=train_epochs, test_epochs=test_epochs,
-                           gpu=gpu, gpuno=0, verbose=verbose)
+                           device=device, verbose=verbose)

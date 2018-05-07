@@ -41,21 +41,16 @@ class MMDloss(th.nn.Module):
     Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.
     """
 
-    def __init__(self, input_size, gpu=False, gpu_id=-1):
+    def __init__(self, input_size, device=SETTINGS.default_device):
         """Init the model."""
         super(MMDloss, self).__init__()
         self.bandwiths = [0.01, 0.1, 1, 10, 100]
 
-        if gpu and gpu_id == -1:
-            gpu_id = SETTINGS.GPU_LIST[0]
         s = th.cat([(th.ones([input_size, 1])).div(input_size),
                     (th.ones([input_size, 1])).div(-input_size)], 0)
 
         self.S = s.mm(s.t())
-        self.S = Variable(self.S, requires_grad=False)
-
-        if gpu:
-            self.S = self.S.cuda(gpu_id)
+        self.S = self.S.cuda.to(device)
 
     def forward(self, x, y):
         """Compute the MMD statistic between x and y."""

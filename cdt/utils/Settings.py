@@ -25,6 +25,7 @@ class ConfigSettings(object):
     __slots__ = ("NB_JOBS",  # Number of parallel jobs runnable
                  "GPU",  # True if GPU is available
                  "GPU_LIST",  # List of CUDA_VISIBLE_DEVICES
+                 "default_device",  # Default device for gpu (pytorch 0.4)
                  "autoset_config",
                  "verbose",
                  "r_is_available")
@@ -40,6 +41,8 @@ class ConfigSettings(object):
 
         if self.autoset_config:
             self = autoset_settings(self)
+
+        self.default_device = 'cuda:' + str(self.GPU_LIST[0]) if self.GPU else 'cpu'
 
 
 def autoset_settings(set_var):

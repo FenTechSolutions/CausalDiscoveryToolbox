@@ -66,7 +66,7 @@ class CGNN_model(th.nn.Module):
         self.noise = Variable(th.zeros(batch_size, self.adjacency_matrix.shape[0]))
         self.corr_noise = dict([[(i, j), Variable(th.zeros(batch_size, 1))] for i, j
                                 in zip(*np.nonzero(self.i_adj_matrix)) if i < j])
-        self.criterion = MMDloss(batch_size, gpu=gpu, gpu_id=gpu_id)
+        self.criterion = MMDloss(batch_size, device='cuda:{}'.format(gpu_id) if gpu else 'cpu')
         self.score = th.FloatTensor([0])
         if gpu:
             self.noise = self.noise.cuda(gpu_id)
