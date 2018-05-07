@@ -114,7 +114,7 @@ class CGNN_model(th.nn.Module):
         return self.score.cpu().numpy() / test_epochs
 
 
-def graph_evaluation(data, graph, nb_runs=16, gpu=False, gpu_id=0, **kwargs):
+def graph_evaluation(data, graph, gpu=False, gpu_id=0, **kwargs):
     """Evaluate a graph taking account of the hardware."""
     obs = Variable(th.FloatTensor(data))
     if gpu:
@@ -202,7 +202,8 @@ class CGNN(GraphModel):
         """ Initialize the CGNN Model."""
         super(CGNN, self).__init__()
 
-    def create_graph_from_data(self, data, **kwargs):
+    def create_graph_from_data(self, data, nh=20, nb_runs=16, nb_jobs=SETTINGS.NB_JOBS,
+                               lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True):
         """Use CGNN to create a graph from scratch."""
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")
@@ -214,7 +215,8 @@ class CGNN(GraphModel):
                           and nx.is_directed_acyclic_graph(nx.DiGraph(np.reshape(np.array(i), (nb_vars, nb_vars)))))]
 
         warnings.warn("A total of {} graphs will be evaluated.".format(len(candidates)))
-        scores = [parallel_graph_evaluation(data, nx.DiGraph(i), **kwargs) for i in candidates]
+        scores = [parallel_graph_evaluation(data, nx.DiGraph(i), nh=nh, nb_runs=nb_runs,
+                                            nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose) for i in candidates]
         final_candidate = candidates[scores.index(min(scores))]
         output = np.zeros(final_candidate.shape)
 
@@ -228,7 +230,8 @@ class CGNN(GraphModel):
         return nx.DiGraph(candidates[output],
                           {idx: i for idx, i in enumerate(data.columns)})
 
-    def orient_directed_graph(self, data, dag, alg='HC', **kwargs):
+    def orient_directed_graph(self, data, dag, alg='HC', nh=20, nb_runs=16, nb_jobs=SETTINGS.NB_JOBS,
+                              lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True):
         """Improve a directed acyclic graph using CGNN.
 
         :param data: data
@@ -240,9 +243,11 @@ class CGNN(GraphModel):
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
 
-        return alg_dic[alg](dag, data, self.infer_graph, **kwargs)
+        return alg_dic[alg](dag, data, self.infer_graph, nh=nh, nb_runs=nb_runs,
+                            nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose)
 
-    def orient_undirected_graph(self, data, umg, **kwargs):
+    def orient_undirected_graph(self, data, umg, nh=20, nb_runs=16, nb_jobs=SETTINGS.NB_JOBS,
+                                lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True):
         """Orient the undirected graph using GNN and apply CGNN to improve the graph.
 
         :param data: data
@@ -252,7 +257,11 @@ class CGNN(GraphModel):
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
 
-        gnn = GNN(**kwargs)
-        dag = gnn.orient_graph(data, umg,  **kwargs)  # Pairwise method
+        gnn = GNN(nh=nh, nb_runs=nb_runs, nb_jobs=nb_jobs, lr=lr,
+                  train_epochs=train_epochs, test_epochs=test_epochs,
+                  verbose=verbose)
+        dag = gnn.orient_graph(data, umg,  nh=nh, nb_runs=nb_runs,
+                               nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose)  # Pairwise method
 
-        return self.orient_directed_graph(data, dag,  **kwargs)
+        return self.orient_directed_graph(data, dag,  nh=nh, nb_runs=nb_runs,
+                                          nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose)
