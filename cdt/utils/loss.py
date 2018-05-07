@@ -49,8 +49,7 @@ class MMDloss(th.nn.Module):
         s = th.cat([(th.ones([input_size, 1])).div(input_size),
                     (th.ones([input_size, 1])).div(-input_size)], 0)
 
-        self.S = s.mm(s.t())
-        self.S = self.S.cuda.to(device)
+        self.S = s.mm(s.t()).to(device)
 
     def forward(self, x, y):
         """Compute the MMD statistic between x and y."""

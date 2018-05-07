@@ -77,7 +77,7 @@ class FSGNN(FeatureSelectionModel):
         y = th.FloatTensor(scale(df_target.as_matrix())).to(device)
         model = FSGNN_model([x.size()[1], nh, 1],
                             dropout=dropout,
-                            activation_function=activation_function)
+                            activation_function=activation_function).to(device)
 
         return model.train(x, y, lr=0.01, l1=0.1,  # batch_size=-1,
                            train_epochs=train_epochs, test_epochs=test_epochs,
