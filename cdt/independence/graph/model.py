@@ -67,5 +67,7 @@ class FeatureSelectionModel(GraphSkeletonModel):
             if matrix_results[i, j] > threshold:
                 graph.add_edge(list_nodes[i], list_nodes[j],
                                weight=matrix_results[i, j])
-
+        for node in list_nodes:
+            if node not in graph.nodes():
+                graph.add_node(node)
         return graph

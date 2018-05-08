@@ -66,9 +66,7 @@ class PairwiseModel(object):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, graph, printout=None, nb_runs=6, nb_jobs=SETTINGS.NB_JOBS,
-                      idx=0, verbose=SETTINGS.verbose, ttest_threshold=0.01,
-                      nb_max_runs=16, train_epochs=1000, test_epochs=1000):
+    def orient_graph(self, df_data, graph, printout=None, nb_runs=6, **kwargs):
         """Orient an undirected graph using the pairwise method defined by the subclass.
 
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
@@ -96,12 +94,11 @@ class PairwiseModel(object):
             raise TypeError("Data type not understood.")
 
         res = []
-        
+
         for idx, (a, b) in enumerate(edges):
             weight = self.predict_proba(
-                df_data[a].as_matrix(), df_data[b].as_matrix(), idx=idx, nb_runs=nb_runs, nb_jobs=nb_jobs,
-                      verbose=verbose, ttest_threshold=ttest_threshold,
-                      nb_max_runs=nb_max_runs, train_epochs=train_epochs, test_epochs=test_epochs)
+                df_data[a].as_matrix(), df_data[b].as_matrix(), idx=idx,
+                nb_runs=nb_runs, **kwargs)
             if weight > 0:  # a causes b
                 output.add_edge(a, b, weight=weight)
             else:
@@ -110,5 +107,9 @@ class PairwiseModel(object):
                 res.append([str(a) + '-' + str(b), weight])
                 DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
                     printout, index=False)
- 
+
+        for node in list(df_data.columns.values):
+            if node not in output.nodes():
+                output.add_node(node)
+
         return output
