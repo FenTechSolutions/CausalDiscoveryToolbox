@@ -108,10 +108,11 @@ class GNN(PairwiseModel):
         self.nh = nh
         self.lr = lr
 
-    def predict_proba(self, a, b, nb_runs=6, nb_jobs=SETTINGS.NB_JOBS,
-                      idx=0, verbose=SETTINGS.verbose, ttest_threshold=0.01,
+    def predict_proba(self, a, b, nb_runs=6, nb_jobs=None, gpu=None,
+                      idx=0, verbose=None, ttest_threshold=0.01,
                       nb_max_runs=16, train_epochs=1000, test_epochs=1000):
         """Run multiple times GNN to estimate the causal direction."""
+        nb_jobs, verbose, gpu = SETTINGS.get_default(nb_jobs=nb_jobs, verbose=verbose, gpu=gpu)
         x = np.stack([a, b], 1)
         ttest_criterion = TTestCriterion(
             max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
@@ -121,7 +122,7 @@ class GNN(PairwiseModel):
 
         while ttest_criterion.loop(AB, BA):
             result_pair = Parallel(n_jobs=nb_jobs)(delayed(GNN_instance)(
-                x, idx=idx, device='cuda:{}'.format(run % len(SETTINGS.GPU_LIST)) if SETTINGS.GPU else 'cpu', 
+                x, idx=idx, device='cuda:{}'.format(run % len(SETTINGS.GPU_LIST)) if gpu else 'cpu',
                 verbose=verbose, train_epochs=train_epochs, test_epochs=test_epochs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])

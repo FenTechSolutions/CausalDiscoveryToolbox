@@ -31,8 +31,9 @@ class FSGNN_model(th.nn.Module):
         self.layers(x)
 
     def train(self, x, y, lr=0.01, l1=0.1,  # batch_size=-1,
-              train_epochs=1000, test_epochs=1000, device=SETTINGS.default_device,
+              train_epochs=1000, test_epochs=1000, device=None,
               verbose=False):
+        device = SETTINGS.get_default(device=device)
         optim = th.optim.Adam(self.parameters(), lr=lr)
         output = th.zeros(x.size()[1])
         noise = Variable(th.randn(x.size())).to(device)
@@ -70,9 +71,10 @@ class FSGNN(FeatureSelectionModel):
 
     def predict_features(self, df_features, df_target, nh=20, idx=0, dropout=0.,
                          activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  # batch_size=-1,
-                         train_epochs=1000, test_epochs=1000, device=SETTINGS.default_device,
-                         verbose=False):
+                         train_epochs=1000, test_epochs=1000, device=None,
+                         verbose=None):
         """For one variable, predict its neighbours."""
+        device, verbose = SETTINGS.get_default(device=device, verbose=verbose)
         x = th.FloatTensor(scale(df_features.as_matrix())).to(device)
         y = th.FloatTensor(scale(df_target.as_matrix())).to(device)
         model = FSGNN_model([x.size()[1], nh, 1],

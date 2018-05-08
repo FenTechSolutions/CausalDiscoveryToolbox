@@ -44,6 +44,35 @@ class ConfigSettings(object):
 
         self.default_device = 'cuda:' + str(self.GPU_LIST[0]) if self.GPU else 'cpu'
 
+    def __setattr__(self, attr, value):
+        """Set attribute override for GPU=True."""
+        if attr == "GPU" and value and not self.GPU:
+            self.NB_JOBS = 2
+            if len(self.GPU_LIST) == 0:
+                if type(value) == int:
+                    self.GPU_LIST = list(range(int))
+                else:
+                    self.GPU_LIST = [0]
+            if self.default_device == 'cpu':
+                self.default_device = 'cuda:{}'.format(self.GPU_LIST[0])
+        super(ConfigSettings, self).__setattr__(attr, value)
+
+    def get_default(self, **kwargs):
+        """Get the default parameters as defined in the Settings class."""
+        out = []
+        for i in kwargs:
+            if kwargs[i] is None:
+                try:
+                    out.append(self.__getattribute__(i))
+                except AttributeError:
+                    if i == "device":
+                        out.append(self.default_device)
+                    else:
+                        out.append(self.__getattribute__(i.upper()))
+            else:
+                out.append(kwargs[i])
+        return out if len(out) > 1 else out[0]  # For unpacking
+
 
 def autoset_settings(set_var):
     """Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.
