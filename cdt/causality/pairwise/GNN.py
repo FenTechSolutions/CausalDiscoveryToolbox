@@ -32,6 +32,7 @@ class GNN_model(th.nn.Module):
             batch_size, 1), requires_grad=False).to(device)
         self.act = th.nn.ReLU()
         self.criterion = MMDloss(batch_size, device=device)
+        self.layers = th.nn.Sequential(self.l1, self.act, self.l2)
 
     def forward(self, x):
         """Pass data through the net structure.
@@ -43,10 +44,9 @@ class GNN_model(th.nn.Module):
 
         """
         self.noise.normal_()
-        y = self.act(self.l1(th.cat([x, self.noise], 1)))
-        return self.l2(y)
+        return self.layers(th.cat([x, self.noise], 1))
 
-    def run(self, x, y, lr=0.01, train_epochs=1000, test_epochs=1000, idx=0):
+    def run(self, x, y, lr=0.01, train_epochs=1000, test_epochs=1000, idx=0, verbose=False, **kwargs):
         """Run the GNN on a pair x,y of FloatTensor data."""
         optim = th.optim.Adam(self.parameters(), lr=lr)
         running_loss = 0
@@ -54,9 +54,9 @@ class GNN_model(th.nn.Module):
 
         for i in range(train_epochs + test_epochs):
             optim.zero_grad()
-            pred = self(x)
+            pred = self.forward(x)
             loss = self.criterion(pred, y)
-            running_loss += loss.data[0]
+            running_loss += loss.item()
 
             if i < train_epochs:
                 loss.backward()
@@ -65,7 +65,7 @@ class GNN_model(th.nn.Module):
                 teloss += running_loss
 
             # print statistics
-            if not i % 300:
+            if verbose and not i % 300:
                 print('Idx:{} ; score:{}'.
                       format(idx, running_loss))
                 running_loss = 0.0
@@ -73,7 +73,7 @@ class GNN_model(th.nn.Module):
         return teloss / test_epochs
 
 
-def GNN_instance(x, idx=0, device=SETTINGS.default_device, **kwargs):
+def GNN_instance(x, idx=0, device=SETTINGS.default_device, nh=20, **kwargs):
     """Run an instance of GNN, testing causal direction.
 
     :param m: data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect
@@ -83,10 +83,10 @@ def GNN_instance(x, idx=0, device=SETTINGS.default_device, **kwargs):
     :return:
     """
     xy = scale(x).astype('float32')
-    inputx = Variable(th.FloatTensor(xy[:, 0])).to(device)
-    target = Variable(th.FloatTensor(xy[:, 1])).to(device)
-    GNNXY = GNN_model(x.shape[0], device=device, **kwargs).to(device)
-    GNNYX = GNN_model(x.shape[0], device=device, **kwargs).to(device)
+    inputx = th.FloatTensor(xy[:, [0]]).to(device)
+    target = th.FloatTensor(xy[:, [1]]).to(device)
+    GNNXY = GNN_model(x.shape[0], device=device, nh=nh).to(device)
+    GNNYX = GNN_model(x.shape[0], device=device, nh=nh).to(device)
 
     XY = GNNXY.run(inputx, target, **kwargs)
     YX = GNNYX.run(target, inputx, **kwargs)
@@ -102,15 +102,17 @@ class GNN(PairwiseModel):
     and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
     """
 
-    def __init__(self):
+    def __init__(self, nh=20, lr=0.01):
         """Init the model."""
         super(GNN, self).__init__()
+        self.nh = nh
+        self.lr = lr
 
     def predict_proba(self, a, b, nb_runs=6, nb_jobs=SETTINGS.NB_JOBS,
                       idx=0, verbose=SETTINGS.verbose, ttest_threshold=0.01,
-                      nb_max_runs=16, **kwargs):
+                      nb_max_runs=16, train_epochs=1000, test_epochs=1000):
         """Run multiple times GNN to estimate the causal direction."""
-        x = np.concatenate([a, b], 1)
+        x = np.stack([a, b], 1)
         ttest_criterion = TTestCriterion(
             max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
 
@@ -118,8 +120,9 @@ class GNN(PairwiseModel):
         BA = []
 
         while ttest_criterion.loop(AB, BA):
-            result_pair = Parallel(n_jobs=nb_jobs)(delayed()(
-                x, idx=idx, device='cuda:{}'.format(run % len(SETTINGS.GPU_LIST)) if SETTINGS.GPU else 'cpu', **kwargs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
+            result_pair = Parallel(n_jobs=nb_jobs)(delayed(GNN_instance)(
+                x, idx=idx, device='cuda:{}'.format(run % len(SETTINGS.GPU_LIST)) if SETTINGS.GPU else 'cpu', 
+                verbose=verbose, train_epochs=train_epochs, test_epochs=test_epochs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
 

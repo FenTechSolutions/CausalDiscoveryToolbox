@@ -136,8 +136,10 @@ def parallel_graph_evaluation(data, graph, nb_runs=16,
 
 
 def hill_climbing(data, graph, **kwargs):
-    """Hill Climbing optimization: the greediest possible algorithm."""
+    """Hill Climbing optimization: a greedy exploration algorithm."""
     tested_candidates = [nx.adj_matrix(graph, weight=None)]
+    print(kwargs)
+    print("best score eval")
     best_score = parallel_graph_evaluation(data, graph, ** kwargs)
     best_candidate = graph
     can_improve = True
@@ -148,7 +150,9 @@ def hill_climbing(data, graph, **kwargs):
             test_graph.remove_edge(i, j)
             test_graph.add_edge(j, i)
             tadjmat = nx.adj_matrix(test_graph, weight=None)
+            print(i, j)
             if (nx.is_directed_acyclic_graph(test_graph) and tadjmat not in tested_candidates):
+                print(tadjmat)
                 tested_candidates.append(tadjmat)
                 score = parallel_graph_evaluation(data, test_graph, **kwargs)
                 if score < best_score:
@@ -243,11 +247,11 @@ class CGNN(GraphModel):
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
 
-        return alg_dic[alg](dag, data, self.infer_graph, nh=nh, nb_runs=nb_runs,
+        return alg_dic[alg](data, dag, nh=nh, nb_runs=nb_runs,
                             nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose)
 
     def orient_undirected_graph(self, data, umg, nh=20, nb_runs=16, nb_jobs=SETTINGS.NB_JOBS,
-                                lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True):
+                                lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True, nb_max_runs=16):
         """Orient the undirected graph using GNN and apply CGNN to improve the graph.
 
         :param data: data
@@ -257,11 +261,10 @@ class CGNN(GraphModel):
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
 
-        gnn = GNN(nh=nh, nb_runs=nb_runs, nb_jobs=nb_jobs, lr=lr,
-                  train_epochs=train_epochs, test_epochs=test_epochs,
-                  verbose=verbose)
-        dag = gnn.orient_graph(data, umg,  nh=nh, nb_runs=nb_runs,
-                               nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose)  # Pairwise method
+        gnn = GNN(nh=nh, lr=lr)
+        dag = gnn.orient_graph(data, umg, nb_runs=nb_runs, nb_max_runs=nb_max_runs,
+                               nb_jobs=nb_jobs, train_epochs=train_epochs, 
+                               test_epochs=test_epochs, verbose=verbose)  # Pairwise method
 
         return self.orient_directed_graph(data, dag,  nh=nh, nb_runs=nb_runs,
                                           nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose)

@@ -49,7 +49,7 @@ class FSGNN_model(th.nn.Module):
             optim.zero_grad()
             gen = self.layers(x)
             # print(gen)
-            loss = criterion(gen, y) + l1*self.layers[0].weight.abs().sum()
+            loss = criterion(gen, y) + l1*(self.layers[0].weight.abs().sum() + self.layers[2].weight.abs().sum())
             # Train the discriminator
             if verbose and not epoch % 200:
                 print("Epoch: {} ; Loss: {}".format(epoch, loss.item()))
@@ -58,7 +58,7 @@ class FSGNN_model(th.nn.Module):
             loss.backward()
             optim.step()
 
-        return list(output.cpu().numpy())
+        return list(output.div_(test_epochs).cpu().numpy())
 
 
 class FSGNN(FeatureSelectionModel):

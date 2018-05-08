@@ -6,6 +6,7 @@ Date : 7/06/2017
 import networkx as nx
 from sklearn.preprocessing import scale
 from pandas import DataFrame
+from ...utils.Settings import SETTINGS
 
 
 class PairwiseModel(object):
@@ -65,7 +66,9 @@ class PairwiseModel(object):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, graph, printout=None, **kwargs):
+    def orient_graph(self, df_data, graph, printout=None, nb_runs=6, nb_jobs=SETTINGS.NB_JOBS,
+                      idx=0, verbose=SETTINGS.verbose, ttest_threshold=0.01,
+                      nb_max_runs=16, train_epochs=1000, test_epochs=1000):
         """Orient an undirected graph using the pairwise method defined by the subclass.
 
         Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
@@ -93,11 +96,12 @@ class PairwiseModel(object):
             raise TypeError("Data type not understood.")
 
         res = []
-        idx = 0
-
-        for a, b in edges:
+        
+        for idx, (a, b) in enumerate(edges):
             weight = self.predict_proba(
-                df_data[a].as_matrix(), df_data[b].as_matrix(), idx, **kwargs)
+                df_data[a].as_matrix(), df_data[b].as_matrix(), idx=idx, nb_runs=nb_runs, nb_jobs=nb_jobs,
+                      verbose=verbose, ttest_threshold=ttest_threshold,
+                      nb_max_runs=nb_max_runs, train_epochs=train_epochs, test_epochs=test_epochs)
             if weight > 0:  # a causes b
                 output.add_edge(a, b, weight=weight)
             else:
@@ -106,6 +110,5 @@ class PairwiseModel(object):
                 res.append([str(a) + '-' + str(b), weight])
                 DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
                     printout, index=False)
-
-            idx += 1
+ 
         return output
