@@ -9,6 +9,7 @@ import os
 import warnings
 import multiprocessing
 import torch as th
+from collections import OrderedDict
 
 
 def message_warning(msg, *a, **kwargs):
@@ -58,21 +59,30 @@ class ConfigSettings(object):
                 self.default_device = 'cuda:{}'.format(self.GPU_LIST[0])
         super(ConfigSettings, self).__setattr__(attr, value)
 
-    def get_default(self, **kwargs):
+    def get_default(self, ordict=None, **kwargs):
         """Get the default parameters as defined in the Settings class."""
-        out = []
-        for i in kwargs:
-            if kwargs[i] is None:
-                try:
-                    out.append(self.__getattribute__(i))
-                except AttributeError:
-                    if i == "device":
-                        out.append(self.default_device)
-                    else:
-                        out.append(self.__getattribute__(i.upper()))
+        def retrieve_param(i):
+            try:
+                return self.__getattribute__(i)
+            except AttributeError:
+                if i == "device":
+                    return self.default_device
+                else:
+                    return self.__getattribute__(i.upper())
+        if ordict is None:
+            if len(kwargs) == 1:
+                return retrieve_param(list(kwargs.keys())[0])
             else:
-                out.append(kwargs[i])
-        return out if len(out) > 1 else out[0]  # For unpacking
+                raise TypeError("As dict is unordered, it is impossible to give"
+                                "the parameters in the correct order.")
+        else:
+            out = []
+            for i in ordict:
+                if ordict[i] is None:
+                    out.append(retrieve_param(i))
+                else:
+                    out.append(ordict[i])
+            return out
 
 
 def autoset_settings(set_var):
