@@ -38,6 +38,7 @@ class ConfigSettings(object):
         self.GPU_LIST = []
         self.autoset_config = True
         self.verbose = True
+        self.default_device = 'cpu'
 
         if self.autoset_config:
             self = autoset_settings(self)
