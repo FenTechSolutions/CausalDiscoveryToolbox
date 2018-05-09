@@ -91,17 +91,12 @@ def autoset_settings(set_var):
             set_var.GPU = len(devices)
             set_var.NB_JOBS = len(devices)
             print("Detecting CUDA devices : {}".format(devices))
-        else:
-            set_var.GPU = check_cuda_devices()
-            if not set_var.GPU:
-                raise KeyError
-            set_var.NB_JOBS = set_var.GPU
-            print("Detecting {} CUDA devices ".format(set_var.GPU))
 
     except KeyError:
-        if set_var.GPU:
-            warnings.warn("GPU detected but no GPU ID. Setting SETTINGS.GPU to 0")
-        else:
+        set_var.GPU = check_cuda_devices()
+        set_var.NB_JOBS = set_var.GPU
+        print("Detecting {} CUDA devices ".format(set_var.GPU))
+        if not set_var.GPU:
             warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to 0, " +
                           "and SETTINGS.NB_JOBS to cpu_count.")
             set_var.GPU = 0
