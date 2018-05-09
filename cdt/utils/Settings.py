@@ -90,17 +90,13 @@ def autoset_settings(set_var):
         if len(devices) != 0:
             set_var.GPU = len(devices)
             set_var.NB_JOBS = len(devices)
-
-        elif set_var.GPU:
-            """2 lines below: Hotfix of incompatibility between
-            multiple torch.cuda init through joblib."""
-            # if th.cuda.is_available():
-            #     set_var.GPU = True
-            set_var.GPU = 1
-            set_var.NB_JOBS = len(devices)
+            print("Detecting CUDA devices : {}".format(devices))
         else:
-            raise KeyError
-        print("Detecting CUDA devices : {}".format(devices))
+            set_var.GPU = check_cuda_devices()
+            if not set_var.GPU:
+                raise KeyError
+            set_var.NB_JOBS = set_var.GPU
+            print("Detecting {} CUDA devices ".format(set_var.GPU))
 
     except KeyError:
         if set_var.GPU:
@@ -112,6 +108,53 @@ def autoset_settings(set_var):
             set_var.NB_JOBS = multiprocessing.cpu_count()
 
     return set_var
+
+
+def check_cuda_devices():
+    """Output some information on CUDA-enabled devices on your computer, including current memory usage. Modified to only get number of devices.
+
+    It's a port of https://gist.github.com/f0k/0d6431e3faa60bffc788f8b4daa029b1
+    from C to Python with ctypes, so it can run without compiling
+    anything. Note that this is a direct translation with no attempt to
+    make the code Pythonic. It's meant as a general demonstration on how
+    to obtain CUDA device information from Python without resorting to
+    nvidia-smi or a compiled Python extension.
+
+    Author: Jan Schlüter
+    Git: https://gist.github.com/63a664160d016a491b2cbea15913d549.git
+    """
+    import ctypes
+
+    # Some constants taken from cuda.h
+    CUDA_SUCCESS = 0
+
+    libnames = ('libcuda.so', 'libcuda.dylib', 'cuda.dll')
+    for libname in libnames:
+        try:
+            cuda = ctypes.CDLL(libname)
+        except OSError:
+            continue
+        else:
+            break
+    else:
+        # raise OSError("could not load any of: " + ' '.join(libnames))
+        return 0
+
+    nGpus = ctypes.c_int()
+    error_str = ctypes.c_char_p()
+
+    result = cuda.cuInit(0)
+    if result != CUDA_SUCCESS:
+        cuda.cuGetErrorString(result, ctypes.byref(error_str))
+        # print("cuInit failed with error code %d: %s" % (result, error_str.value.decode()))
+        return 0
+    result = cuda.cuDeviceGetCount(ctypes.byref(nGpus))
+    if result != CUDA_SUCCESS:
+        cuda.cuGetErrorString(result, ctypes.byref(error_str))
+        # print("cuDeviceGetCount failed with error code %d: %s" % (result, error_str.value.decode()))
+        return 0
+    # print("Found %d device(s)." % nGpus.value)
+    return nGpus.value
 
 
 SETTINGS = ConfigSettings()
