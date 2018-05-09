@@ -56,7 +56,7 @@ class CGNN_model(th.nn.Module):
         """Init the model by creating the blocks and extracting the topological order."""
         super(CGNN_model, self).__init__()
         gpu = SETTINGS.get_default(gpu=gpu)
-
+        device = 'cuda:{}'.format(gpu_id) if gpu else 'cpu'
         nodes = list(graph.nodes())
         self.topological_order = [nodes.index(i) for i in nx.topological_sort(graph)]
         self.adjacency_matrix = nx.adj_matrix(graph, weight=None).todense()
@@ -68,17 +68,12 @@ class CGNN_model(th.nn.Module):
             self.i_adj_matrix = nx.adj_matrix(initial_graph, weight=None).todense()
         self.blocks = th.nn.ModuleList()
         self.generated = [None for i in range(self.adjacency_matrix.shape[0])]
-        self.noise = th.zeros(batch_size, self.adjacency_matrix.shape[0])
-        self.corr_noise = dict([[(i, j), th.zeros(batch_size, 1)] for i, j
+        self.noise = th.zeros(batch_size, self.adjacency_matrix.shape[0]).to(device)
+        self.corr_noise = dict([[(i, j), th.zeros(batch_size, 1).to(device)] for i, j
                                 in zip(*np.nonzero(self.i_adj_matrix)) if i < j])
-        self.criterion = MMDloss(batch_size, device='cuda:{}'.format(gpu_id) if gpu else 'cpu')
-        self.score = th.FloatTensor([0])
-        if gpu:
-            self.noise = self.noise.cuda(gpu_id)
-            self.score = self.score.cuda(gpu_id)
-            for i in self.corr_noise:
-                self.corr_noise[i] = self.corr_noise[i].cuda(gpu_id)
-
+        self.criterion = MMDloss(batch_size, device=device)
+        self.score = th.FloatTensor([0]).to(device)
+        
         for i in range(self.adjacency_matrix.shape[0]):
             if not confounding:
                 self.blocks.append(CGNN_block([sum(self.adjacency_matrix[:, i]) + 1, nh, 1]))
@@ -102,9 +97,10 @@ class CGNN_model(th.nn.Module):
                                                    [self.noise[:, [i]]]] for v in c], 1))
         return th.cat(self.generated, 1)
 
-    def run(self, data, train_epochs=1000, test_epochs=1000, verbose=True,
+    def run(self, data, train_epochs=1000, test_epochs=1000, verbose=None,
             idx=0, lr=0.01, **kwargs):
         """Run the CGNN on a given graph."""
+        verbose = SETTINGS.get_default(verbose=verbose)
         optim = th.optim.Adam(self.parameters(), lr=lr)
         self.score.zero_()
 
@@ -124,12 +120,10 @@ class CGNN_model(th.nn.Module):
 def graph_evaluation(data, graph, gpu=None, gpu_id=0, **kwargs):
     """Evaluate a graph taking account of the hardware."""
     gpu = SETTINGS.get_default(gpu=gpu)
-    obs = Variable(th.FloatTensor(data))
-    cgnn = CGNN_model(graph, data.shape[0], **kwargs)
-    if gpu:
-        cgnn = cgnn.cuda(gpu_id)
-        obs = obs.cuda(gpu_id)
-
+    device = 'cuda:{}'.format(gpu_id) if gpu else 'cpu'
+    obs = Variable(th.FloatTensor(data)).to(device)
+    cgnn = CGNN_model(graph, data.shape[0], gpu_id=gpu_id, **kwargs).to(device)
+    
     return cgnn.run(obs, **kwargs)
 
 
@@ -141,7 +135,7 @@ def parallel_graph_evaluation(data, graph, nb_runs=16,
         return graph_evaluation(data, graph, **kwargs)
     else:
         output = Parallel(n_jobs=nb_jobs)(delayed(graph_evaluation)(data, graph,
-                                          idx=run, gpu_id=SETTINGS.GPU_LIST[run % len(SETTINGS.GPU_LIST)],
+                                          idx=run, gpu_id=run % SETTINGS.GPU,
                                           **kwargs) for run in range(nb_runs))
         return np.mean(output)
 
@@ -196,12 +190,12 @@ class CGNN(GraphModel):
         super(CGNN, self).__init__()
 
     def create_graph_from_data(self, data, nh=20, nb_runs=16, nb_jobs=None, gpu=None,
-                               lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True):
+                               lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None):
         """Use CGNN to create a graph from scratch."""
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")
 
-        gpu, nb_jobs = SETTINGS.get_default(gpu=gpu, nb_jobs=nb_jobs)
+        nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
         # Building all possible candidates:
         nb_vars = len(list(data.columns))
         data = scale(data.as_matrix()).astype('float32')
@@ -227,7 +221,7 @@ class CGNN(GraphModel):
                           {idx: i for idx, i in enumerate(data.columns)})
 
     def orient_directed_graph(self, data, dag, alg='HC', nh=20, nb_runs=16, nb_jobs=None,
-                              gpu=None, lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True):
+                              gpu=None, lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None):
         """Improve a directed acyclic graph using CGNN.
 
         :param data: data
@@ -236,16 +230,17 @@ class CGNN(GraphModel):
         :param log: Save logs of the execution
         :return: improved directed acyclic graph
         """
-        gpu, nb_jobs = SETTINGS.get_default(gpu=gpu, nb_jobs=nb_jobs)
+        nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
         data = scale(data.as_matrix()).astype('float32')
+
         return alg_dic[alg](data, dag, nh=nh, nb_runs=nb_runs, gpu=gpu,
                             nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs,
                             test_epochs=test_epochs, verbose=verbose)
 
     def orient_undirected_graph(self, data, umg, nh=20, nb_runs=16, nb_jobs=None, gpu=None,
-                                lr=0.01, train_epochs=1000, test_epochs=1000, verbose=True, nb_max_runs=16):
+                                lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None, nb_max_runs=16):
         """Orient the undirected graph using GNN and apply CGNN to improve the graph.
 
         :param data: data
@@ -254,9 +249,11 @@ class CGNN(GraphModel):
         """
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
-
+        if verbose:
+            raise ValueError
+        nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
         gnn = GNN(nh=nh, lr=lr)
-        gpu, nb_jobs = SETTINGS.get_default(gpu=gpu, nb_jobs=nb_jobs)
+
         og = gnn.orient_graph(data, umg, nb_runs=nb_runs, nb_max_runs=nb_max_runs,
                               nb_jobs=nb_jobs, train_epochs=train_epochs,
                               test_epochs=test_epochs, verbose=verbose, gpu=gpu)  # Pairwise method

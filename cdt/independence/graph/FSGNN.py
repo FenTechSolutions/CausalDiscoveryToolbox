@@ -6,6 +6,7 @@ Author : Diviyan Kalainathan & Olivier Goudet
 import os
 import pandas as pd
 import torch as th
+import numpy as np
 from torch.autograd import Variable
 from sklearn.preprocessing import scale
 from .model import FeatureSelectionModel
@@ -32,8 +33,8 @@ class FSGNN_model(th.nn.Module):
 
     def train(self, x, y, lr=0.01, l1=0.1,  # batch_size=-1,
               train_epochs=1000, test_epochs=1000, device=None,
-              verbose=False):
-        device = SETTINGS.get_default(device=device)
+              verbose=None):
+        device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         optim = th.optim.Adam(self.parameters(), lr=lr)
         output = th.zeros(x.size()[1])
         noise = Variable(th.randn(x.size())).to(device)
@@ -72,15 +73,18 @@ class FSGNN(FeatureSelectionModel):
     def predict_features(self, df_features, df_target, nh=20, idx=0, dropout=0.,
                          activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  # batch_size=-1,
                          train_epochs=1000, test_epochs=1000, device=None,
-                         verbose=None):
+                         verbose=None, nb_runs=3):
         """For one variable, predict its neighbours."""
-        device, verbose = SETTINGS.get_default(device=device, verbose=verbose)
+        device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         x = th.FloatTensor(scale(df_features.as_matrix())).to(device)
         y = th.FloatTensor(scale(df_target.as_matrix())).to(device)
-        model = FSGNN_model([x.size()[1], nh, 1],
-                            dropout=dropout,
-                            activation_function=activation_function).to(device)
+        out = []
+        for i in range(nb_runs):
+            model = FSGNN_model([x.size()[1], nh, 1],
+                                dropout=dropout,
+                                activation_function=activation_function).to(device)
 
-        return model.train(x, y, lr=0.01, l1=0.1,  # batch_size=-1,
-                           train_epochs=train_epochs, test_epochs=test_epochs,
-                           device=device, verbose=verbose)
+            out.append(model.train(x, y, lr=0.01, l1=0.1,  # batch_size=-1,
+                                   train_epochs=train_epochs, test_epochs=test_epochs,
+                                   device=device, verbose=verbose))
+        return list(np.mean(np.array(out), axis=0))
