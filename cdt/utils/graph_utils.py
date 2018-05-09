@@ -13,7 +13,7 @@ def dagify_min_edge(g):
                else remove it.
     """
     while not nx.is_directed_acyclic_graph(g):
-        cycle = nx.simple_cycles(g)[0]
+        cycle = nx.simple_cycles(g).next()
         scores = []
         edges = []
         for i, j in zip(cycle[:1], cycle[:1]):
