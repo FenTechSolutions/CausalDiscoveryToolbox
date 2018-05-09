@@ -17,12 +17,14 @@ def message_warning(msg, *a, **kwargs):
 
 
 warnings.formatwarning = message_warning
+init = True
 
 
 class DefaultRPackages(object):
     """Define the packages to be tested for import."""
 
-    __slots__ = ("pcalg",
+    __slots__ = ("init",
+                 "pcalg",
                  "kpcalg",
                  "bnlearn",
                  "D2C",
@@ -31,12 +33,14 @@ class DefaultRPackages(object):
 
     def __init__(self):
         """Init the values of the packages."""
-        self.pcalg = False
-        self.kpcalg = False
-        self.bnlearn = False
-        self.D2C = False
-        self.SID = False
-        self.CAM = False
+        self.init = True
+        self.pcalg = None
+        self.kpcalg = None
+        self.bnlearn = None
+        self.D2C = None
+        self.SID = None
+        self.CAM = None
+        self.init = False
 
     def __repr__(self):
         """Representation."""
@@ -46,13 +50,19 @@ class DefaultRPackages(object):
         """For print purposes."""
         return str(["{}: {}".format(i, getattr(self, i)) for i in self.__slots__])
 
+    def __getattribute__(self, name):
+        """Test if libraries are available on the fly."""
+        out = object.__getattribute__(self, name)
+        if out is None and not object.__getattribute__(self, 'init'):
+            availability = self.check_R_package(name)
+            setattr(self, name, availability)
+            return availability
+        return out
 
-def check_R_packages(packages):
-    """Execute a subprocess to check the packages' availability."""
-    for i in packages.__slots__:
-        setattr(packages, i,
-                not bool(launch_R_script("{}/R_templates/test_import.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                         {"{package}": i}, verbose=False)))
+    def check_R_package(self, package):
+        """Execute a subprocess to check the package's availability."""
+        test_package = not bool(launch_R_script("{}/R_templates/test_import.R".format(os.path.dirname(os.path.realpath(__file__))),                                      {"{package}": package}, verbose=True))
+        return test_package
 
 
 def launch_R_script(template, arguments, output_function=None, verbose=True):
@@ -93,4 +103,4 @@ def launch_R_script(template, arguments, output_function=None, verbose=True):
 
 
 RPackages = DefaultRPackages()
-check_R_packages(RPackages)
+init = False
