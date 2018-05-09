@@ -9,7 +9,6 @@ import os
 import warnings
 import multiprocessing
 import torch as th
-from collections import OrderedDict
 
 
 def message_warning(msg, *a, **kwargs):
@@ -24,8 +23,7 @@ class ConfigSettings(object):
     """Defining the class for the hardware/high level settings of the CDT."""
 
     __slots__ = ("NB_JOBS",  # Number of parallel jobs runnable
-                 "GPU",  # True if GPU is available
-                 "GPU_LIST",  # List of CUDA_VISIBLE_DEVICES
+                 "GPU",  # Number of GPUs Available
                  "default_device",  # Default device for gpu (pytorch 0.4)
                  "autoset_config",
                  "verbose",
@@ -36,7 +34,6 @@ class ConfigSettings(object):
         super(ConfigSettings, self).__init__()
         self.NB_JOBS = 8
         self.GPU = False
-        self.GPU_LIST = []
         self.autoset_config = True
         self.verbose = True
         self.default_device = 'cpu'
@@ -44,22 +41,15 @@ class ConfigSettings(object):
         if self.autoset_config:
             self = autoset_settings(self)
 
-        self.default_device = 'cuda:' + str(self.GPU_LIST[0]) if self.GPU else 'cpu'
+        self.default_device = 'cuda:0' if self.GPU else 'cpu'
 
     def __setattr__(self, attr, value):
         """Set attribute override for GPU=True."""
-        if attr == "GPU" and value and not self.GPU:
-            self.NB_JOBS = 2
-            if len(self.GPU_LIST) == 0:
-                if type(value) == int:
-                    self.GPU_LIST = list(range(int))
-                else:
-                    self.GPU_LIST = [0]
-            if self.default_device == 'cpu':
-                self.default_device = 'cuda:{}'.format(self.GPU_LIST[0])
+        if attr == "GPU" and value and not self.GPU and self.default_device == 'cpu':
+            self.default_device = 'cuda:0'
         super(ConfigSettings, self).__setattr__(attr, value)
 
-    def get_default(self, ordict=None, **kwargs):
+    def get_default(self, *args, **kwargs):
         """Get the default parameters as defined in the Settings class."""
         def retrieve_param(i):
             try:
@@ -69,19 +59,21 @@ class ConfigSettings(object):
                     return self.default_device
                 else:
                     return self.__getattribute__(i.upper())
-        if ordict is None:
-            if len(kwargs) == 1:
+        if len(args) == 0:
+            if len(kwargs) == 1 and kwargs[list(kwargs.keys())[0]] is not None:
+                return kwargs[list(kwargs.keys())[0]]
+            elif len(kwargs) == 1:
                 return retrieve_param(list(kwargs.keys())[0])
             else:
                 raise TypeError("As dict is unordered, it is impossible to give"
                                 "the parameters in the correct order.")
         else:
             out = []
-            for i in ordict:
-                if ordict[i] is None:
-                    out.append(retrieve_param(i))
+            for i in args:
+                if i[1] is None:
+                    out.append(retrieve_param(i[0]))
                 else:
-                    out.append(ordict[i])
+                    out.append(i[1])
             return out
 
 
@@ -96,8 +88,7 @@ def autoset_settings(set_var):
         if type(devices) != list and type(devices) != tuple:
             devices = [devices]
         if len(devices) != 0:
-            set_var.GPU = True
-            set_var.GPU_LIST = list(range(len(devices)))
+            set_var.GPU = len(devices)
             set_var.NB_JOBS = len(devices)
 
         elif set_var.GPU:
@@ -105,7 +96,7 @@ def autoset_settings(set_var):
             multiple torch.cuda init through joblib."""
             # if th.cuda.is_available():
             #     set_var.GPU = True
-            set_var.GPU_LIST = [0]
+            set_var.GPU = 1
             set_var.NB_JOBS = len(devices)
         else:
             raise KeyError
@@ -113,12 +104,11 @@ def autoset_settings(set_var):
 
     except KeyError:
         if set_var.GPU:
-            warnings.warn("GPU detected but no GPU ID. Setting SETTINGS.GPU_LIST to [0]")
+            warnings.warn("GPU detected but no GPU ID. Setting SETTINGS.GPU to 0")
         else:
-            warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to False, " +
-                          "SETTINGS.GPU_LIST to [], and SETTINGS.NB_JOBS to cpu_count.")
-            set_var.GPU = False
-            set_var.GPU_LIST = []
+            warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to 0, " +
+                          "and SETTINGS.NB_JOBS to cpu_count.")
+            set_var.GPU = 0
             set_var.NB_JOBS = multiprocessing.cpu_count()
 
     return set_var
