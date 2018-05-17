@@ -73,7 +73,7 @@ class CGNN_model(th.nn.Module):
                                 in zip(*np.nonzero(self.i_adj_matrix)) if i < j])
         self.criterion = MMDloss(batch_size, device=device)
         self.score = th.FloatTensor([0]).to(device)
-        
+
         for i in range(self.adjacency_matrix.shape[0]):
             if not confounding:
                 self.blocks.append(CGNN_block([sum(self.adjacency_matrix[:, i]) + 1, nh, 1]))
@@ -123,7 +123,7 @@ def graph_evaluation(data, graph, gpu=None, gpu_id=0, **kwargs):
     device = 'cuda:{}'.format(gpu_id) if gpu else 'cpu'
     obs = Variable(th.FloatTensor(data)).to(device)
     cgnn = CGNN_model(graph, data.shape[0], gpu_id=gpu_id, **kwargs).to(device)
-    
+
     return cgnn.run(obs, **kwargs)
 
 
@@ -181,7 +181,7 @@ def tabu_search():
 class CGNN(GraphModel):
     """CGNN : Generate the whole causal graph and predict causal directions in the graph.
 
-    Author : Olivier Goudet & Diviyan Kalainathan
+    Author : Olivier Goudet & Diviyan Kalainathan & Al.
     Ref : Causal Generative Neural Networks (https://arxiv.org/abs/1711.08936)
     """
 

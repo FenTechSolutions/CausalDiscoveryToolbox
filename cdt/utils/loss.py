@@ -50,7 +50,7 @@ class MMDloss(th.nn.Module):
         else:
             self.bandwiths = bandwidths
         s = th.cat([th.ones([input_size, 1]) / input_size,
-                    th.ones([input_size, 1]) /-input_size], 0)
+                    th.ones([input_size, 1]) / -input_size], 0)
 
         self.S = s.mm(s.t()).to(device)
 

@@ -11,8 +11,8 @@ from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 import torch as th
 from torch.autograd import Variable
-from collections import OrderedDict as odict
 from .model import PairwiseModel
+
 
 class GNN_model(th.nn.Module):
     """Torch model for the GNN structure."""

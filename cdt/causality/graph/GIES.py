@@ -24,7 +24,7 @@ class GIES(GraphModel):
     """GIES algorithm.
 
     Ref:
-    .M. Chickering (2002).  Optimal structure identification with greedy search.
+    D.M. Chickering (2002).  Optimal structure identification with greedy search.
     Journal of Machine Learning Research 3 , 507–554
 
     A. Hauser and P. Bühlmann (2012). Characterization and greedy learning of
