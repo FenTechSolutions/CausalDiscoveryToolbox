@@ -15,7 +15,7 @@ class GraphSkeletonModel(object):
 
     def __init__(self):
         """Init the model."""
-        super(GraphSkeletonModel, self).__init()
+        super(GraphSkeletonModel, self).__init__()
 
     def predict(self, data):
         """Infer a undirected graph out of data."""
@@ -40,7 +40,7 @@ class FeatureSelectionModel(GraphSkeletonModel):
         df_target = pd.DataFrame(df_data[target], columns=[target])
         df_features = df_data[list_features]
 
-        return self.predict_features(df_features, df_target, idx, **kwargs)
+        return self.predict_features(df_features, df_target, **kwargs)
 
     def predict(self, df_data, threshold=0.05, **kwargs):
         """Get the skeleton of the graph from raw data.
@@ -58,7 +58,7 @@ class FeatureSelectionModel(GraphSkeletonModel):
             i.insert(idx, 0)
         matrix_results = np.array(result_feature_selection)
         matrix_results *= matrix_results.transpose()
-        matrix_results.fill_diagonal(0)
+        np.fill_diagonal(matrix_results, 0)
         matrix_results /= 2
 
         graph = nx.Graph()
@@ -67,5 +67,7 @@ class FeatureSelectionModel(GraphSkeletonModel):
             if matrix_results[i, j] > threshold:
                 graph.add_edge(list_nodes[i], list_nodes[j],
                                weight=matrix_results[i, j])
-
+        for node in list_nodes:
+            if node not in graph.nodes():
+                graph.add_node(node)
         return graph

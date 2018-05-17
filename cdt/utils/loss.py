@@ -41,21 +41,18 @@ class MMDloss(th.nn.Module):
     Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.
     """
 
-    def __init__(self, input_size, gpu=False, gpu_id=-1):
+    def __init__(self, input_size, bandwiths=None, device=None):
         """Init the model."""
         super(MMDloss, self).__init__()
-        self.bandwiths = [0.01, 0.1, 1, 10, 100]
+        device = SETTINGS.get_default(device=device)
+        if bandwiths is None:
+            self.bandwiths = [0.01, 0.1, 1, 10, 100]
+        else:
+            self.bandwiths = bandwidths
+        s = th.cat([th.ones([input_size, 1]) / input_size,
+                    th.ones([input_size, 1]) /-input_size], 0)
 
-        if gpu and gpu_id == -1:
-            gpu_id = SETTINGS.GPU_LIST[0]
-        s = th.cat([(th.ones([input_size, 1])).div(input_size),
-                    (th.ones([input_size, 1])).div(-input_size)], 0)
-
-        self.S = s.mm(s.t())
-        self.S = Variable(self.S, requires_grad=False)
-
-        if gpu:
-            self.S = self.S.cuda(gpu_id)
+        self.S = s.mm(s.t()).to(device)
 
     def forward(self, x, y):
         """Compute the MMD statistic between x and y."""
@@ -67,10 +64,9 @@ class MMDloss(th.nn.Module):
         X2 = XX.diag().unsqueeze(0)
         # exponent entries of the RBF kernel (without the sigma) for each
         # combination of the rows in 'X'
-        # -0.5 * (i^Ti - 2*i^Tj + j^Tj)
-        exponent = XX - 0.5 * (X2.expand_as(XX) + X2.t().expand_as(XX))
+        exponent = -2*XX + X2.expand_as(XX) + X2.t().expand_as(XX)
 
-        lossMMD = th.sum(self.S * sum([(exponent * (1./bandwith)).exp() for bandwith in self.bandwiths]))
+        lossMMD = th.sum(self.S * sum([(exponent * -bandwith).exp() for bandwith in self.bandwiths]))
         return lossMMD.sqrt()
 
 
