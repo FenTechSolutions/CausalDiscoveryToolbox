@@ -1,5 +1,5 @@
-"""
-Neural Causation Coefficient
+u"""Neural Causation Coefficient.
+
 Author : David Lopez-Paz
 Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
     "Discovering Causal Signals in Images", CVPR 2017.
@@ -34,15 +34,16 @@ class NCC_model(th.nn.Module):
         :param x: 2d tensor containing both (x,y) Variables
         :return: output of the net
         """
+        sig = th.nn.Sigmoid()
         act = th.nn.ReLU()
-        out = act(self.c1(x))
-        out = act(self.c2(out))
-        out = act(self.l1(self.batch_norm(out)))
-        return th.nn.Sigmoid(out)
+        out1 = act(self.c1(x))
+        out2 = act(self.c2(out1))
+        out3 = self.l1(self.batch_norm(out2))
+        return sig(out3)
 
 
 class NCC(PairwiseModel):
-    """Neural Causation Coefficient.
+    u"""Neural Causation Coefficient.
 
     Infer causal relationships between pairs of variables
     Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
