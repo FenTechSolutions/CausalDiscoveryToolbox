@@ -20,7 +20,7 @@ class Glasso(GraphSkeletonModel):
     def __init__(self):
         super(Glasso, self).__init__()
 
-    def create_skeleton_from_data(self, data, **kwargs):
+    def predict(self, data, **kwargs):
         """
 
         :param data: raw data df
