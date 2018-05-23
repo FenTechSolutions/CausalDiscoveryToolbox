@@ -49,13 +49,17 @@ class FeatureSelectionModel(GraphSkeletonModel):
         """
         nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
         list_nodes = list(df_data.columns.values)
-
-        result_feature_selection = Parallel(n_jobs=nb_jobs)(delayed(self.run_feature_selection)
-                                                            (df_data, node, idx, **kwargs)
-                                                            for idx, node in enumerate(list_nodes))
-
+        if nb_jobs != 1:
+            result_feature_selection = Parallel(n_jobs=nb_jobs)(delayed(self.run_feature_selection)
+                                                                (df_data, node, idx, **kwargs)
+                                                                for idx, node in enumerate(list_nodes))
+        else:
+            result_feature_selection = [self.run_feature_selection(df_data, node, idx, **kwargs) for idx, node in enumerate(list_nodes)]
         for idx, i in enumerate(result_feature_selection):
-            i.insert(idx, 0)
+            try:
+                i.insert(idx, 0)
+            except AttributeError:  # if results are numpy arrays
+                result_feature_selection[idx] = np.insert(i, idx, 0)
         matrix_results = np.array(result_feature_selection)
         matrix_results *= matrix_results.transpose()
         np.fill_diagonal(matrix_results, 0)
