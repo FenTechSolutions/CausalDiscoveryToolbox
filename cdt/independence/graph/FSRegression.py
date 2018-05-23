@@ -66,7 +66,7 @@ class ARD_Regression(FeatureSelectionModel):
         X = df_features.as_matrix()
         y = df_target.as_matrix()
         clf = ARDRegression(compute_score=True)
-        clf.fit(X, y)
+        clf.fit(X, y.ravel())
 
         return np.abs(clf.coef_)
 
