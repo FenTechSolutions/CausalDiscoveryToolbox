@@ -33,7 +33,7 @@ class CAM(GraphModel):
     def __init__(self):
         """Init the model and its available arguments."""
         if not RPackages.CAM:
-            raise ImportError("R Package SAM is not available.")
+            raise ImportError("R Package CAM is not available.")
 
         super(CAM, self).__init__()
         self.scores = {'nonlinear': 'SEMGAM',

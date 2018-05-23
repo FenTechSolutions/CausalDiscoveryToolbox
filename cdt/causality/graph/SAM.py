@@ -11,6 +11,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from joblib import Parallel, delayed
 from .model import GraphModel
+from ...utils.Settings import SETTINGS
 
 
 class CNormalized_Linear(th.nn.Module):
@@ -345,10 +346,9 @@ def run_SAM(df_data, skeleton=None, **kwargs):
             if verbose and epoch % 200 == 0 and i_batch == 0:
 
                 print(str(i) + " " + d_str.format(epoch,
-                                                  adv_loss.cpu().data[0],
-                                                  gen_loss.cpu(
-                                                  ).data[0] / cols,
-                                                  l1_reg.cpu().data[0]))
+                                                  adv_loss.item(),
+                                                  gen_loss.item() / cols,
+                                                  l1_reg.item()))
             loss.backward()
 
             # STORE ASSYMETRY values for output
@@ -391,7 +391,7 @@ class SAM(GraphModel):
         self.test = test_epochs
         self.batchsize = batchsize
 
-    def predict(self, data, skeleton=None, nruns=6, njobs=1, gpus=0, verbose=True,
+    def predict(self, data, skeleton=None, nruns=6, njobs=None, gpus=0, verbose=None,
                 plot=False, plot_generated_pair=False, return_list_results=False):
         """Execute SAM on a dataset given a skeleton or not.
 
@@ -409,15 +409,24 @@ class SAM(GraphModel):
         :return: Adjacency matrix (A) of the graph estimated by SAM,
                 A[i,j] is the term of the ith variable for the jth generator.
         """
-        list_out = Parallel(n_jobs=njobs)(delayed(run_SAM)(data,
-                                                           skeleton=skeleton,
-                                                           lr_gen=self.lr, lr_disc=self.dlr,
-                                                           regul_param=self.l1, nh=self.nh, dnh=self.dnh,
-                                                           gpu=bool(gpus), train_epochs=self.train,
-                                                           test_epochs=self.test, batch_size=self.batchsize,
-                                                           plot=plot, verbose=verbose, gpu_no=idx % max(gpus, 1))
-                                          for idx in range(nruns))
-
+        verbose, njobs = SETTINGS.get_default(('verbose', verbose), ('nb_jobs', njobs))
+        if njobs != 1:
+            list_out = Parallel(n_jobs=njobs)(delayed(run_SAM)(data,
+                                                               skeleton=skeleton,
+                                                               lr_gen=self.lr, lr_disc=self.dlr,
+                                                               regul_param=self.l1, nh=self.nh, dnh=self.dnh,
+                                                               gpu=bool(gpus), train_epochs=self.train,
+                                                               test_epochs=self.test, batch_size=self.batchsize,
+                                                               plot=plot, verbose=verbose, gpu_no=idx % max(gpus, 1))
+                                              for idx in range(nruns))
+        else:
+            list_out = [run_SAM(data, skeleton=skeleton,
+                                lr_gen=self.lr, lr_disc=self.dlr,
+                                regul_param=self.l1, nh=self.nh, dnh=self.dnh,
+                                gpu=bool(gpus), train_epochs=self.train,
+                                test_epochs=self.test, batch_size=self.batchsize,
+                                plot=plot, verbose=verbose, gpu_no=0)
+                        for idx in range(nruns)]
         if return_list_results:
             return list_out
         else:
