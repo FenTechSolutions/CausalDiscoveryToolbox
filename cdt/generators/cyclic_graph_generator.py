@@ -14,13 +14,14 @@ from .causal_mechanisms import (LinearMechanism,
                                 SigmoidMix_Mechanism,
                                 GaussianProcessAdd_Mechanism,
                                 GaussianProcessMix_Mechanism,
-                                gaussian_cause)
+                                normal_noise, gaussian_cause)
 
 
 class CyclicGraphGenerator(object):
     """Generates a cross-sectional dataset out of a cyclic FCM."""
 
-    def __init__(self, causal_mechanism,
+    def __init__(self, causal_mechanism, noise=normal_noise,
+                 noise_coeff=.4,
                  initial_variable_generator=gaussian_cause,
                  points=500, nodes=20, timesteps=0, parents_max=5):
         """Generate an cyclic graph, given a causal mechanism.
@@ -44,6 +45,8 @@ class CyclicGraphGenerator(object):
         else:
             self.timesteps = timesteps
         self.points = points
+        self.noise = noise
+        self.noise_coeff = noise_coeff
         self.adjacency_matrix = np.zeros((nodes, nodes))
         self.parents_max = parents_max
         self.initial_generator = initial_variable_generator
@@ -82,7 +85,7 @@ class CyclicGraphGenerator(object):
 
         # Mechanisms
         self.cfunctions = [self.mechanism(int(sum(self.adjacency_matrix[:, i])),
-                                          self.points) for i in range(self.nodes)]
+                                          self.points, self.noise, noise_coeff=self.noise_coeff) for i in range(self.nodes)]
 
     def generate(self, nb_steps=100, averaging=50, rescale=True):
         """Generate data from an FCM containing cycles."""
@@ -95,7 +98,7 @@ class CyclicGraphGenerator(object):
 
         for i in range(nb_steps):
             for j in range(self.nodes):
-                new_df["V" + str(j)] = self.cfunctions[j](self.data.iloc[:, causes[j]].as_matrix(), nb_steps)[:, 0]
+                new_df["V" + str(j)] = self.cfunctions[j](self.data.iloc[:, causes[j]].as_matrix())[:, 0]
                 if rescale:
                     new_df["V" + str(j)] = scale(new_df["V" + str(j)])
                 if i > nb_steps-averaging:

@@ -14,15 +14,16 @@ from .causal_mechanisms import (LinearMechanism,
                                 SigmoidMix_Mechanism,
                                 GaussianProcessAdd_Mechanism,
                                 GaussianProcessMix_Mechanism,
-                                gmm_cause)
+                                gmm_cause, normal_noise)
 
 
 class AcyclicGraphGenerator(object):
     """Generates a cross-sectional dataset out of a cyclic FCM."""
 
-    def __init__(self, causal_mechanism,
+    def __init__(self, causal_mechanism, noise=normal_noise,
+                 noise_coeff=.4,
                  initial_variable_generator=gmm_cause,
-                 points=500, nodes=20, timesteps=0, parents_max=5):
+                 points=500, nodes=20, parents_max=5):
         """Generate an acyclic graph, given a causal mechanism.
 
         :param initial_variable_generator: init variables of the graph
@@ -39,11 +40,9 @@ class AcyclicGraphGenerator(object):
                           'gp_mix': GaussianProcessMix_Mechanism}[causal_mechanism]
         self.data = pd.DataFrame(None, columns=["V{}".format(i) for i in range(nodes)])
         self.nodes = nodes
-        if timesteps == 0:
-            self.timesteps = np.inf
-        else:
-            self.timesteps = timesteps
         self.points = points
+        self.noise = normal_noise
+        self.noise_coeff = noise_coeff
         self.adjacency_matrix = np.zeros((nodes, nodes))
         self.parents_max = parents_max
         self.initial_generator = initial_variable_generator
@@ -74,7 +73,7 @@ class AcyclicGraphGenerator(object):
 
         # Mechanisms
         self.cfunctions = [self.mechanism(int(sum(self.adjacency_matrix[:, i])),
-                                          self.points)
+                                          self.points, self.noise, noise_coeff=self.noise_coeff)
                            if sum(self.adjacency_matrix[:, i])
                            else self.initial_generator for i in range(self.nodes)]
 
@@ -108,8 +107,3 @@ class AcyclicGraphGenerator(object):
         else:
             raise ValueError("Graph has not yet been generated. \
                               Use self.generate() to do so.")
-
-
-if __name__ == "__main__":
-    print("Testing acyclic graph generator...")
-    raise(NotImplemented)
