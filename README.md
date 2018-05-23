@@ -26,7 +26,7 @@ The packages requires a python version >=3.5, as well as some libraries listed i
 As some of the key algorithms in the _cdt_ package use the PyTorch package, it is required to install it. 
 Check out their website to install the PyTorch version suited to your hardware configuration: http://pytorch.org
 
-## Install the CausalDiscoveryToolboxPackage
+### Install the CausalDiscoveryToolbox package
 The package is available on PyPi:
 ```sh
 pip install cdt
