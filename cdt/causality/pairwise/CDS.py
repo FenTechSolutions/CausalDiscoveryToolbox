@@ -8,6 +8,7 @@ Ref : Fonollosa, José AR, "Conditional distribution variability measures for ca
 import numpy as np
 from collections import Counter
 from .model import PairwiseModel
+import pandas as pd
 
 BINARY = "Binary"
 CATEGORICAL = "Categorical"
@@ -16,7 +17,10 @@ NUMERICAL = "Numerical"
 
 def count_unique(x):
     try:
-        return len(set(x))
+        if type(x) == np.ndarray:
+            return len(np.unique(x))
+        else:
+            return len(set(x))
     except TypeError as e:
         print(x)
         raise e
@@ -73,7 +77,7 @@ class CDS(PairwiseModel):
         self.maxdev = maxdev
         self.minc = minc
 
-    def predict_proba(self, a, b):
+    def predict_proba(self, a, b, **kwargs):
         """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
 
         :param a: Input variable 1
@@ -90,6 +94,8 @@ class CDS(PairwiseModel):
         :param y_te: Input, seen as effect
         :return: CDS statistic between x_te and y_te
         """
+        if type(x_te) == np.ndarray:
+            x_te, y_te = pd.Series(x_te.reshape(-1)), pd.Series(y_te.reshape(-1))
         xd, yd = discretized_sequences(x_te,  y_te,  self.ffactor, self.maxdev)
         cx = Counter(xd)
         cy = Counter(yd)
@@ -98,7 +104,7 @@ class CDS(PairwiseModel):
         py = np.array([cy[i] for i in yrange], dtype=float)
         py = py / py.sum()
         pyx = []
-        for a in cx.iterkeys():
+        for a in cx:
             if cx[a] > self.minc:
                 yx = y_te[xd == a]
                 # if not numerical(ty):

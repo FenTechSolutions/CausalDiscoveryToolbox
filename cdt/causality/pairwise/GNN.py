@@ -116,7 +116,7 @@ class GNN(PairwiseModel):
                       nb_max_runs=16, train_epochs=1000, test_epochs=1000):
         """Run multiple times GNN to estimate the causal direction."""
         nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
-        x = np.stack([a, b], 1)
+        x = np.stack([a.ravel(), b.ravel()], 1)
         ttest_criterion = TTestCriterion(
             max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
 
@@ -124,9 +124,17 @@ class GNN(PairwiseModel):
         BA = []
 
         while ttest_criterion.loop(AB, BA):
-            result_pair = Parallel(n_jobs=nb_jobs)(delayed(GNN_instance)(
-                x, idx=idx, device='cuda:{}'.format(run % gpu) if gpu else 'cpu',
-                verbose=verbose, train_epochs=train_epochs, test_epochs=test_epochs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
+            if nb_jobs != 1:
+                result_pair = Parallel(n_jobs=nb_jobs)(delayed(GNN_instance)(
+                    x, idx=idx, device='cuda:{}'.format(run % gpu) if gpu else 'cpu',
+                    verbose=verbose, train_epochs=train_epochs, test_epochs=test_epochs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
+            else:
+                result_pair = [GNN_instance(x, idx=idx,
+                                            device='cuda:0' if gpu else 'cpu',
+                                            verbose=verbose,
+                                            train_epochs=train_epochs,
+                                            test_epochs=test_epochs)
+                               for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs)]
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
 

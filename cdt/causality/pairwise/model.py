@@ -5,7 +5,7 @@ Date : 7/06/2017
 """
 import networkx as nx
 from sklearn.preprocessing import scale
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from ...utils.Settings import SETTINGS
 
 
@@ -28,6 +28,8 @@ class PairwiseModel(object):
                 return self.predict_proba(x, *args, **kwargs)
         elif type(x) == DataFrame:
             return self.predict_dataset(x, *args, **kwargs)
+        elif type(x) == Series:
+            return self.predict_proba(x.iloc[0], x.iloc[1], *args, **kwargs)
 
     def predict_proba(self, a, b, idx=0, **kwargs):
         """Prediction method for pairwise causal inference.
@@ -53,9 +55,10 @@ class PairwiseModel(object):
         printout = kwargs.get("printout", None)
         pred = []
         res = []
+        x.columns = ["A", "B"]
         for idx, row in x.iterrows():
-
             a = scale(row['A'].reshape((len(row['A']), 1)))
+            print(a)
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
             pred.append(self.predict_proba(a, b, idx))
@@ -97,7 +100,7 @@ class PairwiseModel(object):
 
         for idx, (a, b) in enumerate(edges):
             weight = self.predict_proba(
-                df_data[a].as_matrix(), df_data[b].as_matrix(), idx=idx,
+                df_data[a].as_matrix().reshape((-1, 1)), df_data[b].as_matrix().reshape((-1, 1)), idx=idx,
                 nb_runs=nb_runs, **kwargs)
             if weight > 0:  # a causes b
                 output.add_edge(a, b, weight=weight)

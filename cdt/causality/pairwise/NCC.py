@@ -55,7 +55,7 @@ class NCC(PairwiseModel):
         super(NCC, self).__init__()
         self.model = None
 
-    def fit(self, x_tr, y_tr):
+    def fit(self, x_tr, y_tr, epochs=200):
         """Fit the NCC model.
 
         :param x_tr: CEPC-format DataFrame containing pairs of variables
@@ -66,24 +66,25 @@ class NCC(PairwiseModel):
         criterion = th.nn.BCELoss()
         if th.cuda.is_available():
             self.model = self.model.cuda()
-        for idx, row in x_tr.iterrows():
-            opt.zero_grad()
-            a = row['A'].reshape((len(row['A']), 1))
-            b = row['B'].reshape((len(row['B']), 1))
-            m = np.hstack((a, b))
-            m = scale(m)
-            m = m.astype('float32')
-            m = Variable(th.from_numpy(m))
+        for epoch in range(epochs):
+            for idx, row in x_tr.iterrows():
+                opt.zero_grad()
+                a = row['A'].reshape((len(row['A']), 1))
+                b = row['B'].reshape((len(row['B']), 1))
+                m = np.hstack((a, b))
+                m = scale(m)
+                m = m.astype('float32')
+                m = Variable(th.from_numpy(m))
 
-            if th.cuda.is_available():
-                m = m.cuda()
+                if th.cuda.is_available():
+                    m = m.cuda()
 
-            out = self.model(m)
-            loss = criterion(out, y_tr[idx])
-            loss.backward()
+                out = self.model(m)
+                loss = criterion(out, y_tr[idx])
+                loss.backward()
 
-            # NOTE : optim is called at each epoch ; might want to change
-            opt.step()
+                # NOTE : optim is called at each epoch ; might want to change
+                opt.step()
 
     def predict_proba(self, a, b):
         """Infer causal directions using the trained NCC pairwise model.

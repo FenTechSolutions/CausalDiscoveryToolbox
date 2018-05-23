@@ -20,8 +20,7 @@ def load_model(model_path, verbose=True):
 
 
 def parse_dataframe(df):
-    parse_cell = lambda cell: np.fromstring(cell, dtype=np.float, sep=" ")
-    df = df.applymap(parse_cell)
+    df = df.applymap(lambda cell: np.fromstring(cell, dtype=np.float, sep=" "))
     return df
 
 

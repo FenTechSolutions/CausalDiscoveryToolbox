@@ -105,7 +105,7 @@ class ANM(PairwiseModel):
         """Init the model."""
         super(ANM, self).__init__()
 
-    def predict_proba(self, a, b):
+    def predict_proba(self, a, b, **kwargs):
         """Prediction method for pairwise causal inference using the ANM model.
 
         :param a: Variable 1
