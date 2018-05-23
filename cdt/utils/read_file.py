@@ -52,6 +52,7 @@ def read_causal_pairs(filename, scale=True, **kwargs):
     for idx, row in data.iterrows():
         conv_data.append(convert_row(row, scale))
     df = DataFrame(conv_data, columns=['SampleID', 'A', 'B'])
+    df = df.set_index("SampleID")
     return df
 
 
