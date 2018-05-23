@@ -127,9 +127,9 @@ class BNlearnAlgorithm(GraphModel):
         self.arguments['{ALPHA}'] = str(alpha)
 
         results = self.run_bnlearn(data, verbose=verbose)
-
-        return nx.relabel_nodes(nx.DiGraph(results),
-                                {idx: i for idx, i in enumerate(data.columns)})
+        graph = nx.DiGraph()
+        graph.add_edges_from(results)
+        return graph
 
     def run_bnlearn(self, data, whitelist=None, blacklist=None, verbose=True):
         """Setting up and running bnlearn with all arguments."""
@@ -234,18 +234,3 @@ class MMPC(BNlearnAlgorithm):
         """Init the model."""
         super(MMPC, self).__init__()
         self.arguments['{ALGORITHM}'] = 'mmpc'
-
-
-class Hinton_PC(BNlearnAlgorithm):
-    """SI-Hinton PC algorithm.
-
-    Aliferis FC, Statnikov A, Tsamardinos I, Subramani M, Koutsoukos XD (2010).  "Local Causal
-    and Markov Blanket Induction for Causal Discovery and Feature Selection for Classification Part I:
-    Algorithms and Empirical Evaluation".
-    Journal of Machine Learning Research,11, 171-234
-    """
-
-    def __init__(self):
-        """Init the model."""
-        super(Hinton_PC, self).__init__()
-        self.arguments['{ALGORITHM}'] = 'si.hinton.pc'
