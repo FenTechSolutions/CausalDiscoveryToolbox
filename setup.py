@@ -8,10 +8,16 @@ except ImportError:
     from distutils.core import setup, find_packages
 
 
+with open('README.md') as f:
+    long_description = f.read()
+
+
 def setup_package():
     setup(name='cdt',
-          version='0.2.1',
+          version='0.2.2',
           description='A Toolbox for causal graph inference',
+          long_description=long_description,
+          long_description_content_type="text/markdown",
           packages=find_packages(exclude=['examples', 'tests', 'tests.*']),
           url='https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox',
           package_data={'': ['**/*.R']},
