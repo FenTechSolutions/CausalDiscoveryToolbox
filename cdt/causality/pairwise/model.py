@@ -80,17 +80,17 @@ class PairwiseModel(object):
         :rtype: DirectedGraph
         """
         if type(graph) == nx.DiGraph:
-            edges = [a for a in list(graph.edges) if (a[1], a[0]) in list(graph.edges)]
-            oriented_edges = [a for a in list(graph.edges) if (a[1], a[0]) not in list(graph.edges)]
+            edges = [a for a in list(graph.edges()) if (a[1], a[0]) in list(graph.edges())]
+            oriented_edges = [a for a in list(graph.edges()) if (a[1], a[0]) not in list(graph.edges())]
             for a in edges:
-                if (a[1], a[0]) in list(graph.edges):
+                if (a[1], a[0]) in list(graph.edges()):
                     edges.remove(a)
             output = nx.DiGraph()
             for i in oriented_edges:
                 output.add_edge(*i)
 
         elif type(graph) == nx.Graph:
-            edges = list(graph.edges)
+            edges = list(graph.edges())
             output = nx.DiGraph()
 
         else:
