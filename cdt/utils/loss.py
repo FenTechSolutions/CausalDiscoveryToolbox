@@ -52,8 +52,8 @@ class MMDloss(th.nn.Module):
         s = th.cat([th.ones([input_size, 1]) / input_size,
                     th.ones([input_size, 1]) / -input_size], 0)
 
-        self.S = s.mm(s.t()).to(device)
-
+        self.S = (s @ s.t()).to(device)
+        
     def forward(self, x, y):
         """Compute the MMD statistic between x and y."""
         X = th.cat([x, y], 0)
@@ -61,13 +61,16 @@ class MMDloss(th.nn.Module):
         XX = X @ X.t()
         # dot product of rows with themselves
         # Old code : X2 = (X * X).sum(dim=1)
-        X2 = XX.diag().unsqueeze(0)
+        # X2 = XX.diag().unsqueeze(0)
+        X2 = (X * X).sum(dim=1).unsqueeze(0)
+        # print(X2.shape)
+        # raise ValueError
         # exponent entries of the RBF kernel (without the sigma) for each
         # combination of the rows in 'X'
         exponent = -2*XX + X2.expand_as(XX) + X2.t().expand_as(XX)
-
-        lossMMD = th.sum(self.S * sum([(exponent * -bandwith).exp() for bandwith in self.bandwiths]))
-        return lossMMD.sqrt()
+        
+        lossMMD = th.sum(sum([self.S *(exponent * -bandwith).exp() for bandwith in self.bandwiths]))
+        return lossMMD
 
 
 class MomentMatchingLoss_th(th.nn.Module):
