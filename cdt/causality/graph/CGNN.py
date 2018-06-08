@@ -46,7 +46,12 @@ class CGNN_block(th.nn.Module):
     def forward(self, x):
         """Forward through the network."""
         return self.layers(x)
-
+    
+    def reset_parameters(self):
+        for layer in self.layers:
+            if hasattr(layer, "reset_parameters"):
+                layer.reset_parameters()
+                
 
 class CGNN_model(th.nn.Module):
     """Class for one CGNN instance."""
@@ -117,6 +122,10 @@ class CGNN_model(th.nn.Module):
 
         return self.score.cpu().numpy() / test_epochs
 
+    def reset_parameters(self):
+        for block in self.blocks:
+            block.reset_parameters()
+        
 
 def graph_evaluation(data, adj_matrix, gpu=None, gpu_id=0, **kwargs):
     """Evaluate a graph taking account of the hardware."""
@@ -124,7 +133,7 @@ def graph_evaluation(data, adj_matrix, gpu=None, gpu_id=0, **kwargs):
     device = 'cuda:{}'.format(gpu_id) if gpu else 'cpu'
     obs = Variable(th.FloatTensor(data)).to(device)
     cgnn = CGNN_model(adj_matrix, data.shape[0], gpu_id=gpu_id, **kwargs).to(device)
-
+    cgnn.reset_parameters()
     return cgnn.run(obs, **kwargs)
 
 
