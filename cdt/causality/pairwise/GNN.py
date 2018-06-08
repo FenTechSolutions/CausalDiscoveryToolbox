@@ -73,7 +73,12 @@ class GNN_model(th.nn.Module):
                 running_loss = 0.0
 
         return teloss / test_epochs
-
+    
+    def reset_parameters(self):
+        for layer in self.layers:
+            if hasattr(layer, "reset_parameters"):
+                layer.reset_parameters()
+        
 
 def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
     """Run an instance of GNN, testing causal direction.
@@ -90,7 +95,8 @@ def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
     target = th.FloatTensor(xy[:, [1]]).to(device)
     GNNXY = GNN_model(x.shape[0], device=device, nh=nh).to(device)
     GNNYX = GNN_model(x.shape[0], device=device, nh=nh).to(device)
-
+    GNNXY.reset_parameters()
+    GNNYX.reset_parameters()
     XY = GNNXY.run(inputx, target, **kwargs)
     YX = GNNYX.run(target, inputx, **kwargs)
 
