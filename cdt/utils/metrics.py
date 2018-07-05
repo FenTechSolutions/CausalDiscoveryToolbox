@@ -30,8 +30,14 @@ def precision_recall(target, pred):
 
 def SHD(target, pred, double_for_anticausal=True):
     """Compute the Structural Hamming Distance."""
-    true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
-    predictions = np.array(nx.adjacency_matrix(pred, target.nodes(), weight=None).todense())
+    if type(target) == nx.DiGraph:
+        true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
+        predictions = np.array(nx.adjacency_matrix(pred, target.nodes(), weight=None).todense())
+    elif type(target) == np.ndarray:
+        true_labels = target
+        predictions = pred
+    else:
+        raise TypeError("Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.")
 
     diff = np.abs(true_labels - predictions)
     if double_for_anticausal:
