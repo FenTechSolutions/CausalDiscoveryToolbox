@@ -30,10 +30,10 @@ def precision_recall(target, pred):
 
 def SHD(target, pred, double_for_anticausal=True):
     """Compute the Structural Hamming Distance."""
-    if type(target) == np.ndarray:
+    if isinstance(target, np.ndarray):
         true_labels = target
         predictions = pred
-    elif type(target) == nx.DiGraph:
+    elif isinstance(target, nx.DiGraph):
         true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
         predictions = np.array(nx.adjacency_matrix(pred, target.nodes(), weight=None).todense())
     else:
@@ -57,10 +57,10 @@ def SID(target, pred):
     if not RPackages.SID:
         raise ImportError("SID R package is not available. Please check your installation.")
 
-    if type(target) == np.ndarray:
+    if isinstance(target, np.ndarray):
         true_labels = target
         predictions = pred
-    elif type(target) == nx.DiGraph:
+    elif isinstance(target, nx.DiGraph):
         true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
         predictions = np.array(nx.adjacency_matrix(pred, target.nodes(), weight=None).todense())
     else:
