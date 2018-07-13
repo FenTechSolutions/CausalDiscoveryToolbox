@@ -14,6 +14,7 @@ from .causal_mechanisms import (LinearMechanism,
                                 SigmoidMix_Mechanism,
                                 GaussianProcessAdd_Mechanism,
                                 GaussianProcessMix_Mechanism,
+                                NN_Mechanism,
                                 gmm_cause, normal_noise)
 
 
@@ -37,7 +38,9 @@ class AcyclicGraphGenerator(object):
                           'sigmoid_add': SigmoidAM_Mechanism,
                           'sigmoid_mix': SigmoidMix_Mechanism,
                           'gp_add': GaussianProcessAdd_Mechanism,
-                          'gp_mix': GaussianProcessMix_Mechanism}[causal_mechanism]
+                          'gp_mix': GaussianProcessMix_Mechanism,
+                          'NN': NN_Mechanism}[causal_mechanism]
+
         self.data = pd.DataFrame(None, columns=["V{}".format(i) for i in range(nodes)])
         self.nodes = nodes
         self.points = points
@@ -52,17 +55,25 @@ class AcyclicGraphGenerator(object):
     def init_variables(self, verbose=False):
         """Redefine the causes of the graph."""
         # Resetting adjacency matrix
-        for i in range(self.nodes-1):
-            for j in np.random.choice(range(i+1, self.nodes),
-                                      np.random.randint(0, min([self.parents_max,
-                                                                self.nodes-i])),
-                                      replace=False):
-                if i != j:
-                    self.adjacency_matrix[i, j] = 1
+        # for i in range(self.nodes-1):
+        #     for j in np.random.choice(range(i+1, self.nodes),
+        #                               np.random.randint(0, min([self.parents_max,
+        #                                                         self.nodes-i])),
+        #                               replace=False):
+        #         if i != j:
+        #             self.adjacency_matrix[i, j] = 1
+
+        for j in range(1, self.nodes):
+
+            nb_parents = np.random.randint(0, min([self.parents_max, j])+1)
+
+            for i in np.random.choice(range(0, j), nb_parents, replace=False):
+
+                self.adjacency_matrix[i, j] = 1
 
         try:
-            assert any([sum(self.adjacency_matrix[:, i]) ==
-                        self.parents_max for i in range(self.nodes)])
+            # assert any([sum(self.adjacency_matrix[:, i]) ==
+            #             self.parents_max for i in range(self.nodes)])
             self.g = nx.DiGraph(self.adjacency_matrix)
             assert not list(nx.simple_cycles(self.g))
 
@@ -82,8 +93,11 @@ class AcyclicGraphGenerator(object):
         if self.cfunctions is None:
             self.init_variables()
 
+        print(nx.topological_sort(self.g))
+
         for i in nx.topological_sort(self.g):
             # Root cause
+
             if not sum(self.adjacency_matrix[:, i]):
                 self.data['V{}'.format(i)] = self.cfunctions[i](self.points)
             # Generating causes

@@ -9,7 +9,7 @@ from scipy.stats import bernoulli
 from sklearn.mixture import GaussianMixture as GMM
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.gaussian_process import GaussianProcessRegressor
-
+import torch as th
 
 class LinearMechanism(object):
     """Linear mechanism, where Effect = alpha*Cause + Noise."""
@@ -253,6 +253,49 @@ class GaussianProcessMix_Mechanism(object):
             effect[:, 0] = self.mechanism(self.noise)
 
         return effect
+
+
+
+class NN_Mechanism(object):
+
+    def __init__(self, ncauses, points, noise_function, nh=20, noise_coeff=.4):
+        """Init the mechanism."""
+        super(NN_Mechanism, self).__init__()
+        self.n_causes = ncauses
+        self.points = points
+        self.noise = noise_coeff * noise_function(points)
+        self.nb_step = 0
+        self.nh = nh
+
+
+    def mechanism(self, x):
+        """Mechanism function."""
+        layers = []
+
+        layers.append(th.nn.modules.Linear(self.n_causes+1, self.nh))
+        layers.append(th.nn.Tanh())
+        layers.append(th.nn.modules.Linear(self.nh, 1))
+
+        self.layers = th.nn.Sequential(*layers)
+
+        data = x.astype('float32')
+        data = th.from_numpy(data)
+
+        return np.reshape(self.layers(data).data, (x.shape[0],))
+
+    def __call__(self, causes):
+        """Run the mechanism."""
+        effect = np.zeros((self.points, 1))
+        # Compute each cause's contribution
+        if (causes.shape[1] > 0):
+            mix = np.hstack((causes, self.noise))
+            effect[:, 0] = self.mechanism(mix)
+        else:
+            effect[:, 0] = self.mechanism(self.noise)
+
+        return effect
+
+
 
 
 def gmm_cause(points, k=4, p1=2, p2=2):
