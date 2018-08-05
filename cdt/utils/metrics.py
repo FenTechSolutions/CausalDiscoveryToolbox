@@ -12,17 +12,21 @@ from sklearn.metrics import auc, precision_recall_curve
 from .R import launch_R_script, RPackages
 
 
-def precision_recall(target, pred):
+def precision_recall(target, predictions, low_confidence_undirected=False):
     """Compute (area under the PR curve, precision, recall), metric of evaluation for directed graphs.
 
     :param predictions: Graph predicted, nx.DiGraph
     :param target: Target, nx.DiGraph
+    :param low_confidence_undirected: Default False. Puts undirected edges to the end of predictions
     :return: (aupr, precision, recall)
     """
     true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
-    predictions = np.array(nx.adjacency_matrix(pred, target.nodes()).todense())
+    pred = np.array(nx.adjacency_matrix(predictions, target.nodes()).todense())
+    if low_confidence_undirected:
+        # Take account of undirected edges by putting them with low confidence
+        pred[pred==pred.transpose()] *= min(min(pred[np.nonzero(pred)])*.5, .1)
     precision, recall, _ = precision_recall_curve(
-        true_labels.ravel(), predictions.ravel())
+        true_labels.ravel(), pred.ravel())
     aupr = auc(recall, precision, reorder=True)
 
     return aupr, precision, recall
