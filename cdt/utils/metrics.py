@@ -12,16 +12,53 @@ from sklearn.metrics import auc, precision_recall_curve
 from .R import launch_R_script, RPackages
 
 
-def precision_recall(target, predictions, low_confidence_undirected=False):
-    """Compute (area under the PR curve, precision, recall), metric of evaluation for directed graphs.
+def precision_recall(target, prediction, low_confidence_undirected=False):
+    r"""Compute precision-recall statistics for directed graphs.
+    
+    Precision recall statistics are useful to compare algorithms that make 
+    predictions with a confidence score. Using these statistics, performance 
+    of an algorithms given a set threshold (confidence score) can be approximated.
+    Area under the precision-recall curve, as well as the coordinates of the 
+    precision recall curve are computed, using the scikit-learn library tools.
+    Note that unlike the AUROC metric, this metric does not account for class
+    imbalance.
 
-    :param predictions: Graph predicted, nx.DiGraph
-    :param target: Target, nx.DiGraph
-    :param low_confidence_undirected: Default False. Puts undirected edges to the end of predictions
-    :return: (aupr, precision, recall)
+    Precision is defined by: :math:`Pr=tp/(tp+fp)` and directly denotes the
+    total classification accuracy given a confidence threshold. On the other
+    hand, Recall is defined by: :math:`Re=tp/(tp+fn)` and denotes  
+    misclassification given a threshold.
+
+    Args:
+        target: Target graph, must be of ones and zeros, and instance of 
+          either np.ndarray or nx.DiGraph.
+        prediction: Prediction made by the algorithm to evaluate, must be 
+          either np.ndarray or nx.DiGraph, but of the same type 
+          than the target.
+        low_confidence_undirected: Put the lowest confidence possible to 
+          undirected edges (edges that are symmetric in the confidence score).
+          Default: False
+ 
+    Returns:
+        aupr_score: the area under the precision recall curve
+        precision_recall_points: tuple of data points precision-recall used 
+                                 in for the area under the curve computation.
+
+    Examples::
+        >>> import numpy as np
+        >>> tar, pred = np.random.randint(2, size=(10, 10)), np.random.randn(10, 10)
+        >>> # adjacency matrixes of size 10x10
+        >>> aupr, curve = precision_recall(target, input) 
+        >>> # leave low_confidence_undirected to False as the predictions are continuous
     """
-    true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
-    pred = np.array(nx.adjacency_matrix(predictions, target.nodes()).todense())
+    if isinstance(target, np.ndarray):
+        true_labels = target
+        predictions = pred
+    elif isinstance(target, nx.DiGraph):
+        true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
+        predictions = np.array(nx.adjacency_matrix(pred, target.nodes()).todense())
+    else:
+        raise TypeError("Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.")
+
     if low_confidence_undirected:
         # Take account of undirected edges by putting them with low confidence
         pred[pred==pred.transpose()] *= min(min(pred[np.nonzero(pred)])*.5, .1)
@@ -29,7 +66,7 @@ def precision_recall(target, predictions, low_confidence_undirected=False):
         true_labels.ravel(), pred.ravel())
     aupr = auc(recall, precision, reorder=True)
 
-    return aupr, precision, recall
+    return aupr, list(zip(precision, recall))
 
 
 def SHD(target, pred, double_for_anticausal=True):
