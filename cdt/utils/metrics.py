@@ -11,13 +11,29 @@ from shutil import rmtree
 from sklearn.metrics import auc, precision_recall_curve
 from .R import launch_R_script, RPackages
 
-
+def retrieve_adjacency_matrix(graph, order_nodes=None, weight=False):
+    """Retrieve the adjacency matrix from the nx.DiGraph or numpy array."""
+    if isinstance(graph, np.ndarray):
+        return graph
+        predictions = pred
+    elif isinstance(graph, nx.DiGraph):
+        if order_nodes is None:
+            order_nodes = graph.nodes()
+        if not weight:
+            return np.array(nx.adjacency_matrix(graph, order_nodes, weight=None).todense())
+        else:
+            return np.array(nx.adjacency_matrix(graph, order_nodes).todense())
+    else:
+        raise TypeError("Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.")
+    
+    
 def precision_recall(target, prediction, low_confidence_undirected=False):
     r"""Compute precision-recall statistics for directed graphs.
     
     Precision recall statistics are useful to compare algorithms that make 
     predictions with a confidence score. Using these statistics, performance 
-    of an algorithms given a set threshold (confidence score) can be approximated.
+    of an algorithms given a set threshold (confidence score) can be
+    approximated.
     Area under the precision-recall curve, as well as the coordinates of the 
     precision recall curve are computed, using the scikit-learn library tools.
     Note that unlike the AUROC metric, this metric does not account for class
@@ -50,15 +66,11 @@ def precision_recall(target, prediction, low_confidence_undirected=False):
         >>> aupr, curve = precision_recall(target, input) 
         >>> # leave low_confidence_undirected to False as the predictions are continuous
     """
-    if isinstance(target, np.ndarray):
-        true_labels = target
-        predictions = pred
-    elif isinstance(target, nx.DiGraph):
-        true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
-        predictions = np.array(nx.adjacency_matrix(pred, target.nodes()).todense())
-    else:
-        raise TypeError("Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.")
-
+    true_labels = retrieve_adjacency_matrix(target)
+    predictions = retrieve_adjacency_matrix(pred, target.nodes() 
+                                            if isinstance(target, nx.DiGraph) else None,
+                                            weight=True)
+    
     if low_confidence_undirected:
         # Take account of undirected edges by putting them with low confidence
         pred[pred==pred.transpose()] *= min(min(pred[np.nonzero(pred)])*.5, .1)
@@ -99,15 +111,10 @@ def SHD(target, pred, double_for_anticausal=True):
         >>> tar, pred = randint(2, size=(10, 10)), randint(2, size=(10, 10))
         >>> SHD(tar, pred, double_for_anticausal=False) 
     """
-    if isinstance(target, np.ndarray):
-        true_labels = target
-        predictions = pred
-    elif isinstance(target, nx.DiGraph):
-        true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
-        predictions = np.array(nx.adjacency_matrix(pred, target.nodes(), weight=None).todense())
-    else:
-        raise TypeError("Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.")
-
+    true_labels = retrieve_adjacency_matrix(target)
+    predictions = retrieve_adjacency_matrix(pred, target.nodes() 
+                                            if isinstance(target, nx.DiGraph) else None)
+    
     diff = np.abs(true_labels - predictions)
     if double_for_anticausal:
         return np.sum(diff)
@@ -119,22 +126,39 @@ def SHD(target, pred, double_for_anticausal=True):
 
 def SID(target, pred):
     r"""Compute the Strutural Intervention Distance.
+    
+    The Structural Intervention Distance (SID) is a new distance for graphs
+    introduced by Peters and B\¨uhlmann (2013). This distance was created 
+    to account for the shortcomings of the SHD metric for a causal sense.
+    It consists in computing the path between all the pairs of variables, and
+    checks if the causal relationship between the variables is respected.
+    The given graphs have to be DAGs in order for the SID metric to make sense.
 
-    Ref:  Structural Intervention Distance (SID) for Evaluating Causal Graphs,
-    Jonas Peters, Peter Bühlmann, https://arxiv.org/abs/1306.1043
-    """
+    Args:
+        target: Target graph, must be of ones and zeros, and instance of 
+          either np.ndarray or nx.DiGraph. Must be a DAG.
+        prediction: Prediction made by the algorithm to evaluate, must be 
+          either a binary np.ndarray or nx.DiGraph. Must be a DAG.
+ 
+    Returns:
+        sid_score: Structural Intervention Distance. The value tends to zero 
+          as the tends to be identical.
+        
+    .. _Structural Intervention Distance (SID) for Evaluating Causal Graphs,
+    Jonas Peters, Peter Bühlmann: https://arxiv.org/abs/1306.1043
+    
+    Examples::
+        >>> from numpy.random import randint
+        >>> tar, pred = randint(2, size=(10, 10)), randint(2, size=(10, 10))
+        >>> SID(tar, pred, double_for_anticausal=False) 
+   """
     if not RPackages.SID:
         raise ImportError("SID R package is not available. Please check your installation.")
 
-    if isinstance(target, np.ndarray):
-        true_labels = target
-        predictions = pred
-    elif isinstance(target, nx.DiGraph):
-        true_labels = np.array(nx.adjacency_matrix(target, weight=None).todense())
-        predictions = np.array(nx.adjacency_matrix(pred, target.nodes(), weight=None).todense())
-    else:
-        raise TypeError("Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.")
-
+    true_labels = retrieve_adjacency_matrix(target)
+    predictions = retrieve_adjacency_matrix(pred, target.nodes() 
+                                            if isinstance(target, nx.DiGraph) else None)
+    
     os.makedirs('/tmp/cdt_SID/')
 
     def retrieve_result():
