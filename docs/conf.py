@@ -27,7 +27,7 @@ author = 'Diviyan Kalainathan, Olivier Goudet'
 # The short X.Y version
 version = '0.2'
 # The full version, including alpha/beta/rc tags
-release = '0.2.1'
+release = '0.2.5'
 
 
 # -- General configuration ---------------------------------------------------
@@ -47,6 +47,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinxcontrib.napoleon'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -85,7 +86,11 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+#import sphinx_modern_theme
+#html_theme_path = [sphinx_modern_theme.get_html_theme_path()]
 
+# import sphinx_press_theme
+# html_theme_path = sphinx_press_theme.__path__
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.

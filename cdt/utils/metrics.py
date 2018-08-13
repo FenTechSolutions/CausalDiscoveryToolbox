@@ -45,19 +45,20 @@ def precision_recall(target, prediction, low_confidence_undirected=False):
     misclassification given a threshold.
 
     Args:
-        target: Target graph, must be of ones and zeros, and instance of 
-          either np.ndarray or nx.DiGraph.
-        prediction: Prediction made by the algorithm to evaluate, must be 
-          either np.ndarray or nx.DiGraph, but of the same type 
-          than the target.
+        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of 
+            ones and zeros.
+        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the 
+            algorithm to evaluate.
         low_confidence_undirected: Put the lowest confidence possible to 
-          undirected edges (edges that are symmetric in the confidence score).
-          Default: False
+            undirected edges (edges that are symmetric in the confidence score).
+            Default: False
  
     Returns:
-        aupr_score: the area under the precision recall curve
-        precision_recall_points: tuple of data points precision-recall used 
-                                 in for the area under the curve computation.
+        tuple: tuple containing:
+        
+            + Area under the precision recall curve (float)
+            + Tuple of data points of the precision-recall curve used in the computation of the score (tuple). 
+            
 
     Examples::
         >>> import numpy as np
@@ -67,7 +68,7 @@ def precision_recall(target, prediction, low_confidence_undirected=False):
         >>> # leave low_confidence_undirected to False as the predictions are continuous
     """
     true_labels = retrieve_adjacency_matrix(target)
-    predictions = retrieve_adjacency_matrix(pred, target.nodes() 
+    predictions = retrieve_adjacency_matrix(pred, target.nodes()
                                             if isinstance(target, nx.DiGraph) else None,
                                             weight=True)
     
@@ -94,17 +95,17 @@ def SHD(target, pred, double_for_anticausal=True):
     `False` will count this as a single mistake.
 
     Args:
-        target: Target graph, must be of ones and zeros, and instance of 
-          either np.ndarray or nx.DiGraph.
-        prediction: Prediction made by the algorithm to evaluate, must be 
-          either a binary np.ndarray or nx.DiGraph, but of the same type 
-          than the target. 
-        double_for_anticausal: Count the badly oriented edges as two mistakes.
-          Default: True
+        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of 
+            ones and zeros.
+        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the
+            algorithm to evaluate.
+        double_for_anticausal (bool): Count the badly oriented edges as two 
+            mistakes. Default: True
  
     Returns:
-        shd_score: Structural Hamming Distance. The value tends to zero as the
-          tends to be identical.
+        int: Structural Hamming Distance (int).
+
+            The value tends to zero as the graphs tend to be identical.
         
     Examples::
         >>> from numpy.random import randint
@@ -125,29 +126,34 @@ def SHD(target, pred, double_for_anticausal=True):
 
 
 def SID(target, pred):
-    r"""Compute the Strutural Intervention Distance.
+    """Compute the Strutural Intervention Distance.
     
-    The Structural Intervention Distance (SID) is a new distance for graphs
-    introduced by Peters and B\¨uhlmann (2013). This distance was created 
-    to account for the shortcomings of the SHD metric for a causal sense.
+    [R wrapper] The Structural Intervention Distance (SID) is a new distance
+    for graphs introduced by Peters and Bühlmann (2013). This distance was
+    created to account for the shortcomings of the SHD metric for a causal 
+    sense.
     It consists in computing the path between all the pairs of variables, and
     checks if the causal relationship between the variables is respected.
-    The given graphs have to be DAGs in order for the SID metric to make sense.
+    The given graphs have to be DAGs for the SID metric to make sense.
 
     Args:
-        target: Target graph, must be of ones and zeros, and instance of 
-          either np.ndarray or nx.DiGraph. Must be a DAG.
-        prediction: Prediction made by the algorithm to evaluate, must be 
-          either a binary np.ndarray or nx.DiGraph. Must be a DAG.
+        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of 
+            ones and zeros, and instance of either numpy.ndarray or 
+            networkx.DiGraph. Must be a DAG.
+
+        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the
+            algorithm to evaluate. Must be a DAG.
  
     Returns:
-        sid_score: Structural Intervention Distance. The value tends to zero 
-          as the tends to be identical.
+        int: Structural Intervention Distance. 
+
+            The value tends to zero as the tends to be identical.
         
-    .. _Structural Intervention Distance (SID) for Evaluating Causal Graphs,
-    Jonas Peters, Peter Bühlmann: https://arxiv.org/abs/1306.1043
+    .. note::
+        Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,
+        Jonas Peters, Peter Bühlmann: https://arxiv.org/abs/1306.1043
     
-    Examples::
+    Examples:
         >>> from numpy.random import randint
         >>> tar, pred = randint(2, size=(10, 10)), randint(2, size=(10, 10))
         >>> SID(tar, pred, double_for_anticausal=False) 

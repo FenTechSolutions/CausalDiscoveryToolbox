@@ -15,7 +15,8 @@ Causal Discovery Toolbox: Index
    cdt.independence <source/cdt.independence>
    cdt.generators <source/cdt.generators>
    cdt.utils <source/cdt.utils>
-
+   cdt.metrics <source/cdt.utils.metrics>
+   cdt.Settings <source/cdt.utils.Settings>
 
 Indices and tables
 ==================
