@@ -1,7 +1,11 @@
-"""Evaluation metrics for graphs.
+"""The CDT package implements some metrics to evaluate the output of a 
+algorithm given a ground truth. All these metrics are in the form 
+`metric(target, prediction)`, where any of those arguments are either numpy 
+matrixes that represent the adjacency matrix or networkx.DiGraph instances.
 
-Author: Diviyan Kalainathan
-Date : 20/09
+.. note:: in the case of heterogeneous types of arguments, special care has
+    to be given to the order of the nodes, as the type networkx.DiGraph does 
+    not retain node order.
 """
 
 import os
@@ -60,7 +64,7 @@ def precision_recall(target, prediction, low_confidence_undirected=False):
             + Tuple of data points of the precision-recall curve used in the computation of the score (tuple). 
             
 
-    Examples::
+    Examples:
         >>> import numpy as np
         >>> tar, pred = np.random.randint(2, size=(10, 10)), np.random.randn(10, 10)
         >>> # adjacency matrixes of size 10x10
@@ -107,7 +111,7 @@ def SHD(target, pred, double_for_anticausal=True):
 
             The value tends to zero as the graphs tend to be identical.
         
-    Examples::
+    Examples:
         >>> from numpy.random import randint
         >>> tar, pred = randint(2, size=(10, 10)), randint(2, size=(10, 10))
         >>> SHD(tar, pred, double_for_anticausal=False) 
@@ -147,7 +151,7 @@ def SID(target, pred):
     Returns:
         int: Structural Intervention Distance. 
 
-            The value tends to zero as the tends to be identical.
+            The value tends to zero as the graphs tends to be identical.
         
     .. note::
         Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,
@@ -155,8 +159,9 @@ def SID(target, pred):
     
     Examples:
         >>> from numpy.random import randint
-        >>> tar, pred = randint(2, size=(10, 10)), randint(2, size=(10, 10))
-        >>> SID(tar, pred, double_for_anticausal=False) 
+        >>> tar = np.triu(randint(2, size=(10, 10))) 
+        >>> pred = np.triu(randint(2, size=(10, 10)))
+        >>> SID(tar, pred) 
    """
     if not RPackages.SID:
         raise ImportError("SID R package is not available. Please check your installation.")

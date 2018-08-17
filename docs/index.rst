@@ -11,13 +11,13 @@ Causal Discovery Toolbox: Index
 
    Home <readme-link.md>
    Installation Instructions <installation-link.md>
-   cdt.causality <source/cdt.causality>
-   cdt.independence <source/cdt.independence>
-   cdt.generators <source/cdt.generators>
-   cdt.utils <source/cdt.utils>
-   cdt.metrics <source/cdt.utils.metrics>
-   cdt.Settings <source/cdt.utils.Settings>
-
+   .. cdt.causality <source/cdt.causality>
+   .. cdt.independence <source/cdt.independence>
+   .. cdt.generators <source/cdt.generators>
+   .. utils
+   metrics
+   settings
+   
 Indices and tables
 ==================
 

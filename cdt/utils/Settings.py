@@ -1,14 +1,29 @@
-"""Settings file for the Causal Discovery Toolbox.
+"""This module defines the settings used in the toolbox, such as the default
+hardware parameters; and the tools to autodetect the hardware. All parameters
+are overridable by accessing the ``cdt.SETTINGS`` object, a unique instance of
+the ``ConfigSettings`` class.
 
-Defining all global variables
-Author : Diviyan Kalainathan
-Date : 8/05/2017
+The various attributes of the ``cdt.SETTINGS`` configuration object are:
+
+1. ``cdt.SETTINGS.NB_JOBS`` 
+2. ``cdt.SETTINGS.GPU``
+3. ``cdt.SETTINGS.default_device``
+4. ``cdt.SETTINGS.autoset_config``
+5. ``cdt.SETTINGS.verbose``
+6. ``cdt.SETTINGS.r_is_available``
+
+The hardware detection revolves around the presence of GPUs. If GPUs are 
+present, ``cdt.SETTINGS.GPU`` is set to ``True`` and the number of jobs 
+is set to the number of GPUs. Else the number of jobs is set to the number
+of CPUs. Another test performed at startup is to check if an R framework 
+is available, unlocking additional features of the toolbox.
+
 """
 import ast
 import os
 import warnings
 import multiprocessing
-import torch as th
+import torch as th 
 
 
 def message_warning(msg, *a, **kwargs):
@@ -106,7 +121,8 @@ def autoset_settings(set_var):
 
 
 def check_cuda_devices():
-    """Output some information on CUDA-enabled devices on your computer, including current memory usage. Modified to only get number of devices.
+    """Output some information on CUDA-enabled devices on your computer, 
+    including current memory usage. Modified to only get number of devices.
 
     It's a port of https://gist.github.com/f0k/0d6431e3faa60bffc788f8b4daa029b1
     from C to Python with ctypes, so it can run without compiling
@@ -115,8 +131,8 @@ def check_cuda_devices():
     to obtain CUDA device information from Python without resorting to
     nvidia-smi or a compiled Python extension.
 
-    Author: Jan Schlüter
-    Git: https://gist.github.com/63a664160d016a491b2cbea15913d549.git
+
+    .. note:: Author: Jan Schlüter, https://gist.github.com/63a664160d016a491b2cbea15913d549.git
     """
     import ctypes
 
