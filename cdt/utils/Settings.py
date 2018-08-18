@@ -1,7 +1,7 @@
-"""This module defines the settings used in the toolbox, such as the default
-hardware parameters; and the tools to autodetect the hardware. All parameters
-are overridable by accessing the ``cdt.SETTINGS`` object, a unique instance of
-the ``ConfigSettings`` class.
+"""The ``cdt.utils.Settings`` module defines the settings used in the toolbox,
+such as the default hardware parameters; and the tools to autodetect the 
+hardware. All parameters are overridable by accessing the ``cdt.SETTINGS`` 
+object, a unique instance of the ``cdt.utils.ConfigSettings`` class.
 
 The various attributes of the ``cdt.SETTINGS`` configuration object are:
 
@@ -35,7 +35,18 @@ warnings.formatwarning = message_warning
 
 
 class ConfigSettings(object):
-    """Defining the class for the hardware/high level settings of the CDT."""
+    """Defining the class for the hardware/high level settings of the CDT.
+
+    Attributes:
+        NB_JOBS (int): Number of parallel jobs that can be executed on current
+            hardware.
+        GPU (int): The number of available GPUs ; defaults to `0`.
+        default_device (str): Default device used for pytorch jobs.
+        r_is_available (bool): Sets itself to ``True`` if a R framework is
+            detected.
+        verbose (bool): Sets the verbosity of the toolbox algorithms.
+
+    """
 
     __slots__ = ("NB_JOBS",  # Number of parallel jobs runnable
                  "GPU",  # Number of GPUs Available
@@ -48,7 +59,7 @@ class ConfigSettings(object):
         """Define here the default values of the parameters."""
         super(ConfigSettings, self).__init__()
         self.NB_JOBS = 8
-        self.GPU = False
+        self.GPU = 0
         self.autoset_config = True
         self.verbose = True
         self.default_device = 'cpu'
@@ -65,7 +76,7 @@ class ConfigSettings(object):
         super(ConfigSettings, self).__setattr__(attr, value)
 
     def get_default(self, *args, **kwargs):
-        """Get the default parameters as defined in the Settings class."""
+        """Get the default parameters as defined in the Settings instance."""
         def retrieve_param(i):
             try:
                 return self.__getattribute__(i)

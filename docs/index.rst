@@ -1,7 +1,11 @@
 .. Causal Discovery Toolbox documentation master file, created by
    sphinx-quickstart on Sun Apr 22 18:41:44 2018.
    You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+   contain the root `toctree` directive. cdt.causality <source/cdt.causality>
+   cdt.independence <source/cdt.independence>
+   cdt.generators <source/cdt.generators>
+   utils
+   
 
 Causal Discovery Toolbox: Index
 ====================================================
@@ -11,10 +15,6 @@ Causal Discovery Toolbox: Index
 
    Home <readme-link.md>
    Installation Instructions <installation-link.md>
-   .. cdt.causality <source/cdt.causality>
-   .. cdt.independence <source/cdt.independence>
-   .. cdt.generators <source/cdt.generators>
-   .. utils
    metrics
    settings
    
