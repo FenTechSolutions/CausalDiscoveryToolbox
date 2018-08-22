@@ -15,6 +15,7 @@ Causal Discovery Toolbox: Index
 
    Home <readme-link.md>
    Installation Instructions <installation-link.md>
+   utils
    metrics
    settings
    
