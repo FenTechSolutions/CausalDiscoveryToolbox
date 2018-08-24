@@ -153,6 +153,9 @@ The whole package revolves around using the **DiGraph** and **Graph** classes fr
 .. toctree::
    :maxdepth: 2
    
+   causality
+   independence
+   generators
    utils
    metrics
    settings

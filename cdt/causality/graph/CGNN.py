@@ -191,23 +191,57 @@ def tabu_search():
 
 
 class CGNN(GraphModel):
-    """CGNN : Generate the whole causal graph and predict causal directions in the graph.
+    """Causal Generative Neural Netwoks : Generate the whole causal graph in a
+    topological manner using neural networks and predict causal directions in
+    the graph.
 
-    Author : Olivier Goudet & Diviyan Kalainathan & Al.
-    Ref : Causal Generative Neural Networks (https://arxiv.org/abs/1711.08936)
+    Args:
+        nh (int): Number of hidden units in each generative neural network.
+        nb_runs (int): Number of times to run CGNN to have a stable
+           evaluation.
+        nb_jobs (int): Number of jobs to run in parallel. Defaults to
+           ``cdt.SETTINGS.NB_JOBS``.
+        gpu (bool): True if the GPUs are to be used. Defaults to
+           ``cdt.SETTINGS.GPU``.
+        lr (float): Learning rate for the generative neural networks.
+        train_epochs (int): Number of epochs used to train the network.
+        test_epochs (int): Number of epochs during which the results are
+           harvested. The network still trains at this stage.
+        verbose (bool): Sets the verbosity of the execution. Defaults to
+           ``cdt.SETTINGS.verbose``.
+
+    .. note::
+       Ref : Learning Functional Causal Models with Generative Neural Networks
+       Olivier Goudet & Diviyan Kalainathan & Al.
+       (https://arxiv.org/abs/1709.05321)
     """
 
-    def __init__(self):
+    def __init__(self, nh=20, nb_runs=16, nb_jobs=None, gpu=None,
+                 lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None):
         """ Initialize the CGNN Model."""
         super(CGNN, self).__init__()
+        self.nh = nh
+        self.nb_runs = nb_runs 
+        self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+        self.gpu = SETTINGS.get_default(gpu=gpu)
+        self.lr = lr
+        self.train_epochs = train_epochs 
+        self.test_epochs = test_epochs
+        self.verbose = SETTINGS.get_default(verbose=verbose)
 
-    def create_graph_from_data(self, data, nh=20, nb_runs=16, nb_jobs=None, gpu=None,
-                               lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None):
-        """Use CGNN to create a graph from scratch."""
+    def create_graph_from_data(self, data):
+        """Use CGNN to create a graph from scratch. All the possible structures
+        are tested, which leads to a super exponential complexity. It would be
+        preferable to start from a graph skeleton for large graphs.
+
+        Args:
+            data (pandas.DataFrame): Observational data on which causal
+               discovery has to be performed.
+        
+        """
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")
 
-        nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
         # Building all possible candidates:
         nb_vars = len(list(data.columns))
         data = scale(data.as_matrix()).astype('float32')
@@ -217,8 +251,9 @@ class CGNN(GraphModel):
                           and nx.is_directed_acyclic_graph(nx.DiGraph(np.reshape(np.array(i), (nb_vars, nb_vars)))))]
 
         warnings.warn("A total of {} graphs will be evaluated.".format(len(candidates)))
-        scores = [parallel_graph_evaluation(data, i, nh=nh, nb_runs=nb_runs, gpu=gpu,
-                                            nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs, test_epochs=test_epochs, verbose=verbose) for i in candidates]
+        scores = [parallel_graph_evaluation(data, i, nh=self.nh, nb_runs=self.nb_runs, gpu=self.gpu,
+                                            nb_jobs=self.nb_jobs, lr=self.lr, train_epochs=self.train_epochs,
+                                            test_epochs=self.test_epochs, verbose=self.verbose) for i in candidates]
         final_candidate = candidates[scores.index(min(scores))]
         output = np.zeros(final_candidate.shape)
 
@@ -232,45 +267,49 @@ class CGNN(GraphModel):
         return nx.DiGraph(candidates[output],
                           {idx: i for idx, i in enumerate(data.columns)})
 
-    def orient_directed_graph(self, data, dag, alg='HC', nh=20, nb_runs=16, nb_jobs=None,
-                              gpu=None, lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None):
-        """Improve a directed acyclic graph using CGNN.
+    def orient_directed_graph(self, data, dag, alg='HC'):
+        """Modify and improve a directed acyclic graph solution using CGNN.
 
-        :param data: data
-        :param dag: directed acyclic graph to optimize
-        :param alg: type of algorithm
-        :param log: Save logs of the execution
-        :return: improved directed acyclic graph
+        Args:
+            data (pandas.DataFrame): Observational data on which causal
+               discovery has to be performed.
+            dag (nx.DiGraph): Graph that provides the initial solution,
+               on which the CGNN algorithm will be applied.
+            alg (str): Exploration heuristic to use, among ["HC", "HCr",
+               "tabu", "EHC"]
+
         """
-        nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
 
-        return alg_dic[alg](data, dag, nh=nh, nb_runs=nb_runs, gpu=gpu,
-                            nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs,
-                            test_epochs=test_epochs, verbose=verbose)
+        return alg_dic[alg](data, dag, nh=self.nh, nb_runs=self.nb_runs, gpu=self.gpu,
+                            nb_jobs=self.nb_jobs, lr=self.lr, train_epochs=self.train_epochs,
+                            test_epochs=self.test_epochs, verbose=self.verbose)
 
-    def orient_undirected_graph(self, data, umg, nh=20, nb_runs=16, nb_jobs=None, gpu=None,
-                                lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None, nb_max_runs=16):
+    def orient_undirected_graph(self, data, umg, alg='HC'):
         """Orient the undirected graph using GNN and apply CGNN to improve the graph.
 
-        :param data: data
-        :param umg: undirected acyclic graph
-        :return: directed acyclic graph
+        Args:
+            data (pandas.DataFrame): Observational data on which causal
+               discovery has to be performed.
+            umg (nx.Graph): Graph that provides the skeleton, on which the GNN
+               then the CGNN algorithm will be applied.
+            alg (str): Exploration heuristic to use, among ["HC", "HCr",
+               "tabu", "EHC"]
+
         """
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
-        nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
-        gnn = GNN(nh=nh, lr=lr)
+        gnn = GNN(nh=self.nh, lr=self.lr)
 
-        og = gnn.orient_graph(data, umg, nb_runs=nb_runs, nb_max_runs=nb_max_runs,
-                              nb_jobs=nb_jobs, train_epochs=train_epochs,
-                              test_epochs=test_epochs, verbose=verbose, gpu=gpu)  # Pairwise method
+        og = gnn.orient_graph(data, umg, nb_runs=self.nb_runs, nb_max_runs=self.nb_runs,
+                              nb_jobs=self.nb_jobs, train_epochs=self.train_epochs,
+                              test_epochs=self.test_epochs, verbose=self.verbose, gpu=self.gpu)  # Pairwise method
         # print(nx.adj_matrix(og).todense().shape)
         # print(list(og.edges()))
         dag = dagify_min_edge(og)
         # print(nx.adj_matrix(dag).todense().shape)
 
-        return self.orient_directed_graph(data, dag,  nh=nh, nb_runs=nb_runs, gpu=gpu,
-                                          nb_jobs=nb_jobs, lr=lr, train_epochs=train_epochs,
-                                          test_epochs=test_epochs, verbose=verbose)
+        return self.orient_directed_graph(data, dag, alg=alg, nh=self.nh, nb_runs=self.nb_runs, gpu=self.gpu,
+                                          nb_jobs=self.nb_jobs, lr=self.lr, train_epochs=self.train_epochs,
+                                          test_epochs=self.test_epochs, verbose=self.verbose)
