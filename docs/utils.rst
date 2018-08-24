@@ -19,3 +19,20 @@ cdt.utils.io
 .. autofunction:: read_causal_pairs
 .. autofunction:: read_adjacency_matrix
 .. autofunction:: read_list_edges
+
+cdt.utils.graph
+---------------
+.. automodule:: cdt.utils.graph
+
+.. autofunction:: dagify_min_edge
+   
+cdt.utils.loss
+--------------
+.. automodule:: cdt.utils.loss
+
+.. autoclass:: MMDloss
+
+.. autoclass:: MomentMatchingLoss
+
+.. autoclass:: TTestCriterion
+   :members:

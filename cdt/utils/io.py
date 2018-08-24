@@ -13,9 +13,10 @@ import networkx as nx
 def read_causal_pairs(filename, scale=True, **kwargs):
     """Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.
 
-    :param filename: Name fo the file read
-    :type filename: str
+    :param filename: path of the file to read or DataFrame containing the data
+    :type filename: str or pandas.DataFrame
     :param scale: Scale the data
+    :type scale: bool
     :param kwargs: parameters to be passed to pandas.read_csv
     :return: Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))
     :rtype: pandas.DataFrame
@@ -34,7 +35,6 @@ def read_causal_pairs(filename, scale=True, **kwargs):
         if a[0] == "":
             a.pop(0)
             b.pop(0)
-
         if a[-1] == "":
             a.pop(-1)
             b.pop(-1)
@@ -45,8 +45,12 @@ def read_causal_pairs(filename, scale=True, **kwargs):
             a = scaler(a)
             b = scaler(b)
         return row['SampleID'], a, b
-
-    data = read_csv(filename, **kwargs)
+    if isinstance(filename, str):
+        data = read_csv(filename, **kwargs)
+    elif isinstance(filename, DataFrame):
+        data = filename
+    else:
+        raise TypeError("Type not supported.")
     conv_data = []
 
     for idx, row in data.iterrows():
@@ -57,13 +61,24 @@ def read_causal_pairs(filename, scale=True, **kwargs):
 
 
 def read_adjacency_matrix(filename, directed=True, **kwargs):
-    """Read a file (containing an adjacency matrix) and convert it into a directed or undirected networkx graph.
+    """Read a file (containing an adjacency matrix) and convert it into a
+    directed or undirected networkx graph.
 
-    :param filename: file to read
+    :param filename: file to read or DataFrame containing the data
+    :type filename: str or pandas.DataFrame
     :param directed: Return directed graph
+    :type directed: bool
     :param kwargs: extra parameters to be passed to pandas.read_csv
+    :return: networkx graph containing the graph.
+    :rtype: **networkx.DiGraph** or **networkx.Graph** depending on the
+      ``directed`` parameter.
     """
-    data = read_csv(filename, **kwargs)
+    if isinstance(filename, str):
+        data = read_csv(filename, **kwargs)
+    elif isinstance(filename, DataFrame):
+        data = filename
+    else:
+        raise TypeError("Type not supported.")
     if directed:
         return nx.relabel_nodes(nx.DiGraph(data.values),
                                 {idx: i for idx, i in enumerate(data.columns)})
@@ -73,13 +88,25 @@ def read_adjacency_matrix(filename, directed=True, **kwargs):
 
 
 def read_list_edges(filename, directed=True, **kwargs):
-    """Read a file (containing list of edges) and convert it into a directed or undirected networkx graph.
+    """Read a file (containing list of edges) and convert it into a directed
+    or undirected networkx graph.
 
-    :param filename: file to be read, per default columns=Cause,Effect
-    :param directed:
-    :param kwargs:
+    :param filename: file to read or DataFrame containing the data
+    :type filename: str or pandas.DataFrame
+    :param directed: Return directed graph
+    :type directed: bool
+    :param kwargs: extra parameters to be passed to pandas.read_csv
+    :return: networkx graph containing the graph.
+    :rtype: **networkx.DiGraph** or **networkx.Graph** depending on the
+      ``directed`` parameter.
+
     """
-    data = read_csv(filename, **kwargs)
+    if isinstance(filename, str):
+        data = read_csv(filename, **kwargs)
+    elif isinstance(filename, DataFrame):
+        data = filename
+    else:
+        raise TypeError("Type not supported.")
     if directed:
         graph = nx.DiGraph()
     else:

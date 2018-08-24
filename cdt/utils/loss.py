@@ -1,20 +1,18 @@
-"""Implementation of Losses.
-
-Author : Diviyan Kalainathan & Olivier Goudet
-Date : 09/03/2017
-"""
-
-
+"""Pytorch implementation of Losses and tools."""
 from .Settings import SETTINGS
 import numpy as np
 from scipy.stats import ttest_ind
 import torch as th
-from torch.autograd import Variable
-
-bandwiths_gamma = [0.005, 0.05, 0.25, 0.5, 1, 5, 50]
 
 
 class TTestCriterion(object):
+    """ A loop criterion based on t-test to check significance of results.
+
+    Args:
+        max_iter (int): Maximum number of iterations authorized
+        runs_per_iter (int): Number of runs performed per iteration
+        threshold (float): p-value threshold, under which the loop is stopped.
+    """
     def __init__(self, max_iter, runs_per_iter, threshold=0.01):
         super(TTestCriterion, self).__init__()
         self.threshold = threshold
@@ -24,6 +22,16 @@ class TTestCriterion(object):
         self.p_value = np.nan
 
     def loop(self, xy, yx):
+        """ Tests the loop condition based on the new results and the
+        parameters.
+
+        Args:
+            xy (list): list containing all the results for one set of samples
+            yx (list): list containing all the results for the other set.
+
+        Returns:
+            bool: True if the loop has to continue, False otherwise.
+        """
         if len(xy) > 0:
             self.iter += self.runs_per_iter
         if self.iter < 2:
@@ -36,26 +44,60 @@ class TTestCriterion(object):
 
 
 class MMDloss(th.nn.Module):
-    """Maximum Mean Discrepancy Metric to compare empirical distributions.
+    """"**[torch.nn.Module]** Maximum Mean Discrepancy Metric to compare
+    empirical distributions.
 
-    Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.
+    The MMD score is defined by:
+
+    .. math::
+        \\widehat{MMD_k}(\\mathcal{D}, \\widehat{\\mathcal{D}}) = 
+        \\frac{1}{n^2} \\sum_{i, j = 1}^{n} k(x_i, x_j) + \\frac{1}{n^2}
+        \\sum_{i, j = 1}^{n} k(\\hat{x}_i, \\hat{x}_j) - \\frac{2}{n^2} 
+        \\sum_{i,j = 1}^n k(x_i, \\hat{x}_j)
+
+    where :math:`\\mathcal{D} \\text{ and } \\widehat{\\mathcal{D}}` represent 
+    respectively the observed and empirical distributions, :math:`k` represents
+    the RBF kernel and :math:`n` the batch size.
+
+    Args:
+        input_size (int): Fixed batch size.
+        bandwiths (list): List of bandwiths to take account of. Defaults at
+            [0.01, 0.1, 1, 10, 100]
+        device (str): PyTorch device on which the computation will be made.
+            Defaults at ``cdt.SETTINGS.default_device``.
+
+    Inputs: empirical, observed
+        Forward pass: Takes both the true samples and the generated sample in any order 
+        and returns the MMD score between the two empirical distributions.
+
+        + **empirical** distribution of shape `(batch_size, features)`: torch.Tensor
+          containing the empirical distribution
+        + **observed** distribution of shape `(batch_size, features)`: torch.Tensor
+          containing the observed distribution.
+
+    Outputs: score
+        + **score** of shape `(1)`: Torch.Tensor containing the loss value.
+
+    .. note::
+        Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, 
+        B., & Smola, A. (2012). A kernel two-sample test.
+        Journal of Machine Learning Research, 13(Mar), 723-773.
     """
 
-    def __init__(self, input_size, bandwiths=None, device=None):
+    def __init__(self, input_size, bandwidths=None, device=None):
         """Init the model."""
         super(MMDloss, self).__init__()
         device = SETTINGS.get_default(device=device)
-        if bandwiths is None:
-            self.bandwiths = [0.01, 0.1, 1, 10, 100]
+        if bandwidths is None:
+            self.bandwidths = [0.01, 0.1, 1, 10, 100]
         else:
-            self.bandwiths = bandwidths
+            self.bandwidths = bandwidths
         s = th.cat([th.ones([input_size, 1]) / input_size,
                     th.ones([input_size, 1]) / -input_size], 0)
 
         self.S = (s @ s.t()).to(device)
-        
+
     def forward(self, x, y):
-        """Compute the MMD statistic between x and y."""
         X = th.cat([x, y], 0)
         # dot product between all combinations of rows in 'X'
         XX = X @ X.t()
@@ -68,15 +110,37 @@ class MMDloss(th.nn.Module):
         # exponent entries of the RBF kernel (without the sigma) for each
         # combination of the rows in 'X'
         exponent = -2*XX + X2.expand_as(XX) + X2.t().expand_as(XX)
-        
-        lossMMD = th.sum(sum([self.S *(exponent * -bandwith).exp() for bandwith in self.bandwiths]))
+
+        lossMMD = th.sum(sum([self.S *(exponent * -bandwidth).exp() 
+                              for bandwidth in self.bandwidths]))
         return lossMMD
 
 
-class MomentMatchingLoss_th(th.nn.Module):
-    """k-moments loss, k being a parameter.
+class MomentMatchingLoss(th.nn.Module):
+    """**[torch.nn.Module]** L2 Loss between k-moments between two
+    distributions, k being a parameter.
 
     These moments are raw moments and not normalized.
+    The loss is an L2 loss between the moments:
+
+    .. math::
+        MML(X, Y) = \\sum_{m=1}^{m^*} \\left( \\frac{1}{n_x} \\sum_{i=1}^{n_x} {x_i}^m 
+        - \\frac{1}{n_y} \\sum_{j=1}^{n_y} {y_j}^m \\right)^2
+
+    where :math:`m^*` represent the number of moments to compute.
+
+    Args:
+        n_moments (int): Number of moments to compute.
+
+    Input: (X, Y)
+        + **X** represents the first empirical distribution in a torch.Tensor of
+          shape `(?, features)`
+        + **Y** represents the second empirical distribution in a torch.Tensor of
+          shape `(?, features)`
+
+    Output: mml
+        + **mml** is the output of the forward pass and is differenciable. 
+          torch.Tensor of shape `(1)`
     """
 
     def __init__(self, n_moments=1):
@@ -84,7 +148,7 @@ class MomentMatchingLoss_th(th.nn.Module):
 
         :param n_moments: number of moments
         """
-        super(MomentMatchingLoss_th, self).__init__()
+        super(MomentMatchingLoss, self).__init__()
         self.moments = n_moments
 
     def forward(self, pred, target):
@@ -94,7 +158,7 @@ class MomentMatchingLoss_th(th.nn.Module):
         :param target: Target Variable
         :return: Loss
         """
-        loss = Variable(th.FloatTensor([0]))
+        loss = th.FloatTensor([0])
         for i in range(1, self.moments):
             mk_pred = th.mean(th.pow(pred, i), 0)
             mk_tar = th.mean(th.pow(target, i), 0)

@@ -5,7 +5,7 @@ import pandas as pd
 import networkx as nx
 from cdt.causality.pairwise import (ANM, IGCI, BivariateFit, CDS, NCC, RCC)
 from cdt.independence.graph import Glasso
-from cdt.utils.read_file import read_causal_pairs
+from cdt.utils.io import read_causal_pairs
 from cdt import SETTINGS
 
 SETTINGS.NB_JOBS = 1

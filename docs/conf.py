@@ -15,6 +15,7 @@
 import os
 import sys
 from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 
@@ -172,7 +173,28 @@ texinfo_documents = [
 
 # -- Extension configuration -------------------------------------------------
 napoleon_use_ivar = True
+
+
+mathjax_config = {
+    'extensions': ['tex2jax.js'],
+    'jax': ['input/TeX', 'output/HTML-CSS'],
+    'tex2jax': {
+      'inlineMath': [ ['$','$'], ["\\(","\\)"] ],
+      'displayMath': [ ['$$','$$'], ["\\[","\\]"] ],
+      'processEscapes': True
+    },
+    "HTML-CSS": { 'fonts': ["TeX"] }
+}
+
+
 #-- Options for todo extension ----------------------------------------------
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+github_doc_root = 'https://github.com/rtfd/recommonmark/tree/master/doc/'
+def setup(app):
+    app.add_config_value('recommonmark_config', {
+            'url_resolver': lambda url: github_doc_root + url,
+            'auto_toc_tree_section': 'Contents',
+            }, True)
+    app.add_transform(AutoStructify)

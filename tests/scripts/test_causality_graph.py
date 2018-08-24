@@ -3,7 +3,7 @@
 import os
 import pandas as pd
 import networkx as nx
-from cdt.utils.read_file import read_causal_pairs
+from cdt.utils.io import read_causal_pairs
 from cdt.causality.graph import (CAM, GS, GIES, IAMB,
                                  Fast_IAMB, PC, LiNGAM, SAM)
 

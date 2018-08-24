@@ -17,7 +17,7 @@ from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.loss import MMDloss
 from ...utils.Settings import SETTINGS
-from ...utils.graph_utils import dagify_min_edge
+from ...utils.graph import dagify_min_edge
 
 
 def message_warning(msg, *a, **kwargs):

@@ -19,7 +19,6 @@ def retrieve_adjacency_matrix(graph, order_nodes=None, weight=False):
     """Retrieve the adjacency matrix from the nx.DiGraph or numpy array."""
     if isinstance(graph, np.ndarray):
         return graph
-        predictions = pred
     elif isinstance(graph, nx.DiGraph):
         if order_nodes is None:
             order_nodes = graph.nodes()
