@@ -151,7 +151,7 @@ The whole package revolves around using the **DiGraph** and **Graph** classes fr
    self
    
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1 
    
    causality
    independence

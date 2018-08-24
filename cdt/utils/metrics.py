@@ -1,10 +1,10 @@
 """The CDT package implements some metrics to evaluate the output of a 
 algorithm given a ground truth. All these metrics are in the form 
 `metric(target, prediction)`, where any of those arguments are either numpy 
-matrixes that represent the adjacency matrix or networkx.DiGraph instances.
+matrixes that represent the adjacency matrix or `networkx.DiGraph` instances.
 
-.. note:: in the case of heterogeneous types of arguments, special care has
-    to be given to the order of the nodes, as the type networkx.DiGraph does 
+.. warning:: in the case of heterogeneous types of arguments, special care has
+    to be given to the order of the nodes, as the type `networkx.DiGraph` does 
     not retain node order.
 """
 
