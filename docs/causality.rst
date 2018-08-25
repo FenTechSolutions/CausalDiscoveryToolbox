@@ -12,11 +12,45 @@ cdt.causality.graph
 -------------------
 
 .. automodule:: cdt.causality.graph
+.. currentmodule:: cdt.causality.graph.model
+.. autoclass:: GraphModel
+   :members:
+
+:hidden:`bnlearn-based models`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. currentmodule:: cdt.causality.graph.bnlearn
+.. autoclass:: BNlearnAlgorithm
+   :members:
+      
+:hidden:`GS`
+^^^^^^^^^^^^
+
+.. autoclass:: GS
+   :members:
+
+:hidden:`IAMB`
+^^^^^^^^^^^^^^^
+
+.. autoclass:: IAMB
+   :members:
+
+:hidden:`Fast_IAMB`
+^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: Fast_IAMB
+   :members:
+
+
+:hidden:`MMPC`
+^^^^^^^^^^^^^^^
+
+.. autoclass:: MMPC
+   :members:
+
 .. currentmodule:: cdt.causality.graph
-
-
+                   
 :hidden:`CAM`
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. autoclass:: CAM
    :members: create_graph_from_data 
@@ -34,39 +68,16 @@ cdt.causality.graph
    :members:
 
 :hidden:`GIES`
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: GIES
    :members:
 
-:hidden:`GS`
-~~~~~~~~~~~~~
-
-.. autoclass:: GS
-   :members:
-
-:hidden:`IAMB`
-~~~~~~~~~~~~~
-
-.. autoclass:: GS
-   :members:
-
-:hidden:`Fast_IAMB`
-~~~~~~~~~~~~~
-
-.. autoclass:: Fast_IAMB
-   :members:
 
 :hidden:`LiNGAM`
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: LiNGAM
-   :members:
-
-:hidden:`MMPC`
-~~~~~~~~~~~~~
-
-.. autoclass:: MMPC
    :members:
 
 :hidden:`PC`

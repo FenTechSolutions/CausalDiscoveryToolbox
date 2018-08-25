@@ -10,6 +10,7 @@ from shutil import rmtree
 from .model import GraphModel
 from pandas import DataFrame, read_csv
 from ...utils.R import RPackages, launch_R_script
+from ...utils.Settings import SETTINGS
 
 
 def message_warning(msg, *a, **kwargs):
@@ -23,23 +24,33 @@ warnings.formatwarning = message_warning
 class GES(GraphModel):
     """GES algorithm.
 
-    Ref:
-    D.M. Chickering (2002).  Optimal structure identification with greedy search.
-    Journal of Machine Learning Research 3 , 507–554
+    Args:
+        score (str): Sets the score used by GES.
+        verbose (bool): Defaults to ``cdt.SETTINGS.verbose``.
+    
+    Available scores:
+        + int: GaussL0penIntScore
+        + obs: GaussL0penObsScore
 
-    A. Hauser and P. Bühlmann (2012). Characterization and greedy learning of
-    interventional Markov equivalence classes of directed acyclic graphs.
-    Journal of Machine Learning Research 13, 2409–2464.
+    .. note::
+       Ref:
+       D.M. Chickering (2002).  Optimal structure identification with greedy search.
+       Journal of Machine Learning Research 3 , 507–554
 
-    P. Nandy, A. Hauser and M. Maathuis (2015). Understanding consistency in
-     hybrid causal structure learning.
-    arXiv preprint 1507.02608
+       A. Hauser and P. Bühlmann (2012). Characterization and greedy learning of
+       interventional Markov equivalence classes of directed acyclic graphs.
+       Journal of Machine Learning Research 13, 2409–2464.
 
-    P. Spirtes, C.N. Glymour, and R. Scheines (2000).
-    Causation, Prediction, and Search, MIT Press, Cambridge (MA)
+       P. Nandy, A. Hauser and M. Maathuis (2015). Understanding consistency in
+       hybrid causal structure learning.
+       arXiv preprint 1507.02608
+
+       P. Spirtes, C.N. Glymour, and R. Scheines (2000).
+       Causation, Prediction, and Search, MIT Press, Cambridge (MA)
+
     """
 
-    def __init__(self):
+    def __init__(self, score='obs',verbose=None):
         """Init the model and its available arguments."""
         if not RPackages.pcalg:
             raise ImportError("R Package pcalg is not available.")
@@ -53,44 +64,65 @@ class GES(GraphModel):
                           '{SCORE}': 'GaussL0penObsScore',
                           '{VERBOSE}': 'FALSE',
                           '{OUTPUT}': '/tmp/cdt_ges/result.csv'}
+        self.verbose = SETTINGS.get_default(verbose=verbose)
+        self.score = score
 
-    def orient_undirected_graph(self, data, graph, score='obs',
-                                verbose=False, **kwargs):
-        """Run GES on an undirected graph."""
+    def orient_undirected_graph(self, data, graph):
+        """Run GES on an undirected graph.
+
+        Args:
+            data (pandas.DataFrame): DataFrame containing the data
+            graph (networkx.Graph): Skeleton of the graph to orient
+
+        Returns:
+            networkx.DiGraph: Solution given by the GES algorithm.
+
+        """
         # Building setup w/ arguments.
-        self.arguments['{VERBOSE}'] = str(verbose).upper()
-        self.arguments['{SCORE}'] = self.scores[score]
+        self.arguments['{VERBOSE}'] = str(self.verbose).upper()
+        self.arguments['{SCORE}'] = self.scores[self.score]
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
         fg = DataFrame(1 - fe.as_matrix())
 
-        results = self.run_ges(data, fixedGaps=fg, verbose=verbose)
+        results = self._run_ges(data, fixedGaps=fg, verbose=self.verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
                                 {idx: i for idx, i in enumerate(data.columns)})
 
-    def orient_directed_graph(self, data, graph, *args, **kwargs):
-        """Run GES on a directed_graph."""
+    def orient_directed_graph(self, data, graph):
+        """Run GES on a directed graph.
+
+        Args:
+            data (pandas.DataFrame): DataFrame containing the data
+            graph (networkx.DiGraph): Skeleton of the graph to orient
+
+        Returns:
+            networkx.DiGraph: Solution given by the GES algorithm.
+        """
         warnings.warn("GES is ran on the skeleton of the given graph.")
-        return self.orient_undirected_graph(data, nx.Graph(graph), *args, **kwargs)
+        return self.orient_undirected_graph(data, nx.Graph(graph))
 
-    def create_graph_from_data(self, data, score='obs', verbose=False, **kwargs):
+    def create_graph_from_data(self, data):
         """Run the GES algorithm.
+        
+        Args:
+            data (pandas.DataFrame): DataFrame containing the data
 
-        :param data: DataFrame containing the data
-        :param score: score used for ges. ['obs', 'int']
-        :param verbose: if TRUE, detailed output is provided.
+        Returns:
+            networkx.DiGraph: Solution given by the GES algorithm.
+
         """
         # Building setup w/ arguments.
-        self.arguments['{SCORE}'] = self.scores[score]
-        self.arguments['{VERBOSE}'] = str(verbose).upper()
+        self.arguments['{SCORE}'] = self.scores[self.score]
+        self.arguments['{VERBOSE}'] = str(self.verbose).upper()
 
-        results = self.run_ges(data, verbose=verbose)
+        results = self._run_ges(data, verbose=self.verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
                                 {idx: i for idx, i in enumerate(data.columns)})
 
-    def run_ges(self, data, fixedGaps=None, verbose=True):
+    def _run_ges(self, data, fixedGaps=None, verbose=True):
         """Setting up and running ges with all arguments."""
         # Run GES
         os.makedirs('/tmp/cdt_ges/')
