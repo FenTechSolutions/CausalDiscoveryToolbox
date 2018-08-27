@@ -9,7 +9,9 @@ __pycache__/
 \#*
 *\#
 .idea
-
+doctrees/
+.buildinfo
+builddir
 # C extensions
 *.so
 

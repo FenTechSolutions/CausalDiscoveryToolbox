@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = CausalDiscoveryToolbox
 SOURCEDIR     = .
-BUILDDIR      = _build
+BUILDDIR      = doc_build
 
 # Put it first so that "make" without argument is like "make help".
 help:
