@@ -366,20 +366,28 @@ def run_SAM(df_data, skeleton=None, **kwargs):
 
 
 class SAM(GraphModel):
-    """Structural Agnostic Model."""
+    """Structural Agnostic Model.
+
+    Args:
+        lr (float): Learning rate of the generators
+        dlr (float): Learning rate of the discriminator
+        l1 (float): L1 penalization on the causal filters
+        nh (int): Number of hidden units in the generators' hidden layers
+        dnh (int): Number of hidden units in the discriminator's hidden layer$
+        train_epochs (int): Number of training epochs
+        test_epochs (int): Number of test epochs (saving and averaging the causal filters)
+        batchsize (int): Size of the batches to be fed to the SAM model.
+
+    .. note::
+       Ref: Kalainathan, Diviyan & Goudet, Olivier & Guyon, Isabelle &
+       Lopez-Paz, David & Sebag, Michèle. (2018). SAM: Structural Agnostic
+       Model, Causal Discovery and Penalized Adversarial Learning.
+    """
 
     def __init__(self, lr=0.1, dlr=0.1, l1=0.1, nh=200, dnh=200,
                  train_epochs=1000, test_epochs=1000, batchsize=-1):
         """Init and parametrize the SAM model.
 
-        :param lr: Learning rate of the generators
-        :param dlr: Learning rate of the discriminator
-        :param l1: L1 penalization on the causal filters
-        :param nh: Number of hidden units in the generators' hidden layers
-        :param dnh: Number of hidden units in the discriminator's hidden layer$
-        :param train_epochs: Number of training epochs
-        :param test_epochs: Number of test epochs (saving and averaging the causal filters)
-        :param batchsize: Size of the batches to be fed to the SAM model.
         """
         super(SAM, self).__init__()
         self.lr = lr
@@ -391,28 +399,30 @@ class SAM(GraphModel):
         self.test = test_epochs
         self.batchsize = batchsize
 
-    def predict(self, data, skeleton=None, nruns=6, njobs=None, gpus=0, verbose=None,
+    def predict(self, data, graph=None, nruns=6, njobs=None, gpus=0, verbose=None,
                 plot=False, plot_generated_pair=False, return_list_results=False):
         """Execute SAM on a dataset given a skeleton or not.
 
-        :param data: Observational data for estimation of causal relationships by SAM
-        :param skeleton: A priori knowledge about the causal relationships as an adjacency matrix.
-                         Can be fed either directed or undirected links.
-        :param nruns: Number of runs to be made for causal estimation.
-                      Recommended: >=12 for optimal performance.
-        :param njobs: Numbers of jobs to be run in Parallel.
-                      Recommended: 1 if no GPU available, 2*number of GPUs else.
-        :param gpus: Number of available GPUs for the algorithm.
-        :param verbose: verbose mode
-        :param plot: Plot losses interactively. Not recommended if nruns>1
-        :param plot_generated_pair: plots a generated pair interactively.  Not recommended if nruns>1
-        :return: Adjacency matrix (A) of the graph estimated by SAM,
-                A[i,j] is the term of the ith variable for the jth generator.
+        Args:
+            data (pandas.DataFrame): Observational data for estimation of causal relationships by SAM
+            skeleton (numpy.ndarray): A priori knowledge about the causal relationships as an adjacency matrix.
+                      Can be fed either directed or undirected links.
+            nruns (int): Number of runs to be made for causal estimation.
+                   Recommended: >=12 for optimal performance.
+            njobs (int): Numbers of jobs to be run in Parallel.
+                   Recommended: 1 if no GPU available, 2*number of GPUs else.
+            gpus (int): Number of available GPUs for the algorithm.
+            verbose (bool): verbose mode
+            plot (bool): Plot losses interactively. Not recommended if nruns>1
+            plot_generated_pair (bool): plots a generated pair interactively.  Not recommended if nruns>1
+        Returns:
+            networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term
+            of the ith variable for the jth generator.
         """
         verbose, njobs = SETTINGS.get_default(('verbose', verbose), ('nb_jobs', njobs))
         if njobs != 1:
             list_out = Parallel(n_jobs=njobs)(delayed(run_SAM)(data,
-                                                               skeleton=skeleton,
+                                                               skeleton=graph,
                                                                lr_gen=self.lr, lr_disc=self.dlr,
                                                                regul_param=self.l1, nh=self.nh, dnh=self.dnh,
                                                                gpu=bool(gpus), train_epochs=self.train,
@@ -420,7 +430,7 @@ class SAM(GraphModel):
                                                                plot=plot, verbose=verbose, gpu_no=idx % max(gpus, 1))
                                               for idx in range(nruns))
         else:
-            list_out = [run_SAM(data, skeleton=skeleton,
+            list_out = [run_SAM(data, skeleton=graph,
                                 lr_gen=self.lr, lr_disc=self.dlr,
                                 regul_param=self.l1, nh=self.nh, dnh=self.dnh,
                                 gpu=bool(gpus), train_epochs=self.train,

@@ -8,6 +8,8 @@ cdt.causality.pairwise
 ----------------------
 .. automodule:: cdt.causality.pairwise
 
+ToDo
+
 cdt.causality.graph
 -------------------
 
@@ -78,7 +80,7 @@ cdt.causality.graph
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: LiNGAM
-   :members:
+   :members: create_graph_from_data 
 
 :hidden:`PC`
 ~~~~~~~~~~~~~~
@@ -90,4 +92,4 @@ cdt.causality.graph
 ~~~~~~~~~~~~~~~
 
 .. autoclass:: SAM
-   :members: create_graph_from_data 
+   :members: predict

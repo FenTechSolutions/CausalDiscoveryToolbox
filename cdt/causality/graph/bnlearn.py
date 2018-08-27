@@ -114,7 +114,16 @@ class BNlearnAlgorithm(GraphModel):
         self.verbose = SETTINGS.get_default(verbose=verbose) 
         
     def orient_undirected_graph(self, data, graph):
-        """Run the algorithm on an undirected graph."""
+        """Run the algorithm on an undirected graph.
+
+        Args:
+            data (pandas.DataFrame): DataFrame containing the data
+            graph (networkx.Graph): Skeleton of the graph to orient
+
+        Returns:
+            networkx.DiGraph: Solution on the given skeleton.
+
+        """
         # Building setup w/ arguments.
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
         self.arguments['{SCORE}'] = self.score
@@ -133,16 +142,31 @@ class BNlearnAlgorithm(GraphModel):
                                 {idx: i for idx, i in enumerate(data.columns)})
 
     def orient_directed_graph(self, data, graph):
-        """Run the algorithm on a directed_graph."""
+        """Run the algorithm on a directed_graph.
+
+        Args:
+            data (pandas.DataFrame): DataFrame containing the data
+            graph (networkx.DiGraph): Skeleton of the graph to orient
+
+        Returns:
+            networkx.DiGraph: Solution on the given skeleton.
+
+        .. warning::
+           The algorithm is ran on the skeleton of the given graph.
+
+        """
         warnings.warn("The algorithm is ran on the skeleton of the given graph.")
         return self.orient_undirected_graph(data, nx.Graph(graph))
 
     def create_graph_from_data(self, data):
         """Run the algorithm on data.
 
-        :param data: DataFrame containing the data
-        :param score: score used for bnlearn. ['obs', 'int']
-        :param verbose: if TRUE, detailed output is provided.
+        Args:
+            data (pandas.DataFrame): DataFrame containing the data
+
+        Returns:
+            networkx.DiGraph: Solution given by the algorithm.
+
         """
         # Building setup w/ arguments.
         self.arguments['{SCORE}'] = self.score

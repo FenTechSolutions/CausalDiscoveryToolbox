@@ -136,7 +136,7 @@ class PC(GraphModel):
             graph (networkx.Graph): Skeleton of the graph to orient
 
         Returns:
-            nx.DiGraph: Solution given by PC on the given skeleton.
+            networkx.DiGraph: Solution given by PC on the given skeleton.
         """
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.dir_CI_test[self.CItest]
@@ -163,7 +163,10 @@ class PC(GraphModel):
             graph (networkx.DiGraph): Skeleton of the graph to orient
 
         Returns:
-            nx.DiGraph: Solution given by PC on the given skeleton.
+            networkx.DiGraph: Solution given by PC on the given skeleton.
+
+        .. warning::
+           The algorithm is ran on the skeleton of the given graph.
 
         """
         warnings.warn("PC is ran on the skeleton of the given graph.")
@@ -176,7 +179,7 @@ class PC(GraphModel):
             data (pandas.DataFrame): DataFrame containing the data
 
         Returns:
-            nx.DiGraph: Solution given by PC on the given data.
+            networkx.DiGraph: Solution given by PC on the given data.
        """
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.dir_CI_test[self.CItest]

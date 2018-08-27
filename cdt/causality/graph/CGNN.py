@@ -237,7 +237,9 @@ class CGNN(GraphModel):
         Args:
             data (pandas.DataFrame): Observational data on which causal
                discovery has to be performed.
-        
+        Returns:
+            networkx.DiGraph: Solution given by CGNN.
+       
         """
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")
@@ -277,7 +279,9 @@ class CGNN(GraphModel):
                on which the CGNN algorithm will be applied.
             alg (str): Exploration heuristic to use, among ["HC", "HCr",
                "tabu", "EHC"]
-
+        Returns:
+            networkx.DiGraph: Solution given by CGNN.
+       
         """
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
@@ -296,7 +300,12 @@ class CGNN(GraphModel):
                then the CGNN algorithm will be applied.
             alg (str): Exploration heuristic to use, among ["HC", "HCr",
                "tabu", "EHC"]
-
+        Returns:
+            networkx.DiGraph: Solution given by CGNN.
+       
+        .. note::
+           GNN (``cdt.causality.pairwise.GNN``) is first used to orient the
+           undirected graph and output a DAG before applying CGNN.
         """
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
