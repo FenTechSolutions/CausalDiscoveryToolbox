@@ -139,7 +139,7 @@ class PC(GraphModel):
             networkx.DiGraph: Solution given by PC on the given skeleton.
         """
         # Building setup w/ arguments.
-        self.arguments['{CITEST}'] = self.dir_CI_test[self.CItest]
+        self.arguments['{CITEST}'] = self.dir_CI_test[self.CI_test]
         self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.method_indep]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(self.alpha)
@@ -182,7 +182,7 @@ class PC(GraphModel):
             networkx.DiGraph: Solution given by PC on the given data.
        """
         # Building setup w/ arguments.
-        self.arguments['{CITEST}'] = self.dir_CI_test[self.CItest]
+        self.arguments['{CITEST}'] = self.dir_CI_test[self.CI_test]
         self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.method_indep]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(self.alpha)

@@ -22,7 +22,7 @@ def test_pipeline_CGNN():
     # print(nx.adj_matrix(ugraph).todense().shape)
     # Orient the edges of the graph
 
-    Cgnn = CGNN(nb_runs=1, nb_max_runs=1, train_epochs=2, test_epochs=2)
+    Cgnn = CGNN(nb_runs=1, train_epochs=2, test_epochs=2)
     Cgnn.predict(data, graph=ugraph)
     return 0
 
