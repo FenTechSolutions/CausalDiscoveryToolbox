@@ -37,6 +37,7 @@ class CGNN_block(th.nn.Module):
         layers = []
 
         for i, j in zip(sizes[:-2], sizes[1:-1]):
+            print(i,j)
             layers.append(th.nn.Linear(i, j))
             layers.append(th.nn.ReLU())
 
@@ -80,10 +81,10 @@ class CGNN_model(th.nn.Module):
 
         for i in range(self.adjacency_matrix.shape[0]):
             if not confounding:
-                self.blocks.append(CGNN_block([sum(self.adjacency_matrix[:, i]) + 1, nh, 1]))
+                self.blocks.append(CGNN_block([int(self.adjacency_matrix[:, i].sum()) + 1, nh, 1]))
             else:
-                self.blocks.append(CGNN_block([sum(self.i_adj_matrix[:, i]) +
-                                               sum(self.adjacency_matrix[:, i]) + 1, nh, 1]))
+                self.blocks.append(CGNN_block([int(self.i_adj_matrix[:, i].sum()) +
+                                               int(self.adjacency_matrix[:, i].sum()) + 1, nh, 1]))
 
     def forward(self):
         """Generate according to the topological order of the graph."""
@@ -319,6 +320,4 @@ class CGNN(GraphModel):
         dag = dagify_min_edge(og)
         # print(nx.adj_matrix(dag).todense().shape)
 
-        return self.orient_directed_graph(data, dag, alg=alg, nh=self.nh, nb_runs=self.nb_runs, gpu=self.gpu,
-                                          nb_jobs=self.nb_jobs, lr=self.lr, train_epochs=self.train_epochs,
-                                          test_epochs=self.test_epochs, verbose=self.verbose)
+        return self.orient_directed_graph(data, dag, alg=alg)

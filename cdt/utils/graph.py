@@ -16,7 +16,7 @@ def dagify_min_edge(g):
         networkx.DiGraph: DAG made out of the input graph.
     """
     while not nx.is_directed_acyclic_graph(g):
-        cycle = nx.simple_cycles(g).next()
+        cycle = next(nx.simple_cycles(g))
         scores = []
         edges = []
         for i, j in zip(cycle[:1], cycle[:1]):

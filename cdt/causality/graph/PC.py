@@ -112,7 +112,7 @@ class PC(GraphModel):
         self.CI_test = CItest 
         self.method_indep = method_indep
         self.alpha = alpha
-        self.njobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+        self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
         self.verbose = SETTINGS.get_default(verbose=verbose)
         # Define default args
         self.arguments = {'{FILE}': '/tmp/cdt_pc/data.csv',
@@ -198,16 +198,16 @@ class PC(GraphModel):
         """Setting up and running pc with all arguments."""
         # Checking coherence of arguments
         if (self.arguments['{CITEST}'] == self.dir_CI_test['hsic']
-           and self.arguments['{METHOD_INDEP}'] == self.dir_method_indep['pcalg']):
+           and self.arguments['{METHOD_INDEP}'] == self.dir_method_indep['corr']):
             warnings.warn('Selected method for indep is unfit for the hsic test,'
                           ' setting the hsic.gamma method.')
             self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['hsic_gamma']
 
         elif (self.arguments['{CITEST}'] != self.dir_CI_test['hsic']
-              and self.arguments['{METHOD_INDEP}'] != self.dir_method_indep['pcalg']):
+              and self.arguments['{METHOD_INDEP}'] != self.dir_method_indep['corr']):
             warnings.warn('Selected method for indep is unfit for the selected test,'
                           ' setting the classic correlation-based method.')
-            self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['pcalg']
+            self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['corr']
 
         # Run PC
         os.makedirs('/tmp/cdt_pc/')
