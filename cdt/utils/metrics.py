@@ -71,7 +71,7 @@ def precision_recall(target, prediction, low_confidence_undirected=False):
         >>> # leave low_confidence_undirected to False as the predictions are continuous
     """
     true_labels = retrieve_adjacency_matrix(target)
-    predictions = retrieve_adjacency_matrix(pred, target.nodes()
+    pred = retrieve_adjacency_matrix(prediction, target.nodes()
                                             if isinstance(target, nx.DiGraph) else None,
                                             weight=True)
     

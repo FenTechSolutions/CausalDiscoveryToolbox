@@ -128,7 +128,7 @@ class CAM(GraphModel):
         self.arguments['{SELMETHOD}'] = self.var_selection[self.selmethod]
         self.arguments['{PRUNING}'] = str(self.pruning).upper()
         self.arguments['{PRUNMETHOD}'] = self.var_selection[self.prunmethod]
-        self.arguments['{NJOBS}'] = str(self.njobs)
+        self.arguments['{NJOBS}'] = str(self.nb_jobs)
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
         results = self._run_cam(data, verbose=self.verbose)
 
