@@ -1,0 +1,579 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.utils &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cdt.metrics" href="metrics.html" />
+    <link rel="prev" title="cdt.generators" href="generators.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.R">cdt.utils.R</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.io">cdt.utils.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.graph">cdt.utils.graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.loss">cdt.utils.loss</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>cdt.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-cdt.utils">
+<span id="cdt-utils"></span><h1>cdt.utils<a class="headerlink" href="#module-cdt.utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-cdt.utils.R">
+<span id="cdt-utils-r"></span><h2>cdt.utils.R<a class="headerlink" href="#module-cdt.utils.R" title="Permalink to this headline">¶</a></h2>
+<p>Loading and executing functions from R packages.</p>
+<p>This module defines the interface between R and Python using subprocess.
+At the initialization, the toolbox checks if R is available and sets
+<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.r_is_available</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> if the R framework is detected.
+Else, this module is deactivated.</p>
+<p>Next, each time an R function is called, the availability of the R package is
+tested using the <code class="docutils literal notranslate"><span class="pre">DefaultRPackages.check_R_package</span></code> function. The number of
+available packages is limited and the list is defined in <code class="docutils literal notranslate"><span class="pre">DefaultRPackages</span></code>.</p>
+<p>If the package is available, the <code class="docutils literal notranslate"><span class="pre">launch_R_script</span></code> proceeds to the execution
+of the function, by:</p>
+<ol class="arabic simple">
+<li>Copying the R script template and modifying it with the given arguments</li>
+<li>Copying all the data to a temporary folder in /tmp</li>
+<li>Launching a R subprocess using the modified template and the data, and
+the script saves the results in a folder in /tmp</li>
+<li>Retrieving all the results in the Python process and cleaning up all the
+temporary files.</li>
+</ol>
+<dl class="class">
+<dt id="cdt.utils.R.DefaultRPackages">
+<em class="property">class </em><code class="descclassname">cdt.utils.R.</code><code class="descname">DefaultRPackages</code><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define the R packages that can be imported and checks their availability.</p>
+<p>The attributes define all the R packages that can be imported. Their value
+is initialized to <code class="docutils literal notranslate"><span class="pre">None</span></code> ; and as their are called, their availability
+will be checked and their value will be set to either <cite>True</cite> or <cite>False</cite>
+depending on the results. A package already tested (which value is not
+<cite>None</cite>) will not be tested again.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pcalg</strong> (<em>bool</em>) – Availability of the <cite>pcalg</cite> R package</li>
+<li><strong>kpcalg</strong> (<em>bool</em>) – Availability of the <cite>kpcalg</cite> R package</li>
+<li><strong>bnlearn</strong> (<em>bool</em>) – Availability of the <cite>bnlearn</cite> R package</li>
+<li><strong>D2C</strong> (<em>bool</em>) – Availability of the <cite>D2C</cite> R package</li>
+<li><a class="reference internal" href="metrics.html#cdt.utils.metrics.SID" title="cdt.utils.metrics.SID"><strong>SID</strong></a> (<em>bool</em>) – Availability of the <cite>SID</cite> R package</li>
+<li><a class="reference internal" href="causality.html#cdt.causality.graph.CAM" title="cdt.causality.graph.CAM"><strong>CAM</strong></a> (<em>bool</em>) – Availability of the <cite>CAM</cite> R package</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cdt.utils.R.DefaultRPackages.check_R_package">
+<code class="descname">check_R_package</code><span class="sig-paren">(</span><em>package</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages.check_R_package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.check_R_package" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a subprocess to check the package’s availability.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package</strong> (<em>str</em>) – Name of the package to be tested.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>True</cite> if the package is available, <cite>False</cite> otherwise</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.R.launch_R_script">
+<code class="descclassname">cdt.utils.R.</code><code class="descname">launch_R_script</code><span class="sig-paren">(</span><em>template</em>, <em>arguments</em>, <em>output_function=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#launch_R_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.launch_R_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch an R script, starting from a template and replacing text in file
+before execution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>template</strong> (<em>str</em>) – path to the template of the R script</li>
+<li><strong>arguments</strong> (<em>dict</em>) – Arguments that modify the template’s placeholders
+with arguments</li>
+<li><strong>output_function</strong> (<em>function</em>) – Function to execute <strong>after</strong> the execution
+of the R script, and its output is returned by this function. Used
+traditionally as a function to retrieve the results of the
+execution.</li>
+<li><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the R subprocess.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Returns the output of the <code class="docutils literal notranslate"><span class="pre">output_function</span></code> if not <cite>None</cite>
+else <cite>True</cite> or <cite>False</cite> depending on whether the execution was
+successful.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.io">
+<span id="cdt-utils-io"></span><h2>cdt.utils.io<a class="headerlink" href="#module-cdt.utils.io" title="Permalink to this headline">¶</a></h2>
+<p>Formatting and import functions.</p>
+<p>Author: Diviyan Kalainathan
+Date : 2/06/17</p>
+<dl class="function">
+<dt id="cdt.utils.io.read_causal_pairs">
+<code class="descclassname">cdt.utils.io.</code><code class="descname">read_causal_pairs</code><span class="sig-paren">(</span><em>filename</em>, <em>scale=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_causal_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_causal_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – path of the file to read or DataFrame containing the data</li>
+<li><strong>scale</strong> (<em>bool</em>) – Scale the data</li>
+<li><strong>kwargs</strong> – parameters to be passed to pandas.read_csv</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.io.read_adjacency_matrix">
+<code class="descclassname">cdt.utils.io.</code><code class="descname">read_adjacency_matrix</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_adjacency_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a file (containing an adjacency matrix) and convert it into a
+directed or undirected networkx graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – file to read or DataFrame containing the data</li>
+<li><strong>directed</strong> (<em>bool</em>) – Return directed graph</li>
+<li><strong>kwargs</strong> – extra parameters to be passed to pandas.read_csv</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">networkx graph containing the graph.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><strong>networkx.DiGraph</strong> or <strong>networkx.Graph</strong> depending on the
+<code class="docutils literal notranslate"><span class="pre">directed</span></code> parameter.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.io.read_list_edges">
+<code class="descclassname">cdt.utils.io.</code><code class="descname">read_list_edges</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_list_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_list_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a file (containing list of edges) and convert it into a directed
+or undirected networkx graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – file to read or DataFrame containing the data</li>
+<li><strong>directed</strong> (<em>bool</em>) – Return directed graph</li>
+<li><strong>kwargs</strong> – extra parameters to be passed to pandas.read_csv</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">networkx graph containing the graph.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><strong>networkx.DiGraph</strong> or <strong>networkx.Graph</strong> depending on the
+<code class="docutils literal notranslate"><span class="pre">directed</span></code> parameter.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.graph">
+<span id="cdt-utils-graph"></span><h2>cdt.utils.graph<a class="headerlink" href="#module-cdt.utils.graph" title="Permalink to this headline">¶</a></h2>
+<p>Utilities for graph not included in Networkx.</p>
+<dl class="function">
+<dt id="cdt.utils.graph.dagify_min_edge">
+<code class="descclassname">cdt.utils.graph.</code><code class="descname">dagify_min_edge</code><span class="sig-paren">(</span><em>g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#dagify_min_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.dagify_min_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input a graph and output a DAG.</p>
+<p>The heuristic is to reverse the edge with the lowest score of the cycle
+if possible, else remove it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<em>networkx.DiGraph</em>) – Graph to modify to output a DAG</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">DAG made out of the input graph.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.loss">
+<span id="cdt-utils-loss"></span><h2>cdt.utils.loss<a class="headerlink" href="#module-cdt.utils.loss" title="Permalink to this headline">¶</a></h2>
+<p>Pytorch implementation of Losses and tools.</p>
+<dl class="class">
+<dt id="cdt.utils.loss.MMDloss">
+<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">MMDloss</code><span class="sig-paren">(</span><em>input_size</em>, <em>bandwidths=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#MMDloss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MMDloss" title="Permalink to this definition">¶</a></dt>
+<dd><p>“<strong>[torch.nn.Module]</strong> Maximum Mean Discrepancy Metric to compare
+empirical distributions.</p>
+<p>The MMD score is defined by:</p>
+<div class="math notranslate nohighlight">
+\[\widehat{MMD_k}(\mathcal{D}, \widehat{\mathcal{D}}) =
+\frac{1}{n^2} \sum_{i, j = 1}^{n} k(x_i, x_j) + \frac{1}{n^2}
+\sum_{i, j = 1}^{n} k(\hat{x}_i, \hat{x}_j) - \frac{2}{n^2}
+\sum_{i,j = 1}^n k(x_i, \hat{x}_j)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{D} \text{ and } \widehat{\mathcal{D}}\)</span> represent
+respectively the observed and empirical distributions, <span class="math notranslate nohighlight">\(k\)</span> represents
+the RBF kernel and <span class="math notranslate nohighlight">\(n\)</span> the batch size.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_size</strong> (<em>int</em>) – Fixed batch size.</li>
+<li><strong>bandwiths</strong> (<em>list</em>) – List of bandwiths to take account of. Defaults at
+[0.01, 0.1, 1, 10, 100]</li>
+<li><strong>device</strong> (<em>str</em>) – PyTorch device on which the computation will be made.
+Defaults at <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Inputs: empirical, observed</dt>
+<dd><p class="first">Forward pass: Takes both the true samples and the generated sample in any order
+and returns the MMD score between the two empirical distributions.</p>
+<ul class="last simple">
+<li><strong>empirical</strong> distribution of shape <cite>(batch_size, features)</cite>: torch.Tensor
+containing the empirical distribution</li>
+<li><strong>observed</strong> distribution of shape <cite>(batch_size, features)</cite>: torch.Tensor
+containing the observed distribution.</li>
+</ul>
+</dd>
+<dt>Outputs: score</dt>
+<dd><ul class="first last simple">
+<li><strong>score</strong> of shape <cite>(1)</cite>: Torch.Tensor containing the loss value.</li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf,
+B., &amp; Smola, A. (2012). A kernel two-sample test.
+Journal of Machine Learning Research, 13(Mar), 723-773.</p>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.utils.loss.MomentMatchingLoss">
+<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">MomentMatchingLoss</code><span class="sig-paren">(</span><em>n_moments=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#MomentMatchingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MomentMatchingLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>[torch.nn.Module]</strong> L2 Loss between k-moments between two
+distributions, k being a parameter.</p>
+<p>These moments are raw moments and not normalized.
+The loss is an L2 loss between the moments:</p>
+<div class="math notranslate nohighlight">
+\[MML(X, Y) = \sum_{m=1}^{m^*} \left( \frac{1}{n_x} \sum_{i=1}^{n_x} {x_i}^m
+- \frac{1}{n_y} \sum_{j=1}^{n_y} {y_j}^m \right)^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(m^*\)</span> represent the number of moments to compute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n_moments</strong> (<em>int</em>) – Number of moments to compute.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Input: (X, Y)</dt>
+<dd><ul class="first last simple">
+<li><strong>X</strong> represents the first empirical distribution in a torch.Tensor of
+shape <cite>(?, features)</cite></li>
+<li><strong>Y</strong> represents the second empirical distribution in a torch.Tensor of
+shape <cite>(?, features)</cite></li>
+</ul>
+</dd>
+<dt>Output: mml</dt>
+<dd><ul class="first last simple">
+<li><strong>mml</strong> is the output of the forward pass and is differenciable.
+torch.Tensor of shape <cite>(1)</cite></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.utils.loss.TTestCriterion">
+<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">TTestCriterion</code><span class="sig-paren">(</span><em>max_iter</em>, <em>runs_per_iter</em>, <em>threshold=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>A loop criterion based on t-test to check significance of results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_iter</strong> (<em>int</em>) – Maximum number of iterations authorized</li>
+<li><strong>runs_per_iter</strong> (<em>int</em>) – Number of runs performed per iteration</li>
+<li><strong>threshold</strong> (<em>float</em>) – p-value threshold, under which the loop is stopped.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cdt.utils.loss.TTestCriterion.loop">
+<code class="descname">loop</code><span class="sig-paren">(</span><em>xy</em>, <em>yx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion.loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion.loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the loop condition based on the new results and the
+parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xy</strong> (<em>list</em>) – list containing all the results for one set of samples</li>
+<li><strong>yx</strong> (<em>list</em>) – list containing all the results for the other set.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if the loop has to continue, False otherwise.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="metrics.html" class="btn btn-neutral float-right" title="cdt.metrics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generators.html" class="btn btn-neutral" title="cdt.generators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.5',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

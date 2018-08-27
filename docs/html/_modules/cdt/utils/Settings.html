@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.utils.Settings &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../generators.html">cdt.generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.utils.Settings</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.utils.Settings</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The ``cdt.utils.Settings`` module defines the settings used in the toolbox,</span>
+<span class="sd">such as the default hardware parameters; and the tools to autodetect the </span>
+<span class="sd">hardware. All parameters are overridable by accessing the ``cdt.SETTINGS`` </span>
+<span class="sd">object, a unique instance of the ``cdt.utils.ConfigSettings`` class.</span>
+
+<span class="sd">The various attributes of the ``cdt.SETTINGS`` configuration object are:</span>
+
+<span class="sd">1. ``cdt.SETTINGS.NB_JOBS`` </span>
+<span class="sd">2. ``cdt.SETTINGS.GPU``</span>
+<span class="sd">3. ``cdt.SETTINGS.default_device``</span>
+<span class="sd">4. ``cdt.SETTINGS.autoset_config``</span>
+<span class="sd">5. ``cdt.SETTINGS.verbose``</span>
+<span class="sd">6. ``cdt.SETTINGS.r_is_available``</span>
+
+<span class="sd">The hardware detection revolves around the presence of GPUs. If GPUs are </span>
+<span class="sd">present, ``cdt.SETTINGS.GPU`` is set to ``True`` and the number of jobs </span>
+<span class="sd">is set to the number of GPUs. Else the number of jobs is set to the number</span>
+<span class="sd">of CPUs. Another test performed at startup is to check if an R framework </span>
+<span class="sd">is available, unlocking additional features of the toolbox.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span> 
+
+
+<span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ignore everything except the message.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">message_warning</span>
+
+
+<div class="viewcode-block" id="ConfigSettings"><a class="viewcode-back" href="../../../settings.html#cdt.utils.Settings.ConfigSettings">[docs]</a><span class="k">class</span> <span class="nc">ConfigSettings</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Defining the class for the hardware/high level settings of the CDT.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        NB_JOBS (int): Number of parallel jobs that can be executed on current</span>
+<span class="sd">            hardware.</span>
+<span class="sd">        GPU (int): The number of available GPUs ; defaults to `0`.</span>
+<span class="sd">        default_device (str): Default device used for pytorch jobs.</span>
+<span class="sd">        r_is_available (bool): Sets itself to ``True`` if a R framework is</span>
+<span class="sd">            detected.</span>
+<span class="sd">        verbose (bool): Sets the verbosity of the toolbox algorithms.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;NB_JOBS&quot;</span><span class="p">,</span>  <span class="c1"># Number of parallel jobs runnable</span>
+                 <span class="s2">&quot;GPU&quot;</span><span class="p">,</span>  <span class="c1"># Number of GPUs Available</span>
+                 <span class="s2">&quot;default_device&quot;</span><span class="p">,</span>  <span class="c1"># Default device for gpu (pytorch 0.4)</span>
+                 <span class="s2">&quot;autoset_config&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;r_is_available&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Define here the default values of the parameters.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ConfigSettings</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NB_JOBS</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">autoset_config</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoset_config</span><span class="p">:</span>
+            <span class="bp">self</span> <span class="o">=</span> <span class="n">autoset_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_device</span> <span class="o">=</span> <span class="s1">&#39;cuda:0&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">GPU</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set attribute override for GPU=True.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;GPU&quot;</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">GPU</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_device</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_device</span> <span class="o">=</span> <span class="s1">&#39;cuda:0&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ConfigSettings</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConfigSettings.get_default"><a class="viewcode-back" href="../../../settings.html#cdt.utils.Settings.ConfigSettings.get_default">[docs]</a>    <span class="k">def</span> <span class="nf">get_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the default parameters as defined in the Settings instance.</span>
+
+<span class="sd">        This function proceeds to seamlessly retrieve the argument to pass </span>
+<span class="sd">        through, depending on either it was overidden or not: If no argument</span>
+<span class="sd">        was overridden in a function of the toolbox, the default argument will</span>
+<span class="sd">        be set to ``None``, and this function will retrieve the default </span>
+<span class="sd">        parameters as defined by the ``cdt.SETTINGS`` &#39;s attributes.</span>
+
+<span class="sd">        It has two modes of processing:</span>
+
+<span class="sd">        1. **kwargs for retrieving a single argument: ``get_default(argument_name=value)``.</span>
+<span class="sd">        2. *args through a list of tuples of the shape ``(&#39;argument_name&#39;, value)`` to retrieve multiple values at once.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">retrieve_param</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;device&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_device</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">retrieve_param</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;As dict is unordered, it is impossible to give&quot;</span>
+                                <span class="s2">&quot;the parameters in the correct order.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">retrieve_param</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">out</span></div></div>
+
+
+<div class="viewcode-block" id="autoset_settings"><a class="viewcode-back" href="../../../settings.html#cdt.utils.Settings.autoset_settings">[docs]</a><span class="k">def</span> <span class="nf">autoset_settings</span><span class="p">(</span><span class="n">set_var</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.</span>
+
+<span class="sd">    Return default config if variable not set.</span>
+<span class="sd">    :param set_var: Variable to set. Must be of type ConfigSettings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">tuple</span><span class="p">:</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">devices</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span>
+            <span class="n">set_var</span><span class="o">.</span><span class="n">NB_JOBS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Detecting CUDA devices : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">devices</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="n">check_cuda_devices</span><span class="p">()</span>
+        <span class="n">set_var</span><span class="o">.</span><span class="n">NB_JOBS</span> <span class="o">=</span> <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Detecting </span><span class="si">{}</span><span class="s2"> CUDA devices.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No GPU automatically detected. Setting SETTINGS.GPU to 0, &quot;</span> <span class="o">+</span>
+                          <span class="s2">&quot;and SETTINGS.NB_JOBS to cpu_count.&quot;</span><span class="p">)</span>
+            <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">set_var</span><span class="o">.</span><span class="n">NB_JOBS</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">set_var</span></div>
+
+
+<div class="viewcode-block" id="check_cuda_devices"><a class="viewcode-back" href="../../../settings.html#cdt.utils.Settings.check_cuda_devices">[docs]</a><span class="k">def</span> <span class="nf">check_cuda_devices</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Output some information on CUDA-enabled devices on your computer, </span>
+<span class="sd">    including current memory usage. Modified to only get number of devices.</span>
+
+<span class="sd">    It&#39;s a port of https://gist.github.com/f0k/0d6431e3faa60bffc788f8b4daa029b1</span>
+<span class="sd">    from C to Python with ctypes, so it can run without compiling</span>
+<span class="sd">    anything. Note that this is a direct translation with no attempt to</span>
+<span class="sd">    make the code Pythonic. It&#39;s meant as a general demonstration on how</span>
+<span class="sd">    to obtain CUDA device information from Python without resorting to</span>
+<span class="sd">    nvidia-smi or a compiled Python extension.</span>
+
+
+<span class="sd">    .. note:: Author: Jan Schlüter, https://gist.github.com/63a664160d016a491b2cbea15913d549.git</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">ctypes</span>
+
+    <span class="c1"># Some constants taken from cuda.h</span>
+    <span class="n">CUDA_SUCCESS</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">libnames</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;libcuda.so&#39;</span><span class="p">,</span> <span class="s1">&#39;libcuda.dylib&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda.dll&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">libname</span> <span class="ow">in</span> <span class="n">libnames</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cuda</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="n">libname</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># raise OSError(&quot;could not load any of: &quot; + &#39; &#39;.join(libnames))</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="n">nGpus</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">()</span>
+    <span class="n">error_str</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">()</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">cuda</span><span class="o">.</span><span class="n">cuInit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="n">CUDA_SUCCESS</span><span class="p">:</span>
+        <span class="n">cuda</span><span class="o">.</span><span class="n">cuGetErrorString</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">error_str</span><span class="p">))</span>
+        <span class="c1"># print(&quot;cuInit failed with error code %d: %s&quot; % (result, error_str.value.decode()))</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">cuda</span><span class="o">.</span><span class="n">cuDeviceGetCount</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">nGpus</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="n">CUDA_SUCCESS</span><span class="p">:</span>
+        <span class="n">cuda</span><span class="o">.</span><span class="n">cuGetErrorString</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">error_str</span><span class="p">))</span>
+        <span class="c1"># print(&quot;cuDeviceGetCount failed with error code %d: %s&quot; % (result, error_str.value.decode()))</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="c1"># print(&quot;Found %d device(s).&quot; % nGpus.value)</span>
+    <span class="k">return</span> <span class="n">nGpus</span><span class="o">.</span><span class="n">value</span></div>
+
+
+<span class="n">SETTINGS</span> <span class="o">=</span> <span class="n">ConfigSettings</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2.5',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

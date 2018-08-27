@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Causal Discovery Toolbox Documentation &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cdt.causality" href="causality.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Causal Discovery Toolbox Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="causal-discovery-toolbox-documentation">
+<span id="causal-discovery-toolbox-documentation"></span><h1>Causal Discovery Toolbox Documentation<a class="headerlink" href="#causal-discovery-toolbox-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Package for causal inference in graphs and in the pairwise settings for Python&gt;=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.</p>
+<p><a class="reference external" href="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="Build Status" src="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master" /></a>
+<a class="reference external" href="https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md"><img alt="Hex.pm" src="https://img.shields.io/hexpm/l/plug.svg?maxAge=259200" /></a>
+<a class="reference external" href="#"><img alt="Python.pm" src="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200" /></a>
+<a class="reference external" href="#"><img alt="version" src="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200" /></a></p>
+<p>It implements lots of algorithms for graph structure recovery (including algorithms from the <strong>bnlearn</strong>, <strong>pcalg</strong> packages), mainly based out of observational data.</p>
+<p>An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb">jupyter-notebook</a></p>
+<p>Install it using pip: (See more details on installation below)</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install cdt
+</pre></div>
+</div>
+<div class="section" id="installation">
+<span id="installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The packages requires a python version &gt;=3.5, as well as some libraries listed in <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/requirements.txt">requirements file</a>. For some additional functionalities, more libraries are needed for these extra functions and options to become available. Here is a quick install guide of the package, starting off with the minimal install up to the full installation.</p>
+<p><strong>Note</strong> : A (mini/ana)conda framework would help installing all those packages and therefore could be recommended for non-expert users.</p>
+<div class="section" id="install-pytorch">
+<span id="install-pytorch"></span><h3>Install PyTorch<a class="headerlink" href="#install-pytorch" title="Permalink to this headline">¶</a></h3>
+<p>As some of the key algorithms in the <em>cdt</em> package use the PyTorch package, it is required to install it.
+Check out their website to install the PyTorch version suited to your hardware configuration: http://pytorch.org</p>
+</div>
+<div class="section" id="install-the-causaldiscoverytoolbox-package">
+<span id="install-the-causaldiscoverytoolbox-package"></span><h3>Install the CausalDiscoveryToolbox package<a class="headerlink" href="#install-the-causaldiscoverytoolbox-package" title="Permalink to this headline">¶</a></h3>
+<p>The package is available on PyPi:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install cdt
+</pre></div>
+</div>
+<p>Or you can also install it from source.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git  <span class="c1"># Download the package </span>
+$ <span class="nb">cd</span> CausalDiscoveryToolbox
+$ pip install -r requirements.txt  <span class="c1"># Install the requirements</span>
+$ python setup.py install develop --user
+</pre></div>
+</div>
+<p><strong>The package is then up and running ! You can run most of the algorithms in the CausalDiscoveryToolbox, you might get warnings: some additional features are not available</strong></p>
+<p>From now on, you can import the library using :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cdt</span>
+</pre></div>
+</div>
+<p>Check out the package structure and more info on the package itself <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/documentation.md">here</a>.</p>
+</div>
+<div class="section" id="additional-r-and-r-libraries">
+<span id="additional-r-and-r-libraries"></span><h3>Additional : R and R libraries<a class="headerlink" href="#additional-r-and-r-libraries" title="Permalink to this headline">¶</a></h3>
+<p>In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, … while using the <em>cdt</em> framework, it is required to install R.</p>
+<p>Check out how to install all R dependencies in the before-install section of the <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/.travis.yml">travis.yml</a> file for debian based distributions.
+The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt">r-requirements file</a> notes all the R packages used by the toolbox.</p>
+</div>
+</div>
+<div class="section" id="overview">
+<span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="general-package-structure">
+<span id="general-package-structure"></span><h3>General package structure<a class="headerlink" href="#general-package-structure" title="Permalink to this headline">¶</a></h3>
+<p>The following figure shows how the package and its algorithms are structured</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cdt package
+|
+|- independence
+|  |- skeleton (Infering the skeleton from data, and removing spurious connections)
+|  |  |- Lasso variants (Randomized Lasso[1], Glasso[2], HSICLasso[3])
+|  |  |- FSGNN (CGNN variant for feature selection)
+|  |  |- Network deconvolution[4]
+|  |  |- Skeleton recovery using feature selection algorithms (RFECV[5], LinearSVR[6], RRelief[7], ARD[8,9], DecisionTree)
+|  |- stats (pairwise methods for dependency)
+|     |- Correlation (Pearson, Spearman, KendallTau)
+|     |- Kernel based (NormalizedHSIC[10])
+|     |- Mutual information based (MIRegression, Adjusted Mutual Information[11], Normalized mutual information[11])
+|
+|- generators
+|  |- RandomGraphFromData (Generate a random graph similar to inputdata)
+|  |- RandomGraphGenerator (Generates a random graph, can generate pairs of variables)
+|  |- generate_graph_with_structure (generates a graph with a fixed structure)
+|
+|- causality
+|  |- graph (methods for graph inference)
+|  |  |- CGNN[12] method (In tensorflow, pytorch version needs revision)
+|  |  |- PC[13]
+|  |  |- GES[13]
+|  |  |- GIES[13]
+|  |  |- LiNGAM[13]
+|  |  |- CAM[13]
+|  |- pairwise (methods for pairwise inference)
+|     |- ANM[14] (Additive Noise Model)
+|     |- IGCI[15] (Information Geometric Causal Inference)
+|     |- RCC[16] (Randomized Causation Coefficient)
+|     |- NCC[17] (Neural Causation Coefficient)
+|     |- GNN[12] (Generative Neural Network -- Part of CGNN )
+|     |- Bivariate fit (Baseline method of regression)
+|     |- GPI[18], PNL[19], Jarfo[20] to implement
+|
+|- utils
+   |- Settings -&gt; CGNN_SETTINGS, SETTINGS (hardware settings)
+   |- Loss -&gt; MMD loss [21, 22] &amp; various other loss functions
+   |- metrics -&gt; Implements the metrics for graph scoring
+   |- Formats -&gt; for importing data formats
+   |- Graph -&gt; defines the DirectedGraph and UndirectedGraph class (see below)
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="hardware-and-algorithm-settings">
+<span id="hardware-and-algorithm-settings"></span><h3>Hardware and algorithm settings<a class="headerlink" href="#hardware-and-algorithm-settings" title="Permalink to this headline">¶</a></h3>
+<p>The toolbox has a SETTINGS class that defines the hardware settings . Those settings are unique and their default parameters are defined in <strong><em>cdt/utils/Settings</em></strong>.</p>
+<p>These parameters are accessible and overridable via accessing the class :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cdt</span>
+<span class="n">cdt</span><span class="o">.</span><span class="n">SETTINGS</span>
+</pre></div>
+</div>
+<p>Moreover, the hardware parameters are detected and defined automatically (including number of GPUs, CPUs, available optional packages) at the <strong>import</strong> of the package using the <strong>cdt.utils.Settings.autoset_settings</strong> method, run at startup.</p>
+</div>
+<div class="section" id="the-graph-class">
+<span id="the-graph-class"></span><h3>The graph class<a class="headerlink" href="#the-graph-class" title="Permalink to this headline">¶</a></h3>
+<p>The whole package revolves around using the <strong>DiGraph</strong> and <strong>Graph</strong> classes from the <strong>networkx</strong> package.</p>
+</div>
+<div class="section" id="references">
+<span id="references"></span><h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>[1] Wang, S., Nan, B., Rosset, S., &amp; Zhu, J. (2011). Random lasso. The annals of applied statistics, 5(1), 468.</li>
+<li>[2] Friedman, J., Hastie, T., &amp; Tibshirani, R. (2008). Sparse inverse covariance estimation with the graphical lasso. Biostatistics, 9(3), 432-441.</li>
+<li>[3] Yamada, M., Jitkrittum, W., Sigal, L., Xing, E. P., &amp; Sugiyama, M. (2014). High-dimensional feature selection by feature-wise kernelized lasso. Neural computation, 26(1), 185-207.</li>
+<li>[4] Feizi, S., Marbach, D., Médard, M., &amp; Kellis, M. (2013). Network deconvolution as a general method to distinguish direct dependencies in networks. Nature biotechnology, 31(8), 726-733.</li>
+<li>[5] Guyon, I., Weston, J., Barnhill, S., &amp; Vapnik, V. (2002). Gene selection for cancer classification using support vector machines. Machine learning, 46(1), 389-422.</li>
+<li>[6] Vapnik, V., Golowich, S. E., &amp; Smola, A. J. (1997). Support vector method for function approximation, regression estimation and signal processing. In Advances in neural information processing systems (pp. 281-287).</li>
+<li>[7] Kira, K., &amp; Rendell, L. A. (1992, July). The feature selection problem: Traditional methods and a new algorithm. In Aaai (Vol. 2, pp. 129-134).</li>
+<li>[8] MacKay,  D.  J.  (1992). Bayesian interpolation. Neural Computation, 4, 415–447.</li>
+<li>[9] Neal, R. M. (1996). Bayesian learning for neural networks. No. 118 in Lecture Notes in Statistics. New York: Springer.</li>
+<li>[10] Gretton, A., Bousquet, O., Smola, A., &amp; Scholkopf, B. (2005, October). Measuring statistical dependence with Hilbert-Schmidt norms. In ALT (Vol. 16, pp. 63-78).</li>
+<li>[11] Vinh, N. X., Epps, J., &amp; Bailey, J. (2010). Information theoretic measures for clusterings comparison: Variants, properties, normalization and correction for chance. Journal of Machine Learning Research, 11(Oct), 2837-2854.</li>
+<li>[12] Goudet, O., Kalainathan, D., Caillou, P., Lopez-Paz, D., Guyon, I., Sebag, M., … &amp; Tubaro, P. (2017). Learning functional causal models with generative neural networks. arXiv preprint arXiv:1709.05321.</li>
+<li>[13] Spirtes, P., Glymour, C., Scheines, R. (2000). Causation, Prediction, and Search. MIT press.</li>
+<li>[14] Hoyer, P. O., Janzing, D., Mooij, J. M., Peters, J., &amp; Schölkopf, B. (2009). Nonlinear causal discovery with additive noise models. In Advances in neural information processing systems (pp. 689-696).</li>
+<li>[15] Janzing, D., Mooij, J., Zhang, K., Lemeire, J., Zscheischler, J., Daniušis, P., … &amp; Schölkopf, B. (2012). Information-geometric approach to inferring causal directions. Artificial Intelligence, 182, 1-31.</li>
+<li>[16] Lopez-Paz, D., Muandet, K., Schölkopf, B., &amp; Tolstikhin, I. (2015, June). Towards a learning theory of cause-effect inference. In International Conference on Machine Learning (pp. 1452-1461).</li>
+<li>[17] Lopez-Paz, D., Nishihara, R., Chintala, S., Schölkopf, B., &amp; Bottou, L. (2017, July). Discovering causal signals in images. In Proceedings of CVPR.</li>
+<li>[18] Stegle, O., Janzing, D., Zhang, K., Mooij, J. M., &amp; Schölkopf, B. (2010). Probabilistic latent variable models for distinguishing between cause and effect. In Advances in Neural Information Processing Systems (pp. 1687-1695).</li>
+<li>[19] Zhang, K., &amp; Hyvärinen, A. (2009, June). On the identifiability of the post-nonlinear causal model. In Proceedings of the twenty-fifth conference on uncertainty in artificial intelligence (pp. 647-655). AUAI Press.</li>
+<li>[20] Fonollosa, J. A. (2016). Conditional distribution variability measures for causality detection. arXiv preprint arXiv:1601.06680.</li>
+<li>[21] Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., &amp; Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.</li>
+<li>[22] Li, Y., Swersky, K., &amp; Zemel, R. (2015). Generative moment matching networks. In Proceedings of the 32nd International Conference on Machine Learning (ICML-15) (pp. 1718-1727).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="table-of-contents">
+<span id="table-of-contents"></span><h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<span id="indices-and-tables"></span><h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="causality.html" class="btn btn-neutral float-right" title="cdt.causality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.5',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

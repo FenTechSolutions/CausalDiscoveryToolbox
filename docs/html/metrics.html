@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Toolbox Settings" href="settings.html" />
+    <link rel="prev" title="cdt.utils" href="utils.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>cdt.metrics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/metrics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-cdt.utils.metrics">
+<span id="cdt-metrics"></span><h1>cdt.metrics<a class="headerlink" href="#module-cdt.utils.metrics" title="Permalink to this headline">¶</a></h1>
+<p>The CDT package implements some metrics to evaluate the output of a
+algorithm given a ground truth. All these metrics are in the form
+<cite>metric(target, prediction)</cite>, where any of those arguments are either numpy
+matrixes that represent the adjacency matrix or <cite>networkx.DiGraph</cite> instances.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">in the case of heterogeneous types of arguments, special care has
+to be given to the order of the nodes, as the type <cite>networkx.DiGraph</cite> does
+not retain node order.</p>
+</div>
+<dl class="function">
+<dt id="cdt.utils.metrics.precision_recall">
+<code class="descclassname">cdt.utils.metrics.</code><code class="descname">precision_recall</code><span class="sig-paren">(</span><em>target</em>, <em>prediction</em>, <em>low_confidence_undirected=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/metrics.html#precision_recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.precision_recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute precision-recall statistics for directed graphs.</p>
+<p>Precision recall statistics are useful to compare algorithms that make
+predictions with a confidence score. Using these statistics, performance
+of an algorithms given a set threshold (confidence score) can be
+approximated.
+Area under the precision-recall curve, as well as the coordinates of the
+precision recall curve are computed, using the scikit-learn library tools.
+Note that unlike the AUROC metric, this metric does not account for class
+imbalance.</p>
+<p>Precision is defined by: <span class="math notranslate nohighlight">\(Pr=tp/(tp+fp)\)</span> and directly denotes the
+total classification accuracy given a confidence threshold. On the other
+hand, Recall is defined by: <span class="math notranslate nohighlight">\(Re=tp/(tp+fn)\)</span> and denotes
+misclassification given a threshold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
+ones and zeros.</li>
+<li><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
+algorithm to evaluate.</li>
+<li><strong>low_confidence_undirected</strong> – Put the lowest confidence possible to
+undirected edges (edges that are symmetric in the confidence score).
+Default: False</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>tuple containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Area under the precision recall curve (float)</li>
+<li>Tuple of data points of the precision-recall curve used in the computation of the score (tuple).</li>
+</ul>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># adjacency matrixes of size 10x10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aupr</span><span class="p">,</span> <span class="n">curve</span> <span class="o">=</span> <span class="n">precision_recall</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># leave low_confidence_undirected to False as the predictions are continuous</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.metrics.SHD">
+<code class="descclassname">cdt.utils.metrics.</code><code class="descname">SHD</code><span class="sig-paren">(</span><em>target</em>, <em>pred</em>, <em>double_for_anticausal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/metrics.html#SHD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.SHD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Structural Hamming Distance.</p>
+<p>The Structural Hamming Distance (SHD) is a standard distance to compare
+graphs by their adjacency matrix. It consists in computing the difference
+between the two (binary) adjacency matrixes: every edge that is either
+missing or not in the target graph is counted as a mistake. Note that
+for directed graph, two mistakes can be counted as the edge in the wrong
+direction is false and the edge in the good direction is missing ; the
+<cite>double_for_anticausal</cite> argument accounts for this remark. Setting it to
+<cite>False</cite> will count this as a single mistake.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
+ones and zeros.</li>
+<li><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
+algorithm to evaluate.</li>
+<li><strong>double_for_anticausal</strong> (<em>bool</em>) – Count the badly oriented edges as two
+mistakes. Default: True</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>Structural Hamming Distance (int).</p>
+<blockquote>
+<div><p>The value tends to zero as the graphs tend to be identical.</p>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span> <span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SHD</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">double_for_anticausal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.metrics.SID">
+<code class="descclassname">cdt.utils.metrics.</code><code class="descname">SID</code><span class="sig-paren">(</span><em>target</em>, <em>pred</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/metrics.html#SID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.SID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Strutural Intervention Distance.</p>
+<p>[R wrapper] The Structural Intervention Distance (SID) is a new distance
+for graphs introduced by Peters and Bühlmann (2013). This distance was
+created to account for the shortcomings of the SHD metric for a causal
+sense.
+It consists in computing the path between all the pairs of variables, and
+checks if the causal relationship between the variables is respected.
+The given graphs have to be DAGs for the SID metric to make sense.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
+ones and zeros, and instance of either numpy.ndarray or
+networkx.DiGraph. Must be a DAG.</li>
+<li><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
+algorithm to evaluate. Must be a DAG.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>Structural Intervention Distance.</p>
+<blockquote>
+<div><p>The value tends to zero as the graphs tends to be identical.</p>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,
+Jonas Peters, Peter Bühlmann: <a class="reference external" href="https://arxiv.org/abs/1306.1043">https://arxiv.org/abs/1306.1043</a></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SID</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="settings.html" class="btn btn-neutral float-right" title="Toolbox Settings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="utils.html" class="btn btn-neutral" title="cdt.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.5',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
