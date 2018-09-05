@@ -7,7 +7,7 @@ Cause-effect models.
 #
 # License: Apache, Version 2.0
 
-import features as f
+from .features import extract_features, FeatureMapper
 import numpy as np
 from sklearn import pipeline
 from sklearn.base import BaseEstimator
@@ -90,14 +90,14 @@ class Pipeline(pipeline.Pipeline):
 
 def get_pipeline(features, regressor=None, params=None):
     steps = [
-        ("extract_features", f.FeatureMapper(features)),
+        ("extract_features", FeatureMapper(features)),
         ("regressor", regressor(**params)),
         ]
     return Pipeline(steps)
 
 class CauseEffectEstimatorOneStep(BaseEstimator):
     def __init__(self, features=None, regressor=None, params=None, symmetrize=True):
-        self.extractor = f.extract_features
+        self.extractor = extract_features
         self.classifier = get_pipeline(features, regressor, params)
         self.symmetrize = symmetrize
     
@@ -123,7 +123,7 @@ class CauseEffectEstimatorOneStep(BaseEstimator):
 
 class CauseEffectEstimatorSymmetric(BaseEstimator):
     def __init__(self, features=None, regressor=None, params=None, symmetrize=True):
-        self.extractor = f.extract_features
+        self.extractor = extract_features
         self.classifier_left = get_pipeline(features, regressor, params)
         self.classifier_right = get_pipeline(features, regressor, params)
         self.symmetrize = symmetrize
@@ -176,7 +176,7 @@ class CauseEffectEstimatorSymmetric(BaseEstimator):
 
 class CauseEffectEstimatorID(BaseEstimator):
     def __init__(self, features_independence=None, features_direction=None, regressor=None, params=None, symmetrize=True):
-        self.extractor = f.extract_features
+        self.extractor = extract_features
         self.classifier_independence = get_pipeline(features_independence, regressor, params)
         self.classifier_direction = get_pipeline(features_direction, regressor, params)
         self.symmetrize = symmetrize
@@ -254,7 +254,7 @@ def pmap(func, mlist, n_jobs):
     return mmap(func, mlist)
 
 class CauseEffectSystemCombination(BaseEstimator):  
-    def __init__(self, extractor=f.extract_features, weights=None, symmetrize=True, n_jobs=-1):
+    def __init__(self, extractor=extract_features, weights=None, symmetrize=True, n_jobs=-1):
         self.extractor = extractor
         self.features = selected_features
         self.systems = [

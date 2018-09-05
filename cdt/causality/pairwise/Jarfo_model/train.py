@@ -8,17 +8,17 @@ Cause-effect model training
 # License: Apache, Version 2.0
 
 import sys
-import data_io
+from .data_io import write_data, save_model
 import numpy as np
-import estimator as ce
-import features as f
+from .estimator import CauseEffectSystemCombination
+# import features as f
 import pandas as pd
-from scipy.optimize import fmin
-import _pickle as pickle
-import util
+# from scipy.optimize import fmin
+# import _pickle as pickle
+from .util import random_permutation
 
 
-MODEL = ce.CauseEffectSystemCombination
+MODEL = CauseEffectSystemCombination
 MODEL_PARAMS = {'weights': [0.383, 0.370, 0.247], 'n_jobs': -1}
 
 
@@ -28,21 +28,19 @@ def train(df, tar, save = False):
     train_filter = None
 
     model = MODEL(**MODEL_PARAMS)
-
     print("Reading in training data " + set1)
     train = df
     print("Extracting features")
     train = model.extract(train)
     if save:
         print("Saving train features")
-        data_io.write_data(set1, train)
+        write_data(set1, train)
     # target = data_io.read_target(set1)
 
 
     # Data selection
-    train, target = util.random_permutation(train, tar)
+    train, target = random_permutation(train, tar)
     train_filter = None
-
     if train_filter is not None:
         train = train[train_filter]
         target = target[train_filter]
@@ -54,6 +52,6 @@ def train(df, tar, save = False):
     if save:
         model_path = "model.pkl"
         print("Saving model", model_path)
-        data_io.save_model(model, model_path)
+        save_model(model, model_path)
     return model
 

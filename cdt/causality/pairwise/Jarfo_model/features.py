@@ -17,7 +17,7 @@ from collections import Counter, defaultdict
 from multiprocessing import Pool
 import pandas as pd
 import operator
-import hsic
+from .hsic import FastHsicTestGamma
 import math
 
 BINARY = "Binary"
@@ -458,7 +458,7 @@ def normalized_hsic(x, tx, y, ty):
             y = to_numerical(y, x)
         x = (x - np.mean(x)) / np.std(x)
         y = (y - np.mean(y)) / np.std(y)
-        h = hsic.FastHsicTestGamma(x, y)
+        h = FastHsicTestGamma(x, y)
     return h
 
 
@@ -581,10 +581,10 @@ all_features = [
     ('Discrete Mutual Information', ['A', 'A type', 'B', 'B type'], MultiColumnTransform(discrete_mutual_information)),
     ('Normalized Discrete Mutual Information',
      ['Discrete Mutual Information[A,A type,B,B type]', 'Min[Discrete Entropy[A,A type],Discrete Entropy[B,B type]]'],
-     MultiColumnTransform(operator.div)),
+     MultiColumnTransform(operator.truediv)),
     ('Normalized Discrete Mutual Information',
      ['Discrete Mutual Information[A,A type,B,B type]', 'Discrete Joint Entropy[A,A type,B,B type]'],
-     MultiColumnTransform(operator.div)),
+     MultiColumnTransform(operator.truediv)),
     ('Adjusted Mutual Information', ['A', 'A type', 'B', 'B type'], MultiColumnTransform(adjusted_mutual_information)),
 
     ('Polyfit', ['A', 'A type', 'B', 'B type'], MultiColumnTransform(fit)),
