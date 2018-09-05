@@ -8,6 +8,7 @@ language: python
 python:
   - "3.5"
   - "3.6"
+
 # command to install dependencies
 before_install:
   - sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
@@ -19,7 +20,6 @@ before_install:
   - sudo apt-get install build-essential  -y --allow-unauthenticated
   - sudo apt-get install libv8-3.14-dev  -y --allow-unauthenticated
   - sudo Rscript -e 'install.packages(c("V8","sfsmisc","clue","randomForest","lattice"),repos="http://cran.us.r-project.org")'
-
   - sudo Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite(c("CAM", "SID", "bnlearn", "pcalg", "kpcalg", "D2C"))'
 
 install:
@@ -28,6 +28,9 @@ install:
   - pip3 install -r requirements.txt
   - pip3 install pytest
   - pip3 install .
+  - pip3 install codecov
+
 # command to run tests
 script:
   - pytest
+  - codecov
