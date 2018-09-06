@@ -282,6 +282,7 @@ class CauseEffectSystemCombination(BaseEstimator):
         return self.extractor(features, n_jobs=self.n_jobs)
 
     def fit(self, X, y=None):
+        # print(X.columns)
         task = [(m, 'fit', (X, y)) for m in self.systems]
         self.systems = pmap(calculate_method, task, self.n_jobs)
         return self

@@ -19,7 +19,7 @@ from .util import random_permutation
 
 
 MODEL = CauseEffectSystemCombination
-MODEL_PARAMS = {'weights': [0.383, 0.370, 0.247], 'n_jobs': -1}
+MODEL_PARAMS = {'weights': [0.383, 0.370, 0.247], 'n_jobs': 1}
 
 
 def train(df, tar, save = False):
@@ -46,8 +46,10 @@ def train(df, tar, save = False):
         target = target[train_filter]
 
     print("Training model with optimal weights")
+    # print(train)
+    # print(tar.values)
     X = pd.concat([train])
-    y = np.concatenate((tar))
+    y = np.concatenate((tar.values))
     model.fit(X, y)
     if save:
         model_path = "model.pkl"

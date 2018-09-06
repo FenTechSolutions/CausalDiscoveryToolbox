@@ -135,17 +135,18 @@ def normalized_error_probability(x, tx, y, ty, ffactor=3, maxdev=3):
 
 def discrete_entropy(x, tx, ffactor=3, maxdev=3, bias_factor=0.7):
     c = discrete_probability(x, tx, ffactor, maxdev)
-    pk = np.array(c.values(), dtype=float)
+    # print(c, len(c))
+    pk = np.array(list(c.values()), dtype=float)
     pk = pk / pk.sum()
     vec = pk * np.log(pk)
     S = -np.sum(vec, axis=0)
-    return S + bias_factor * (len(pk) - 1) / float(2 * len(x))
+    return S + bias_factor * (len(pk) - 1) / float(2 * len(list(x)))
 
 
 def discrete_divergence(cx, cy):
     for a, v in cx.most_common():
-        if cy[a] == 0: cy[a] = 1
-
+        if cy[a] == 0:
+            cy[a] = 1
     nx = float(sum(cx.values()))
     ny = float(sum(cy.values()))
     sum = 0.
@@ -158,12 +159,12 @@ def discrete_divergence(cx, cy):
 
 def discrete_joint_entropy(x, tx, y, ty, ffactor=3, maxdev=3):
     x, y = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    return discrete_entropy(zip(x, y), CATEGORICAL)
+    return discrete_entropy(list(zip(x, y)), CATEGORICAL)
 
 
 def normalized_discrete_joint_entropy(x, tx, y, ty, ffactor=3, maxdev=3):
     x, y = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    e = discrete_entropy(zip(x, y), CATEGORICAL)
+    e = discrete_entropy(list(zip(x, y)), CATEGORICAL)
     nx = len_discretized_values(x, tx, ffactor, maxdev)
     ny = len_discretized_values(y, ty, ffactor, maxdev)
     if nx * ny > 0: e = e / np.log(nx * ny)
@@ -247,7 +248,7 @@ def normalized_entropy(x, tx, m=2):
     cx = Counter(x)
     if len(cx) < 2:
         return 0
-    xk = np.array(cx.keys(), dtype=float)
+    xk = np.array(list(cx.keys()), dtype=float)
     xk.sort()
     delta = (xk[1:] - xk[:-1]) / m
     counter = np.array([cx[i] for i in xk], dtype=float)
@@ -287,7 +288,7 @@ def igci(x, tx, y, ty):
 def uniform_divergence(x, tx, m=2):
     x = normalize(x, tx)
     cx = Counter(x)
-    xk = np.array(cx.keys(), dtype=float)
+    xk = np.array(list(cx.keys()), dtype=float)
     xk.sort()
     delta = np.zeros(len(xk))
     if len(xk) > 1:
@@ -365,7 +366,7 @@ def fit_noise_entropy(x, tx, y, ty, ffactor=3, maxdev=3, minc=10):
     x, y = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
     cx = Counter(x)
     entyx = []
-    for a in cx.iterkeys():
+    for a in cx:
         if cx[a] > minc:
             entyx.append(discrete_entropy(y[x == a], CATEGORICAL))
     if len(entyx) == 0: return 0
@@ -377,7 +378,7 @@ def fit_noise_skewness(x, tx, y, ty, ffactor=3, maxdev=3, minc=8):
     xd, yd = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
     cx = Counter(xd)
     skewyx = []
-    for a in cx.iterkeys():
+    for a in cx:
         if cx[a] >= minc:
             skewyx.append(normalized_skewness(y[xd == a], ty))
     if len(skewyx) == 0: return 0
@@ -388,7 +389,7 @@ def fit_noise_kurtosis(x, tx, y, ty, ffactor=3, maxdev=3, minc=8):
     xd, yd = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
     cx = Counter(xd)
     kurtyx = []
-    for a in cx.iterkeys():
+    for a in cx:
         if cx[a] >= minc:
             kurtyx.append(normalized_kurtosis(y[xd == a], ty))
     if len(kurtyx) == 0: return 0
@@ -404,7 +405,7 @@ def conditional_distribution_similarity(x, tx, y, ty, ffactor=2, maxdev=3, minc=
     py = np.array([cy[i] for i in yrange], dtype=float)
     py = py / py.sum()
     pyx = []
-    for a in cx.iterkeys():
+    for a in cx:
         if cx[a] > minc:
             yx = y[xd == a]
             if not numerical(ty):
@@ -488,6 +489,20 @@ class MultiColumnTransform(BaseEstimator):
 
     def transform(self, X, y=None):
         return np.array([self.transformer(*x[1]) for x in X.iterrows()], ndmin=2).T
+
+
+def determine_type(dffeature, categorical_threshold=70):
+
+    def type_row(feature, categorical_threshold):
+        nunique_values = len(np.unique(feature))
+        # print(nunique_values)
+        if nunique_values < 3:
+            return BINARY
+        elif nunique_values < categorical_threshold:
+            return CATEGORICAL
+        else:
+            return NUMERICAL
+    return [type_row(row, categorical_threshold) for row in dffeature]
 
 
 all_features = [
@@ -727,16 +742,23 @@ def extract_features(X, features=all_features, y=None, n_jobs=-1):
     def can_be_extracted(feature_name, column_names):
         long_feature_name = complete_feature_name(feature_name, column_names)
         to_be_extracted = ((feature_name[0] == '+') or (long_feature_name not in X.columns))
+
+        # print(long_feature_name, to_be_extracted and is_in_X(column_names))
         return to_be_extracted and is_in_X(column_names)
 
     while True:
+        for typefeature, var in [("A type","A"), ("B type", "B")]:
+            if typefeature not in X.columns:
+                X[typefeature] = determine_type(X[var])
         new_features_list = [(complete_feature_name(feature_name, column_names), column_names, extractor)
                              for feature_name, column_names, extractor in features if
                              can_be_extracted(feature_name, column_names)]
         if not new_features_list:
             break
+        # print(new_features_list)
         task = [(extractor, 'fit_transform', (X[column_names], y)) for _, column_names, extractor in new_features_list]
         new_features = pmap(calculate_method, task)
         for (feature_name, _, _), feature in zip(new_features_list, new_features):
             X[feature_name] = feature
+        #print(X.columns)
     return X

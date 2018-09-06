@@ -22,10 +22,10 @@ graph_skeleton = Glasso().predict(data_graph)
 
 def test_pairwise():
     for method in [Jarfo]:  # Jarfo
-        print(method)
+        # print(method)
         m = method()
         if hasattr(m, "fit"):
-            print(train_data)
+            # print(train_data)
             m.fit(train_data, train_target)
         r = m.predict(data_pairwise)
         assert r is not None
