@@ -11,6 +11,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.gaussian_process import GaussianProcessRegressor
 import torch as th
 
+
 class LinearMechanism(object):
     """Linear mechanism, where Effect = alpha*Cause + Noise."""
 
@@ -255,7 +256,6 @@ class GaussianProcessMix_Mechanism(object):
         return effect
 
 
-
 class NN_Mechanism(object):
 
     def __init__(self, ncauses, points, noise_function, nh=20, noise_coeff=.4):
@@ -296,8 +296,6 @@ class NN_Mechanism(object):
         return effect
 
 
-
-
 def gmm_cause(points, k=4, p1=2, p2=2):
     """Init a root cause with a Gaussian Mixture Model w/ a spherical covariance type."""
     g = GMM(k, covariance_type="spherical")
@@ -317,9 +315,11 @@ def gaussian_cause(points):
 
 def normal_noise(points):
     """Init a noise variable."""
-    return np.random.rand(1) * np.random.randn(points, 1) + random.sample([2, -2], 1)
+    return np.random.rand(1) * np.random.randn(points, 1) \
+        + random.sample([2, -2], 1)
 
 
 def uniform_noise(points):
     """Init a uniform noise variable."""
-    return np.random.rand(1) * np.random.uniform(points, 1) + random.sample([2, -2], 1)
+    return np.random.rand(1) * np.random.uniform(points, 1) \
+        + random.sample([2, -2], 1)

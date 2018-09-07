@@ -54,26 +54,12 @@ class AcyclicGraphGenerator(object):
 
     def init_variables(self, verbose=False):
         """Redefine the causes of the graph."""
-        # Resetting adjacency matrix
-        # for i in range(self.nodes-1):
-        #     for j in np.random.choice(range(i+1, self.nodes),
-        #                               np.random.randint(0, min([self.parents_max,
-        #                                                         self.nodes-i])),
-        #                               replace=False):
-        #         if i != j:
-        #             self.adjacency_matrix[i, j] = 1
-
         for j in range(1, self.nodes):
-
             nb_parents = np.random.randint(0, min([self.parents_max, j])+1)
-
             for i in np.random.choice(range(0, j), nb_parents, replace=False):
-
                 self.adjacency_matrix[i, j] = 1
 
         try:
-            # assert any([sum(self.adjacency_matrix[:, i]) ==
-            #             self.parents_max for i in range(self.nodes)])
             self.g = nx.DiGraph(self.adjacency_matrix)
             assert not list(nx.simple_cycles(self.g))
 
@@ -88,12 +74,10 @@ class AcyclicGraphGenerator(object):
                            if sum(self.adjacency_matrix[:, i])
                            else self.initial_generator for i in range(self.nodes)]
 
-    def generate(self, nb_steps=100, averaging=50, rescale=True):
+    def generate(self, rescale=True):
         """Generate data from an FCM containing cycles."""
         if self.cfunctions is None:
             self.init_variables()
-
-        print(nx.topological_sort(self.g))
 
         for i in nx.topological_sort(self.g):
             # Root cause
@@ -115,8 +99,10 @@ class AcyclicGraphGenerator(object):
         Optional keyword arguments can be passed to pandas.
         """
         if self.data is not None:
-            self.data.to_csv(fname_radical+'_data.csv', **kwargs)
-            pd.DataFrame(self.adjacency_matrix).to_csv(fname_radical+'_target.csv', **kwargs)
+            self.data.to_csv(fname_radical+'_data.csv', index=False, **kwargs)
+            pd.DataFrame(self.adjacency_matrix).to_csv(fname_radical \
+                                                       + '_target.csv',
+                                                       index=False, **kwargs)
 
         else:
             raise ValueError("Graph has not yet been generated. \

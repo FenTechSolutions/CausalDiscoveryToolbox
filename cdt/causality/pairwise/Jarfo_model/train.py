@@ -26,7 +26,9 @@ def train(df, tar, save = False):
     set1 = 'train' if len(sys.argv) < 2 else sys.argv[1]
     # set2 = [] if len(sys.argv) < 3 else sys.argv[2:]
     train_filter = None
-
+    if len(df) % 2:
+        df.drop(df.tail(1).index, inplace=True)
+        tar.drop(tar.tail(1).index, inplace=True)
     model = MODEL(**MODEL_PARAMS)
     print("Reading in training data " + set1)
     train = df

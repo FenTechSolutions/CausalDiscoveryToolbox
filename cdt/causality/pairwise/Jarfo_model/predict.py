@@ -72,5 +72,13 @@ def main():
     write_predictions(pred_path, test[0::2], predictions[0::2])
 
 
+def predict(df, model):
+    df.columns = ["A", "B"]
+    # print(df)
+    df2 = model.extract(df)
+    # print(df2)
+    return model.predict(df2)
+ 
+
 if __name__ == "__main__":
     main()

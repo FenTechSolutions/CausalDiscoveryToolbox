@@ -9,9 +9,9 @@ from cdt import SETTINGS
 SETTINGS.NB_JOBS = 1
 
 
-train_data = read_causal_pairs("{}/../datasets/Example_pairwise_pairs.csv".format(os.path.dirname(os.path.realpath(__file__)))).iloc[:4, :50]
+train_data = read_causal_pairs("{}/../datasets/Example_pairwise_pairs.csv".format(os.path.dirname(os.path.realpath(__file__)))).iloc[:, :50]
 
-train_target = pd.read_csv("{}/../datasets/Example_pairwise_targets.csv".format(os.path.dirname(os.path.realpath(__file__)))).iloc[:4, :50].set_index("SampleID")
+train_target = pd.read_csv("{}/../datasets/Example_pairwise_targets.csv".format(os.path.dirname(os.path.realpath(__file__)))).iloc[:, :50].set_index("SampleID")
 
 data_pairwise = read_causal_pairs("{}/../datasets/Example_pairwise_pairs.csv".format(os.path.dirname(os.path.realpath(__file__)))).iloc[:5, :50]
 
