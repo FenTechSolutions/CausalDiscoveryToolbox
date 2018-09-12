@@ -103,13 +103,15 @@ class PC(GraphModel):
         self.dir_CI_test = {"gaussian": "pcalg::gaussCItest",
                             "hsic": "kpcalg::kernelCItest",
                             "discrete": "pcalg::disCItest",
-                            "binary": "pcalg::binCItest"}
+                            "binary": "pcalg::binCItest",
+                            "rcot": "RCIT::RCoT"}
         self.dir_method_indep = {'dcc': "data=X, ic.method=\"dcc\"",
                                  'hsic_gamma': "data=X, ic.method=\"hsic.gamma\"",
                                  'hsic_perm': "data=X, ic.method=\"hsic.perm\"",
                                  'hsic_clus': "data=X, ic.method=\"hsic.clus\"",
-                                 'corr': "C = cor(X), n = nrow(X)"}
-        self.CI_test = CItest 
+                                 'corr': "C = cor(X), n = nrow(X)",
+                                 'none': "data=X, ic.method=\"RCIT::RCoT\""}
+        self.CI_test = CItest
         self.method_indep = method_indep
         self.alpha = alpha
         self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
@@ -197,13 +199,14 @@ class PC(GraphModel):
     def _run_pc(self, data, fixedEdges=None, fixedGaps=None, verbose=True):
         """Setting up and running pc with all arguments."""
         # Checking coherence of arguments
+        # print(self.arguments)
         if (self.arguments['{CITEST}'] == self.dir_CI_test['hsic']
            and self.arguments['{METHOD_INDEP}'] == self.dir_method_indep['corr']):
             warnings.warn('Selected method for indep is unfit for the hsic test,'
                           ' setting the hsic.gamma method.')
             self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['hsic_gamma']
 
-        elif (self.arguments['{CITEST}'] != self.dir_CI_test['hsic']
+        elif (self.arguments['{CITEST}'] == self.dir_CI_test['gaussian']
               and self.arguments['{METHOD_INDEP}'] != self.dir_method_indep['corr']):
             warnings.warn('Selected method for indep is unfit for the selected test,'
                           ' setting the classic correlation-based method.')
