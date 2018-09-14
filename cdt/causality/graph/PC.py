@@ -104,7 +104,7 @@ class PC(GraphModel):
                             "hsic": "kpcalg::kernelCItest",
                             "discrete": "pcalg::disCItest",
                             "binary": "pcalg::binCItest",
-                            "rcot": "RCIT::RCoT"}
+                            "rcot": "RCIT:::CItest"}
         self.dir_method_indep = {'dcc': "data=X, ic.method=\"dcc\"",
                                  'hsic_gamma': "data=X, ic.method=\"hsic.gamma\"",
                                  'hsic_perm': "data=X, ic.method=\"hsic.perm\"",
