@@ -3,11 +3,13 @@ sudo: required
 branches:
   only:
   - master
+  - dev
 
 language: python
 python:
   - "3.5"
   - "3.6"
+  - "3.7"
 
 # command to install dependencies
 before_install:
@@ -21,12 +23,10 @@ before_install:
   - sudo apt-get install libv8-3.14-dev  -y --allow-unauthenticated
   - sudo Rscript -e 'install.packages(c("V8","sfsmisc","clue","randomForest","lattice","devtools","MASS"),repos="http://cran.us.r-project.org")'
   - sudo Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite(c("CAM", "SID", "bnlearn", "pcalg", "kpcalg", "D2C"))'
-  - sudo Rscript -e 'library(devtools); install_github("cran/momentchi2"); install_github("ericstrobl/RCIT")'
+  - sudo Rscript -e 'library(devtools); install_github("cran/momentchi2"); install_github("Diviyan-Kalainathan/RCIT")'
 
 
 install:
-  - if [[ `python3 -c 'import sys ; print(".".join([str(i) for i in sys.version_info[:][:2]]))'` == '3.5' ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.4.0-cp35-cp35m-linux_x86_64.whl; fi
-  - if [[ `python3 -c 'import sys ; print(".".join([str(i) for i in sys.version_info[:][:2]]))'` == '3.6' ]]; then pip3 install http://download.pytorch.org/whl/cpu/torch-0.4.0-cp36-cp36m-linux_x86_64.whl; fi
   - pip3 install -r requirements.txt
   - pip3 install pytest pytest-cov
   - pip3 install .

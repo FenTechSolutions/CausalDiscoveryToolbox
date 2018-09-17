@@ -1,7 +1,7 @@
 """Loading and executing functions from R packages.
 
 This module defines the interface between R and Python using subprocess.
-At the initialization, the toolbox checks if R is available and sets 
+At the initialization, the toolbox checks if R is available and sets
 ``cdt.SETTINGS.r_is_available`` to ``True`` if the R framework is detected.
 Else, this module is deactivated.
 
@@ -14,7 +14,7 @@ of the function, by:
 
 1. Copying the R script template and modifying it with the given arguments
 2. Copying all the data to a temporary folder in /tmp
-3. Launching a R subprocess using the modified template and the data, and 
+3. Launching a R subprocess using the modified template and the data, and
    the script saves the results in a folder in /tmp
 4. Retrieving all the results in the Python process and cleaning up all the
    temporary files.
@@ -46,12 +46,18 @@ class DefaultRPackages(object):
     `None`) will not be tested again.
 
     Attributes:
-        pcalg (bool): Availability of the `pcalg` R package 
-        kpcalg (bool): Availability of the `kpcalg` R package 
-        bnlearn (bool): Availability of the `bnlearn` R package 
-        D2C (bool): Availability of the `D2C` R package 
-        SID (bool): Availability of the `SID` R package 
-        CAM (bool): Availability of the `CAM` R package 
+        pcalg (bool): Availability of the `pcalg` R package
+        kpcalg (bool): Availability of the `kpcalg` R package
+        bnlearn (bool): Availability of the `bnlearn` R package
+        D2C (bool): Availability of the `D2C` R package
+        SID (bool): Availability of the `SID` R package
+        CAM (bool): Availability of the `CAM` R package
+        RCIT (bool): Availability of the `RCIT` R package
+
+    .. warning ::
+       The RCIT package is not the original one (github.com/ericstrobl/RCIT)
+       but an adaptation made to fit in the PC algorithm, available at:
+       https://github.com/Diviyan-Kalainathan/RCIT
     """
 
     __slots__ = ("init",
@@ -60,7 +66,8 @@ class DefaultRPackages(object):
                  "bnlearn",
                  "D2C",
                  "SID",
-                 "CAM")
+                 "CAM",
+                 "RCIT")
 
     def __init__(self):
         """Init the values of the packages."""
@@ -71,6 +78,7 @@ class DefaultRPackages(object):
         self.D2C = None
         self.SID = None
         self.CAM = None
+        self.RCIT = None
         self.init = False
 
     def __repr__(self):

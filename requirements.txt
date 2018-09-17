@@ -5,3 +5,4 @@ joblib
 pandas
 networkx
 skrebate
+torch

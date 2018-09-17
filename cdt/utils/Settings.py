@@ -1,21 +1,20 @@
 """The ``cdt.utils.Settings`` module defines the settings used in the toolbox,
-such as the default hardware parameters; and the tools to autodetect the 
-hardware. All parameters are overridable by accessing the ``cdt.SETTINGS`` 
+such as the default hardware parameters; and the tools to autodetect the
+hardware. All parameters are overridable by accessing the ``cdt.SETTINGS``
 object, a unique instance of the ``cdt.utils.ConfigSettings`` class.
 
 The various attributes of the ``cdt.SETTINGS`` configuration object are:
 
-1. ``cdt.SETTINGS.NB_JOBS`` 
+1. ``cdt.SETTINGS.NB_JOBS``
 2. ``cdt.SETTINGS.GPU``
 3. ``cdt.SETTINGS.default_device``
 4. ``cdt.SETTINGS.autoset_config``
 5. ``cdt.SETTINGS.verbose``
-6. ``cdt.SETTINGS.r_is_available``
 
-The hardware detection revolves around the presence of GPUs. If GPUs are 
-present, ``cdt.SETTINGS.GPU`` is set to ``True`` and the number of jobs 
+The hardware detection revolves around the presence of GPUs. If GPUs are
+present, ``cdt.SETTINGS.GPU`` is set to ``True`` and the number of jobs
 is set to the number of GPUs. Else the number of jobs is set to the number
-of CPUs. Another test performed at startup is to check if an R framework 
+of CPUs. Another test performed at startup is to check if an R framework
 is available, unlocking additional features of the toolbox.
 
 """
@@ -23,7 +22,7 @@ import ast
 import os
 import warnings
 import multiprocessing
-import torch as th 
+import torch as th
 
 
 def message_warning(msg, *a, **kwargs):
@@ -42,8 +41,6 @@ class ConfigSettings(object):
             hardware.
         GPU (int): The number of available GPUs ; defaults to `0`.
         default_device (str): Default device used for pytorch jobs.
-        r_is_available (bool): Sets itself to ``True`` if a R framework is
-            detected.
         verbose (bool): Sets the verbosity of the toolbox algorithms.
 
     """
@@ -52,8 +49,7 @@ class ConfigSettings(object):
                  "GPU",  # Number of GPUs Available
                  "default_device",  # Default device for gpu (pytorch 0.4)
                  "autoset_config",
-                 "verbose",
-                 "r_is_available")
+                 "verbose")
 
     def __init__(self):
         """Define here the default values of the parameters."""
@@ -78,10 +74,10 @@ class ConfigSettings(object):
     def get_default(self, *args, **kwargs):
         """Get the default parameters as defined in the Settings instance.
 
-        This function proceeds to seamlessly retrieve the argument to pass 
+        This function proceeds to seamlessly retrieve the argument to pass
         through, depending on either it was overidden or not: If no argument
         was overridden in a function of the toolbox, the default argument will
-        be set to ``None``, and this function will retrieve the default 
+        be set to ``None``, and this function will retrieve the default
         parameters as defined by the ``cdt.SETTINGS`` 's attributes.
 
         It has two modes of processing:
@@ -144,7 +140,7 @@ def autoset_settings(set_var):
 
 
 def check_cuda_devices():
-    """Output some information on CUDA-enabled devices on your computer, 
+    """Output some information on CUDA-enabled devices on your computer,
     including current memory usage. Modified to only get number of devices.
 
     It's a port of https://gist.github.com/f0k/0d6431e3faa60bffc788f8b4daa029b1

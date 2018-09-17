@@ -41,18 +41,21 @@ class PC(GraphModel):
         dir_method_indep (dict): contains all available heuristics for CI
            testing.
 
-    Available conditional independence tests:
+    Available heuristics for conditional independence tests:
         + gaussian: "pcalg::gaussCItest"
         + hsic: "kpcalg::kernelCItest"
         + discrete: "pcalg::disCItest"
         + binary: "pcalg::binCItest"
+        + randomized: "RCIT:::CItest"
 
-    Available heuristics for CI testing:
+    Available CI tests:
         + dcc: "data=X, ic.method=\"dcc\""
         + hsic_gamma: "data=X, ic.method=\"hsic.gamma\""
         + hsic_perm: "data=X, ic.method=\"hsic.perm\""
         + hsic_clus: "data=X, ic.method=\"hsic.clus\""
         + corr: "C = cor(X), n = nrow(X)"
+        + rcit: "data=X, ic.method=\"RCIT::RCIT\""
+        + rcot: "data=X, ic.method=\"RCIT::RCoT\""
 
     Default Parameters:
         + FILE: '/tmp/cdt_pc/data.csv'
@@ -90,27 +93,34 @@ class PC(GraphModel):
        P. Spirtes, C. Glymour and R. Scheines (2000).
        Causation, Prediction, and Search, 2nd edition. The MIT Press
 
+       Strobl, E. V., Zhang, K., & Visweswaran, S. (2017). Approximate
+       Kernel-based Conditional Independence Tests for Fast Non-Parametric
+       Causal Discovery. arXiv preprint arXiv:1702.03877.
+
        Imported from the Pcalg package.
     """
 
     def __init__(self, CItest="gaussian", method_indep='corr', alpha=0.01,
                  nb_jobs=None, verbose=None):
         """Init the model and its available arguments."""
-        if not (RPackages.pcalg and RPackages.kpcalg):
-            raise ImportError("R Package (k)pcalg is not available.")
+        if not (RPackages.pcalg and RPackages.kpcalg and RPackages.RCIT):
+            raise ImportError("R Package (k)pcalg/RCIT is not available. "
+                              "RCIT has to be installed from "
+                              "https://github.com/Diviyan-Kalainathan/RCIT")
 
         super(PC, self).__init__()
         self.dir_CI_test = {"gaussian": "pcalg::gaussCItest",
                             "hsic": "kpcalg::kernelCItest",
                             "discrete": "pcalg::disCItest",
                             "binary": "pcalg::binCItest",
-                            "rcot": "RCIT:::CItest"}
+                            "randomized": "RCIT:::CItest"}
         self.dir_method_indep = {'dcc': "data=X, ic.method=\"dcc\"",
                                  'hsic_gamma': "data=X, ic.method=\"hsic.gamma\"",
                                  'hsic_perm': "data=X, ic.method=\"hsic.perm\"",
                                  'hsic_clus': "data=X, ic.method=\"hsic.clus\"",
                                  'corr': "C = cor(X), n = nrow(X)",
-                                 'none': "data=X, ic.method=\"RCIT::RCoT\""}
+                                 'rcit': "data=X, ic.method=\"RCIT::RCIT\"",
+                                 'rcot': "data=X, ic.method=\"RCIT::RCoT\""}
         self.CI_test = CItest
         self.method_indep = method_indep
         self.alpha = alpha
