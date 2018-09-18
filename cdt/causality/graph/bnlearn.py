@@ -186,7 +186,7 @@ class BNlearnAlgorithm(GraphModel):
         os.makedirs('/tmp/cdt_bnlearn/')
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_bnlearn/result.csv', delimiter=',').as_matrix()
+            return read_csv('/tmp/cdt_bnlearn/result.csv', delimiter=',').values
 
         try:
             data.to_csv('/tmp/cdt_bnlearn/data.csv', index=False)

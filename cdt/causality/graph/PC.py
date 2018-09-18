@@ -159,7 +159,7 @@ class PC(GraphModel):
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
-        fg = DataFrame(1 - fe.as_matrix())
+        fg = DataFrame(1 - fe.values)
 
         results = self._run_pc(data, fixedEdges=fe, fixedGaps=fg, verbose=self.verbose)
 
@@ -226,7 +226,7 @@ class PC(GraphModel):
         os.makedirs('/tmp/cdt_pc/')
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_pc/result.csv', delimiter=',').as_matrix()
+            return read_csv('/tmp/cdt_pc/result.csv', delimiter=',').values
 
         try:
             data.to_csv('/tmp/cdt_pc/data.csv', header=False, index=False)

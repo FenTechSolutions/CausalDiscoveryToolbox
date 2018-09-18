@@ -76,8 +76,8 @@ class FSGNN(FeatureSelectionModel):
                          verbose=None, nb_runs=3):
         """For one variable, predict its neighbours."""
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
-        x = th.FloatTensor(scale(df_features.as_matrix())).to(device)
-        y = th.FloatTensor(scale(df_target.as_matrix())).to(device)
+        x = th.FloatTensor(scale(df_features.values)).to(device)
+        y = th.FloatTensor(scale(df_target.values)).to(device)
         out = []
         for i in range(nb_runs):
             model = FSGNN_model([x.size()[1], nh, 1],

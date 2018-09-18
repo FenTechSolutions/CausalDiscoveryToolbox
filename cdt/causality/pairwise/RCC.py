@@ -108,7 +108,7 @@ from .model import PairwiseModel
 #         x_ab, y_ab = None, None
 #         if y_tr is not None:
 #             if type(y_tr) == pandas.DataFrame:
-#                 y_tr = y_tr['Target'].as_matrix()
+#                 y_tr = y_tr['Target'].values
 #             y_tr = np.hstack((y_tr, -y_tr))
 #
 #             x_ab = x_tr[(y_tr == 1) | (y_tr == -1)]

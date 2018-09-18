@@ -86,9 +86,9 @@ class AcyclicGraphGenerator(object):
                 self.data['V{}'.format(i)] = self.cfunctions[i](self.points)
             # Generating causes
             else:
-                self.data['V{}'.format(i)] = self.cfunctions[i](self.data.iloc[:, self.adjacency_matrix[:, i].nonzero()[0]].as_matrix())
+                self.data['V{}'.format(i)] = self.cfunctions[i](self.data.iloc[:, self.adjacency_matrix[:, i].nonzero()[0]].values)
             if rescale:
-                self.data['V{}'.format(i)] = scale(self.data['V{}'.format(i)].as_matrix())
+                self.data['V{}'.format(i)] = scale(self.data['V{}'.format(i)].values)
 
         return self.g, self.data
 

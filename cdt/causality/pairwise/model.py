@@ -100,7 +100,7 @@ class PairwiseModel(object):
 
         for idx, (a, b) in enumerate(edges):
             weight = self.predict_proba(
-                df_data[a].as_matrix().reshape((-1, 1)), df_data[b].as_matrix().reshape((-1, 1)), idx=idx,
+                df_data[a].values.reshape((-1, 1)), df_data[b].values.reshape((-1, 1)), idx=idx,
                 nb_runs=nb_runs, **kwargs)
             if weight > 0:  # a causes b
                 output.add_edge(a, b, weight=weight)

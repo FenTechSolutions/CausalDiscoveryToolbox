@@ -34,7 +34,7 @@ class FeatureMapper:
             extractor.fit(X[feature_name].values[:, np.newaxis], y)
 
     def transform(self, X):
-        return X[self.features].as_matrix()
+        return X[self.features].values
 
     def fit_transform(self, X, y=None):
         return self.transform(X)

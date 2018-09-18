@@ -30,7 +30,7 @@ class Glasso(GraphSkeletonModel):
         alpha = kwargs.get('alpha', 0.01)
         max_iter = kwargs.get('max_iter', 2000)
         edge_model = GraphLasso(alpha=alpha, max_iter=max_iter)
-        edge_model.fit(data.as_matrix())
+        edge_model.fit(data.values)
 
         return nx.relabel_nodes(nx.DiGraph(edge_model.get_precision()),
                                 {idx: i for idx, i in enumerate(data.columns)})
@@ -50,7 +50,7 @@ class RandomizedLasso_model(FeatureSelectionModel):
 
         randomized_lasso = RandomizedLasso(alpha=alpha, scaling=scaling, sample_fraction=sample_fraction,
                                            n_resampling=n_resampling)
-        randomized_lasso.fit(df_features.as_matrix(), np.ravel(df_target.as_matrix()))
+        randomized_lasso.fit(df_features.values, np.ravel(df_target.values))
 
         return randomized_lasso.scores_
 
@@ -61,8 +61,8 @@ class HSICLasso(FeatureSelectionModel):
 
     def predict_features(self, df_features, df_target, idx=0, **kwargs):
 
-        y = np.transpose(df_target.as_matrix())
-        X = np.transpose(df_features.as_matrix())
+        y = np.transpose(df_target.values)
+        X = np.transpose(df_features.values)
 
         path, beta, A, lam = hsiclasso(X, y)
 

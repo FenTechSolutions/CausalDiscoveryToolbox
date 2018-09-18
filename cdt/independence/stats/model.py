@@ -39,7 +39,7 @@ class IndependenceModel(object):
 
         for idx_i, i in enumerate(data.columns):
             for idx_j, j in enumerate(data.columns[idx_i+1:]):
-                score = self.predict(data[i].as_matrix(), data[j].as_matrix())
+                score = self.predict(data[i].values, data[j].values)
                 if abs(score) > 0.001:
                     graph.add_edge(i, j, weight=score)
 

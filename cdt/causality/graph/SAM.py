@@ -245,7 +245,7 @@ def run_SAM(df_data, skeleton=None, **kwargs):
     d_str = "Epoch: {} -- Disc: {} -- Gen: {} -- L1: {}"
     try:
         list_nodes = list(df_data.columns)
-        df_data = (df_data[list_nodes]).as_matrix()
+        df_data = (df_data[list_nodes]).values
     except AttributeError:
         list_nodes = list(range(df_data.shape[1]))
     data = df_data.astype('float32')

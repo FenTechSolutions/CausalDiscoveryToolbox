@@ -83,7 +83,7 @@ class GES(GraphModel):
         self.arguments['{SCORE}'] = self.scores[self.score]
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
-        fg = DataFrame(1 - fe.as_matrix())
+        fg = DataFrame(1 - fe.values)
 
         results = self._run_ges(data, fixedGaps=fg, verbose=self.verbose)
 
@@ -128,7 +128,7 @@ class GES(GraphModel):
         os.makedirs('/tmp/cdt_ges/')
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_ges/result.csv', delimiter=',').as_matrix()
+            return read_csv('/tmp/cdt_ges/result.csv', delimiter=',').values
 
         try:
             data.to_csv('/tmp/cdt_ges/data.csv', header=False, index=False)

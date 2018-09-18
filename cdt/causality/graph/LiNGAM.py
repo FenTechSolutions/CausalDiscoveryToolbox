@@ -82,7 +82,7 @@ class LiNGAM(GraphModel):
         os.makedirs('/tmp/cdt_LiNGAM/')
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_LiNGAM/result.csv', delimiter=',').as_matrix()
+            return read_csv('/tmp/cdt_LiNGAM/result.csv', delimiter=',').values
 
         try:
             data.to_csv('/tmp/cdt_LiNGAM/data.csv', header=False, index=False)

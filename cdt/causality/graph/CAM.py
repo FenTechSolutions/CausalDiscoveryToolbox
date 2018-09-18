@@ -141,7 +141,7 @@ class CAM(GraphModel):
         os.makedirs('/tmp/cdt_CAM/')
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_CAM/result.csv', delimiter=',').as_matrix()
+            return read_csv('/tmp/cdt_CAM/result.csv', delimiter=',').values
 
         try:
             data.to_csv('/tmp/cdt_CAM/data.csv', header=False, index=False)

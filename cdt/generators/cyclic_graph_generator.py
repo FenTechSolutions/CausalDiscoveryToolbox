@@ -98,7 +98,7 @@ class CyclicGraphGenerator(object):
 
         for i in range(nb_steps):
             for j in range(self.nodes):
-                new_df["V" + str(j)] = self.cfunctions[j](self.data.iloc[:, causes[j]].as_matrix())[:, 0]
+                new_df["V" + str(j)] = self.cfunctions[j](self.data.iloc[:, causes[j]].values)[:, 0]
                 if rescale:
                     new_df["V" + str(j)] = scale(new_df["V" + str(j)])
                 if i > nb_steps-averaging:

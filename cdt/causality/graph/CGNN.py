@@ -154,7 +154,7 @@ def parallel_graph_evaluation(data, adj_matrix, nb_runs=16,
 def hill_climbing(data, graph, **kwargs):
     """Hill Climbing optimization: a greedy exploration algorithm."""
     nodelist = list(data.columns)
-    data = scale(data.as_matrix()).astype('float32')
+    data = scale(data.values).astype('float32')
     tested_candidates = [nx.adj_matrix(graph, nodelist=nodelist, weight=None)]
     best_score = parallel_graph_evaluation(data, tested_candidates[0].todense(), ** kwargs)
     best_candidate = graph
@@ -247,7 +247,7 @@ class CGNN(GraphModel):
 
         # Building all possible candidates:
         nb_vars = len(list(data.columns))
-        data = scale(data.as_matrix()).astype('float32')
+        data = scale(data.values).astype('float32')
 
         candidates = [np.reshape(np.array(i), (nb_vars, nb_vars)) for i in itertools.product([0, 1], repeat=nb_vars*nb_vars)
                       if (np.trace(np.reshape(np.array(i), (nb_vars, nb_vars))) == 0
