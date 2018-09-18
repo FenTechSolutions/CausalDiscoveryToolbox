@@ -52,11 +52,17 @@ def weighted_mean_and_std(values, weights):
 
 
 def count_unique(x):
-    return len(set(x))
+    try:
+        return len(set(x))
+    except TypeError:
+        return len(set(x.flat))
 
 
 def count_unique_ratio(x):
-    return len(set(x)) / float(len(x))
+    try:
+        return len(set(x)) / float(len(x))
+    except TypeError:
+        return len(set(x.flat))/float(len(x))
 
 
 def binary(tp):
@@ -82,7 +88,10 @@ def binary_entropy(p, base):
 
 def discrete_probability(x, tx, ffactor, maxdev):
     x = discretized_sequence(x, tx, ffactor, maxdev)
-    return Counter(x)
+    try:
+        return Counter(x)
+    except TypeError as e:
+        return Counter(np.array(x).flat) if isinstance(x, list) else Counter(x.flat)
 
 
 def discretized_values(x, tx, ffactor, maxdev):
@@ -91,7 +100,10 @@ def discretized_values(x, tx, ffactor, maxdev):
         vmin = -ffactor * maxdev
         return range(vmin, vmax + 1)
     else:
-        return sorted(list(set(x)))
+        try:
+            return sorted(list(set(x)))
+        except TypeError:
+            return sorted(list(set(x.flat)))
 
 
 def len_discretized_values(x, tx, ffactor, maxdev):
@@ -118,13 +130,22 @@ def discretized_sequences(x, tx, y, ty, ffactor=3, maxdev=3):
 
 def normalized_error_probability(x, tx, y, ty, ffactor=3, maxdev=3):
     x, y = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    cx = Counter(x)
-    cy = Counter(y)
+    try:
+        cx = Counter(x)
+        cy = Counter(y)
+    except TypeError:
+        cx = Counter(x.flat)
+        cy = Counter(y.flat)
+    
     nx = len(cx)
     ny = len(cy)
     pxy = defaultdict(lambda: 0)
-    for p in zip(x, y):
-        pxy[p] += 1
+    try:
+        for p in zip(x, y):
+            pxy[p] += 1
+    except TypeError:
+        for p in zip(x.flat, y.flat):
+            pxy[p] += 1
     pxy = np.array([[pxy[(a, b)] for b in cy] for a in cx], dtype=float)
     pxy = pxy / pxy.sum()
     perr = 1 - np.sum(pxy.max(axis=1))
@@ -177,8 +198,10 @@ def discrete_conditional_entropy(x, tx, y, ty):
 
 def adjusted_mutual_information(x, tx, y, ty, ffactor=3, maxdev=3):
     x, y = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    return adjusted_mutual_info_score(x, y)
-
+    try:
+        return adjusted_mutual_info_score(x, y)
+    except ValueError:
+        return adjusted_mutual_info_score(x.squeeze(1), y.squeeze(1))
 
 def discrete_mutual_information(x, tx, y, ty):
     ex = discrete_entropy(x, tx)
@@ -210,7 +233,10 @@ def to_numerical(x, y):
 
 def normalize(x, tx):
     if not numerical(tx):  # reassign labels according to its frequency
-        cx = Counter(x)
+        try:
+            cx = Counter(x)
+        except TypeError:
+            cx = Counter(x.flat)
         xmap = dict()
         # nx = len(cx)
         # center = nx/2 if (nx % 4) == 0 else (nx-1)//2
@@ -220,7 +246,7 @@ def normalize(x, tx):
         # xmap[k[0]] = center + offset
         for i, k in enumerate(cx.most_common()):
             xmap[k[0]] = i
-        y = np.array([xmap[a] for a in x], dtype=float)
+        y = np.array([xmap[a] for a in x.flat], dtype=float)
     else:
         y = x
 
@@ -231,8 +257,12 @@ def normalize(x, tx):
 
 
 def normalized_entropy_baseline(x, tx):
-    if len(set(x)) < 2:
-        return 0
+    try:
+        if len(set(x)) < 2:
+            return 0
+    except TypeError:
+        if len(set(x.flat)) < 2:
+            return 0
     x = normalize(x, tx)
     xs = np.sort(x)
     delta = xs[1:] - xs[:-1]
@@ -245,7 +275,11 @@ def normalized_entropy_baseline(x, tx):
 
 def normalized_entropy(x, tx, m=2):
     x = normalize(x, tx)
-    cx = Counter(x)
+    try:
+        cx = Counter(x)
+    except TypeError:
+        cx = Counter(x.flat)
+
     if len(cx) < 2:
         return 0
     xk = np.array(list(cx.keys()), dtype=float)
@@ -260,13 +294,17 @@ def normalized_entropy(x, tx, m=2):
 
 
 def igci(x, tx, y, ty):
-    if len(set(x)) < 2:
-        return 0
+    try:
+        if len(set(x)) < 2:
+            return 0
+    except TypeError:
+        if len(set(x.flat)) < 2:
+            return 0
     x = normalize(x, tx)
     y = normalize(y, ty)
-    if len(x) != len(set(x)):
+    if len(x) != len(set(x.flat)):
         dx = defaultdict(lambda: np.zeros(2))
-        for i, a in enumerate(x):
+        for i, a in enumerate(x.flat):
             dx[a][0] += y[i]
             dx[a][1] += 1
         for a in dx.keys():
@@ -277,6 +315,8 @@ def igci(x, tx, y, ty):
         xy = np.array(sorted(zip(x, y)), dtype=float)
         counter = np.ones(len(x))
     delta = xy[1:] - xy[:-1]
+    if len(delta.shape) > 2:
+        delta = delta.squeeze(2)
     selec = delta[:, 1] != 0
     delta = delta[selec]
     counter = np.min([counter[1:], counter[:-1]], axis=0)
@@ -287,7 +327,10 @@ def igci(x, tx, y, ty):
 
 def uniform_divergence(x, tx, m=2):
     x = normalize(x, tx)
-    cx = Counter(x)
+    try:
+        cx = Counter(x)
+    except TypeError:
+        cx = Counter(x.flat)
     xk = np.array(list(cx.keys()), dtype=float)
     xk.sort()
     delta = np.zeros(len(xk))
@@ -340,6 +383,11 @@ def fit(x, tx, y, ty):
         return 0
     x = (x - np.mean(x)) / np.std(x)
     y = (y - np.mean(y)) / np.std(y)
+    if len(x.shape) > 1:
+        x = x.squeeze(1)
+    if len(y.shape) > 1:
+        y = y.squeeze(1)
+
     xy1 = np.polyfit(x, y, 1)
     xy2 = np.polyfit(x, y, 2)
     return abs(2 * xy2[0]) + abs(xy2[1] - xy1[0])
@@ -355,6 +403,10 @@ def fit_error(x, tx, y, ty, m=2):
         y = to_numerical(y, x)
     x = (x - np.mean(x)) / np.std(x)
     y = (y - np.mean(y)) / np.std(y)
+    if len(x.shape) > 1:
+        x = x.squeeze(1)
+    if len(y.shape) > 1:
+        y = y.squeeze(1)
     if (count_unique(x) <= m) or (count_unique(y) <= m):
         xy = np.polyfit(x, y, min(count_unique(x), count_unique(y)) - 1)
     else:
@@ -364,7 +416,10 @@ def fit_error(x, tx, y, ty, m=2):
 
 def fit_noise_entropy(x, tx, y, ty, ffactor=3, maxdev=3, minc=10):
     x, y = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    cx = Counter(x)
+    try:
+        cx = Counter(x)
+    except TypeError:
+        cx = Counter(x.flat)
     entyx = []
     for a in cx:
         if cx[a] > minc:
@@ -376,7 +431,10 @@ def fit_noise_entropy(x, tx, y, ty, ffactor=3, maxdev=3, minc=10):
 
 def fit_noise_skewness(x, tx, y, ty, ffactor=3, maxdev=3, minc=8):
     xd, yd = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    cx = Counter(xd)
+    try:
+        cx = Counter(xd)
+    except TypeError:
+        cx = Counter(xd.flat)
     skewyx = []
     for a in cx:
         if cx[a] >= minc:
@@ -387,7 +445,10 @@ def fit_noise_skewness(x, tx, y, ty, ffactor=3, maxdev=3, minc=8):
 
 def fit_noise_kurtosis(x, tx, y, ty, ffactor=3, maxdev=3, minc=8):
     xd, yd = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    cx = Counter(xd)
+    try:
+        cx = Counter(xd)
+    except TypeError:
+        cx = Counter(xd.flat)
     kurtyx = []
     for a in cx:
         if cx[a] >= minc:
@@ -398,8 +459,12 @@ def fit_noise_kurtosis(x, tx, y, ty, ffactor=3, maxdev=3, minc=8):
 
 def conditional_distribution_similarity(x, tx, y, ty, ffactor=2, maxdev=3, minc=12):
     xd, yd = discretized_sequences(x, tx, y, ty, ffactor, maxdev)
-    cx = Counter(xd)
-    cy = Counter(yd)
+    try:
+        cx = Counter(xd)
+        cy = Counter(yd)
+    except TypeError:
+        cx = Counter(xd.flat)
+        cy = Counter(yd.flat)
     yrange = sorted(cy.keys())
     ny = len(yrange)
     py = np.array([cy[i] for i in yrange], dtype=float)
@@ -759,6 +824,9 @@ def extract_features(X, features=all_features, y=None, n_jobs=-1):
         task = [(extractor, 'fit_transform', (X[column_names], y)) for _, column_names, extractor in new_features_list]
         new_features = pmap(calculate_method, task)
         for (feature_name, _, _), feature in zip(new_features_list, new_features):
-            X[feature_name] = feature
+            try:
+                X[feature_name] = feature
+            except ValueError:
+                X[feature_name] = feature.transpose()
         #print(X.columns)
     return X

@@ -58,7 +58,6 @@ class PairwiseModel(object):
         x.columns = ["A", "B"]
         for idx, row in x.iterrows():
             a = scale(row['A'].reshape((len(row['A']), 1)))
-            print(a)
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
             pred.append(self.predict_proba(a, b, idx))

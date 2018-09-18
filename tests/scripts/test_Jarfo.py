@@ -15,8 +15,12 @@ train_target = pd.read_csv("{}/../datasets/Example_pairwise_targets.csv".format(
 
 data_pairwise = read_causal_pairs("{}/../datasets/Example_pairwise_pairs.csv".format(os.path.dirname(os.path.realpath(__file__)))).iloc[:5, :50]
 
-data_graph = pd.read_csv('{}/../datasets/Example_graph_numdata.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, :5]
+data_graph = pd.read_csv('{}/../datasets/Example_graph_numdata.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:100, :5]
 
+train_data = pd.concat([train_data]*5, ignore_index=True)
+train_target = pd.concat([train_target]*5, ignore_index=True)
+train_target.iloc[10:,:]=0
+# print(train_target)
 graph_skeleton = Glasso().predict(data_graph)
 
 

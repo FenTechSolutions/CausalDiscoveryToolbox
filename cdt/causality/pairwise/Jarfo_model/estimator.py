@@ -192,6 +192,7 @@ class CauseEffectEstimatorID(BaseEstimator):
         weight_independence = np.ones(len(target_independence))
         weight_independence[target_independence==0] = sum(target_independence==1)/float(sum(target_independence==0))        
         try:
+            # print(target_independence)
             self.classifier_independence.fit(train_independence, target_independence, regressor__sample_weight=weight_independence)
         except TypeError:
             self.classifier_independence.fit(train_independence, target_independence)
@@ -297,7 +298,9 @@ class CauseEffectSystemCombination(BaseEstimator):
 
     def predict(self, X):
         task = [(m, 'predict', (X,)) for m in self.systems]
-        a = np.array(pmap(calculate_method, task, self.n_jobs))
+        # print(calculate_method, task, self.n_jobs)
+        a = np.array(list(pmap(calculate_method, task, self.n_jobs)))
+        # print(a, self.weights)
         if self.weights is not None:
             return np.dot(self.weights, a)
         else:
