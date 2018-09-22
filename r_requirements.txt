@@ -4,3 +4,4 @@ bnlearn
 SID
 CAM
 D2C
+RCIT
