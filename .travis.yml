@@ -14,12 +14,10 @@ before_install:
   - docker run divkal/cdt-env-py3.6:1.1 /bin/sh
 
 install:
-  - git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git && cd CausalDiscoveryToolbox
-  - pip3 install .
+  - docker build -t divkal/cdt .
 
 script:
-  - pytest --cov=./
-  - codecov
+  - docker run divkal/cdt /bin/sh -c 'cd ~/CDT && pytest --cov=./ && codecov'
 
 ## Old .travis.yml
 # command to install dependencies

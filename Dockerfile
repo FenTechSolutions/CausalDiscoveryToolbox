@@ -1,11 +1,9 @@
-ARG nv
-FROM ubuntu
+FROM cdt-env-py3.6:1.1
 MAINTAINER Diviyan Kalainathan <diviyan@lri.fr>
 LABEL version="0.2.5"
-LABEL description="Docker image for the Causal Discovery Toolbox"
-ARG python
+LABEL description="Docker dinal image for the Causal Discovery Toolbox"
 
-COPY . /tmp
-COPY "install-deps/install-dependencies-${python}.sh" /tmp
-RUN cd /tmp && bash "install-dependencies-${python}.sh"
+RUN mkdir -p ~/CDT
+COPY . /CDT
+RUN cd ~/CDT && pip3 install .
 CMD /bin/sh
