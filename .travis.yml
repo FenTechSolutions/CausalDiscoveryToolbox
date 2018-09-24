@@ -17,7 +17,7 @@ before_install:
   - gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
   - gpg -a --export E084DAB9 | sudo apt-key add -
   - sudo apt-get -q update > /dev/null
-  - travis_wait 60 bash install_dependencies.sh
+  - travis_wait 60 sudo bash install_dependencies.sh
 
 install:
   - pip3 install -r requirements.txt
