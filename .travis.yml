@@ -17,7 +17,7 @@ install:
   - docker build -t divkal/cdt .
 
 script:
-  - docker run divkal/cdt /bin/sh -c 'cd ~/CDT && pytest --cov=./ && codecov'
+  - docker run divkal/cdt /bin/sh -c 'cd /CDT && pytest --cov=./ && codecov'
 
 ## Old .travis.yml
 # command to install dependencies
