@@ -5,27 +5,36 @@ branches:
   - master
   - dev
 
-language: python
-python:
-  - "3.5"
-  - "3.6"
-#  - "3.7" Not supported by travis.ci yet.
+services:
+  - docker
 
-# command to install dependencies
 before_install:
-  - sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
-  - gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
-  - gpg -a --export E084DAB9 | sudo apt-key add -
-  - sudo apt-get -q update > /dev/null
-  - travis_wait 60 sudo bash install_dependencies.sh
+  - docker pull divkal/cdt-env-py3.6:0.1
+  - docker ps -a
+  - docker run divkal/cdt-env-py3.6:0.1 /bin/sh
 
 install:
-  - pip3 install -r requirements.txt
-  - pip3 install pytest pytest-cov
+  - git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git && cd CausalDiscoveryToolbox
   - pip3 install .
-  - pip3 install codecov
 
-# command to run tests
 script:
   - pytest --cov=./
   - codecov
+# command to install dependencies
+# before_install:
+#   - sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
+#   - gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
+#   - gpg -a --export E084DAB9 | sudo apt-key add -
+#   - sudo apt-get -q update > /dev/null
+#   - travis_wait 60 sudo bash install_dependencies.sh
+#
+# install:
+#   - pip3 install -r requirements.txt
+#   - pip3 install pytest pytest-cov
+#   - pip3 install .
+#   - pip3 install codecov
+#
+# # command to run tests
+# script:
+#   - pytest --cov=./
+#   - codecov
