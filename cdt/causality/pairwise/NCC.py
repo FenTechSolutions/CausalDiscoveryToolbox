@@ -34,11 +34,13 @@ class NCC_model(th.nn.Module):
         :param x: 2d tensor containing both (x,y) Variables
         :return: output of the net
         """
+        if x.dim()==2:
+            x.unsqueeze_(2)
         sig = th.nn.Sigmoid()
         act = th.nn.ReLU()
         out1 = act(self.c1(x))
-        out2 = act(self.c2(out1))
-        out3 = self.l1(self.batch_norm(out2))
+        out2 = act(self.c2(out1)).squeeze(2)
+        out3 = self.l2(self.l1(self.batch_norm(out2).mean(dim=0)))
         return sig(out3)
 
 
@@ -64,10 +66,12 @@ class NCC(PairwiseModel):
         self.model = NCC_model()
         opt = th.optim.Adam(self.model.parameters())
         criterion = th.nn.BCELoss()
+        y = th.Tensor(y_tr.values)
         if th.cuda.is_available():
             self.model = self.model.cuda()
+            y = y.cuda()
         for epoch in range(epochs):
-            for idx, row in x_tr.iterrows():
+            for i, (idx, row) in enumerate(x_tr.iterrows()):
                 opt.zero_grad()
                 a = row['A'].reshape((len(row['A']), 1))
                 b = row['B'].reshape((len(row['B']), 1))
@@ -78,9 +82,8 @@ class NCC(PairwiseModel):
 
                 if th.cuda.is_available():
                     m = m.cuda()
-
                 out = self.model(m)
-                loss = criterion(out, y_tr[idx])
+                loss = criterion(out, y[i])
                 loss.backward()
 
                 # NOTE : optim is called at each epoch ; might want to change
@@ -94,7 +97,7 @@ class NCC(PairwiseModel):
         :return: probability (Value : 1 if a->b and -1 if b->a)
         :rtype: float
         """
-        if not self.model():
+        if self.model is None:
             print('Model has to be trained before doing any predictions')
             raise ValueError
         if len(np.array(a).shape) == 1:

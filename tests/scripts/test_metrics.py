@@ -2,6 +2,7 @@
 import numpy as np
 import networkx as nx
 from cdt.utils.metrics import precision_recall, SHD, SID
+from copy import deepcopy
 
 
 def init():
@@ -9,7 +10,7 @@ def init():
     mat1[1, 0] = 1
     mat1[2, 1] = 1
     mat1[2, 0] = 1
-    mat2 = np.matrix.copy(mat1)
+    mat2 = deepcopy(mat1)
     mat2[2, 1] = 0
     mat2[1, 2] = .5
     return nx.DiGraph(mat1), nx.DiGraph(mat2)
