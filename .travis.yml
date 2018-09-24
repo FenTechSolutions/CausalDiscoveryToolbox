@@ -9,9 +9,9 @@ services:
   - docker
 
 before_install:
-  - docker pull divkal/cdt-env-py3.6:0.1
+  - docker pull divkal/cdt-env-py3.6:1.0
   - docker ps -a
-  - docker run divkal/cdt-env-py3.6:0.1 /bin/sh
+  - docker run divkal/cdt-env-py3.6:1.0 /bin/sh
 
 install:
   - git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git && cd CausalDiscoveryToolbox
