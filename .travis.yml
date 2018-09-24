@@ -17,14 +17,7 @@ before_install:
   - gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
   - gpg -a --export E084DAB9 | sudo apt-key add -
   - sudo apt-get -q update > /dev/null
-  - travis_wait 30 sudo apt-get -q install r-base -y --allow-unauthenticated >/dev/null
-  - sudo apt-get -q install libgmp3-dev  -y --allow-unauthenticated
-  - sudo apt-get -q install build-essential  -y --allow-unauthenticated
-  - sudo apt-get -q install libv8-3.14-dev  -y --allow-unauthenticated
-  - travis_wait 50 sudo Rscript -e 'install.packages(c("V8","sfsmisc","clue","randomForest","lattice","devtools","MASS"),repos="http://cran.us.r-project.org")' >/dev/null
-  - travis_wait 50 sudo Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite(c("CAM", "SID", "bnlearn", "pcalg", "kpcalg", "D2C"))' >/dev/null
-  - sudo Rscript -e 'library(devtools); install_github("cran/momentchi2"); install_github("Diviyan-Kalainathan/RCIT")'
-
+  - travis_wait 60 bash install_dependencies.sh
 
 install:
   - pip3 install -r requirements.txt
