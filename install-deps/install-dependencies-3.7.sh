@@ -5,6 +5,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 apt-get -q install r-base -y --allow-unauthenticated
 apt-get -q install libssl-dev -y
 apt-get -q install libgit2-dev -y
+apt-get -q install git -y
 apt-get -q install libgmp3-dev  -y --allow-unauthenticated
 apt-get -q install build-essential  -y --allow-unauthenticated
 apt-get -q install libv8-3.14-dev  -y --allow-unauthenticated

@@ -9,9 +9,9 @@ services:
   - docker
 
 before_install:
-  - docker pull divkal/cdt-env-py3.6:1.0
+  - docker pull divkal/cdt-env-py3.6:1.1
   - docker ps -a
-  - docker run divkal/cdt-env-py3.6:1.0 /bin/sh
+  - docker run divkal/cdt-env-py3.6:1.1 /bin/sh
 
 install:
   - git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git && cd CausalDiscoveryToolbox
@@ -20,6 +20,8 @@ install:
 script:
   - pytest --cov=./
   - codecov
+
+## Old .travis.yml
 # command to install dependencies
 # before_install:
 #   - sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
