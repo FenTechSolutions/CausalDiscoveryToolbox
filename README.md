@@ -18,6 +18,13 @@ Install it using pip: (See more details on installation below)
 ```sh
 pip install cdt
 ```
+## Docker images
+Docker images are available, including all the dependencies, and enabled functionalities:
+
+|  python ver. 	|  cpu 	| gpu 	|
+|--------------	|-----------------------------------------------------------------------------------------------------------------------------	|----------------------------------------------------------------------------------------------------------------------------------------	|
+| 3.6 	| [![d36cpu](https://img.shields.io/badge/docker-0.2.5-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/) 	| [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.2.5-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
+| 3.7 	| [![d37cpu](https://img.shields.io/badge/docker-0.2.5-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/) 	| [![d37gpu](https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200)](#) 	|
 
 ## Installation
 
