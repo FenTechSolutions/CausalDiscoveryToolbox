@@ -8,8 +8,9 @@ RUN mkdir -p /CDT
 COPY . /CDT
 RUN cd /CDT && \
     apt-get -q install "python${python}" "python${python}-dev" python3-pip python3-setuptools -y && \
-    pip3 install -r requirements.txt && \
-    pip3 install pytest pytest-cov && \
-    pip3 install codecov && \
-    pip3 install .
+    rm /usr/bin/python3 && ln -s /usr/bin/python${python} /usr/bin/python3 && \
+    python3 -m pip install -r requirements.txt && \
+    python3 -m pip install pytest pytest-cov && \
+    python3 -m pip install codecov && \
+    python3 setup.py install
 CMD /bin/sh

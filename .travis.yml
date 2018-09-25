@@ -9,12 +9,12 @@ services:
   - docker
 
 before_install:
-  - docker pull divkal/cdt-env-py3.6:1.1
+  - docker pull divkal/cdt-env-base:1.0
   - docker ps -a
-  - docker run divkal/cdt-env-py3.6:1.1 /bin/sh
+  - docker run divkal/cdt-env-base:1.0 /bin/sh
 
 install:
-  - docker build -t divkal/cdt .
+  - docker build --build-arg python=3.6 -t divkal/cdt .
 
 script:
   - docker run divkal/cdt /bin/sh -c 'cd /CDT && pytest --cov=./ && codecov'
