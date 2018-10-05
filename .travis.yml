@@ -18,7 +18,7 @@ jobs:
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-env-base:1.0
-      - Docker build --build-arg python=3.6 -t divkal/cdt-test .
+      - docker build --build-arg python=3.6 -t divkal/cdt-test .
       - docker push divkal/cdt-test
     - stage: test
       script: docker run --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pytest --cov && codecov -t $CODECOV_TOKEN'
