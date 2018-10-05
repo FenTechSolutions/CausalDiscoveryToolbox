@@ -4,6 +4,7 @@ Imported from the Pcalg package.
 Author: Diviyan Kalainathan
 """
 import os
+import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
@@ -45,9 +46,10 @@ class LiNGAM(GraphModel):
 
         super(LiNGAM, self).__init__()
 
-        self.arguments = {'{FILE}': '/tmp/cdt_LiNGAM/data.csv',
+        self.arguments = {'{FOLDER}': '/tmp/cdt_LiNGAM/',
+                          '{FILE}': 'data.csv',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': '/tmp/cdt_LiNGAM/result.csv'}
+                          '{OUTPUT}': 'result.csv'}
         self.verbose = SETTINGS.get_default(verbose=verbose)
 
     def orient_undirected_graph(self, data, graph):
@@ -79,21 +81,23 @@ class LiNGAM(GraphModel):
     def _run_LiNGAM(self, data, fixedGaps=None, verbose=True):
         """Setting up and running LiNGAM with all arguments."""
         # Run LiNGAM
-        os.makedirs('/tmp/cdt_LiNGAM/')
+        id = str(uuid.uuid4())
+        os.makedirs('/tmp/cdt_LiNGAM' + id + '/')
+        self.arguments['{FOLDER}'] = '/tmp/cdt_LiNGAM' + id + '/'
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_LiNGAM/result.csv', delimiter=',').values
+            return read_csv('/tmp/cdt_LiNGAM' + id + '/result.csv', delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_LiNGAM/data.csv', header=False, index=False)
+            data.to_csv('/tmp/cdt_LiNGAM' + id + '/data.csv', header=False, index=False)
             lingam_result = launch_R_script("{}/R_templates/lingam.R".format(os.path.dirname(os.path.realpath(__file__))),
                                             self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_LiNGAM')
+            rmtree('/tmp/cdt_LiNGAM' + id + '')
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_LiNGAM/')
+            rmtree('/tmp/cdt_LiNGAM' + id + '/')
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_LiNGAM')
+        rmtree('/tmp/cdt_LiNGAM' + id + '')
         return lingam_result

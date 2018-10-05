@@ -4,6 +4,7 @@ Imported from the Pcalg package.
 Author: Diviyan Kalainathan
 """
 import os
+import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
@@ -58,12 +59,13 @@ class GES(GraphModel):
         super(GES, self).__init__()
         self.scores = {'int': 'GaussL0penIntScore',
                        'obs': 'GaussL0penObsScore'}
-        self.arguments = {'{FILE}': '/tmp/cdt_ges/data.csv',
+        self.arguments = {'{FOLDER}': '/tmp/cdt_ges/',
+                          '{FILE}': 'data.csv',
                           '{SKELETON}': 'FALSE',
-                          '{GAPS}': '/tmp/cdt_ges/fixedgaps.csv',
+                          '{GAPS}': 'fixedgaps.csv',
                           '{SCORE}': 'GaussL0penObsScore',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': '/tmp/cdt_ges/result.csv'}
+                          '{OUTPUT}': 'result.csv'}
         self.verbose = SETTINGS.get_default(verbose=verbose)
         self.score = score
 
@@ -105,7 +107,7 @@ class GES(GraphModel):
 
     def create_graph_from_data(self, data):
         """Run the GES algorithm.
-        
+
         Args:
             data (pandas.DataFrame): DataFrame containing the data
 
@@ -125,15 +127,17 @@ class GES(GraphModel):
     def _run_ges(self, data, fixedGaps=None, verbose=True):
         """Setting up and running ges with all arguments."""
         # Run GES
-        os.makedirs('/tmp/cdt_ges/')
+        id = str(uuid.uuid4())
+        os.makedirs('/tmp/cdt_ges' + id + '/')
+        self.arguments['{FOLDER}'] = '/tmp/cdt_ges' + id + '/'
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_ges/result.csv', delimiter=',').values
+            return read_csv('/tmp/cdt_ges' + id + '/result.csv', delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_ges/data.csv', header=False, index=False)
+            data.to_csv('/tmp/cdt_ges' + id + '/data.csv', header=False, index=False)
             if fixedGaps is not None:
-                fixedGaps.to_csv('/tmp/cdt_ges/fixedgaps.csv', index=False, header=False)
+                fixedGaps.to_csv('/tmp/cdt_ges' + id + '/fixedgaps.csv', index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
@@ -142,10 +146,10 @@ class GES(GraphModel):
                                          self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_ges')
+            rmtree('/tmp/cdt_ges' + id + '')
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_ges/')
+            rmtree('/tmp/cdt_ges' + id + '/')
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_ges')
+        rmtree('/tmp/cdt_ges' + id + '')
         return ges_result

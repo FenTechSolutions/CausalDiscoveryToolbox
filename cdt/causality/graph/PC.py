@@ -4,6 +4,7 @@ Imported from the Pcalg package.
 Author = Diviyan Kalainathan
 """
 import os
+import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
@@ -127,10 +128,11 @@ class PC(GraphModel):
         self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
         self.verbose = SETTINGS.get_default(verbose=verbose)
         # Define default args
-        self.arguments = {'{FILE}': '/tmp/cdt_pc/data.csv',
+        self.arguments = {'{FOLDER}': '/tmp/cdt_pc/',
+                          '{FILE}': 'data.csv',
                           '{SKELETON}': 'FALSE',
-                          '{EDGES}': '/tmp/cdt_pc/fixededges.csv',
-                          '{GAPS}': '/tmp/cdt_pc/fixedgaps.csv',
+                          '{EDGES}': 'fixededges.csv',
+                          '{GAPS}': 'fixedgaps.csv',
                           '{CITEST}': "pcalg::gaussCItest",
                           '{METHOD_INDEP}': "C = cor(X), n = nrow(X)",
                           '{SELMAT}': 'NULL',
@@ -138,7 +140,7 @@ class PC(GraphModel):
                           '{SETOPTIONS}': 'NULL',
                           '{ALPHA}': '',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': '/tmp/cdt_pc/result.csv'}
+                          '{OUTPUT}': 'result.csv'}
 
     def orient_undirected_graph(self, data, graph, **kwargs):
         """Run PC on an undirected graph.
@@ -223,16 +225,18 @@ class PC(GraphModel):
             self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['corr']
 
         # Run PC
-        os.makedirs('/tmp/cdt_pc/')
+        id = str(uuid.uuid4())
+        os.makedirs('/tmp/cdt_pc' + id + '/')
+        self.arguments['{FOLDER}'] = '/tmp/cdt_pc' + id + '/'
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_pc/result.csv', delimiter=',').values
+            return read_csv('/tmp/cdt_pc' + id + '/result.csv', delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_pc/data.csv', header=False, index=False)
+            data.to_csv('/tmp/cdt_pc' + id + '/data.csv', header=False, index=False)
             if fixedGaps is not None and fixedEdges is not None:
-                fixedGaps.to_csv('/tmp/cdt_pc/fixedgaps.csv', index=False, header=False)
-                fixedEdges.to_csv('/tmp/cdt_pc/fixededges.csv', index=False, header=False)
+                fixedGaps.to_csv('/tmp/cdt_pc' + id + '/fixedgaps.csv', index=False, header=False)
+                fixedEdges.to_csv('/tmp/cdt_pc' + id + '/fixededges.csv', index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
@@ -241,10 +245,10 @@ class PC(GraphModel):
                                         self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_pc')
+            rmtree('/tmp/cdt_pc' + id + '')
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_pc/')
+            rmtree('/tmp/cdt_pc' + id + '/')
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_pc')
+        rmtree('/tmp/cdt_pc' + id + '')
         return pc_result

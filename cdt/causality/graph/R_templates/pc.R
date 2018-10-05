@@ -52,7 +52,7 @@ runPC <- function(X, suffStat, parentsOf, alpha, variableSelMat, setOptions,
   list(resList = result, resMat = pcmat)
 }
 
- dataset <- read.csv(file='{FILE}', sep=",");
+ dataset <- read.csv(file='{FOLDER}{FILE}', sep=",");
 
 variableSelMat = {SELMAT}  # NULL
 directed = {DIRECTED}  # TRUE
@@ -61,8 +61,8 @@ setOptions = {SETOPTIONS} # NULL
 parentsOf = 1:ncol(dataset)
 alpha <- {ALPHA} # 0.01
 if ({SKELETON}){
-  fixedGaps <- read.csv(file='{GAPS}', sep=",", header=FALSE) # NULL
-  fixedEdges <- read.csv(file='{EDGES}', sep=",", header=FALSE) # NULL
+  fixedGaps <- read.csv(file='{FOLDER}{GAPS}', sep=",", header=FALSE) # NULL
+  fixedEdges <- read.csv(file='{FOLDER}{EDGES}', sep=",", header=FALSE) # NULL
   fixedGaps = (data.matrix(fixedGaps))
   fixedEdges = (data.matrix(fixedEdges))
   rownames(fixedGaps) <- colnames(fixedGaps)
@@ -76,4 +76,4 @@ result <- runPC(dataset, suffStat = NULL, parentsOf, alpha,
                variableSelMat, setOptions,
                directed, verbose, fixedEdges, fixedGaps, CI_test)
 
-write.csv(result$resMat,row.names = FALSE, file = '{OUTPUT}');
+write.csv(result$resMat,row.names = FALSE, file = '{FOLDER}{OUTPUT}');

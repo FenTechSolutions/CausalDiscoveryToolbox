@@ -1,6 +1,7 @@
 """GIES algorithm.
 """
 import os
+import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
@@ -55,12 +56,13 @@ class GIES(GraphModel):
         super(GIES, self).__init__()
         self.scores = {'int': 'GaussL0penIntScore',
                        'obs': 'GaussL0penObsScore'}
-        self.arguments = {'{FILE}': '/tmp/cdt_gies/data.csv',
+        self.arguments = {'{FOLDER}': '/tmp/cdt_gies/',
+                          '{FILE}': 'data.csv',
                           '{SKELETON}': 'FALSE',
-                          '{GAPS}': '/tmp/cdt_gies/fixedgaps.csv',
+                          '{GAPS}': 'fixedgaps.csv',
                           '{SCORE}': 'GaussL0penObsScore',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': '/tmp/cdt_gies/result.csv'}
+                          '{OUTPUT}': 'result.csv'}
         self.verbose = SETTINGS.get_default(verbose=verbose)
         self.score = score
 
@@ -122,15 +124,17 @@ class GIES(GraphModel):
     def _run_gies(self, data, fixedGaps=None, verbose=True):
         """Setting up and running GIES with all arguments."""
         # Run gies
-        os.makedirs('/tmp/cdt_gies/')
+        id = str(uuid.uuid4())
+        os.makedirs('/tmp/cdt_gies' + id + '/')
+        self.arguments['{FOLDER}'] = '/tmp/cdt_gies' + id + '/'
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_gies/result.csv', delimiter=',').values
+            return read_csv('/tmp/cdt_gies' + id + '/result.csv', delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_gies/data.csv', header=False, index=False)
+            data.to_csv('/tmp/cdt_gies' + id + '/data.csv', header=False, index=False)
             if fixedGaps is not None:
-                fixedGaps.to_csv('/tmp/cdt_gies/fixedgaps.csv', index=False, header=False)
+                fixedGaps.to_csv('/tmp/cdt_gies' + id + '/fixedgaps.csv', index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
@@ -139,10 +143,10 @@ class GIES(GraphModel):
                                           self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_gies')
+            rmtree('/tmp/cdt_gies' + id + '')
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_gies/')
+            rmtree('/tmp/cdt_gies' + id + '/')
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_gies')
+        rmtree('/tmp/cdt_gies' + id + '')
         return gies_result

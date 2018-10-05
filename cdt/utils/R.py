@@ -24,6 +24,7 @@ import os
 import warnings
 import fileinput
 import subprocess
+import uuid
 from shutil import copy, rmtree
 
 
@@ -130,9 +131,10 @@ def launch_R_script(template, arguments, output_function=None, verbose=True):
         else `True` or `False` depending on whether the execution was
         successful.
     """
-    os.makedirs('/tmp/cdt_R_scripts/')
+    id = str(uuid.uuid4())
+    os.makedirs('/tmp/cdt_R_script_' + id + '/')
     try:
-        scriptpath = '/tmp/cdt_R_scripts/instance_{}'.format(os.path.basename(template))
+        scriptpath = '/tmp/cdt_R_script_' + id + '/instance_{}'.format(os.path.basename(template))
         copy(template, scriptpath)
 
         with fileinput.FileInput(scriptpath, inplace=True) as file:
@@ -156,12 +158,12 @@ def launch_R_script(template, arguments, output_function=None, verbose=True):
 
     # Cleaning up
     except Exception as e:
-        rmtree('/tmp/cdt_R_scripts/')
+        rmtree('/tmp/cdt_R_script_' + id + '/')
         raise e
     except KeyboardInterrupt:
-        rmtree('/tmp/cdt_R_scripts/')
+        rmtree('/tmp/cdt_R_script_' + id + '/')
         raise KeyboardInterrupt
-    rmtree('/tmp/cdt_R_scripts/')
+    rmtree('/tmp/cdt_R_script_' + id + '/')
     return output
 
 

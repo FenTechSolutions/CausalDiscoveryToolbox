@@ -4,6 +4,7 @@ Imported from the bnlearn package.
 Author: Diviyan Kalainathan
 """
 import os
+import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
@@ -96,17 +97,18 @@ class BNlearnAlgorithm(GraphModel):
         if not RPackages.bnlearn:
             raise ImportError("R Package bnlearn is not available.")
         super(BNlearnAlgorithm, self).__init__()
-        self.arguments = {'{FILE}': '/tmp/cdt_bnlearn/data.csv',
+        self.arguments = {'{FOLDER}': '/tmp/cdt_bnlearn/',
+                          '{FILE}': 'data.csv',
                           '{SKELETON}': 'FALSE',
                           '{ALGORITHM}': None,
-                          '{WHITELIST}': '/tmp/cdt_bnlearn/whitelist.csv',
-                          '{BLACKLIST}': '/tmp/cdt_bnlearn/blacklist.csv',
+                          '{WHITELIST}': 'whitelist.csv',
+                          '{BLACKLIST}': 'blacklist.csv',
                           '{SCORE}': 'NULL',
                           '{OPTIM}': 'FALSE',
                           '{ALPHA}': '0.05',
                           '{BETA}': 'NULL',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': '/tmp/cdt_bnlearn/result.csv'}
+                          '{OUTPUT}': 'result.csv'}
         self.score = score
         self.alpha = alpha
         self.beta = beta
@@ -183,16 +185,18 @@ class BNlearnAlgorithm(GraphModel):
     def _run_bnlearn(self, data, whitelist=None, blacklist=None, verbose=True):
         """Setting up and running bnlearn with all arguments."""
         # Run the algorithm
-        os.makedirs('/tmp/cdt_bnlearn/')
+        id = str(uuid.uuid4())
+        os.makedirs('/tmp/cdt_bnlearn' + id + '/')
+        self.arguments['{FOLDER}'] = '/tmp/cdt_bnlearn' + id + '/'
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_bnlearn/result.csv', delimiter=',').values
+            return read_csv('/tmp/cdt_bnlearn' + id + '/result.csv', delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_bnlearn/data.csv', index=False)
+            data.to_csv('/tmp/cdt_bnlearn' + id + '/data.csv', index=False)
             if blacklist is not None:
-                whitelist.to_csv('/tmp/cdt_bnlearn/whitelist.csv', index=False, header=False)
-                blacklist.to_csv('/tmp/cdt_bnlearn/blacklist.csv', index=False, header=False)
+                whitelist.to_csv('/tmp/cdt_bnlearn' + id + '/whitelist.csv', index=False, header=False)
+                blacklist.to_csv('/tmp/cdt_bnlearn' + id + '/blacklist.csv', index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
@@ -201,12 +205,12 @@ class BNlearnAlgorithm(GraphModel):
                                              self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_bnlearn')
+            rmtree('/tmp/cdt_bnlearn' + id + '')
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_bnlearn/')
+            rmtree('/tmp/cdt_bnlearn' + id + '/')
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_bnlearn')
+        rmtree('/tmp/cdt_bnlearn' + id)
         return bnlearn_result
 
 

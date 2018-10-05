@@ -4,6 +4,7 @@ Imported from the Pcalg package.
 Author: Diviyan Kalainathan
 """
 import os
+import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
@@ -83,7 +84,8 @@ class CAM(GraphModel):
                               'lasso': 'selLasso',
                               'linear': 'selLm',
                               'linearboost': 'selLmBoost'}
-        self.arguments = {'{FILE}': '/tmp/cdt_CAM/data.csv',
+        self.arguments = {'{FOLDER}': '/tmp/cdt_CAM/',
+                          '{FILE}': 'data.csv',
                           '{SCORE}': 'SEMGAM',
                           '{VARSEL}': 'TRUE',
                           '{SELMETHOD}': 'selGamBoost',
@@ -92,7 +94,7 @@ class CAM(GraphModel):
                           '{NJOBS}': str(SETTINGS.NB_JOBS),
                           '{CUTOFF}': str(0.001),
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': '/tmp/cdt_CAM/result.csv'}
+                          '{OUTPUT}': 'result.csv'}
         self.score = score
         self.cutoff = cutoff
         self.variablesel = variablesel
@@ -138,21 +140,23 @@ class CAM(GraphModel):
     def _run_cam(self, data, fixedGaps=None, verbose=True):
         """Setting up and running CAM with all arguments."""
         # Run CAM
-        os.makedirs('/tmp/cdt_CAM/')
+        id = str(uuid.uuid4())
+        os.makedirs('/tmp/cdt_CAM' + id + '/')
+        self.arguments['{FOLDER}'] = '/tmp/cdt_CAM' + id + '/'
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_CAM/result.csv', delimiter=',').values
+            return read_csv('/tmp/cdt_CAM' + id + '/result.csv', delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_CAM/data.csv', header=False, index=False)
+            data.to_csv('/tmp/cdt_CAM' + id + '/data.csv', header=False, index=False)
             cam_result = launch_R_script("{}/R_templates/cam.R".format(os.path.dirname(os.path.realpath(__file__))),
                                          self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_CAM')
+            rmtree('/tmp/cdt_CAM' + id + '')
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_CAM/')
+            rmtree('/tmp/cdt_CAM' + id + '/')
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_CAM')
+        rmtree('/tmp/cdt_CAM' + id + '')
         return cam_result
