@@ -21,7 +21,7 @@ jobs:
       - docker build --build-arg python=3.6 -t divkal/cdt-test .
       - docker push divkal/cdt-test
     - stage: test
-      script: docker run --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pytest --cov=./ && codecov --token $CODECOV_TOKEN'
+      script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pytest --cov=./ && codecov --token $CODECOV_TOKEN'
     - stage: deploy
       name: "Build and push 3.6"
       script:
