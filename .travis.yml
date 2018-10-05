@@ -8,33 +8,25 @@ branches:
 services:
   - docker
 
-before_install:
-  - docker pull divkal/cdt-env-base:1.0
-  - docker ps -a
-  - docker run divkal/cdt-env-base:1.0 /bin/sh
+env:
+  - VERSION=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
 
-install:
-  - docker build --build-arg python=3.6 -t divkal/cdt .
-
-script:
-  - docker run divkal/cdt /bin/sh -c 'cd /CDT && pytest --cov=./ && codecov'
-
-## Old .travis.yml
-# command to install dependencies
-# before_install:
-#   - sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
-#   - gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
-#   - gpg -a --export E084DAB9 | sudo apt-key add -
-#   - sudo apt-get -q update > /dev/null
-#   - travis_wait 60 sudo bash install_dependencies.sh
-#
-# install:
-#   - pip3 install -r requirements.txt
-#   - pip3 install pytest pytest-cov
-#   - pip3 install .
-#   - pip3 install codecov
-#
-# # command to run tests
-# script:
-#   - pytest --cov=./
-#   - codecov
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker pull divkal/cdt-env-base:1.0
+      - docker build --build-arg python=3.6 -t divkal/cdt-py3.6:$VERSION .
+    - stage: test
+      script: docker run --rm divkal/cdt /bin/sh -c 'cd /CDT && pytest --cov && codecov -t $CODECOV_TOKEN'
+    - stage: deploy
+      script:
+      - docker push divkal/cdt-py3.6:$VERSION
+    - script:
+      - docker build --build-arg python=3.7 -t divkal/cdt-py3.7:$VERSION .
+      - docker push divkal/cdt-py3.7:$VERSION
+    - script:
+      - docker pull divkal/nv-cdt-env-base:1.0
+      - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION .
+      - docker push divkal/nv-cdt-py3.6:$VERSION .
