@@ -60,7 +60,7 @@ class PairwiseModel(object):
             a = scale(row['A'].reshape((len(row['A']), 1)))
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
-            pred.append(self.predict_proba(a, b, idx))
+            pred.append(self.predict_proba(a, b, idx=idx))
 
             if printout is not None:
                 res.append([row['SampleID'], pred[-1]])
