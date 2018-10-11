@@ -32,12 +32,9 @@ jobs:
       after_success:
         - git config --global user.email "travis-bumpversion@example.com"
         - git config --global user.name "Travis CI Bumpversion"
-        - echo "$ssh_private" > travis_key
-        - echo "$ssh_public" > travis_key.pub
-        - chmod 600 travis_key
-        - chmod 644 travis_key.pub
+        - chmod 600 rel_travis
         - eval `ssh-agent -s`
-        - ssh-add travis_key
+        - ssh-add rel_travis
         - git config --global push.default simple
         - pip install bumpversion
         - if commit_message=~\[REL\]: bumpversion --current-version $VERSION minor setup.py README.md docs/index.md
@@ -80,12 +77,9 @@ jobs:
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
       - git config --global user.email "travis-docs@example.com"
       - git config --global user.name "Travis CI Docs"
-      - echo "$ssh_private" > travis_key
-      - echo "$ssh_public" > travis_key.pub
-      - chmod 600 travis_key
-      - chmod 644 travis_key.pub
+      - chmod 600 rel_travis
       - eval `ssh-agent -s`
-      - ssh-add travis_key
+      - ssh-add rel_travis
       - git pull
       - git config --global push.default simple
       - docker run -v $(pwd):/cdtlib --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip uninstall cdt -y && pip install . && pip install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
