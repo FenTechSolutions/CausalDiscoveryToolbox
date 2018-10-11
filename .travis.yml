@@ -39,12 +39,7 @@ jobs:
         - ssh-add rel_travis
         - git config --global push.default simple
         - pip install bumpversion
-        - if commit_message=~\[REL\]:
-          - bumpversion --current-version $VERSION minor setup.py README.md docs/index.md
-        - if commit_message=~\[MREL\]:
-          - bumpversion --current-version $VERSION major setup.py README.md docs/index.md
-        - if NOT (commit_message=~\[REL\] OR commit_message=~\[MREL\]):
-          - bumpversion --current-version $VERSION patch setup.py README.md docs/index.md
+        - if [[ $COMMIT_MESSAGE == *"[REL]"* ]]; then bumpversion --current-version $VERSION minor setup.py README.md docs/index.md; elif [[ $COMMIT_MESSAGE == *"[MREL]"* ]]; then bumpversion --current-version $VERSION major setup.py README.md docs/index.md; else bumpversion --current-version $VERSION patch setup.py README.md docs/index.md; fi
         - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
         - git add -u
         - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
@@ -82,7 +77,7 @@ jobs:
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
-      - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip install twine wheel && python setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
+      - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
     - script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
@@ -94,7 +89,7 @@ jobs:
       - eval `ssh-agent -s`
       - ssh-add rel_travis
       - git config --global push.default simple
-      - docker run -v $(pwd):/cdtlib --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip uninstall cdt -y && pip install . && pip install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
+      - docker run -v $(pwd):/cdtlib --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
       - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
       - git add ./docs
       - git commit -m "[DEPLOY] Docs $VERSION_NEW [skip travis-ci]"
