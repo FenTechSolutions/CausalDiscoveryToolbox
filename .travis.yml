@@ -47,6 +47,7 @@ jobs:
           - bumpversion --current-version $VERSION patch setup.py README.md docs/index.md
         - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
         - git add -u
+        - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
         - git commit -m "[DEPLOY] $VERSION_NEW [skip travis-ci]"
         - git push deploy HEAD:master
     - stage: deploy 1st stage
