@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Causal Discovery Toolbox Documentation &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>Causal Discovery Toolbox &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
   
 
   
@@ -82,7 +82,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Causal Discovery Toolbox Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Causal Discovery Toolbox</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
@@ -136,7 +136,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Causal Discovery Toolbox Documentation</li>
+      <li>Causal Discovery Toolbox</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -155,18 +155,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="causal-discovery-toolbox-documentation">
-<span id="causal-discovery-toolbox-documentation"></span><h1>Causal Discovery Toolbox Documentation<a class="headerlink" href="#causal-discovery-toolbox-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="causal-discovery-toolbox">
+<span id="causal-discovery-toolbox"></span><h1>Causal Discovery Toolbox<a class="headerlink" href="#causal-discovery-toolbox" title="Permalink to this headline">¶</a></h1>
 <p>Package for causal inference in graphs and in the pairwise settings for Python&gt;=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.</p>
 <p><a class="reference external" href="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="Build Status" src="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master" /></a>
+<a class="reference external" href="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="codecov" src="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg" /></a>
 <a class="reference external" href="https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md"><img alt="Hex.pm" src="https://img.shields.io/hexpm/l/plug.svg?maxAge=259200" /></a>
 <a class="reference external" href="#"><img alt="Python.pm" src="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200" /></a>
 <a class="reference external" href="#"><img alt="version" src="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200" /></a></p>
 <p>It implements lots of algorithms for graph structure recovery (including algorithms from the <strong>bnlearn</strong>, <strong>pcalg</strong> packages), mainly based out of observational data.</p>
+<div class="section" id="check-out-the-docs-here">
+<span id="check-out-the-docs-here"></span><h2><a class="reference external" href="https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html">Check out the DOCS here !</a><a class="headerlink" href="#check-out-the-docs-here" title="Permalink to this headline">¶</a></h2>
 <p>An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb">jupyter-notebook</a></p>
 <p>Install it using pip: (See more details on installation below)</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install cdt
 </pre></div>
+</div>
+</div>
+<div class="section" id="docker-images">
+<span id="docker-images"></span><h2>Docker images<a class="headerlink" href="#docker-images" title="Permalink to this headline">¶</a></h2>
+<p>Docker images are available, including all the dependencies, and enabled functionalities:</p>
+<p>|  python ver.  |  cpu  | gpu   |
+|————– |—————————————————————————————————————————–  |—————————————————————————————————————————————-   |
+| 3.6   | <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.6/"><img alt="d36cpu" src="https://img.shields.io/badge/docker-0.2.6-0db7ed.svg?maxAge=259200" /></a>   | <a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-py3.6/"><img alt="d36gpu" src="https://img.shields.io/badge/nvidia--docker-0.2.6-76b900.svg?maxAge=259200" /></a>    |
+| 3.7   | <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.7/"><img alt="d37cpu" src="https://img.shields.io/badge/docker-0.2.6-0db7ed.svg?maxAge=259200" /></a>   | <a class="reference external" href="#"><img alt="d37gpu" src="https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200" /></a>   |</p>
 </div>
 <div class="section" id="installation">
 <span id="installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
@@ -339,7 +351,7 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
@@ -358,21 +370,15 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.2.5',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
 
   
 

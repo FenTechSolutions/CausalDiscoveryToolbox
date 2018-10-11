@@ -82,7 +82,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
@@ -168,7 +168,6 @@ object, a unique instance of the <code class="docutils literal notranslate"><spa
 <li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.autoset_config</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.r_is_available</span></code></li>
 </ol>
 <p>The hardware detection revolves around the presence of GPUs. If GPUs are
 present, <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> and the number of jobs
@@ -188,8 +187,6 @@ is available, unlocking additional features of the toolbox.</p>
 hardware.</li>
 <li><strong>GPU</strong> (<em>int</em>) – The number of available GPUs ; defaults to <cite>0</cite>.</li>
 <li><strong>default_device</strong> (<em>str</em>) – Default device used for pytorch jobs.</li>
-<li><strong>r_is_available</strong> (<em>bool</em>) – Sets itself to <code class="docutils literal notranslate"><span class="pre">True</span></code> if a R framework is
-detected.</li>
 <li><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the toolbox algorithms.</li>
 </ul>
 </td>
@@ -259,7 +256,7 @@ nvidia-smi or a compiled Python extension.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
@@ -278,21 +275,15 @@ nvidia-smi or a compiled Python extension.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.2.5',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
 
   
 

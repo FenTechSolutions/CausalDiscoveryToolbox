@@ -81,7 +81,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
@@ -154,23 +154,22 @@
             
   <h1>Source code for cdt.utils.Settings</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;The ``cdt.utils.Settings`` module defines the settings used in the toolbox,</span>
-<span class="sd">such as the default hardware parameters; and the tools to autodetect the </span>
-<span class="sd">hardware. All parameters are overridable by accessing the ``cdt.SETTINGS`` </span>
+<span class="sd">such as the default hardware parameters; and the tools to autodetect the</span>
+<span class="sd">hardware. All parameters are overridable by accessing the ``cdt.SETTINGS``</span>
 <span class="sd">object, a unique instance of the ``cdt.utils.ConfigSettings`` class.</span>
 
 <span class="sd">The various attributes of the ``cdt.SETTINGS`` configuration object are:</span>
 
-<span class="sd">1. ``cdt.SETTINGS.NB_JOBS`` </span>
+<span class="sd">1. ``cdt.SETTINGS.NB_JOBS``</span>
 <span class="sd">2. ``cdt.SETTINGS.GPU``</span>
 <span class="sd">3. ``cdt.SETTINGS.default_device``</span>
 <span class="sd">4. ``cdt.SETTINGS.autoset_config``</span>
 <span class="sd">5. ``cdt.SETTINGS.verbose``</span>
-<span class="sd">6. ``cdt.SETTINGS.r_is_available``</span>
 
-<span class="sd">The hardware detection revolves around the presence of GPUs. If GPUs are </span>
-<span class="sd">present, ``cdt.SETTINGS.GPU`` is set to ``True`` and the number of jobs </span>
+<span class="sd">The hardware detection revolves around the presence of GPUs. If GPUs are</span>
+<span class="sd">present, ``cdt.SETTINGS.GPU`` is set to ``True`` and the number of jobs</span>
 <span class="sd">is set to the number of GPUs. Else the number of jobs is set to the number</span>
-<span class="sd">of CPUs. Another test performed at startup is to check if an R framework </span>
+<span class="sd">of CPUs. Another test performed at startup is to check if an R framework</span>
 <span class="sd">is available, unlocking additional features of the toolbox.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -178,7 +177,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span> 
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
 
 
 <span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -197,8 +196,6 @@
 <span class="sd">            hardware.</span>
 <span class="sd">        GPU (int): The number of available GPUs ; defaults to `0`.</span>
 <span class="sd">        default_device (str): Default device used for pytorch jobs.</span>
-<span class="sd">        r_is_available (bool): Sets itself to ``True`` if a R framework is</span>
-<span class="sd">            detected.</span>
 <span class="sd">        verbose (bool): Sets the verbosity of the toolbox algorithms.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -207,8 +204,7 @@
                  <span class="s2">&quot;GPU&quot;</span><span class="p">,</span>  <span class="c1"># Number of GPUs Available</span>
                  <span class="s2">&quot;default_device&quot;</span><span class="p">,</span>  <span class="c1"># Default device for gpu (pytorch 0.4)</span>
                  <span class="s2">&quot;autoset_config&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;r_is_available&quot;</span><span class="p">)</span>
+                 <span class="s2">&quot;verbose&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Define here the default values of the parameters.&quot;&quot;&quot;</span>
@@ -233,10 +229,10 @@
 <div class="viewcode-block" id="ConfigSettings.get_default"><a class="viewcode-back" href="../../../settings.html#cdt.utils.Settings.ConfigSettings.get_default">[docs]</a>    <span class="k">def</span> <span class="nf">get_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the default parameters as defined in the Settings instance.</span>
 
-<span class="sd">        This function proceeds to seamlessly retrieve the argument to pass </span>
+<span class="sd">        This function proceeds to seamlessly retrieve the argument to pass</span>
 <span class="sd">        through, depending on either it was overidden or not: If no argument</span>
 <span class="sd">        was overridden in a function of the toolbox, the default argument will</span>
-<span class="sd">        be set to ``None``, and this function will retrieve the default </span>
+<span class="sd">        be set to ``None``, and this function will retrieve the default</span>
 <span class="sd">        parameters as defined by the ``cdt.SETTINGS`` &#39;s attributes.</span>
 
 <span class="sd">        It has two modes of processing:</span>
@@ -299,7 +295,7 @@
 
 
 <div class="viewcode-block" id="check_cuda_devices"><a class="viewcode-back" href="../../../settings.html#cdt.utils.Settings.check_cuda_devices">[docs]</a><span class="k">def</span> <span class="nf">check_cuda_devices</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Output some information on CUDA-enabled devices on your computer, </span>
+    <span class="sd">&quot;&quot;&quot;Output some information on CUDA-enabled devices on your computer,</span>
 <span class="sd">    including current memory usage. Modified to only get number of devices.</span>
 
 <span class="sd">    It&#39;s a port of https://gist.github.com/f0k/0d6431e3faa60bffc788f8b4daa029b1</span>
@@ -359,7 +355,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
@@ -378,21 +374,15 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../../',
-            VERSION:'0.2.5',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
 
   
 

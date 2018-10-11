@@ -81,7 +81,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
@@ -156,7 +156,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Loading and executing functions from R packages.</span>
 
 <span class="sd">This module defines the interface between R and Python using subprocess.</span>
-<span class="sd">At the initialization, the toolbox checks if R is available and sets </span>
+<span class="sd">At the initialization, the toolbox checks if R is available and sets</span>
 <span class="sd">``cdt.SETTINGS.r_is_available`` to ``True`` if the R framework is detected.</span>
 <span class="sd">Else, this module is deactivated.</span>
 
@@ -169,7 +169,7 @@
 
 <span class="sd">1. Copying the R script template and modifying it with the given arguments</span>
 <span class="sd">2. Copying all the data to a temporary folder in /tmp</span>
-<span class="sd">3. Launching a R subprocess using the modified template and the data, and </span>
+<span class="sd">3. Launching a R subprocess using the modified template and the data, and</span>
 <span class="sd">   the script saves the results in a folder in /tmp</span>
 <span class="sd">4. Retrieving all the results in the Python process and cleaning up all the</span>
 <span class="sd">   temporary files.</span>
@@ -179,6 +179,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">fileinput</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">rmtree</span>
 
 
@@ -201,12 +202,18 @@
 <span class="sd">    `None`) will not be tested again.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        pcalg (bool): Availability of the `pcalg` R package </span>
-<span class="sd">        kpcalg (bool): Availability of the `kpcalg` R package </span>
-<span class="sd">        bnlearn (bool): Availability of the `bnlearn` R package </span>
-<span class="sd">        D2C (bool): Availability of the `D2C` R package </span>
-<span class="sd">        SID (bool): Availability of the `SID` R package </span>
-<span class="sd">        CAM (bool): Availability of the `CAM` R package </span>
+<span class="sd">        pcalg (bool): Availability of the `pcalg` R package</span>
+<span class="sd">        kpcalg (bool): Availability of the `kpcalg` R package</span>
+<span class="sd">        bnlearn (bool): Availability of the `bnlearn` R package</span>
+<span class="sd">        D2C (bool): Availability of the `D2C` R package</span>
+<span class="sd">        SID (bool): Availability of the `SID` R package</span>
+<span class="sd">        CAM (bool): Availability of the `CAM` R package</span>
+<span class="sd">        RCIT (bool): Availability of the `RCIT` R package</span>
+
+<span class="sd">    .. warning ::</span>
+<span class="sd">       The RCIT package is not the original one (github.com/ericstrobl/RCIT)</span>
+<span class="sd">       but an adaptation made to fit in the PC algorithm, available at:</span>
+<span class="sd">       https://github.com/Diviyan-Kalainathan/RCIT</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;init&quot;</span><span class="p">,</span>
@@ -215,7 +222,8 @@
                  <span class="s2">&quot;bnlearn&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;D2C&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;SID&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;CAM&quot;</span><span class="p">)</span>
+                 <span class="s2">&quot;CAM&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;RCIT&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the values of the packages.&quot;&quot;&quot;</span>
@@ -226,6 +234,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">D2C</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SID</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CAM</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RCIT</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -277,9 +286,10 @@
 <span class="sd">        else `True` or `False` depending on whether the execution was</span>
 <span class="sd">        successful.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_scripts/&#39;</span><span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">scriptpath</span> <span class="o">=</span> <span class="s1">&#39;/tmp/cdt_R_scripts/instance_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">template</span><span class="p">))</span>
+        <span class="n">scriptpath</span> <span class="o">=</span> <span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/instance_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">template</span><span class="p">))</span>
         <span class="n">copy</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">scriptpath</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">fileinput</span><span class="o">.</span><span class="n">FileInput</span><span class="p">(</span><span class="n">scriptpath</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
@@ -303,12 +313,12 @@
 
     <span class="c1"># Cleaning up</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_scripts/&#39;</span><span class="p">)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">e</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_scripts/&#39;</span><span class="p">)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
-    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_scripts/&#39;</span><span class="p">)</span>
+    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
@@ -326,7 +336,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
@@ -345,21 +355,15 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../../',
-            VERSION:'0.2.5',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
 
   
 

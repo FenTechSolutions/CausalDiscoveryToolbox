@@ -83,7 +83,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
@@ -202,13 +202,20 @@ depending on the results. A package already tested (which value is not
 <li><strong>kpcalg</strong> (<em>bool</em>) – Availability of the <cite>kpcalg</cite> R package</li>
 <li><strong>bnlearn</strong> (<em>bool</em>) – Availability of the <cite>bnlearn</cite> R package</li>
 <li><strong>D2C</strong> (<em>bool</em>) – Availability of the <cite>D2C</cite> R package</li>
-<li><a class="reference internal" href="metrics.html#cdt.utils.metrics.SID" title="cdt.utils.metrics.SID"><strong>SID</strong></a> (<em>bool</em>) – Availability of the <cite>SID</cite> R package</li>
-<li><a class="reference internal" href="causality.html#cdt.causality.graph.CAM" title="cdt.causality.graph.CAM"><strong>CAM</strong></a> (<em>bool</em>) – Availability of the <cite>CAM</cite> R package</li>
+<li><strong>SID</strong> (<em>bool</em>) – Availability of the <cite>SID</cite> R package</li>
+<li><strong>CAM</strong> (<em>bool</em>) – Availability of the <cite>CAM</cite> R package</li>
+<li><strong>RCIT</strong> (<em>bool</em>) – Availability of the <cite>RCIT</cite> R package</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The RCIT package is not the original one (github.com/ericstrobl/RCIT)
+but an adaptation made to fit in the PC algorithm, available at:
+<a class="reference external" href="https://github.com/Diviyan-Kalainathan/RCIT">https://github.com/Diviyan-Kalainathan/RCIT</a></p>
+</div>
 <dl class="method">
 <dt id="cdt.utils.R.DefaultRPackages.check_R_package">
 <code class="descname">check_R_package</code><span class="sig-paren">(</span><em>package</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages.check_R_package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.check_R_package" title="Permalink to this definition">¶</a></dt>
@@ -530,7 +537,7 @@ parameters.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
@@ -549,21 +556,15 @@ parameters.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.2.5',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
 
   
 
