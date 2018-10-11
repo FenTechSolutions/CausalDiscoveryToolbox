@@ -5,8 +5,8 @@ Package for causal inference in graphs and in the pairwise settings for Python>=
 [![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
-[![Python.pm](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200)](#)
-[![version](https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200)](#)
+[![Python.pm](https://img.shields.io/badge/python->3.5-lightgrey.svg?maxAge=259200)](#)
+[![version](https://img.shields.io/badge/version-0.2.6-yellow.svg?maxAge=259200)](#)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 

@@ -30,7 +30,7 @@ jobs:
       - docker push divkal/cdt-test
     - stage: test
       name: "Test and bumpversion"
-      script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pytest --cov=./ && codecov --token $CODECOV_TOKEN'
+      script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov=./cdt && codecov --token $CODECOV_TOKEN'
       after_success:
         - git config --global user.email "travis-bumpversion@example.com"
         - git config --global user.name "Travis CI Bumpversion"
@@ -39,7 +39,7 @@ jobs:
         - ssh-add rel_travis
         - git config --global push.default simple
         - pip install bumpversion
-        - if [[ $COMMIT_MESSAGE == *"[REL]"* ]]; then bumpversion --current-version $VERSION minor setup.py README.md docs/index.md; elif [[ $COMMIT_MESSAGE == *"[MREL]"* ]]; then bumpversion --current-version $VERSION major setup.py README.md docs/index.md; else bumpversion --current-version $VERSION patch setup.py README.md docs/index.md; fi
+        - if [[ $TRAVIS_COMMIT_MESSAGE == *"[REL]"* ]]; then bumpversion --current-version $VERSION minor setup.py README.md docs/index.md; elif [[ $TRAVIS_COMMIT_MESSAGE == *"[MREL]"* ]]; then bumpversion --current-version $VERSION major setup.py README.md docs/index.md; else bumpversion --current-version $VERSION patch setup.py README.md docs/index.md; fi
         - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
         - git add -u
         - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
