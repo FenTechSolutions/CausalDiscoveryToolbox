@@ -14,7 +14,9 @@ services:
 
 env:
   - VERSION=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
-
+before_install:
+  openssl aes-256-cbc -K $encrypted_7b48abc79884_key -iv $encrypted_7b48abc79884_iv -in rel_travis.enc -out rel_travis -d
+install: true
 jobs:
   include:
     - stage: build docker image
@@ -76,8 +78,8 @@ jobs:
     - script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
-      - git config --global user.email "travis-bumpversion@example.com"
-      - git config --global user.name "Travis CI Bumpversion"
+      - git config --global user.email "travis-docs@example.com"
+      - git config --global user.name "Travis CI Docs"
       - echo "$ssh_private" > travis_key
       - echo "$ssh_public" > travis_key.pub
       - chmod 600 travis_key
