@@ -14,7 +14,7 @@ doctrees/
 builddir
 # C extensions
 *.so
-
+rel_travis*
 # Distribution / packaging
 .Python
 env/

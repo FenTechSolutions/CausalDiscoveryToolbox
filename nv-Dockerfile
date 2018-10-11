@@ -11,5 +11,5 @@ RUN cd /CDT && \
     python -m pip install -r requirements.txt && \
     python -m pip install pytest pytest-cov && \
     python -m pip install codecov && \
-    python setup.py install develop --user
+    python setup.py install
 CMD /bin/sh

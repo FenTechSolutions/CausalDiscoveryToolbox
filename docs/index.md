@@ -1,12 +1,16 @@
-# Causal Discovery Toolbox Documentation 
- Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
+# Causal Discovery Toolbox
+
+Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
 [![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
+[![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
 [![Python.pm](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200)](#)
 [![version](https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200)](#)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
+
+## [Check out the DOCS here !](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html) 
 
 An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb)
 
@@ -14,6 +18,13 @@ Install it using pip: (See more details on installation below)
 ```sh
 pip install cdt
 ```
+## Docker images
+Docker images are available, including all the dependencies, and enabled functionalities:
+
+|  python ver. 	|  cpu 	| gpu 	|
+|--------------	|-----------------------------------------------------------------------------------------------------------------------------	|----------------------------------------------------------------------------------------------------------------------------------------	|
+| 3.6 	| [![d36cpu](https://img.shields.io/badge/docker-0.2.5-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/) 	| [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.2.5-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
+| 3.7 	| [![d37cpu](https://img.shields.io/badge/docker-0.2.5-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/) 	| [![d37gpu](https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200)](#) 	|
 
 ## Installation
 
@@ -142,6 +153,7 @@ The whole package revolves around using the **DiGraph** and **Graph** classes fr
 - [20] Fonollosa, J. A. (2016). Conditional distribution variability measures for causality detection. arXiv preprint arXiv:1601.06680.
 - [21] Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.
 - [22] Li, Y., Swersky, K., & Zemel, R. (2015). Generative moment matching networks. In Proceedings of the 32nd International Conference on Machine Learning (ICML-15) (pp. 1718-1727).  
+
 
 ## Table of Contents
 ```eval_rst

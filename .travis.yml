@@ -1,9 +1,13 @@
 # Setting up automatic travis test build.
 sudo: required
+
+language: python
+
+conditions: v1
+
 branches:
   only:
   - master
-  - dev
 
 services:
   - docker
@@ -21,23 +25,70 @@ jobs:
       - docker build --build-arg python=3.6 -t divkal/cdt-test .
       - docker push divkal/cdt-test
     - stage: test
+      name: "Test and bumpversion"
       script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pytest --cov=./ && codecov --token $CODECOV_TOKEN'
-    - stage: deploy
+      after_success:
+        - git config --global user.email "travis-bumpversion@example.com"
+        - git config --global user.name "Travis CI Bumpversion"
+        - echo "$ssh_private" > travis_key
+        - echo "$ssh_public" > travis_key.pub
+        - chmod 600 travis_key
+        - chmod 644 travis_key.pub
+        - eval `ssh-agent -s`
+        - ssh-add travis_key
+        - git config --global push.default simple
+        - pip install bumpversion
+        - if commit_message=~\[REL\]: bumpversion --current-version $VERSION minor setup.py README.md docs/index.md
+        - if commit_message=~\[MREL\]: bumpversion --current-version $VERSION major setup.py README.md docs/index.md
+        - if NOT (commit_message=~\[REL\] OR commit_message=~\[MREL\]): bumpversion --current-version $VERSION patch setup.py README.md docs/index.md
+        - env:
+          global:
+            - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
+        - git remote add deploy $(git remote -v | sed -nre 's#^origin.*https://([^/]*)/([^]*) *.*push.*#git@\1:\2#p')
+        - git add -u
+        - git commit -m "[DEPLOY] $VERSION_NEW [skip travis-ci]"
+        - git push deploy HEAD:master
+    - stage: deploy 1st stage
       name: "Build and push 3.6"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-test
-      - docker tag divkal/cdt-test divkal/cdt-py3.6:$VERSION
-      - docker push divkal/cdt-py3.6:$VERSION
+      - docker pull divkal/cdt-env-base:1.0
+      - docker build --build-arg python=3.6 -t divkal/cdt-py3.6:$VERSION_NEW .
+      - docker push divkal/cdt-py3.6:$VERSION_NEW
     - script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-env-base:1.0
-      - docker build --build-arg python=3.7 -t divkal/cdt-py3.7:$VERSION .
-      - docker push divkal/cdt-py3.7:$VERSION
+      - docker build --build-arg python=3.7 -t divkal/cdt-py3.7:$VERSION_NEW .
+      - docker push divkal/cdt-py3.7:$VERSION_NEW
       name: "Build and push 3.7"
     - script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/nv-cdt-env-base:1.0
-      - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION .
-      - docker push divkal/nv-cdt-py3.6:$VERSION
+      - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
+      - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
       name: "Build and push nv-3.6"
+    - stage: deploy 2nd stage
+      name: "Push on Pypi"
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker pull divkal/cdt-py3.7:$VERSION_NEW
+      - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip install twine wheel && python setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
+    - script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker pull divkal/cdt-py3.7:$VERSION_NEW
+      - git config --global user.email "travis-bumpversion@example.com"
+      - git config --global user.name "Travis CI Bumpversion"
+      - echo "$ssh_private" > travis_key
+      - echo "$ssh_public" > travis_key.pub
+      - chmod 600 travis_key
+      - chmod 644 travis_key.pub
+      - eval `ssh-agent -s`
+      - ssh-add travis_key
+      - git pull
+      - git config --global push.default simple
+      - docker run -v $(pwd):/cdtlib --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip uninstall cdt -y && pip install . && pip install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
+      - git remote add deploy $(git remote -v | sed -nre 's#^origin.*https://([^/]*)/([^]*) *.*push.*#git@\1:\2#p')
+      - git add ./docs
+      - git commit -m "[DEPLOY] Docs $VERSION_NEW [skip travis-ci]"
+      - git push deploy HEAD:master
+      name: "Compile docs and push"
