@@ -82,18 +82,22 @@ class NCC(PairwiseModel):
             dataset.append(m)
         if th.cuda.is_available():
             dataset = [m.cuda() for m in dataset]
-
+        acc = [0]
         with trange(epochs) as t:
             for epoch in t:
-                for m in dataset:
+                for i, m in enumerate(dataset):
                     opt.zero_grad()
                     out = self.model(m)
                     loss = criterion(out, y[i])
                     loss.backward()
                     if not i:
-                        t.set_postfix(loss=loss.item())
+                        t.set_postfix(loss=loss.item(), acc=np.mean(acc))
+                        acc = []
 
-                    # NOTE : optim is called at each epoch ; might want to change
+                    else:
+                        val = 1 if out > .5 else 0
+                        acc.append(np.abs(y[i] - val))
+                    # NOTE : optim is called at each sample ; might want to change
                     opt.step()
 
     def predict_proba(self, a, b):
