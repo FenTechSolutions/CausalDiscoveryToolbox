@@ -1,6 +1,7 @@
 """Utilities for graph not included in Networkx."""
 import networkx as nx
 from copy import deepcopy
+import numpy as np
 
 
 def dagify_min_edge(g):

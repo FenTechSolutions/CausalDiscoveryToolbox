@@ -10,6 +10,7 @@ import numpy as np
 import torch as th
 from torch.autograd import Variable
 from .model import PairwiseModel
+from tqdm import trange
 
 
 class NCC_model(th.nn.Module):
@@ -70,24 +71,27 @@ class NCC(PairwiseModel):
         if th.cuda.is_available():
             self.model = self.model.cuda()
             y = y.cuda()
-        for epoch in range(epochs):
-            for i, (idx, row) in enumerate(x_tr.iterrows()):
-                opt.zero_grad()
-                a = row['A'].reshape((len(row['A']), 1))
-                b = row['B'].reshape((len(row['B']), 1))
-                m = np.hstack((a, b))
-                m = scale(m)
-                m = m.astype('float32')
-                m = Variable(th.from_numpy(m))
+        with trange(epochs) as t:
+            for epoch in t:
+                for i, (idx, row) in enumerate(x_tr.iterrows()):
+                    opt.zero_grad()
+                    a = row['A'].reshape((len(row['A']), 1))
+                    b = row['B'].reshape((len(row['B']), 1))
+                    m = np.hstack((a, b))
+                    m = scale(m)
+                    m = m.astype('float32')
+                    m = Variable(th.from_numpy(m))
 
-                if th.cuda.is_available():
-                    m = m.cuda()
-                out = self.model(m)
-                loss = criterion(out, y[i])
-                loss.backward()
+                    if th.cuda.is_available():
+                        m = m.cuda()
+                    out = self.model(m)
+                    loss = criterion(out, y[i])
+                    loss.backward()
+                    if not i:
+                        t.set_postfix(loss=loss.item())
 
-                # NOTE : optim is called at each epoch ; might want to change
-                opt.step()
+                        # NOTE : optim is called at each epoch ; might want to change
+                        opt.step()
 
     def predict_proba(self, a, b):
         """Infer causal directions using the trained NCC pairwise model.
