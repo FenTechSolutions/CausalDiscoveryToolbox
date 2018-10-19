@@ -71,6 +71,7 @@ class NCC(PairwiseModel):
         if th.cuda.is_available():
             self.model = self.model.cuda()
             y = y.cuda()
+            y_cpu = y.cpu()
         dataset = []
         for i, (idx, row) in enumerate(x_tr.iterrows()):
 
@@ -96,7 +97,10 @@ class NCC(PairwiseModel):
 
                     else:
                         val = 1 if out > .5 else 0
-                        acc.append(np.abs(y[i] - val))
+                        if th.cuda.is_available():
+                            acc.append(np.abs(y_cpu[i] - val))
+                        else:
+                            acc.append(np.abs(y[i] - val))
                     # NOTE : optim is called at each sample ; might want to change
                     opt.step()
 
