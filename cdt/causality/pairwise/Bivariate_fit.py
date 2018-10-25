@@ -8,6 +8,10 @@ from sklearn.preprocessing import scale
 from sklearn.metrics import mean_squared_error
 import numpy as np
 from .model import PairwiseModel
+from sklearn.preprocessing import PolynomialFeatures
+poly=PolynomialFeatures(degree=3)
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
 
 
 class BivariateFit(PairwiseModel):
@@ -38,8 +42,10 @@ class BivariateFit(PairwiseModel):
         x = np.reshape(scale(x), (-1, 1))
         y = np.reshape(scale(y), (-1, 1))
 
+
         gp = GaussianProcessRegressor().fit(x, y)
         y_predict = gp.predict(x)
+
         error = mean_squared_error(y_predict, y)
 
         return error

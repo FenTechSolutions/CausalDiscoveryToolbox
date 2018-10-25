@@ -4,6 +4,7 @@ Author : Olivier Goudet
 Date : 7/06/17
 """
 from sklearn.gaussian_process import GaussianProcessRegressor
+
 from sklearn.preprocessing import minmax_scale
 from sklearn.metrics import mean_squared_error
 import numpy as np
@@ -36,6 +37,7 @@ class RECI(PairwiseModel):
 
         x = np.reshape(minmax_scale(x), (-1, 1))
         y = np.reshape(minmax_scale(y), (-1, 1))
+
 
         poly = PolynomialFeatures(degree=3)
         poly_x = poly.fit_transform(x)
