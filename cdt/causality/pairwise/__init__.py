@@ -4,6 +4,7 @@ from .Jarfo import Jarfo
 from .IGCI import IGCI
 from .GNN import GNN
 from .Bivariate_fit import BivariateFit
+from .RECI import RECI
 from ...utils.Settings import SETTINGS
 from .RCC import RCC
 from .NCC import NCC
