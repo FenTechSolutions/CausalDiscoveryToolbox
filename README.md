@@ -6,7 +6,7 @@ Package for causal inference in graphs and in the pairwise settings for Python>=
 [![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
 [![Python.pm](https://img.shields.io/badge/python->3.5-lightgrey.svg?maxAge=259200)](#)
-[![version](https://img.shields.io/badge/version-0.2.6-yellow.svg?maxAge=259200)](#)
+[![version](https://img.shields.io/badge/version-0.2.7-yellow.svg?maxAge=259200)](#)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 
@@ -23,8 +23,8 @@ Docker images are available, including all the dependencies, and enabled functio
 
 |  python ver. 	|  cpu 	| gpu 	|
 |--------------	|-----------------------------------------------------------------------------------------------------------------------------	|----------------------------------------------------------------------------------------------------------------------------------------	|
-| 3.6 	| [![d36cpu](https://img.shields.io/badge/docker-0.2.6-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/) 	| [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.2.6-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
-| 3.7 	| [![d37cpu](https://img.shields.io/badge/docker-0.2.6-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/) 	| [![d37gpu](https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200)](#) 	|
+| 3.6 	| [![d36cpu](https://img.shields.io/badge/docker-0.2.7-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/) 	| [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.2.7-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
+| 3.7 	| [![d37cpu](https://img.shields.io/badge/docker-0.2.7-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/) 	| [![d37gpu](https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200)](#) 	|
 
 ## Installation
 

@@ -14,13 +14,13 @@ from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
 
-class BivariateFit(PairwiseModel):
+class RECI(PairwiseModel):
     """
     Bivariate Fit model.
     Based itself on a best-fit criterion based on a regressor.
     """
     def __init__(self, ffactor=2, maxdev=3, minc=12):
-        super(BivariateFit, self).__init__()
+        super(RECI, self).__init__()
 
     def predict_proba(self, a, b, **kwargs):
         """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
@@ -42,10 +42,18 @@ class BivariateFit(PairwiseModel):
         x = np.reshape(scale(x), (-1, 1))
         y = np.reshape(scale(y), (-1, 1))
 
+        poly = PolynomialFeatures(degree=3)
+        poly_x = poly.fit_transform(x)
 
-        gp = GaussianProcessRegressor().fit(x, y)
-        y_predict = gp.predict(x)
+        poly_x[:,1] = 0
+        poly_x[:,2] = 0
 
+        regressor = LinearRegression()
+        regressor.fit(poly_x, y)
+
+        y_predict = regressor.predict(poly_x)
+
+        
         error = mean_squared_error(y_predict, y)
 
         return error
