@@ -12,7 +12,6 @@ from .model import PairwiseModel
 from sklearn.preprocessing import PolynomialFeatures
 poly=PolynomialFeatures(degree=3)
 from sklearn.linear_model import LinearRegression
-import matplotlib.pyplot as plt
 
 
 class RECI(PairwiseModel):
