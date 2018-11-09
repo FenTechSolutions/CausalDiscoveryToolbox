@@ -24,7 +24,7 @@ def setup_package():
           install_requires=['numpy', 'scipy', 'scikit-learn',
                             'joblib', 'pandas',
                             'networkx',
-                            'skrebate'],
+                            'skrebate', 'tqdm'],
           include_package_data=True,
           author='Diviyan Kalainathan',
           author_email='diviyan.kalainathan@lri.fr',

@@ -6,3 +6,4 @@ pandas
 networkx
 skrebate
 torch
+tqdm
