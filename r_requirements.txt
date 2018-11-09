@@ -1,6 +1,7 @@
 pcalg
 kpcalg
 bnlearn
+sparsebn
 SID
 CAM
 D2C

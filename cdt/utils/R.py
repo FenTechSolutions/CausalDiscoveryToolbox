@@ -65,6 +65,7 @@ class DefaultRPackages(object):
                  "pcalg",
                  "kpcalg",
                  "bnlearn",
+                 "sparsebn",
                  "D2C",
                  "SID",
                  "CAM",
@@ -76,6 +77,7 @@ class DefaultRPackages(object):
         self.pcalg = None
         self.kpcalg = None
         self.bnlearn = None
+        self.sparsebn = None
         self.D2C = None
         self.SID = None
         self.CAM = None

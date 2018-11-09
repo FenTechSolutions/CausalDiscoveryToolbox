@@ -25,7 +25,7 @@ jobs:
       name: "Build 3.6 image for testing"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:1.0
+      - docker pull divkal/cdt-env-base:1.1
       - docker build --build-arg python=3.6 -t divkal/cdt-test .
       - docker push divkal/cdt-test
     - stage: test
@@ -51,14 +51,14 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:1.0
+      - docker pull divkal/cdt-env-base:1.1
       - docker build --build-arg python=3.6 -t divkal/cdt-py3.6:$VERSION_NEW .
       - docker push divkal/cdt-py3.6:$VERSION_NEW
     - script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:1.0
+      - docker pull divkal/cdt-env-base:1.1
       - docker build --build-arg python=3.7 -t divkal/cdt-py3.7:$VERSION_NEW .
       - docker push divkal/cdt-py3.7:$VERSION_NEW
       name: "Build and push 3.7"
@@ -66,7 +66,7 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/nv-cdt-env-base:1.0
+      - docker pull divkal/nv-cdt-env-base:1.1
       - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
       - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
       name: "Build and push nv-3.6"
