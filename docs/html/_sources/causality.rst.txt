@@ -50,7 +50,13 @@ cdt.causality.graph
    :members:
 
 .. currentmodule:: cdt.causality.graph
-                   
+
+:hidden:`CCDr`
+~~~~~~~~~~~~~~
+
+.. autoclass:: CCDr
+   :members: create_graph_from_data
+
 :hidden:`CAM`
 ~~~~~~~~~~~~~~
 

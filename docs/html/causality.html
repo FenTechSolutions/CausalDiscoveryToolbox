@@ -96,6 +96,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#mmpc"><span class="hidden-section">MMPC</span></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#ccdr"><span class="hidden-section">CCDr</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cam"><span class="hidden-section">CAM</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cgnn"><span class="hidden-section">CGNN</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ges"><span class="hidden-section">GES</span></a></li>
@@ -495,6 +496,37 @@ Machine Learning,65(1), 31-78.</p>
 </dd></dl>
 
 </div>
+</div>
+<div class="section" id="ccdr">
+<h3><span class="hidden-section">CCDr</span><a class="headerlink" href="#ccdr" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.causality.graph.CCDr">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CCDr</code><span class="sig-paren">(</span><em>score='nonlinear'</em>, <em>cutoff=0.001</em>, <em>variablesel=True</em>, <em>selmethod='gamboost'</em>, <em>pruning=False</em>, <em>prunmethod='gam'</em>, <em>nb_jobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr" title="Permalink to this definition">¶</a></dt>
+<dd><p>CCDr algorithm.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This implementation of CCDr does not support starting with a graph.</p>
+</div>
+<dl class="method">
+<dt id="cdt.causality.graph.CCDr.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply causal discovery on observational data using CCDr.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the CCDR algorithm.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="cam">
 <h3><span class="hidden-section">CAM</span><a class="headerlink" href="#cam" title="Permalink to this headline">¶</a></h3>
