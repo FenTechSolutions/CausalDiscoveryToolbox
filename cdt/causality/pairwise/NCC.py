@@ -108,11 +108,11 @@ class NCC(PairwiseModel):
         dataset = [m.to(device) for m in dataset]
         acc = [0]
         da = th.utils.data.DataLoader(Dataset(dataset, y), batch_size=batchsize,
-                                      shuffle=True, drop_last=True)
+                                      shuffle=True)
         data_per_epoch = (len(dataset) // batchsize)
         with trange(epochs, desc="Epochs", disable=not verbose) as te:
             for epoch in te:
-                with trange(data_per_epoch-1, desc=f"Batches of {batchsize}",
+                with trange(data_per_epoch, desc=f"Batches of {batchsize}",
                             disable=not verbose) as t:
                     output = []
                     labels = []
