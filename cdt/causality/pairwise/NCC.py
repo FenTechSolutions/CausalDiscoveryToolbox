@@ -87,6 +87,8 @@ class NCC(PairwiseModel):
         :param x_tr: CEPC-format DataFrame containing pairs of variables
         :param y_tr: array containing targets (-1, 1)
         """
+        if batchsize > len(x_tr):
+            batchsize = len(x_tr)
         verbose, device = SETTINGS.get_default(('verbose', verbose),
                                                ('device', device))
         self.model = NCC_model()
@@ -113,7 +115,7 @@ class NCC(PairwiseModel):
         with trange(epochs, desc="Epochs", disable=not verbose) as te:
             for epoch in te:
                 with trange(data_per_epoch, desc=f"Batches of {batchsize}",
-                            disable=not verbose) as t:
+                            disable=not (verbose and batchsize == len(dataset))) as t:
                     output = []
                     labels = []
                     for (batch, label), i in zip(da, t):
@@ -127,8 +129,8 @@ class NCC(PairwiseModel):
                         output.append(out)
                         labels.append(label)
                     acc = th.where(th.cat(output, 0) > .5,
-                                   th.ones(len(acc)),
-                                   th.zeros(len(acc))) - th.cat(labels, 0)
+                                   th.ones(len(output)),
+                                   th.zeros(len(output))) - th.cat(labels, 0)
                     te.set_postfix(Acc=1-acc.abs().mean().item())
 
     def predict_proba(self, a, b, device=None):
@@ -149,12 +151,12 @@ class NCC(PairwiseModel):
         m = np.hstack((a, b))
         m = scale(m)
         m = m.astype('float32')
-        m = Variable(th.from_numpy(m))
+        m = th.from_numpy(m).t().unsqueeze(0)
 
         if th.cuda.is_available():
             m = m.cuda()
 
-        return (self.model(m).cpu().numpy()-.5) * 2
+        return (self.model(m).data.cpu().numpy()-.5) * 2
 
     def predict_dataset(self, df, device=None, verbose=None):
         """
@@ -176,4 +178,4 @@ class NCC(PairwiseModel):
         dataset = [m.to(device) for m in dataset]
         return (th.cat([self.model(m) for m, t in zip(dataset, trange(len(dataset)),
                                                       disable=not verbose)]\
-                       , 0).cpu().numpy() -.5) * 2
+                       , 0).data.cpu().numpy() -.5) * 2
