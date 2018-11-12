@@ -11,23 +11,50 @@ import torch as th
 from torch.autograd import Variable
 from .model import PairwiseModel
 from tqdm import trange
+from torch.utils import data
+from ...utils.Settings import SETTINGS
+
+
+class Dataset(data.Dataset):
+  'Characterizes a dataset for PyTorch'
+  def __init__(self, dataset, labels):
+        'Initialization'
+        self.labels = labels
+        self.dataset = dataset
+
+  def __len__(self):
+        'Denotes the total number of samples'
+        return len(self.dataset)
+
+  def __getitem__(self, index):
+        'Generates one sample of data'
+        # Select sample
+
+        # Load data and get label
+
+        return self.dataset[index], self.labels[index]
 
 
 class NCC_model(th.nn.Module):
     """NCC model structure."""
 
-    def __init__(self, n_hiddens=20):
+    def __init__(self, n_hiddens=20, kernel_size=3):
         """Init the NCC structure with the number of hidden units.
 
         :param n_hiddens: Number of hidden units
         :type n_hiddens: int
         """
         super(NCC_model, self).__init__()
-        self.c1 = th.nn.Conv1d(2, n_hiddens, 1)
-        self.c2 = th.nn.Conv1d(n_hiddens, n_hiddens, 1)
-        self.batch_norm = th.nn.BatchNorm1d(n_hiddens, affine=False)
-        self.l1 = th.nn.Linear(n_hiddens, n_hiddens)
-        self.l2 = th.nn.Linear(n_hiddens, 1)
+        self.conv = th.nn.Sequential(th.nn.Conv1d(2, n_hiddens, kernel_size),
+                                     th.nn.ReLU(),
+                                     th.nn.Conv1d(n_hiddens, n_hiddens,
+                                                  kernel_size),
+                                     th.nn.ReLU())
+        # self.batch_norm = th.nn.BatchNorm1d(n_hiddens, affine=False)
+        self.dense = th.nn.Sequential(th.nn.Linear(n_hiddens, n_hiddens),
+                                      th.nn.ReLU(),
+                                      th.nn.Linear(n_hiddens, 1)
+                                      )
 
     def forward(self, x):
         """Passing data through the network.
@@ -35,14 +62,9 @@ class NCC_model(th.nn.Module):
         :param x: 2d tensor containing both (x,y) Variables
         :return: output of the net
         """
-        if x.dim()==2:
-            x.unsqueeze_(2)
-        sig = th.nn.Sigmoid()
-        act = th.nn.ReLU()
-        out1 = act(self.c1(x))
-        out2 = act(self.c2(out1)).squeeze(2)
-        out3 = self.l2(self.l1(self.batch_norm(out2).mean(dim=0)))
-        return sig(out3)
+
+        features = self.conv(x).mean(dim=2)
+        return self.dense(features)
 
 
 class NCC(PairwiseModel):
@@ -58,20 +80,22 @@ class NCC(PairwiseModel):
         super(NCC, self).__init__()
         self.model = None
 
-    def fit(self, x_tr, y_tr, epochs=200):
+    def fit(self, x_tr, y_tr, epochs=50, batchsize=32,
+            learning_rate=0.01, verbose=None, device=None):
         """Fit the NCC model.
 
         :param x_tr: CEPC-format DataFrame containing pairs of variables
-        :param y_tr: array containing targets
+        :param y_tr: array containing targets (-1, 1)
         """
+        verbose, device = SETTINGS.get_default(('verbose', verbose),
+                                               ('device', device))
         self.model = NCC_model()
-        opt = th.optim.Adam(self.model.parameters())
-        criterion = th.nn.BCELoss()
-        y = th.Tensor(y_tr.values)
-        if th.cuda.is_available():
-            self.model = self.model.cuda()
-            y = y.cuda()
-            y_cpu = y.cpu()
+        opt = th.optim.Adam(self.model.parameters(), lr=learning_rate)
+        criterion = th.nn.BCEWithLogitsLoss()
+        y = th.Tensor(y_tr.values)/2 + .5
+        # print(y)
+        self.model = self.model.to(device)
+        y = y.to(device)
         dataset = []
         for i, (idx, row) in enumerate(x_tr.iterrows()):
 
@@ -79,32 +103,35 @@ class NCC(PairwiseModel):
             b = row['B'].reshape((len(row['B']), 1))
             m = np.hstack((a, b))
             m = m.astype('float32')
-            m = Variable(th.from_numpy(m))
+            m = th.from_numpy(m).t().unsqueeze(0)
             dataset.append(m)
-        if th.cuda.is_available():
-            dataset = [m.cuda() for m in dataset]
+        dataset = [m.to(device) for m in dataset]
         acc = [0]
-        with trange(epochs) as t:
-            for epoch in t:
-                for i, m in enumerate(dataset):
-                    opt.zero_grad()
-                    out = self.model(m)
-                    loss = criterion(out, y[i])
-                    loss.backward()
-                    if not i:
-                        t.set_postfix(loss=loss.item(), acc=np.mean(acc))
-                        acc = []
+        da = th.utils.data.DataLoader(Dataset(dataset, y), batch_size=batchsize,
+                                      shuffle=True, drop_last=True)
+        data_per_epoch = (len(dataset) // batchsize)
+        with trange(epochs, desc="Epochs", disable=not verbose) as te:
+            for epoch in te:
+                with trange(data_per_epoch-1, desc=f"Batches of {batchsize}",
+                            disable=not verbose) as t:
+                    output = []
+                    labels = []
+                    for (batch, label), i in zip(da, t):
+                        opt.zero_grad()
+                        # print(batch.shape, labels.shape)
+                        out = th.stack([self.model(m) for m in batch], 0).squeeze(2)
+                        loss = criterion(out, label)
+                        loss.backward()
+                        t.set_postfix(loss=loss.item())
+                        opt.step()
+                        output.append(out)
+                        labels.append(label)
+                    acc = th.where(th.cat(output, 0) > .5,
+                                   th.ones(len(acc)),
+                                   th.zeros(len(acc))) - th.cat(labels, 0)
+                    te.set_postfix(Acc=1-acc.abs().mean().item())
 
-                    else:
-                        val = 1 if out > .5 else 0
-                        if th.cuda.is_available():
-                            acc.append(np.abs(y_cpu[i] - val))
-                        else:
-                            acc.append(np.abs(y[i] - val))
-                    # NOTE : optim is called at each sample ; might want to change
-                    opt.step()
-
-    def predict_proba(self, a, b):
+    def predict_proba(self, a, b, device=None):
         """Infer causal directions using the trained NCC pairwise model.
 
         :param a: Variable 1
@@ -112,6 +139,7 @@ class NCC(PairwiseModel):
         :return: probability (Value : 1 if a->b and -1 if b->a)
         :rtype: float
         """
+        device = SETTINGS.get_default(device=device)
         if self.model is None:
             print('Model has to be trained before doing any predictions')
             raise ValueError
@@ -126,4 +154,26 @@ class NCC(PairwiseModel):
         if th.cuda.is_available():
             m = m.cuda()
 
-        return self.model(m)
+        return (self.model(m).cpu().numpy()-.5) * 2
+
+    def predict_dataset(self, df, device=None, verbose=None):
+        """
+        :param df: CEPC Dataframe of columns 'A' and 'B' with np.arrays in cells
+        :return: probabilities (Value : 1 if a->b and -1 if b->a)
+        :rtype: np.ndarray
+        """
+        verbose, device = SETTINGS.get_default(('verbose', verbose),
+                                               ('device', device))
+        dataset = []
+        for i, (idx, row) in enumerate(df.iterrows()):
+            a = row['A'].reshape((len(row['A']), 1))
+            b = row['B'].reshape((len(row['B']), 1))
+            m = np.hstack((a, b))
+            m = m.astype('float32')
+            m = th.from_numpy(m).t().unsqueeze(0)
+            dataset.append(m)
+
+        dataset = [m.to(device) for m in dataset]
+        return (th.cat([self.model(m) for m, t in zip(dataset, trange(len(dataset)),
+                                                      disable=not verbose)]\
+                       , 0).cpu().numpy() -.5) * 2
