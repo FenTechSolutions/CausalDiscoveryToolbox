@@ -23,7 +23,7 @@ class PairwiseModel(object):
         """Generic predict method, chooses which subfunction to use for a more
         suited.
 
-        Depending on the type of `x` and of '*args', this function process to execute
+        Depending on the type of `x` and of `*args`, this function process to execute
         different functions in the priority order:
 
         1. If ``args[0]`` is a ``networkx.(Di)Graph``, then ``self.orient_graph`` is executed.
