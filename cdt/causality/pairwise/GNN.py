@@ -103,12 +103,21 @@ def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
     return [XY, YX]
 
 
-# Test
 class GNN(PairwiseModel):
     """Shallow Generative Neural networks.
 
     Models the causal directions x->y and y->x with a 1-hidden layer neural network
     and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
+
+    Args:
+        nh (int): number of hidden units in the neural network
+        lr (float): learning rate of the optimizer
+
+    .. note::
+       Ref : Learning Functional Causal Models with Generative Neural Networks
+       Olivier Goudet & Diviyan Kalainathan & Al.
+       (https://arxiv.org/abs/1709.05321)
+
     """
 
     def __init__(self, nh=20, lr=0.01):
@@ -120,8 +129,25 @@ class GNN(PairwiseModel):
     def predict_proba(self, a, b, nb_runs=6, nb_jobs=None, gpu=None,
                       idx=0, verbose=None, ttest_threshold=0.01,
                       nb_max_runs=16, train_epochs=1000, test_epochs=1000):
-        """Run multiple times GNN to estimate the causal direction."""
-        nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
+        """Run multiple times GNN to estimate the causal direction.
+
+        Args:
+            a (np.ndarray): Variable 1
+            b (np.ndarray): Variable 2
+            nb_runs (int): number of runs to execute per batch (before testing for significance with t-test).
+            nb_jobs (int): number of runs to execute in parallel. (Initialized with ``cdt.SETTINGS.NB_JOBS``)
+            gpu (bool): use gpu (Initialized with ``cdt.SETTINGS.GPU``)
+            idx (int): (optional) index of the pair, for printing purposes
+            verbose (bool): verbosity (Initialized with ``cdt.SETTINGS.verbose``)
+            ttest_threshold (float): threshold to stop the boostraps before ``nb_max_runs`` if the difference is significant
+            nb_max_runs (int): Max number of bootstraps
+            train_epochs (int): Number of epochs during which the model is going to be trained
+            test_epochs (int): Number of epochs during which the model is going to be tested
+
+        Returns:
+            float: Causal score of the pair (Value : 1 if a->b and -1 if b->a)
+        """
+        Nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
         x = np.stack([a.ravel(), b.ravel()], 1)
         ttest_criterion = TTestCriterion(
             max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)

@@ -24,12 +24,14 @@ class AdjMI(IndependenceModel):
 
     The dependency metric relies on using the clustering metric adjusted mutual information applied
     to binned variables using the Freedman Diaconis Estimator.
-    Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, "Information theoretic measures for clusterings
-        comparison: Variants, properties, normalization and correction for chance", Journal of Machine Learning
-        Research, Volume 11, Oct 2010.
-    Ref: Freedman, David and Diaconis, Persi, "On the histogram as a density estimator:L2 theory",
-        "Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete", 1981, issn=1432-2064,
-        doi=10.1007/BF01025868.
+
+    .. note::
+       Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, "Information theoretic measures for clusterings
+       comparison: Variants, properties, normalization and correction for chance", Journal of Machine Learning
+       Research, Volume 11, Oct 2010.
+       Ref: Freedman, David and Diaconis, Persi, "On the histogram as a density estimator:L2 theory",
+       "Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete", 1981, issn=1432-2064,
+       doi=10.1007/BF01025868.
     """
 
     def __init__(self):
@@ -56,12 +58,13 @@ class NormMI(IndependenceModel):
 
     The dependency metric relies on using the clustering metric adjusted mutual information applied
     to binned variables using the Freedman Diaconis Estimator.
-    Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, "Information theoretic measures for clusterings
-        comparison: Variants, properties, normalization and correction for chance", Journal of Machine Learning
-        Research, Volume 11, Oct 2010.
-    Ref: Freedman, David and Diaconis, Persi, "On the histogram as a density estimator:L2 theory",
-        "Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete", 1981, issn=1432-2064,
-        doi=10.1007/BF01025868.
+    .. note::
+       Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, "Information theoretic measures for clusterings
+       comparison: Variants, properties, normalization and correction for chance", Journal of Machine Learning
+       Research, Volume 11, Oct 2010.
+       Ref: Freedman, David and Diaconis, Persi, "On the histogram as a density estimator:L2 theory",
+       "Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete", 1981, issn=1432-2064,
+       doi=10.1007/BF01025868.
 
     :param a: input data
     :param b: input data

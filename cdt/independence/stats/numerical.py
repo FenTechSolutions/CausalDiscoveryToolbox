@@ -83,46 +83,107 @@ def FastHsicTestGamma(X, Y, sig=[-1, -1], maxpnt=200):
 
 
 class PearsonCorrelation(IndependenceModel):
+    """Pearson's correlation coefficient.
+
+    .. math::
+        r(a, b) = \\frac{\\sum_{i=1}^n (a_i - \\bar{a})(b_i - \\bar{b})}
+        {\\sqrt{\\sum_{i=1}^n(a_i - \\bar{a})^2 \\sqrt{\\sum_{i=1}^n(b_i - \\bar{b})^2}}}
+
+    """
     def __init__(self):
         super(PearsonCorrelation, self).__init__()
 
     def predict(self, a, b):
+        """ Compute the test statistic
+
+        Args:
+            a (array-like): Variable 1
+            b (array-like): Variable 2
+
+        Returns:
+            float: test statistic
+        """
         return sp.pearsonr(a, b)[0]
 
 
 class SpearmanCorrelation(IndependenceModel):
+    """Spearman correlation.
+
+    Applies Pearson's correlation on the rank of the values.
+    """
     def __init__(self):
         super(SpearmanCorrelation, self).__init__()
 
     def predict(self, a, b):
+        """ Compute the test statistic
+
+        Args:
+            a (array-like): Variable 1
+            b (array-like): Variable 2
+
+        Returns:
+            float: test statistic
+        """
         return sp.spearmanr(a, b)[0]
 
 
 class MIRegression(IndependenceModel):
+    """ Test statistic based on a mutual information regression."""
     def __init__(self):
         super(MIRegression, self).__init__()
 
     def predict(self, a, b):
+        """ Compute the test statistic
+
+        Args:
+            a (array-like): Variable 1
+            b (array-like): Variable 2
+
+        Returns:
+            float: test statistic
+        """
         a = np.array(a).reshape((-1, 1))
         b = np.array(b).reshape((-1, 1))
         return (mutual_info_regression(a, b.reshape((-1,))) + mutual_info_regression(b, a.reshape((-1,))))/2
 
 
 class KendallTau(IndependenceModel):
+    """Compute Kendall's Tau."""
     def __init__(self):
         super(KendallTau, self).__init__()
 
     def predict(self, a, b):
+        """ Compute the test statistic
+
+        Args:
+            a (array-like): Variable 1
+            b (array-like): Variable 2
+
+        Returns:
+            float: test statistic
+        """
         a = np.array(a).reshape((-1, 1))
         b = np.array(b).reshape((-1, 1))
         return sp.kendalltau(a, b)[0]
 
 
 class NormalizedHSIC(IndependenceModel):
+    """Kernel-based independence test statistic. Uses RBF kernel."""
     def __init__(self):
         super(NormalizedHSIC, self).__init__()
 
     def predict(self, a, b, sig=[-1, -1], maxpnt=500):
+        """ Compute the test statistic
+
+        Args:
+            a (array-like): Variable 1
+            b (array-like): Variable 2
+            sig (list): [0] (resp [1]) is kernel size for a(resp b) (set to median distance if -1)
+            maxpnt (int): maximum number of points used, for computational time
+
+        Returns:
+            float: test statistic
+        """
         a = (a - np.mean(a)) / np.std(a)
         b = (b - np.mean(b)) / np.std(b)
 

@@ -6,34 +6,40 @@ from networkx import Graph
 
 
 class IndependenceModel(object):
-    """Base class for independence and utilities to recover the undirected graph out of data."""
+    """Base class for independence and utilities to recover the
+    undirected graph out of data.
+
+    Args:
+        predictor (function): function to estimate dependence (0 : independence), taking as input 2 array-like variables.
+
+    """
 
     def __init__(self, predictor=None):
-        """Init the model.
-
-        :param predictor: function to estimate dependence (0 : independence),
-                          taking as input 2 array-like variables.
-        """
+        """Init the model."""
         super(IndependenceModel, self).__init__()
         if predictor is not None:
             self.predict = predictor
 
     def predict(self, a, b):
-        """Test dependence between variables.
+        """Compute a dependence test statistic between variables.
 
-        :param a: First Variable
-        :param b: Second Variable
-        :return: Proba independence score. A score close to 0 -> independent
+        Args:
+            a (numpy.ndarray): First variable
+            b (numpy.ndarray): Second variable
+
+        Returns:
+            float: dependence test statistic (close to 0 -> independent)
         """
         raise NotImplementedError
 
     def predict_undirected_graph(self, data):
         """Build a skeleton using a pairwise independence criterion.
 
-        :param data: Raw data table
-        :type data: pandas.DataFrame
-        :return: Undirected graph
-        :rtype: UndirectedGraph
+        Args:
+            data (pandas.DataFrame): Raw data table
+
+        Returns:
+            networkx.Graph: Undirected graph representing the skeleton.
         """
         graph = Graph()
 

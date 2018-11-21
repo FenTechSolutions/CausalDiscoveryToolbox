@@ -16,35 +16,38 @@ from sklearn.linear_model import LinearRegression
 class BivariateFit(PairwiseModel):
     """
     Bivariate Fit model.
-    Based itself on a best-fit criterion based on a regressor.
+    Based itself on a best-fit criterion based on a Gaussian Process regressor.
+    Used as weak baseline.
     """
     def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(BivariateFit, self).__init__()
 
     def predict_proba(self, a, b, **kwargs):
-        """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
+        """ Infer causal relationships between 2 variables using regression.
 
-        :param a: Input variable 1
-        :param b: Input variable 2
-        :return: (Value : 1 if a->b and -1 if b->a)
-        :rtype: float
+        Args:
+            a (numpy.ndarray): Variable 1
+            b (numpy.ndarray): Variable 2
+
+        Returns:
+            float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
         return self.b_fit_score(b, a) - self.b_fit_score(a, b)
 
     def b_fit_score(self, x, y):
         """ Computes the cds statistic from variable 1 to variable 2
 
-        :param x: Input, seen as cause
-        :param y: Input, seen as effect
-        :return: CDS statistic between x_te and y_te
+        Args:
+            a (numpy.ndarray): Variable 1
+            b (numpy.ndarray): Variable 2
+
+        Returns:
+            float: BF fit score
         """
         x = np.reshape(scale(x), (-1, 1))
         y = np.reshape(scale(y), (-1, 1))
-
-
         gp = GaussianProcessRegressor().fit(x, y)
         y_predict = gp.predict(x)
-
         error = mean_squared_error(y_predict, y)
 
         return error

@@ -8,6 +8,7 @@ Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and B
 from sklearn.preprocessing import scale
 import numpy as np
 import torch as th
+import pandas as pd
 from torch.autograd import Variable
 from .model import PairwiseModel
 from tqdm import trange
@@ -70,9 +71,11 @@ class NCC_model(th.nn.Module):
 class NCC(PairwiseModel):
     u"""Neural Causation Coefficient.
 
-    Infer causal relationships between pairs of variables
-    Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
-    "Discovering Causal Signals in Images", CVPR 2017.
+    Infer causal relationships between pairs of variables using mean embbedings of neural networks
+
+    .. note:
+        Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
+        "Discovering Causal Signals in Images", CVPR 2017.
 
     """
 
@@ -84,8 +87,13 @@ class NCC(PairwiseModel):
             learning_rate=0.01, verbose=None, device=None):
         """Fit the NCC model.
 
-        :param x_tr: CEPC-format DataFrame containing pairs of variables
-        :param y_tr: array containing targets (-1, 1)
+        Args:
+            x_tr (pd.DataFrame): CEPC format dataframe containing the pairs
+            y_tr (pd.DataFrame or np.ndarray): labels associated to the pairs
+            epochs (int): number of train epochs
+            learning_rate (float): learning rate of Adam
+            verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
+            device (str): cuda or cpu device (defaults to ``cdt.SETTINGS.default_device``)
         """
         if batchsize > len(x_tr):
             batchsize = len(x_tr)
@@ -94,7 +102,8 @@ class NCC(PairwiseModel):
         self.model = NCC_model()
         opt = th.optim.Adam(self.model.parameters(), lr=learning_rate)
         criterion = th.nn.BCEWithLogitsLoss()
-        y = th.Tensor(y_tr.values)/2 + .5
+        y = y_tr.values if isinstance(y_tr, pd.DataFrame) else y_tr
+        y = th.Tensor(y)/2 + .5
         # print(y)
         self.model = self.model.to(device)
         y = y.to(device)
@@ -114,7 +123,7 @@ class NCC(PairwiseModel):
         data_per_epoch = (len(dataset) // batchsize)
         with trange(epochs, desc="Epochs", disable=not verbose) as te:
             for epoch in te:
-                with trange(data_per_epoch, desc=f"Batches of {batchsize}",
+                with trange(data_per_epoch, desc="Batches of {}".format(batchsize),
                             disable=not (verbose and batchsize == len(dataset))) as t:
                     output = []
                     labels = []
@@ -136,10 +145,13 @@ class NCC(PairwiseModel):
     def predict_proba(self, a, b, device=None):
         """Infer causal directions using the trained NCC pairwise model.
 
-        :param a: Variable 1
-        :param b: Variable 2
-        :return: probability (Value : 1 if a->b and -1 if b->a)
-        :rtype: float
+        Args:
+            a (numpy.ndarray): Variable 1
+            b (numpy.ndarray): Variable 2
+            device (str): Device to run the algorithm on (defaults to ``cdt.SETTINGS.default_device``)
+
+        Returns:
+            float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
         device = SETTINGS.get_default(device=device)
         if self.model is None:
@@ -160,9 +172,16 @@ class NCC(PairwiseModel):
 
     def predict_dataset(self, df, device=None, verbose=None):
         """
-        :param df: CEPC Dataframe of columns 'A' and 'B' with np.arrays in cells
-        :return: probabilities (Value : 1 if a->b and -1 if b->a)
-        :rtype: np.ndarray
+        Args:
+            x_tr (pd.DataFrame): CEPC format dataframe containing the pairs
+            y_tr (pd.DataFrame or np.ndarray): labels associated to the pairs
+            epochs (int): number of train epochs
+            learning rate (float): learning rate of Adam
+            verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
+            device (str): cuda or cpu device (defaults to ``cdt.SETTINGS.default_device``)
+
+        Returns:
+            pandas.DataFrame: dataframe containing the predicted causation coefficients
         """
         verbose, device = SETTINGS.get_default(('verbose', verbose),
                                                ('device', device))
@@ -176,6 +195,6 @@ class NCC(PairwiseModel):
             dataset.append(m)
 
         dataset = [m.to(device) for m in dataset]
-        return (th.cat([self.model(m) for m, t in zip(dataset, trange(len(dataset)),
+        return pd.DataFrame((th.cat([self.model(m) for m, t in zip(dataset, trange(len(dataset)),
                                                       disable=not verbose)]\
-                       , 0).data.cpu().numpy() -.5) * 2
+                       , 0).data.cpu().numpy() -.5) * 2)

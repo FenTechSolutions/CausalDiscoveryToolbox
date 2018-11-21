@@ -69,7 +69,9 @@ class CDS(PairwiseModel):
 
     Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
     The lower the std. the more likely the pair to be x->y (resp. y->x).
-    Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
+
+    .. note::
+       Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
     """
     def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(CDS, self).__init__()
@@ -78,21 +80,26 @@ class CDS(PairwiseModel):
         self.minc = minc
 
     def predict_proba(self, a, b, **kwargs):
-        """ Infer causal relationships between 2 variables x_te and y_te using the CDS statistic
+        """ Infer causal relationships between 2 variables using the CDS statistic
 
-        :param a: Input variable 1
-        :param b: Input variable 2
-        :return: (Value : 1 if a->b and -1 if b->a)
-        :rtype: float
+        Args:
+            a (numpy.ndarray): Variable 1
+            b (numpy.ndarray): Variable 2
+
+        Returns:
+            float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
         return self.cds_score(b, a) - self.cds_score(a, b)
 
     def cds_score(self, x_te, y_te):
         """ Computes the cds statistic from variable 1 to variable 2
 
-        :param x_te: Input, seen as cause
-        :param y_te: Input, seen as effect
-        :return: CDS statistic between x_te and y_te
+        Args:
+            x_te (numpy.ndarray): Variable 1
+            y_te (numpy.ndarray): Variable 2
+
+        Returns:
+            float: CDS fit score
         """
         if type(x_te) == np.ndarray:
             x_te, y_te = pd.Series(x_te.reshape(-1)), pd.Series(y_te.reshape(-1))

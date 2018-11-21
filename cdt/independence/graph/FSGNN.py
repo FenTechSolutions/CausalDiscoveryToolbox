@@ -3,15 +3,34 @@
 Algorithm between SAM and CGNN
 Author : Diviyan Kalainathan & Olivier Goudet
 """
-import os
-import pandas as pd
 import torch as th
 import numpy as np
-from torch.autograd import Variable
+from torch.utils import data
 from sklearn.preprocessing import scale
+from tqdm import trange
 from .model import FeatureSelectionModel
 from ...utils.Settings import SETTINGS
 from ...utils.loss import MMDloss
+
+
+class Dataset(data.Dataset):
+  'Characterizes a dataset for PyTorch'
+  def __init__(self, dataset, labels):
+        'Initialization'
+        self.labels = labels
+        self.dataset = dataset
+
+  def __len__(self):
+        'Denotes the total number of samples'
+        return len(self.dataset)
+
+  def __getitem__(self, index):
+        'Generates one sample of data'
+        # Select sample
+
+        # Load data and get label
+
+        return self.dataset[index], self.labels[index]
 
 
 class FSGNN_model(th.nn.Module):
@@ -31,36 +50,39 @@ class FSGNN_model(th.nn.Module):
     def forward(self, x):
         self.layers(x)
 
-    def train(self, x, y, lr=0.01, l1=0.1,  # batch_size=-1,
+    def train(self, x, y, lr=0.01, l1=0.1, batch_size=-1,
               train_epochs=1000, test_epochs=1000, device=None,
               verbose=None):
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         optim = th.optim.Adam(self.parameters(), lr=lr)
         output = th.zeros(x.size()[1])
-        noise = Variable(th.randn(x.size())).to(device)
         output = th.zeros(x.size()[1]).to(device)
 
         criterion = MMDloss(input_size=x.shape[0], device=device)
-        # if batch_size == -1:raise NotImplementedError
-        #     batch_size = x.size()[0]
+        if batch_size == -1:
+            batch_size = x.size()[0]
         # Printout value
-        # data_iterator = th.utils.data.DataLoader(x, batch_size=batch_size,
-        #                                          shuffle=True)
+        noise = th.randn(batch_size, 1).to(device)
+        data_iterator = th.utils.data.DataLoader(Dataset(x, y), batch_size=batch_size,
+                                                 shuffle=True, drop_last=True)
         # TRAIN
-        for epoch in range(train_epochs + test_epochs):
-            optim.zero_grad()
-            gen = self.layers(x)
-            # print(gen)
-            loss = criterion(gen, y) + l1*(self.layers[0].weight.abs().sum() + self.layers[2].weight.abs().sum())
-            # Train the discriminator
-            if verbose and not epoch % 200:
-                print("Epoch: {} ; Loss: {}".format(epoch, loss.item()))
-            if epoch >= train_epochs:
-                output.add_(self.layers[0].weight.data.sum(dim=0))
-            loss.backward()
-            optim.step()
+        with trange(train_epochs + test_epochs, disable=not verbose) as t:
+            for epoch in t:
+                for i, (batch, target) in enumerate(data_iterator):
+                    optim.zero_grad()
+                    noise.normal_()
+                    gen = self.layers(th.cat([batch, noise], 1))
+                    # print(gen)
+                    loss = criterion(gen, target) + l1*(self.layers[0].weight.abs().sum() + self.layers[2].weight.abs().sum())
+                    # Train the discriminator
+                    if not epoch % 100 and i == 0:
+                        t.set_postfix(epoch=epoch, loss=loss.item())
+                    if epoch >= train_epochs:
+                        output.add_(self.layers[0].weight.data[:, :-1].sum(dim=0))
+                    loss.backward()
+                    optim.step()
 
-        return list(output.div_(test_epochs).cpu().numpy())
+        return list(output.div_(test_epochs).div_(x.shape[0]//batch_size).cpu().numpy())
 
 
 class FSGNN(FeatureSelectionModel):
@@ -71,20 +93,41 @@ class FSGNN(FeatureSelectionModel):
         super(FSGNN, self).__init__()
 
     def predict_features(self, df_features, df_target, nh=20, idx=0, dropout=0.,
-                         activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  # batch_size=-1,
+                         activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  batch_size=-1,
                          train_epochs=1000, test_epochs=1000, device=None,
                          verbose=None, nb_runs=3):
-        """For one variable, predict its neighbours."""
+        """For one variable, predict its neighbours.
+
+        Args:
+            df_features (pandas.DataFrame):
+            df_target (pandas.Series):
+            nh (int): number of hidden units
+            idx (int): (optional) for printing purposes
+            dropout (float): probability of dropout (between 0 and 1)
+            activation_function (torch.nn.Module): activation function of the NN
+            lr (float): learning rate of Adam
+            l1 (float): L1 penalization coefficient
+            batch_size (int): batch size, defaults to full-batch
+            train_epochs (int): number of train epochs
+            test_epochs (int): number of test epochs
+            device (str): cuda or cpu device (defaults to ``cdt.SETTINGS.default_device``)
+            verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
+            nb_runs (int): number of bootstrap runs
+
+        Returns:
+            list: scores of each feature relatively to the target
+
+        """
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         x = th.FloatTensor(scale(df_features.values)).to(device)
         y = th.FloatTensor(scale(df_target.values)).to(device)
         out = []
         for i in range(nb_runs):
-            model = FSGNN_model([x.size()[1], nh, 1],
+            model = FSGNN_model([x.size()[1] + 1, nh, 1],
                                 dropout=dropout,
                                 activation_function=activation_function).to(device)
 
-            out.append(model.train(x, y, lr=0.01, l1=0.1,  # batch_size=-1,
+            out.append(model.train(x, y, lr=0.01, l1=0.1, batch_size=-1,
                                    train_epochs=train_epochs, test_epochs=test_epochs,
                                    device=device, verbose=verbose))
         return list(np.mean(np.array(out), axis=0))

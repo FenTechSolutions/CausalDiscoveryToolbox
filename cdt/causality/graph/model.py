@@ -24,11 +24,11 @@ class GraphModel(object):
 
         Depending on the type of `graph`, this function process to execute
         different functions:
-        
+
         1. If ``graph`` is a ``networkx.DiGraph``, then ``self.orient_directed_graph`` is executed.
         2. If ``graph`` is a ``networkx.Graph``, then ``self.orient_undirected_graph`` is executed.
         3. If ``graph`` is a ``None``, then ``self.create_graph_from_data`` is executed.
-        
+
         Args:
             df_data (pandas.DataFrame): DataFrame containing the observational data.
             graph (networkx.DiGraph or networkx.Graph or None): Prior knowledge on the causal graph.
@@ -49,7 +49,7 @@ class GraphModel(object):
 
     def orient_undirected_graph(self, data, umg, **kwargs):
         """Orient an undirected graph.
-        
+
         .. note::
            Not implemented: will be implemented by the model classes.
         """
@@ -57,7 +57,7 @@ class GraphModel(object):
 
     def orient_directed_graph(self, data, dag, **kwargs):
         """Re/Orient an undirected graph.
-        
+
         .. note::
            Not implemented: will be implemented by the model classes.
         """

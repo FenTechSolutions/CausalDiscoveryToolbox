@@ -28,7 +28,7 @@ class GES(GraphModel):
     Args:
         score (str): Sets the score used by GES.
         verbose (bool): Defaults to ``cdt.SETTINGS.verbose``.
-    
+
     Available scores:
         + int: GaussL0penIntScore
         + obs: GaussL0penObsScore

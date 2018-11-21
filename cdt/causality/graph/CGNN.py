@@ -12,6 +12,7 @@ import torch as th
 from copy import deepcopy
 from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
+from tqdm import trange
 from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.loss import MMDloss
@@ -46,12 +47,12 @@ class CGNN_block(th.nn.Module):
     def forward(self, x):
         """Forward through the network."""
         return self.layers(x)
-    
+
     def reset_parameters(self):
         for layer in self.layers:
             if hasattr(layer, "reset_parameters"):
                 layer.reset_parameters()
-                
+
 
 class CGNN_model(th.nn.Module):
     """Class for one CGNN instance."""
@@ -107,25 +108,24 @@ class CGNN_model(th.nn.Module):
         verbose = SETTINGS.get_default(verbose=verbose)
         optim = th.optim.Adam(self.parameters(), lr=lr)
         self.score.zero_()
-    
-        for epoch in range(train_epochs + test_epochs):
-            optim.zero_grad()
-            generated_data = self.forward()
-            mmd = self.criterion(generated_data, data)
-            if verbose and not epoch % 200:
-                
-                print("IDX: {}, Epoch: {}, MMD Score: {}".format(idx, epoch, mmd.item()))
-            mmd.backward()
-            optim.step()
-            if epoch >= test_epochs:
-                self.score.add_(mmd.data)
+        with trange(train_epochs + test_epochs, disable=not verbose) as t:
+            for epoch in t:
+                optim.zero_grad()
+                generated_data = self.forward()
+                mmd = self.criterion(generated_data, data)
+                if not epoch % 200:
+                    t.set_postfix(idx=idx, epoch=epoch, loss=mmd.item())
+                mmd.backward()
+                optim.step()
+                if epoch >= test_epochs:
+                    self.score.add_(mmd.data)
 
         return self.score.cpu().numpy() / test_epochs
 
     def reset_parameters(self):
         for block in self.blocks:
             block.reset_parameters()
-        
+
 
 def graph_evaluation(data, adj_matrix, gpu=None, gpu_id=0, **kwargs):
     """Evaluate a graph taking account of the hardware."""
@@ -239,7 +239,7 @@ class CGNN(GraphModel):
                discovery has to be performed.
         Returns:
             networkx.DiGraph: Solution given by CGNN.
-       
+
         """
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")

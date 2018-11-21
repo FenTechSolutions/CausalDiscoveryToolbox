@@ -11,41 +11,84 @@ from ...utils.Settings import SETTINGS
 
 
 class GraphSkeletonModel(object):
-    """Base class for undirected graph recovery."""
+    """Base class for undirected graph recovery directly out of data."""
 
     def __init__(self):
         """Init the model."""
         super(GraphSkeletonModel, self).__init__()
 
     def predict(self, data):
-        """Infer a undirected graph out of data."""
+        """Infer a undirected graph out of data.
+
+        Args:
+            data (pandas.DataFrame): observational data
+
+        Returns:
+            networkx.Graph: Graph skeleton
+
+        .. warning::
+           Not implemented. Implemented by the algorithms.
+        """
         raise NotImplementedError
 
 
 class FeatureSelectionModel(GraphSkeletonModel):
-    """Base class for methods using feature selection on each variable."""
+    """Base class for methods using feature selection
+    on each variable independently.
+    """
 
     def __init__(self):
         """Init the model."""
         super(FeatureSelectionModel, self).__init__()
 
     def predict_features(self, df_features, df_target, idx=0, **kwargs):
-        """For one variable, predict its neighbours."""
+        """For one variable, predict its neighbouring nodes.
+
+        Args:
+            df_features (pandas.DataFrame):
+            df_target (pandas.Series):
+            idx (int): (optional) for printing purposes
+            kwargs (dict): additional options for algorithms
+
+        Returns:
+            list: scores of each feature relatively to the target
+
+        .. warning::
+           Not implemented. Implemented by the algorithms.
+        """
         raise NotImplementedError
 
-    def run_feature_selection(self, df_data, target, idx, **kwargs):
-        """Run feature selection for one node."""
+    def run_feature_selection(self, df_data, target, idx=0, **kwargs):
+        """Run feature selection for one node: wrapper around
+        ``self.predict_features``.
+
+        Args:
+            df_data (pandas.DataFrame): All the observational data
+            target (str): Name of the target variable
+            idx (int): (optional) For printing purposes
+
+        Returns:
+            list: scores of each feature relatively to the target
+        """
         list_features = list(df_data.columns.values)
         list_features.remove(target)
         df_target = pd.DataFrame(df_data[target], columns=[target])
         df_features = df_data[list_features]
 
-        return self.predict_features(df_features, df_target, **kwargs)
+        return self.predict_features(df_features, df_target, idx=idx, **kwargs)
 
     def predict(self, df_data, threshold=0.05, **kwargs):
-        """Get the skeleton of the graph from raw data.
+        """Predict the skeleton of the graph from raw data.
 
-        :param df_data: data to construct a graph from
+        Returns iteratively the feature selection algorithm on each node.
+
+        Args:
+            df_data (pandas.DataFrame): data to construct a graph from
+            threshold (float): cutoff value for feature selection scores
+            kwargs (dict): additional arguments for algorithms
+
+        Returns:
+            networkx.Graph: predicted skeleton of the graph.
         """
         nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
         list_nodes = list(df_data.columns.values)
@@ -75,3 +118,4 @@ class FeatureSelectionModel(GraphSkeletonModel):
             if node not in graph.nodes():
                 graph.add_node(node)
         return graph
+

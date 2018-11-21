@@ -24,14 +24,18 @@ warnings.formatwarning = message_warning
 
 class CCDr(GraphModel):
     r"""CCDr algorithm.
+    Concave penalized Coordinate Descent with reparametrization) structure
+    learning algorithm as described in Aragam and Zhou (2015). This is a fast,
+    score based method for learning Bayesian networks that uses sparse
+    regularization and block-cyclic coordinate descent.
+
+    Imported from the 'sparsebn' package.
 
     .. warning::
        This implementation of CCDr does not support starting with a graph.
     """
 
-    def __init__(self, score='nonlinear', cutoff=0.001, variablesel=True,
-                 selmethod='gamboost', pruning=False, prunmethod='gam',
-                 nb_jobs=None, verbose=None):
+    def __init__(self, verbose=None):
         """Init the model and its available arguments."""
         if not RPackages.sparsebn:
             raise ImportError("R Package sparsebn is not available.")

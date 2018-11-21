@@ -20,7 +20,24 @@ class PairwiseModel(object):
         super(PairwiseModel, self).__init__()
 
     def predict(self, x, *args, **kwargs):
-        """Generic predict method."""
+        """Generic predict method, chooses which subfunction to use for a more
+        suited.
+
+        Depending on the type of `x` and of '*args', this function process to execute
+        different functions in the priority order:
+
+        1. If ``args[0]`` is a ``networkx.(Di)Graph``, then ``self.orient_graph`` is executed.
+        2. If ``args[0]`` exists, then ``self.predict_proba`` is executed.
+        3. If ``x`` is a ``pandas.DataFrame``, then ``self.predict_dataset`` is executed.
+        4. If ``x`` is a ``pandas.Series``, then ``self.predict_proba`` is executed.
+
+        Args:
+            x (numpy.array or pandas.DataFrame or pandas.Series): First variable or dataset.
+            args (numpy.array or networkx.Graph): graph or second variable.
+
+        Returns:
+            pandas.Dataframe or networkx.Digraph: predictions output
+        """
         if len(args) > 0:
             if type(args[0]) == nx.Graph or type(args[0]) == nx.DiGraph:
                 return self.orient_graph(x, *args, **kwargs)
@@ -36,21 +53,27 @@ class PairwiseModel(object):
 
         predict_proba is meant to be overridden in all subclasses
 
-        :param a: Variable 1
-        :param b: Variable 2
-        :return: probability (Value : 1 if a->b and -1 if b->a)
-        :rtype: float
+        Args:
+            a (numpy.ndarray): Variable 1
+            b (numpy.ndarray): Variable 2
+            idx (int): (optional) index number for printing purposes
+
+        Returns:
+            float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
         raise NotImplementedError
 
     def predict_dataset(self, x, **kwargs):
-        """Causal prediction of a pairwise dataset (x,y).
+        """Generic dataset prediction function.
 
-        :param x: Pairwise dataset
-        :param printout: print regularly predictions
-        :type x: cepc_df format
-        :return: predictions probabilities
-        :rtype: list
+        Runs the score independently on all pairs.
+
+        Args:
+            x (pandas.DataFrame): a CEPC format Dataframe.
+            kwargs (dict): additional arguments for the algorithms
+
+        Returns:
+            pandas.DataFrame: a Dataframe with the predictions.
         """
         printout = kwargs.get("printout", None)
         pred = []
@@ -68,15 +91,23 @@ class PairwiseModel(object):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, graph, printout=None, nb_runs=6, **kwargs):
+    def orient_graph(self, df_data, graph, nb_runs=6, printout=None, **kwargs):
         """Orient an undirected graph using the pairwise method defined by the subclass.
 
-        Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
-        :param df_data: dataset
-        :param umg: UndirectedGraph
-        :param printout: print regularly predictions
-        :return: Directed graph w/ weights
-        :rtype: DirectedGraph
+        The pairwise method is ran on every undirected edge.
+
+        Args:
+            df_data (pandas.DataFrame): Data
+            umg (networkx.Graph): Graph to orient
+            nb_runs (int): number of times to rerun for each pair (bootstrap)
+            printout (str): (optional) Path to file where to save temporary results
+
+        Returns:
+            networkx.DiGraph: a directed graph, which might contain cycles
+
+        .. warning:
+           Requirement : Name of the nodes in the graph correspond to name of
+           the variables in df_data
         """
         if type(graph) == nx.DiGraph:
             edges = [a for a in list(graph.edges()) if (a[1], a[0]) in list(graph.edges())]

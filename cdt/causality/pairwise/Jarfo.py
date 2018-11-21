@@ -13,6 +13,13 @@ from copy import deepcopy
 
 
 class Jarfo(PairwiseModel):
+    """Jarfo model, 2nd of the Cause Effect Pairs challenge,
+    1st of the Fast Causation Challenge.
+    Builds lots of features on top of a gradient boosting classifier.
+
+    .. note::
+       Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
+    """
     def __init__(self):
         super(Jarfo, self).__init__()
 
@@ -28,6 +35,15 @@ class Jarfo(PairwiseModel):
         self.model = train.train(df2, tar2)
 
     def predict_dataset(self, df):
+        """Runs Jarfo independently on all pairs.
+
+        Args:
+            x (pandas.DataFrame): a CEPC format Dataframe.
+            kwargs (dict): additional arguments for the algorithms
+
+        Returns:
+            pandas.DataFrame: a Dataframe with the predictions.
+        """
         if len(list(df.columns)) == 2:
             df.columns = ["A", "B"]
         if self.model is None:
@@ -39,19 +55,36 @@ class Jarfo(PairwiseModel):
             df2 = df2.append({'A': row["B"], 'B': row["A"]}, ignore_index=True)
         return predict.predict(deepcopy(df2), deepcopy(self.model))[::2]
 
-    def predict_proba(self, a, b, idx, **kwargs):
+    def predict_proba(self, a, b, idx=0, **kwargs):
+        """ Use Jarfo to predict the causal direction of a pair of vars.
+
+        Args:
+            a (numpy.ndarray): Variable 1
+            b (numpy.ndarray): Variable 2
+            idx (int): (optional) index number for printing purposes
+
+        Returns:
+            float: Causation score (Value : 1 if a->b and -1 if b->a)
+        """
         return self.predict_dataset(DataFrame([[a, b]],
                                               columns=['A', 'B']))
 
-    def orient_graph(self, df_data, graph, printout=None, nb_runs=6, **kwargs):
-        """Orient an undirected graph using the pairwise method defined by the subclass.
+    def orient_graph(self, df_data, graph, printout=None, **kwargs):
+        """Orient an undirected graph using Jarfo, function modified for optimization.
 
-        Requirement : Name of the nodes in the graph correspond to name of the variables in df_data
-        :param df_data: dataset
-        :param umg: UndirectedGraph
-        :param printout: print regularly predictions
-        :return: Directed graph w/ weights
-        :rtype: DirectedGraph
+        Args:
+            df_data (pandas.DataFrame): Data
+            umg (networkx.Graph): Graph to orient
+            nb_runs (int): number of times to rerun for each pair (bootstrap)
+            printout (str): (optional) Path to file where to save temporary results
+
+        Returns:
+            networkx.DiGraph: a directed graph, which might contain cycles
+
+        .. warning:
+           Requirement : Name of the nodes in the graph correspond to name of
+           the variables in df_data
+
         """
         if type(graph) == nx.DiGraph:
             edges = [a for a in list(graph.edges()) if (a[1], a[0]) in list(graph.edges())]

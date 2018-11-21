@@ -7,28 +7,33 @@ Date: 1/06/17
 import networkx as nx
 from sklearn.covariance import GraphLasso
 from .model import GraphSkeletonModel, FeatureSelectionModel
-from sklearn.linear_model import RandomizedLasso
-from .HSICLasso import *
+from .HSICLasso import hsiclasso
+import numpy as np
 
 
 class Glasso(GraphSkeletonModel):
-    """Apply Glasso to find an adjacency matrix
+    """Graphical Lasso to find an adjacency matrix
 
-    Ref : ToDo - P.Buhlmann
+    .. note::
+       Ref : Friedman, J., Hastie, T., & Tibshirani, R. (2008). Sparse inverse
+       covariance estimation with the graphical lasso. Biostatistics, 9(3),
+       432-441.
     """
 
     def __init__(self):
         super(Glasso, self).__init__()
 
-    def predict(self, data, **kwargs):
-        """
+    def predict(self, data, alpha=0.01, max_iter=2000, **kwargs):
+        """ Predict the graph skeleton.
 
-        :param data: raw data df
-        :param kwargs: alpha hyper-parameter (
-        :return:
+        Args:
+            data (pandas.DataFrame): observational data
+            alpha (float): regularization parameter
+            max_iter (int): maximum number of iterations
+
+        Returns:
+            networkx.Graph: Graph skeleton
         """
-        alpha = kwargs.get('alpha', 0.01)
-        max_iter = kwargs.get('max_iter', 2000)
         edge_model = GraphLasso(alpha=alpha, max_iter=max_iter)
         edge_model.fit(data.values)
 
@@ -36,30 +41,26 @@ class Glasso(GraphSkeletonModel):
                                 {idx: i for idx, i in enumerate(data.columns)})
 
 
-class RandomizedLasso_model(FeatureSelectionModel):
-    """RandomizedLasso from scikit-learn."""
-
-    def __init__(self):
-        super(RandomizedLasso_model, self).__init__()
-
-    def predict_features(self, df_features, df_target, idx=0, **kwargs):
-        alpha = kwargs.get("alpha", 'aic')
-        scaling = kwargs.get("scaling", 0.5)
-        sample_fraction = kwargs.get("sample_fraction", 0.75)
-        n_resampling = kwargs.get("n_resampling", 10)
-
-        randomized_lasso = RandomizedLasso(alpha=alpha, scaling=scaling, sample_fraction=sample_fraction,
-                                           n_resampling=n_resampling)
-        randomized_lasso.fit(df_features.values, np.ravel(df_target.values))
-
-        return randomized_lasso.scores_
-
-
 class HSICLasso(FeatureSelectionModel):
+    """Graphical Lasso with a kernel-based independence test."""
     def __init__(self):
         super(HSICLasso, self).__init__()
 
     def predict_features(self, df_features, df_target, idx=0, **kwargs):
+        """For one variable, predict its neighbouring nodes.
+
+        Args:
+            df_features (pandas.DataFrame):
+            df_target (pandas.Series):
+            idx (int): (optional) for printing purposes
+            kwargs (dict): additional options for algorithms
+
+        Returns:
+            list: scores of each feature relatively to the target
+
+        .. warning::
+           Not implemented. Implemented by the algorithms.
+        """
 
         y = np.transpose(df_target.values)
         X = np.transpose(df_features.values)
