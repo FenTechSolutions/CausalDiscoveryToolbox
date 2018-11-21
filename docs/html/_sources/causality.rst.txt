@@ -1,14 +1,70 @@
 .. role:: hidden
     :class: hidden-section
-           
+
 cdt.causality
 =============
 
 cdt.causality.pairwise
 ----------------------
 .. automodule:: cdt.causality.pairwise
+.. currentmodule:: cdt.causality.pairwise.model
+.. autoclass:: PairwiseModel
+   :members:
 
-ToDo
+:hidden:`ANM`
+~~~~~~~~~~~~~~
+
+.. autoclass:: ANM
+   :members:
+
+:hidden:`Bivariate Fit`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: BivariateFit
+   :members:
+
+:hidden:`CDS`
+~~~~~~~~~~~~~~
+
+.. autoclass:: CDS
+   :members:
+
+:hidden:`GNN`
+~~~~~~~~~~~~~~
+
+.. autoclass:: GNN
+   :members:
+
+:hidden:`IGCI`
+~~~~~~~~~~~~~~
+
+.. autoclass:: IGCI
+   :members:
+
+:hidden:`Jarfo`
+~~~~~~~~~~~~~~~
+
+.. autoclass:: Jarfo
+   :members:
+
+:hidden:`NCC`
+~~~~~~~~~~~~~~
+
+.. autoclass:: NCC
+   :members:
+
+:hidden:`RCC`
+~~~~~~~~~~~~~~
+
+.. autoclass:: RCC
+   :members:
+
+:hidden:`RECI`
+~~~~~~~~~~~~~~
+
+.. autoclass:: RECI
+   :members:
+
 
 cdt.causality.graph
 -------------------
@@ -23,7 +79,7 @@ cdt.causality.graph
 .. currentmodule:: cdt.causality.graph.bnlearn
 .. autoclass:: BNlearnAlgorithm
    :members:
-      
+
 :hidden:`GS`
 ^^^^^^^^^^^^
 
@@ -51,17 +107,17 @@ cdt.causality.graph
 
 .. currentmodule:: cdt.causality.graph
 
+:hidden:`CAM`
+~~~~~~~~~~~~~~
+
+.. autoclass:: CAM
+   :members: create_graph_from_data
+
 :hidden:`CCDr`
 ~~~~~~~~~~~~~~
 
 .. autoclass:: CCDr
    :members: create_graph_from_data
-
-:hidden:`CAM`
-~~~~~~~~~~~~~~
-
-.. autoclass:: CAM
-   :members: create_graph_from_data 
 
 :hidden:`CGNN`
 ~~~~~~~~~~~~~~~~
@@ -86,7 +142,7 @@ cdt.causality.graph
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: LiNGAM
-   :members: create_graph_from_data 
+   :members: create_graph_from_data
 
 :hidden:`PC`
 ~~~~~~~~~~~~~~

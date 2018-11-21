@@ -179,11 +179,11 @@
 
 <span class="sd">        Depending on the type of `graph`, this function process to execute</span>
 <span class="sd">        different functions:</span>
-<span class="sd">        </span>
+
 <span class="sd">        1. If ``graph`` is a ``networkx.DiGraph``, then ``self.orient_directed_graph`` is executed.</span>
 <span class="sd">        2. If ``graph`` is a ``networkx.Graph``, then ``self.orient_undirected_graph`` is executed.</span>
 <span class="sd">        3. If ``graph`` is a ``None``, then ``self.create_graph_from_data`` is executed.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            df_data (pandas.DataFrame): DataFrame containing the observational data.</span>
 <span class="sd">            graph (networkx.DiGraph or networkx.Graph or None): Prior knowledge on the causal graph.</span>
@@ -204,7 +204,7 @@
 
 <div class="viewcode-block" id="GraphModel.orient_undirected_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.model.GraphModel.orient_undirected_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">umg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Orient an undirected graph.</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. note::</span>
 <span class="sd">           Not implemented: will be implemented by the model classes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -212,7 +212,7 @@
 
 <div class="viewcode-block" id="GraphModel.orient_directed_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.model.GraphModel.orient_directed_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_directed_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Re/Orient an undirected graph.</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. note::</span>
 <span class="sd">           Not implemented: will be implemented by the model classes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

@@ -2,7 +2,7 @@
 cdt.utils
 =========
 .. automodule:: cdt.utils
-                
+
 cdt.utils.R
 -----------------------
 .. automodule:: cdt.utils.R
@@ -11,7 +11,7 @@ cdt.utils.R
 
 .. autofunction:: launch_R_script
 
-                
+
 cdt.utils.io
 ------------
 .. automodule:: cdt.utils.io
@@ -23,9 +23,12 @@ cdt.utils.io
 cdt.utils.graph
 ---------------
 .. automodule:: cdt.utils.graph
-
+.. autofunction:: network_deconvolution
+.. autofunction:: aracne
+.. autofunction:: clr
+.. autofunction:: remove_indirect_links
 .. autofunction:: dagify_min_edge
-   
+
 cdt.utils.loss
 --------------
 .. automodule:: cdt.utils.loss

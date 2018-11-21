@@ -87,7 +87,18 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.causality</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-cdt.causality.pairwise">cdt.causality.pairwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdt.causality.pairwise">cdt.causality.pairwise</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#anm"><span class="hidden-section">ANM</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bivariate-fit"><span class="hidden-section">Bivariate Fit</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cds"><span class="hidden-section">CDS</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gnn"><span class="hidden-section">GNN</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#igci"><span class="hidden-section">IGCI</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jarfo"><span class="hidden-section">Jarfo</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ncc"><span class="hidden-section">NCC</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rcc"><span class="hidden-section">RCC</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reci"><span class="hidden-section">RECI</span></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.causality.graph">cdt.causality.graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#bnlearn-based-models"><span class="hidden-section">bnlearn-based models</span></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#gs"><span class="hidden-section">GS</span></a></li>
@@ -96,8 +107,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#mmpc"><span class="hidden-section">MMPC</span></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#ccdr"><span class="hidden-section">CCDr</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cam"><span class="hidden-section">CAM</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ccdr"><span class="hidden-section">CCDr</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cgnn"><span class="hidden-section">CGNN</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ges"><span class="hidden-section">GES</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#gies"><span class="hidden-section">GIES</span></a></li>
@@ -181,7 +192,151 @@
 <h1>cdt.causality<a class="headerlink" href="#cdt-causality" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-cdt.causality.pairwise">
 <span id="cdt-causality-pairwise"></span><h2>cdt.causality.pairwise<a class="headerlink" href="#module-cdt.causality.pairwise" title="Permalink to this headline">¶</a></h2>
-<p>ToDo</p>
+<dl class="class">
+<dt id="cdt.causality.pairwise.model.PairwiseModel">
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.model.</code><code class="descname">PairwiseModel</code><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for all pairwise causal inference models</p>
+<p>Usage for undirected/directed graphs and CEPC df format.</p>
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.orient_graph">
+<code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>nb_runs=6</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.orient_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient an undirected graph using the pairwise method defined by the subclass.</p>
+<p>The pairwise method is ran on every undirected edge.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</li>
+<li><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</li>
+<li><strong>nb_runs</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</li>
+<li><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a directed graph, which might contain cycles</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>x</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic predict method, chooses which subfunction to use for a more
+suited.</p>
+<p>Depending on the type of <cite>x</cite> and of ‘<a href="#id1"><span class="problematic" id="id2">*</span></a>args’, this function process to execute
+different functions in the priority order:</p>
+<ol class="arabic simple">
+<li>If <code class="docutils literal notranslate"><span class="pre">args[0]</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.(Di)Graph</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.orient_graph</span></code> is executed.</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">args[0]</span></code> exists, then <code class="docutils literal notranslate"><span class="pre">self.predict_proba</span></code> is executed.</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.predict_dataset</span></code> is executed.</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.predict_proba</span></code> is executed.</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>numpy.array</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – First variable or dataset.</li>
+<li><strong>args</strong> (<em>numpy.array</em><em> or </em><em>networkx.Graph</em>) – graph or second variable.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">predictions output</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.Dataframe or networkx.Digraph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.predict_dataset">
+<code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>x</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic dataset prediction function.</p>
+<p>Runs the score independently on all pairs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a Dataframe with the predictions.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.model.PairwiseModel.predict_proba">
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prediction method for pairwise causal inference.</p>
+<p>predict_proba is meant to be overridden in all subclasses</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
+<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) index number for printing purposes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="anm">
+<h3><span class="hidden-section">ANM</span><a class="headerlink" href="#anm" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="bivariate-fit">
+<h3><span class="hidden-section">Bivariate Fit</span><a class="headerlink" href="#bivariate-fit" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="cds">
+<h3><span class="hidden-section">CDS</span><a class="headerlink" href="#cds" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="gnn">
+<h3><span class="hidden-section">GNN</span><a class="headerlink" href="#gnn" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="igci">
+<h3><span class="hidden-section">IGCI</span><a class="headerlink" href="#igci" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jarfo">
+<h3><span class="hidden-section">Jarfo</span><a class="headerlink" href="#jarfo" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="ncc">
+<h3><span class="hidden-section">NCC</span><a class="headerlink" href="#ncc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="rcc">
+<h3><span class="hidden-section">RCC</span><a class="headerlink" href="#rcc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="reci">
+<h3><span class="hidden-section">RECI</span><a class="headerlink" href="#reci" title="Permalink to this headline">¶</a></h3>
+</div>
 </div>
 <div class="section" id="module-cdt.causality.graph">
 <span id="cdt-causality-graph"></span><h2>cdt.causality.graph<a class="headerlink" href="#module-cdt.causality.graph" title="Permalink to this headline">¶</a></h2>
@@ -497,37 +652,6 @@ Machine Learning,65(1), 31-78.</p>
 
 </div>
 </div>
-<div class="section" id="ccdr">
-<h3><span class="hidden-section">CCDr</span><a class="headerlink" href="#ccdr" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="cdt.causality.graph.CCDr">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CCDr</code><span class="sig-paren">(</span><em>score='nonlinear'</em>, <em>cutoff=0.001</em>, <em>variablesel=True</em>, <em>selmethod='gamboost'</em>, <em>pruning=False</em>, <em>prunmethod='gam'</em>, <em>nb_jobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr" title="Permalink to this definition">¶</a></dt>
-<dd><p>CCDr algorithm.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This implementation of CCDr does not support starting with a graph.</p>
-</div>
-<dl class="method">
-<dt id="cdt.causality.graph.CCDr.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply causal discovery on observational data using CCDr.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the CCDR algorithm.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="cam">
 <h3><span class="hidden-section">CAM</span><a class="headerlink" href="#cam" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
@@ -606,6 +730,42 @@ The adaptation will be made at a later date.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the CAM algorithm.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="ccdr">
+<h3><span class="hidden-section">CCDr</span><a class="headerlink" href="#ccdr" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.causality.graph.CCDr">
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CCDr</code><span class="sig-paren">(</span><em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr" title="Permalink to this definition">¶</a></dt>
+<dd><p>CCDr algorithm.
+Concave penalized Coordinate Descent with reparametrization) structure
+learning algorithm as described in Aragam and Zhou (2015). This is a fast,
+score based method for learning Bayesian networks that uses sparse
+regularization and block-cyclic coordinate descent.</p>
+<p>Imported from the ‘sparsebn’ package.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This implementation of CCDr does not support starting with a graph.</p>
+</div>
+<dl class="method">
+<dt id="cdt.causality.graph.CCDr.create_graph_from_data">
+<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply causal discovery on observational data using CCDr.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the CCDR algorithm.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
 </tr>
