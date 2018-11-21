@@ -8,6 +8,7 @@ cdt.independence.stats
 .. autoclass:: IndependenceModel
    :members:
 
+.. currentmodule:: cdt.independence.stats
 
 :hidden:`AdjMI`
 ~~~~~~~~~~~~~~~~~
@@ -61,6 +62,8 @@ cdt.independence.graph
 
 .. autoclass:: FeatureSelectionModel
    :members:
+
+.. currentmodule:: cdt.independence.graph
 
 :hidden:`ARD`
 ~~~~~~~~~~~~~~~~~~~~~~~~

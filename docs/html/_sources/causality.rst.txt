@@ -11,6 +11,8 @@ cdt.causality.pairwise
 .. autoclass:: PairwiseModel
    :members:
 
+.. currentmodule:: cdt.causality.pairwise
+
 :hidden:`ANM`
 ~~~~~~~~~~~~~~
 

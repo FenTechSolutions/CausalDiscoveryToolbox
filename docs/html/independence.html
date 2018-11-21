@@ -242,24 +242,280 @@ undirected graph out of data.</p>
 
 <div class="section" id="adjmi">
 <h3><span class="hidden-section">AdjMI</span><a class="headerlink" href="#adjmi" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.stats.AdjMI">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">AdjMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dependency criterion made of binning and mutual information.</p>
+<p>The dependency metric relies on using the clustering metric adjusted mutual information applied
+to binned variables using the Freedman Diaconis Estimator.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, “Information theoretic measures for clusterings
+comparison: Variants, properties, normalization and correction for chance”, Journal of Machine Learning
+Research, Volume 11, Oct 2010.
+Ref: Freedman, David and Diaconis, Persi, “On the histogram as a density estimator:L2 theory”,
+“Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete”, 1981, issn=1432-2064,
+doi=10.1007/BF01025868.</p>
+</div>
+<dl class="method">
+<dt id="cdt.independence.stats.AdjMI.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the independence test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+<li><strong>b</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dependency statistic (1=Highly dependent, 0=Not dependent)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="kendalltau">
 <h3><span class="hidden-section">KendallTau</span><a class="headerlink" href="#kendalltau" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.stats.KendallTau">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">KendallTau</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Kendall’s Tau.</p>
+<dl class="method">
+<dt id="cdt.independence.stats.KendallTau.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em>) – Variable 1</li>
+<li><strong>b</strong> (<em>array-like</em>) – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">test statistic</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="miregression">
 <h3><span class="hidden-section">MIRegression</span><a class="headerlink" href="#miregression" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.stats.MIRegression">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">MIRegression</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test statistic based on a mutual information regression.</p>
+<dl class="method">
+<dt id="cdt.independence.stats.MIRegression.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em>) – Variable 1</li>
+<li><strong>b</strong> (<em>array-like</em>) – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">test statistic</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="normalizedhsic">
 <h3><span class="hidden-section">NormalizedHSIC</span><a class="headerlink" href="#normalizedhsic" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.stats.NormalizedHSIC">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">NormalizedHSIC</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kernel-based independence test statistic. Uses RBF kernel.</p>
+<dl class="method">
+<dt id="cdt.independence.stats.NormalizedHSIC.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a, b, sig=[-1, -1], maxpnt=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em>) – Variable 1</li>
+<li><strong>b</strong> (<em>array-like</em>) – Variable 2</li>
+<li><strong>sig</strong> (<em>list</em>) – [0] (resp [1]) is kernel size for a(resp b) (set to median distance if -1)</li>
+<li><strong>maxpnt</strong> (<em>int</em>) – maximum number of points used, for computational time</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">test statistic</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="normmi">
 <h3><span class="hidden-section">NormMI</span><a class="headerlink" href="#normmi" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.stats.NormMI">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">NormMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dependency criterion made of binning and mutual information.</p>
+<p>The dependency metric relies on using the clustering metric adjusted mutual information applied
+to binned variables using the Freedman Diaconis Estimator.
+.. note:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ref</span><span class="p">:</span> <span class="n">Vinh</span><span class="p">,</span> <span class="n">Nguyen</span> <span class="n">Xuan</span> <span class="ow">and</span> <span class="n">Epps</span><span class="p">,</span> <span class="n">Julien</span> <span class="ow">and</span> <span class="n">Bailey</span><span class="p">,</span> <span class="n">James</span><span class="p">,</span> <span class="s2">&quot;Information theoretic measures for clusterings</span>
+<span class="n">comparison</span><span class="p">:</span> <span class="n">Variants</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">normalization</span> <span class="ow">and</span> <span class="n">correction</span> <span class="k">for</span> <span class="n">chance</span><span class="s2">&quot;, Journal of Machine Learning</span>
+<span class="n">Research</span><span class="p">,</span> <span class="n">Volume</span> <span class="mi">11</span><span class="p">,</span> <span class="n">Oct</span> <span class="mf">2010.</span>
+<span class="n">Ref</span><span class="p">:</span> <span class="n">Freedman</span><span class="p">,</span> <span class="n">David</span> <span class="ow">and</span> <span class="n">Diaconis</span><span class="p">,</span> <span class="n">Persi</span><span class="p">,</span> <span class="s2">&quot;On the histogram as a density estimator:L2 theory&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete&quot;</span><span class="p">,</span> <span class="mi">1981</span><span class="p">,</span> <span class="n">issn</span><span class="o">=</span><span class="mi">1432</span><span class="o">-</span><span class="mi">2064</span><span class="p">,</span>
+<span class="n">doi</span><span class="o">=</span><span class="mf">10.1007</span><span class="o">/</span><span class="n">BF01025868</span><span class="o">.</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+<li><strong>b</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dependency statistic (1=Highly dependent, 0=Not dependent)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cdt.independence.stats.NormMI.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the independence test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+<li><strong>b</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dependency statistic (1=Highly dependent, 0=Not dependent)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="pearsoncorrelation">
 <h3><span class="hidden-section">PearsonCorrelation</span><a class="headerlink" href="#pearsoncorrelation" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.stats.PearsonCorrelation">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">PearsonCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pearson’s correlation coefficient.</p>
+<div class="math notranslate nohighlight">
+\[r(a, b) = \frac{\sum_{i=1}^n (a_i - \bar{a})(b_i - \bar{b})}
+{\sqrt{\sum_{i=1}^n(a_i - \bar{a})^2 \sqrt{\sum_{i=1}^n(b_i - \bar{b})^2}}}\]</div>
+<dl class="method">
+<dt id="cdt.independence.stats.PearsonCorrelation.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em>) – Variable 1</li>
+<li><strong>b</strong> (<em>array-like</em>) – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">test statistic</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="spearmancorrelation">
 <h3><span class="hidden-section">SpearmanCorrelation</span><a class="headerlink" href="#spearmancorrelation" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.stats.SpearmanCorrelation">
+<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">SpearmanCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spearman correlation.</p>
+<p>Applies Pearson’s correlation on the rank of the values.</p>
+<dl class="method">
+<dt id="cdt.independence.stats.SpearmanCorrelation.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>array-like</em>) – Variable 1</li>
+<li><strong>b</strong> (<em>array-like</em>) – Variable 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">test statistic</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="module-cdt.independence.graph">
@@ -383,27 +639,310 @@ on each variable independently.</p>
 
 <div class="section" id="ard">
 <h3><span class="hidden-section">ARD</span><a class="headerlink" href="#ard" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.ARD">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">ARD</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature selection with Bayesian ARD regression.</p>
+<dl class="method">
+<dt id="cdt.independence.graph.ARD.predict_features">
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbouring nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </li>
+<li><strong>df_target</strong> (<em>pandas.Series</em>) – </li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – additional options for algorithms</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scores of each feature relatively to the target</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="decisiontreeregression">
 <h3><span class="hidden-section">DecisionTreeRegression</span><a class="headerlink" href="#decisiontreeregression" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.DecisionTreeRegression">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">DecisionTreeRegression</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature selection with decision tree regression.</p>
+<dl class="method">
+<dt id="cdt.independence.graph.DecisionTreeRegression.predict_features">
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbouring nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </li>
+<li><strong>df_target</strong> (<em>pandas.Series</em>) – </li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – additional options for algorithms</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scores of each feature relatively to the target</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="fsgnn">
 <h3><span class="hidden-section">FSGNN</span><a class="headerlink" href="#fsgnn" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.FSGNN">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">FSGNN</code><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature Selection using MMD and Generative Neural Networks.</p>
+<dl class="method">
+<dt id="cdt.independence.graph.FSGNN.predict_features">
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>nh=20</em>, <em>idx=0</em>, <em>dropout=0.0</em>, <em>activation_function=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>lr=0.01</em>, <em>l1=0.1</em>, <em>batch_size=-1</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>device=None</em>, <em>verbose=None</em>, <em>nb_runs=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbours.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </li>
+<li><strong>df_target</strong> (<em>pandas.Series</em>) – </li>
+<li><strong>nh</strong> (<em>int</em>) – number of hidden units</li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</li>
+<li><strong>dropout</strong> (<em>float</em>) – probability of dropout (between 0 and 1)</li>
+<li><strong>activation_function</strong> (<em>torch.nn.Module</em>) – activation function of the NN</li>
+<li><strong>lr</strong> (<em>float</em>) – learning rate of Adam</li>
+<li><strong>l1</strong> (<em>float</em>) – L1 penalization coefficient</li>
+<li><strong>batch_size</strong> (<em>int</em>) – batch size, defaults to full-batch</li>
+<li><strong>train_epochs</strong> (<em>int</em>) – number of train epochs</li>
+<li><strong>test_epochs</strong> (<em>int</em>) – number of test epochs</li>
+<li><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</li>
+<li><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</li>
+<li><strong>nb_runs</strong> (<em>int</em>) – number of bootstrap runs</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scores of each feature relatively to the target</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="glasso">
 <h3><span class="hidden-section">Glasso</span><a class="headerlink" href="#glasso" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.Glasso">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">Glasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graphical Lasso to find an adjacency matrix</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ref : Friedman, J., Hastie, T., &amp; Tibshirani, R. (2008). Sparse inverse
+covariance estimation with the graphical lasso. Biostatistics, 9(3),
+432-441.</p>
+</div>
+<dl class="method">
+<dt id="cdt.independence.graph.Glasso.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em>, <em>alpha=0.01</em>, <em>max_iter=2000</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the graph skeleton.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>pandas.DataFrame</em>) – observational data</li>
+<li><strong>alpha</strong> (<em>float</em>) – regularization parameter</li>
+<li><strong>max_iter</strong> (<em>int</em>) – maximum number of iterations</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Graph skeleton</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.Graph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="hsiclasso">
 <h3><span class="hidden-section">HSICLasso</span><a class="headerlink" href="#hsiclasso" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.HSICLasso">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">HSICLasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graphical Lasso with a kernel-based independence test.</p>
+<dl class="method">
+<dt id="cdt.independence.graph.HSICLasso.predict_features">
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbouring nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </li>
+<li><strong>df_target</strong> (<em>pandas.Series</em>) – </li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – additional options for algorithms</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scores of each feature relatively to the target</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Not implemented. Implemented by the algorithms.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="linearsvrl2">
 <h3><span class="hidden-section">LinearSVRL2</span><a class="headerlink" href="#linearsvrl2" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.LinearSVRL2">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">LinearSVRL2</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature selection with Linear Support Vector Regression.</p>
+<dl class="method">
+<dt id="cdt.independence.graph.LinearSVRL2.predict_features">
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>C=0.1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbouring nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </li>
+<li><strong>df_target</strong> (<em>pandas.Series</em>) – </li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – additional options for algorithms</li>
+<li><strong>C</strong> (<em>float</em>) – Penalty parameter of the error term</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scores of each feature relatively to the target</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="rfecvlinearsvr">
 <h3><span class="hidden-section">RFECVLinearSVR</span><a class="headerlink" href="#rfecvlinearsvr" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.RFECVLinearSVR">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">RFECVLinearSVR</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive Feature elimination with cross validation,
+with support vector regressors</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ref: Guyon, I., Weston, J., Barnhill, S., &amp; Vapnik, V.,
+“Gene selection for cancer classification using support vector machines”,
+Mach. Learn., 46(1-3), 389–422, 2002.</p>
+</div>
+<dl class="method">
+<dt id="cdt.independence.graph.RFECVLinearSVR.predict_features">
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbouring nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </li>
+<li><strong>df_target</strong> (<em>pandas.Series</em>) – </li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – additional options for algorithms</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scores of each feature relatively to the target</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="rrelief">
 <h3><span class="hidden-section">RRelief</span><a class="headerlink" href="#rrelief" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.independence.graph.RRelief">
+<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">RRelief</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature selection with RRelief.</p>
+<dl class="method">
+<dt id="cdt.independence.graph.RRelief.predict_features">
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbouring nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </li>
+<li><strong>df_target</strong> (<em>pandas.Series</em>) – </li>
+<li><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – additional options for algorithms</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scores of each feature relatively to the target</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 </div>

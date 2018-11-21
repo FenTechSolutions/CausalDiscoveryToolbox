@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.model &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.causality.pairwise.Jarfo &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
   
 
   
@@ -137,7 +137,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>cdt.causality.pairwise.model</li>
+      <li>cdt.causality.pairwise.Jarfo</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,61 +152,66 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for cdt.causality.pairwise.model</h1><div class="highlight"><pre>
+  <h1>Source code for cdt.causality.pairwise.Jarfo</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Pairwise causal models base class</span>
-<span class="sd">Author: Diviyan Kalainathan</span>
-<span class="sd">Date : 7/06/2017</span>
+<span class="sd">Jarfo causal inference model</span>
+<span class="sd">Author : José AR Fonollosa</span>
+<span class="sd">Ref : Fonollosa, José AR, &quot;Conditional distribution variability measures for causality detection&quot;, 2016.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span>
-<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">.Jarfo_model</span> <span class="k">import</span> <span class="n">train</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">PairwiseModel</span>
+<span class="kn">from</span> <span class="nn">.Jarfo_model</span> <span class="k">import</span> <span class="n">predict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 
 
-<div class="viewcode-block" id="PairwiseModel"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.model.PairwiseModel">[docs]</a><span class="k">class</span> <span class="nc">PairwiseModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for all pairwise causal inference models</span>
+<div class="viewcode-block" id="Jarfo"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.Jarfo">[docs]</a><span class="k">class</span> <span class="nc">Jarfo</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Jarfo model, 2nd of the Cause Effect Pairs challenge,</span>
+<span class="sd">    1st of the Fast Causation Challenge.</span>
+<span class="sd">    Builds lots of features on top of a gradient boosting classifier.</span>
 
-<span class="sd">    Usage for undirected/directed graphs and CEPC df format.</span>
+<span class="sd">    .. note::</span>
+<span class="sd">       Ref : Fonollosa, José AR, &quot;Conditional distribution variability measures for causality detection&quot;, 2016.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Jarfo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PairwiseModel.predict"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.model.PairwiseModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generic predict method, chooses which subfunction to use for a more</span>
-<span class="sd">        suited.</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
+        <span class="n">df2</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">tar2</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">tar2</span> <span class="o">=</span> <span class="n">tar2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">tar2</span> <span class="o">=</span> <span class="n">tar2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">row</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span> <span class="n">tar2</span><span class="p">)</span>
 
-<span class="sd">        Depending on the type of `x` and of `*args`, this function process to execute</span>
-<span class="sd">        different functions in the priority order:</span>
-
-<span class="sd">        1. If ``args[0]`` is a ``networkx.(Di)Graph``, then ``self.orient_graph`` is executed.</span>
-<span class="sd">        2. If ``args[0]`` exists, then ``self.predict_proba`` is executed.</span>
-<span class="sd">        3. If ``x`` is a ``pandas.DataFrame``, then ``self.predict_dataset`` is executed.</span>
-<span class="sd">        4. If ``x`` is a ``pandas.Series``, then ``self.predict_proba`` is executed.</span>
+<div class="viewcode-block" id="Jarfo.predict_dataset"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.Jarfo.predict_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Runs Jarfo independently on all pairs.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (numpy.array or pandas.DataFrame or pandas.Series): First variable or dataset.</span>
-<span class="sd">            args (numpy.array or networkx.Graph): graph or second variable.</span>
+<span class="sd">            x (pandas.DataFrame): a CEPC format Dataframe.</span>
+<span class="sd">            kwargs (dict): additional arguments for the algorithms</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.Dataframe or networkx.Digraph: predictions output</span>
+<span class="sd">            pandas.DataFrame: a Dataframe with the predictions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">DataFrame</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_dataset</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">Series</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Model has not been trained before predictions&quot;</span><span class="p">)</span>
+        <span class="n">df2</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PairwiseModel.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.model.PairwiseModel.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Prediction method for pairwise causal inference.</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">predict</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">df2</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">))[::</span><span class="mi">2</span><span class="p">]</span></div>
 
-<span class="sd">        predict_proba is meant to be overridden in all subclasses</span>
+<div class="viewcode-block" id="Jarfo.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.Jarfo.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Use Jarfo to predict the causal direction of a pair of vars.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            a (numpy.ndarray): Variable 1</span>
@@ -216,40 +221,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_dataset</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">([[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">]],</span>
+                                              <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">]))</span></div>
 
-<div class="viewcode-block" id="PairwiseModel.predict_dataset"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.model.PairwiseModel.predict_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generic dataset prediction function.</span>
-
-<span class="sd">        Runs the score independently on all pairs.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x (pandas.DataFrame): a CEPC format Dataframe.</span>
-<span class="sd">            kwargs (dict): additional arguments for the algorithms</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame: a Dataframe with the predictions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">printout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;printout&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">pred</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">x</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)))</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)))</span>
-
-            <span class="n">pred</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">))</span>
-
-            <span class="k">if</span> <span class="n">printout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">],</span> <span class="n">pred</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
-                <span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="s1">&#39;Predictions&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-                    <span class="n">printout</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pred</span></div>
-
-<div class="viewcode-block" id="PairwiseModel.orient_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.model.PairwiseModel.orient_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">nb_runs</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">printout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Orient an undirected graph using the pairwise method defined by the subclass.</span>
-
-<span class="sd">        The pairwise method is ran on every undirected edge.</span>
+<div class="viewcode-block" id="Jarfo.orient_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.Jarfo.orient_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">printout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Orient an undirected graph using Jarfo, function modified for optimization.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            df_data (pandas.DataFrame): Data</span>
@@ -263,6 +239,7 @@
 <span class="sd">        .. warning:</span>
 <span class="sd">           Requirement : Name of the nodes in the graph correspond to name of</span>
 <span class="sd">           the variables in df_data</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">==</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
             <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">())]</span>
@@ -282,11 +259,13 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Data type not understood.&quot;</span><span class="p">)</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
-
+        <span class="n">df_task</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">edges</span><span class="p">):</span>
-            <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span>
-                <span class="n">df_data</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">df_data</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
-                <span class="n">nb_runs</span><span class="o">=</span><span class="n">nb_runs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">df_task</span> <span class="o">=</span> <span class="n">df_task</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">df_data</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                                      <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="n">df_data</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))},</span>
+                                     <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_dataset</span><span class="p">(</span><span class="n">df_task</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">weight</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># a causes b</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
