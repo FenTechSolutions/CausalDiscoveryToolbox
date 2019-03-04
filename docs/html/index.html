@@ -17,33 +17,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cdt.causality" href="causality.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -156,16 +160,16 @@
            <div itemprop="articleBody">
             
   <div class="section" id="causal-discovery-toolbox">
-<span id="causal-discovery-toolbox"></span><h1>Causal Discovery Toolbox<a class="headerlink" href="#causal-discovery-toolbox" title="Permalink to this headline">¶</a></h1>
+<h1>Causal Discovery Toolbox<a class="headerlink" href="#causal-discovery-toolbox" title="Permalink to this headline">¶</a></h1>
 <p>Package for causal inference in graphs and in the pairwise settings for Python&gt;=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.</p>
-<p><a class="reference external" href="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="Build Status" src="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master" /></a>
-<a class="reference external" href="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="codecov" src="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg" /></a>
-<a class="reference external" href="https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md"><img alt="Hex.pm" src="https://img.shields.io/hexpm/l/plug.svg?maxAge=259200" /></a>
-<a class="reference external" href="#"><img alt="Python.pm" src="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200" /></a>
-<a class="reference external" href="#"><img alt="version" src="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200" /></a></p>
+<p><a class="reference external" href="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master" src="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master" />Build Status</a>
+<a class="reference external" href="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg" src="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg" />codecov</a>
+<a class="reference external" href="https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE"><img alt="https://img.shields.io/hexpm/l/plug.svg?maxAge=259200" src="https://img.shields.io/hexpm/l/plug.svg?maxAge=259200" />Hex.pm</a>
+<a class="reference external" href="#"><img alt="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200" src="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200" />Python.pm</a>
+<a class="reference external" href="#"><img alt="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200" src="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200" />version</a></p>
 <p>It implements lots of algorithms for graph structure recovery (including algorithms from the <strong>bnlearn</strong>, <strong>pcalg</strong> packages), mainly based out of observational data.</p>
 <div class="section" id="check-out-the-docs-here">
-<span id="check-out-the-docs-here"></span><h2><a class="reference external" href="https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html">Check out the DOCS here !</a><a class="headerlink" href="#check-out-the-docs-here" title="Permalink to this headline">¶</a></h2>
+<h2><a class="reference external" href="https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html">Check out the DOCS here !</a><a class="headerlink" href="#check-out-the-docs-here" title="Permalink to this headline">¶</a></h2>
 <p>An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb">jupyter-notebook</a></p>
 <p>Install it using pip: (See more details on installation below)</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install cdt
@@ -173,24 +177,24 @@
 </div>
 </div>
 <div class="section" id="docker-images">
-<span id="docker-images"></span><h2>Docker images<a class="headerlink" href="#docker-images" title="Permalink to this headline">¶</a></h2>
+<h2>Docker images<a class="headerlink" href="#docker-images" title="Permalink to this headline">¶</a></h2>
 <p>Docker images are available, including all the dependencies, and enabled functionalities:</p>
-<p>|  python ver.  |  cpu  | gpu   |
-|————– |—————————————————————————————————————————–  |—————————————————————————————————————————————-   |
-| 3.6   | <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.6/"><img alt="d36cpu" src="https://img.shields.io/badge/docker-0.3.1-0db7ed.svg?maxAge=259200" /></a>   | <a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-py3.6/"><img alt="d36gpu" src="https://img.shields.io/badge/nvidia--docker-0.3.1-76b900.svg?maxAge=259200" /></a>    |
-| 3.7   | <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.7/"><img alt="d37cpu" src="https://img.shields.io/badge/docker-0.3.1-0db7ed.svg?maxAge=259200" /></a>   | <a class="reference external" href="#"><img alt="d37gpu" src="https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200" /></a>   |</p>
+<p>|  python ver. 	|  cpu 	| gpu 	|
+|————–	|—————————————————————————————————————————–	|—————————————————————————————————————————————-	|
+| 3.6 	| <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.6/"><img alt="https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200" src="https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200" />d36cpu</a> 	| <a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-py3.6/"><img alt="https://img.shields.io/badge/nvidia--docker-0.4.0-76b900.svg?maxAge=259200" src="https://img.shields.io/badge/nvidia--docker-0.4.0-76b900.svg?maxAge=259200" />d36gpu</a> 	|
+| 3.7 	| <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.7/"><img alt="https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200" src="https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200" />d37cpu</a> 	| <a class="reference external" href="#"><img alt="https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200" src="https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200" />d37gpu</a> 	|</p>
 </div>
 <div class="section" id="installation">
-<span id="installation"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>The packages requires a python version &gt;=3.5, as well as some libraries listed in <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/requirements.txt">requirements file</a>. For some additional functionalities, more libraries are needed for these extra functions and options to become available. Here is a quick install guide of the package, starting off with the minimal install up to the full installation.</p>
 <p><strong>Note</strong> : A (mini/ana)conda framework would help installing all those packages and therefore could be recommended for non-expert users.</p>
 <div class="section" id="install-pytorch">
-<span id="install-pytorch"></span><h3>Install PyTorch<a class="headerlink" href="#install-pytorch" title="Permalink to this headline">¶</a></h3>
+<h3>Install PyTorch<a class="headerlink" href="#install-pytorch" title="Permalink to this headline">¶</a></h3>
 <p>As some of the key algorithms in the <em>cdt</em> package use the PyTorch package, it is required to install it.
 Check out their website to install the PyTorch version suited to your hardware configuration: http://pytorch.org</p>
 </div>
 <div class="section" id="install-the-causaldiscoverytoolbox-package">
-<span id="install-the-causaldiscoverytoolbox-package"></span><h3>Install the CausalDiscoveryToolbox package<a class="headerlink" href="#install-the-causaldiscoverytoolbox-package" title="Permalink to this headline">¶</a></h3>
+<h3>Install the CausalDiscoveryToolbox package<a class="headerlink" href="#install-the-causaldiscoverytoolbox-package" title="Permalink to this headline">¶</a></h3>
 <p>The package is available on PyPi:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install cdt
 </pre></div>
@@ -207,19 +211,19 @@ $ python setup.py install develop --user
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cdt</span>
 </pre></div>
 </div>
-<p>Check out the package structure and more info on the package itself <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/documentation.md">here</a>.</p>
+<p>Check out the package structure and more info on the package itself <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/documentation">here</a>.</p>
 </div>
 <div class="section" id="additional-r-and-r-libraries">
-<span id="additional-r-and-r-libraries"></span><h3>Additional : R and R libraries<a class="headerlink" href="#additional-r-and-r-libraries" title="Permalink to this headline">¶</a></h3>
+<h3>Additional : R and R libraries<a class="headerlink" href="#additional-r-and-r-libraries" title="Permalink to this headline">¶</a></h3>
 <p>In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, … while using the <em>cdt</em> framework, it is required to install R.</p>
 <p>Check out how to install all R dependencies in the before-install section of the <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/.travis.yml">travis.yml</a> file for debian based distributions.
 The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt">r-requirements file</a> notes all the R packages used by the toolbox.</p>
 </div>
 </div>
 <div class="section" id="overview">
-<span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="general-package-structure">
-<span id="general-package-structure"></span><h3>General package structure<a class="headerlink" href="#general-package-structure" title="Permalink to this headline">¶</a></h3>
+<h3>General package structure<a class="headerlink" href="#general-package-structure" title="Permalink to this headline">¶</a></h3>
 <p>The following figure shows how the package and its algorithms are structured</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cdt package
 |
@@ -267,7 +271,7 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
 </div>
 </div>
 <div class="section" id="hardware-and-algorithm-settings">
-<span id="hardware-and-algorithm-settings"></span><h3>Hardware and algorithm settings<a class="headerlink" href="#hardware-and-algorithm-settings" title="Permalink to this headline">¶</a></h3>
+<h3>Hardware and algorithm settings<a class="headerlink" href="#hardware-and-algorithm-settings" title="Permalink to this headline">¶</a></h3>
 <p>The toolbox has a SETTINGS class that defines the hardware settings . Those settings are unique and their default parameters are defined in <strong><em>cdt/utils/Settings</em></strong>.</p>
 <p>These parameters are accessible and overridable via accessing the class :</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cdt</span>
@@ -277,11 +281,11 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
 <p>Moreover, the hardware parameters are detected and defined automatically (including number of GPUs, CPUs, available optional packages) at the <strong>import</strong> of the package using the <strong>cdt.utils.Settings.autoset_settings</strong> method, run at startup.</p>
 </div>
 <div class="section" id="the-graph-class">
-<span id="the-graph-class"></span><h3>The graph class<a class="headerlink" href="#the-graph-class" title="Permalink to this headline">¶</a></h3>
+<h3>The graph class<a class="headerlink" href="#the-graph-class" title="Permalink to this headline">¶</a></h3>
 <p>The whole package revolves around using the <strong>DiGraph</strong> and <strong>Graph</strong> classes from the <strong>networkx</strong> package.</p>
 </div>
 <div class="section" id="references">
-<span id="references"></span><h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>[1] Wang, S., Nan, B., Rosset, S., &amp; Zhu, J. (2011). Random lasso. The annals of applied statistics, 5(1), 468.</li>
 <li>[2] Friedman, J., Hastie, T., &amp; Tibshirani, R. (2008). Sparse inverse covariance estimation with the graphical lasso. Biostatistics, 9(3), 432-441.</li>
@@ -309,7 +313,7 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
 </div>
 </div>
 <div class="section" id="table-of-contents">
-<span id="table-of-contents"></span><h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
@@ -324,7 +328,7 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
 </div>
 </div>
 <div class="section" id="indices-and-tables">
-<span id="indices-and-tables"></span><h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
 <li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
@@ -368,27 +372,16 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
