@@ -136,7 +136,8 @@ class DefaultRPackages(object):
         return test_package
 
 
-def launch_R_script(template, arguments, output_function=None, verbose=True):
+def launch_R_script(template, arguments, output_function=None,
+                    verbose=True, debug=False):
     """Launch an R script, starting from a template and replacing text in file
     before execution.
 
@@ -149,6 +150,7 @@ def launch_R_script(template, arguments, output_function=None, verbose=True):
             traditionally as a function to retrieve the results of the
             execution.
         verbose (bool): Sets the verbosity of the R subprocess.
+        debug (bool): If True, the generated scripts are not deleted.
 
     Return:
         Returns the output of the ``output_function`` if not `None`
@@ -182,12 +184,15 @@ def launch_R_script(template, arguments, output_function=None, verbose=True):
 
     # Cleaning up
     except Exception as e:
-        rmtree('/tmp/cdt_R_script_' + id + '/')
+        if not debug:
+            rmtree('/tmp/cdt_R_script_' + id + '/')
         raise e
     except KeyboardInterrupt:
-        rmtree('/tmp/cdt_R_script_' + id + '/')
+        if not debug:
+            rmtree('/tmp/cdt_R_script_' + id + '/')
         raise KeyboardInterrupt
-    rmtree('/tmp/cdt_R_script_' + id + '/')
+    if not debug:
+        rmtree('/tmp/cdt_R_script_' + id + '/')
     return output
 
 
