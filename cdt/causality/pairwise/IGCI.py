@@ -102,7 +102,7 @@ class IGCI(PairwiseModel):
                         estimator: method used to evaluate the pairs (entropy or integral)}
         :return: Return value of the IGCI model >0 if a->b otherwise if return <0
         """
-        estimators = {'entropy': lambda x, y: eval_entropy(y) - eval_entropy(x), 'integral': integral_approx_estimator}
+        estimators = {'entropy': lambda x, y: eval_entropy(x) - eval_entropy(y), 'integral': integral_approx_estimator}
         ref_measures = {'gaussian': lambda x: standard_scale.fit_transform(x.reshape((-1, 1))),
                         'uniform': lambda x: min_max_scale.fit_transform(x.reshape((-1, 1))), 'None': lambda x: x}
 
