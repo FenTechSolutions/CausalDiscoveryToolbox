@@ -3,7 +3,7 @@
 import os
 import pandas as pd
 import networkx as nx
-from cdt.causality.pairwise import (ANM, IGCI, BivariateFit, CDS, NCC, RCC)
+from cdt.causality.pairwise import (ANM, IGCI, BivariateFit, CDS, NCC, RCC, RECI)
 from cdt.independence.graph import Glasso
 from cdt.utils.io import read_causal_pairs
 from cdt import SETTINGS
@@ -23,7 +23,7 @@ graph_skeleton = Glasso().predict(data_graph)
 
 
 def test_pairwise():
-    for method in [ANM, IGCI, BivariateFit, CDS, RCC, NCC]:  # Jarfo
+    for method in [ANM, IGCI, BivariateFit, CDS, RCC, NCC, RECI]:  # Jarfo
         print(method)
         m = method()
         if hasattr(m, "fit"):

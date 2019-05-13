@@ -4,17 +4,17 @@ import os
 import pandas as pd
 import networkx as nx
 from cdt import SETTINGS
-from cdt.utils.io import read_causal_pairs
-from cdt.causality.graph import (CAM, GS, GIES, IAMB,
+from cdt.causality.graph import (CAM, GS, GIES, IAMB, CCDr, GES,
                                  Fast_IAMB, PC, LiNGAM, SAM)
 
 data_graph = pd.read_csv('{}/../datasets/Example_graph_numdata.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, :5]
 
 SETTINGS.verbose = False
 
+
 def test_graph():
     for method in [CAM, GS, GIES,  IAMB, Fast_IAMB,
-                   PC, LiNGAM]:
+                   PC, LiNGAM, CCDr, GES]:
         print(method)
         m = method()
         assert isinstance(m.predict(data_graph), nx.DiGraph)

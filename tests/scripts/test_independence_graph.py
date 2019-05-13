@@ -5,7 +5,7 @@ import pandas as pd
 import networkx as nx
 from cdt import SETTINGS
 from cdt.independence.graph import (Glasso, ARD, DecisionTreeRegression,
-                                    LinearSVRL2,
+                                    LinearSVRL2, HSICLasso,
                                     RFECVLinearSVR, RRelief)
 from cdt.utils.graph import remove_indirect_links
 
@@ -19,7 +19,7 @@ def init():
 def test_statistical_methods():
     data = init()
     for method in [Glasso, ARD, DecisionTreeRegression,
-                   LinearSVRL2,
+                   LinearSVRL2, HSICLasso,
                    RFECVLinearSVR, RRelief]:
         model = method()
         # print(method)
