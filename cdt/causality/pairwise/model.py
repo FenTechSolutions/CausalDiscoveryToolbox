@@ -113,7 +113,7 @@ class PairwiseModel(object):
                     printout, index=False)
         return pred
 
-    def orient_graph(self, df_data, graph, nb_runs=6, printout=None, **kwargs):
+    def orient_graph(self, df_data, graph, printout=None, **kwargs):
         """Orient an undirected graph using the pairwise method defined by the subclass.
 
         The pairwise method is ran on every undirected edge.
@@ -121,7 +121,6 @@ class PairwiseModel(object):
         Args:
             df_data (pandas.DataFrame): Data
             umg (networkx.Graph): Graph to orient
-            nb_runs (int): number of times to rerun for each pair (bootstrap)
             printout (str): (optional) Path to file where to save temporary results
 
         Returns:
@@ -152,8 +151,9 @@ class PairwiseModel(object):
 
         for idx, (a, b) in enumerate(edges):
             weight = self.predict_proba(
-                df_data[a].values.reshape((-1, 1)), df_data[b].values.reshape((-1, 1)), idx=idx,
-                nb_runs=nb_runs, **kwargs)
+                df_data[a].values.reshape((-1, 1)),
+                df_data[b].values.reshape((-1, 1)), idx=idx,
+                **kwargs)
             if weight > 0:  # a causes b
                 output.add_edge(a, b, weight=weight)
             else:

@@ -32,7 +32,6 @@ import itertools
 import warnings
 import torch as th
 from copy import deepcopy
-from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 from tqdm import trange
 from .model import GraphModel
@@ -40,6 +39,7 @@ from ..pairwise.GNN import GNN
 from ...utils.loss import MMDloss
 from ...utils.Settings import SETTINGS
 from ...utils.graph import dagify_min_edge
+from ...utils.parallel import parallel_run
 
 
 def message_warning(msg, *a, **kwargs):
@@ -59,7 +59,6 @@ class CGNN_block(th.nn.Module):
         layers = []
 
         for i, j in zip(sizes[:-2], sizes[1:-1]):
-            print(i,j)
             layers.append(th.nn.Linear(i, j))
             layers.append(th.nn.ReLU())
 
@@ -149,26 +148,26 @@ class CGNN_model(th.nn.Module):
             block.reset_parameters()
 
 
-def graph_evaluation(data, adj_matrix, gpu=None, gpu_id=0, **kwargs):
+def graph_evaluation(data, adj_matrix, device='cpu', **kwargs):
     """Evaluate a graph taking account of the hardware."""
-    gpu = SETTINGS.get_default(gpu=gpu)
-    device = 'cuda:{}'.format(gpu_id) if gpu else 'cpu'
     obs = th.FloatTensor(data).to(device)
-    cgnn = CGNN_model(adj_matrix, data.shape[0], gpu_id=gpu_id, **kwargs).to(device)
+    cgnn = CGNN_model(adj_matrix, data.shape[0], **kwargs).to(device)
     cgnn.reset_parameters()
     return cgnn.run(obs, **kwargs)
 
 
 def parallel_graph_evaluation(data, adj_matrix, nb_runs=16,
-                              nb_jobs=None, **kwargs):
+                              nb_jobs=None, gpus=None, **kwargs):
     """Parallelize the various runs of CGNN to evaluate a graph."""
-    nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+    nb_jobs, gpus = SETTINGS.get_default(('nb_jobs', nb_jobs), ('gpu', gpus))
+
     if nb_runs == 1:
-        return graph_evaluation(data, adj_matrix, **kwargs)
+        return graph_evaluation(data, adj_matrix,
+                                device=SETTINGS.default_device, **kwargs)
     else:
-        output = Parallel(n_jobs=nb_jobs)(delayed(graph_evaluation)(data, adj_matrix,
-                                          idx=run, gpu_id=run % SETTINGS.GPU,
-                                          **kwargs) for run in range(nb_runs))
+        output = parallel_run(graph_evaluation, data,
+                              adj_matrix, n_jobs=nb_jobs,
+                              gpus=gpus, **kwargs)
         return np.mean(output)
 
 
@@ -223,8 +222,8 @@ class CGNN(GraphModel):
            evaluation.
         nb_jobs (int): Number of jobs to run in parallel. Defaults to
            ``cdt.SETTINGS.NB_JOBS``.
-        gpu (bool): True if the GPUs are to be used. Defaults to
-           ``cdt.SETTINGS.GPU``.
+        gpus (bool): Number of available gpus
+           (Initialized with ``cdt.SETTINGS.GPU``)
         lr (float): Learning rate for the generative neural networks.
         train_epochs (int): Number of epochs used to train the network.
         test_epochs (int): Number of epochs during which the results are
@@ -238,16 +237,16 @@ class CGNN(GraphModel):
        (https://arxiv.org/abs/1709.05321)
     """
 
-    def __init__(self, nh=20, nb_runs=16, nb_jobs=None, gpu=None,
+    def __init__(self, nh=20, nb_runs=16, nb_jobs=None, gpus=None,
                  lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None):
         """ Initialize the CGNN Model."""
         super(CGNN, self).__init__()
         self.nh = nh
-        self.nb_runs = nb_runs 
+        self.nb_runs = nb_runs
         self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
-        self.gpu = SETTINGS.get_default(gpu=gpu)
+        self.gpus = SETTINGS.get_default(gpu=gpus)
         self.lr = lr
-        self.train_epochs = train_epochs 
+        self.train_epochs = train_epochs
         self.test_epochs = test_epochs
         self.verbose = SETTINGS.get_default(verbose=verbose)
 
@@ -268,14 +267,14 @@ class CGNN(GraphModel):
 
         # Building all possible candidates:
         nb_vars = len(list(data.columns))
-        data = scale(data.values).astype('float32')
+        indata = scale(data.values).astype('float32')
 
         candidates = [np.reshape(np.array(i), (nb_vars, nb_vars)) for i in itertools.product([0, 1], repeat=nb_vars*nb_vars)
                       if (np.trace(np.reshape(np.array(i), (nb_vars, nb_vars))) == 0
                           and nx.is_directed_acyclic_graph(nx.DiGraph(np.reshape(np.array(i), (nb_vars, nb_vars)))))]
 
         warnings.warn("A total of {} graphs will be evaluated.".format(len(candidates)))
-        scores = [parallel_graph_evaluation(data, i, nh=self.nh, nb_runs=self.nb_runs, gpu=self.gpu,
+        scores = [parallel_graph_evaluation(indata, i, nh=self.nh, nb_runs=self.nb_runs, gpus=self.gpus,
                                             nb_jobs=self.nb_jobs, lr=self.lr, train_epochs=self.train_epochs,
                                             test_epochs=self.test_epochs, verbose=self.verbose) for i in candidates]
         final_candidate = candidates[scores.index(min(scores))]
@@ -284,12 +283,12 @@ class CGNN(GraphModel):
         # Retrieve the confidence score on each edge.
         for (i, j), x in np.ndenumerate(final_candidate):
             if x > 0:
-                cand = final_candidate
+                cand = np.copy(final_candidate)
                 cand[i, j] = 0
-                output[i, j] = min(scores) - scores[candidates.index(cand)]
-
-        return nx.DiGraph(candidates[output],
-                          {idx: i for idx, i in enumerate(data.columns)})
+                output[i, j] = min(scores) - scores[[np.array_equal(cand, tgraph)
+                                                     for tgraph in candidates].index(True)]
+        prediction = nx.DiGraph(final_candidate * output)
+        return nx.relabel_nodes(prediction, {idx: i for idx, i in enumerate(data.columns)})
 
     def orient_directed_graph(self, data, dag, alg='HC'):
         """Modify and improve a directed acyclic graph solution using CGNN.
@@ -303,12 +302,12 @@ class CGNN(GraphModel):
                "tabu", "EHC"]
         Returns:
             networkx.DiGraph: Solution given by CGNN.
-       
+
         """
         alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
                    'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
 
-        return alg_dic[alg](data, dag, nh=self.nh, nb_runs=self.nb_runs, gpu=self.gpu,
+        return alg_dic[alg](data, dag, nh=self.nh, nb_runs=self.nb_runs, gpus=self.gpus,
                             nb_jobs=self.nb_jobs, lr=self.lr, train_epochs=self.train_epochs,
                             test_epochs=self.test_epochs, verbose=self.verbose)
 
@@ -324,18 +323,19 @@ class CGNN(GraphModel):
                "tabu", "EHC"]
         Returns:
             networkx.DiGraph: Solution given by CGNN.
-       
+
         .. note::
            GNN (``cdt.causality.pairwise.GNN``) is first used to orient the
            undirected graph and output a DAG before applying CGNN.
         """
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
-        gnn = GNN(nh=self.nh, lr=self.lr)
+        gnn = GNN(nh=self.nh, lr=self.lr, nb_runs=self.nb_runs,
+                  nb_max_runs=self.nb_runs, nb_jobs=self.nb_jobs,
+                  train_epochs=self.train_epochs, test_epochs=self.test_epochs,
+                  verbose=self.verbose, gpus=self.gpus)
 
-        og = gnn.orient_graph(data, umg, nb_runs=self.nb_runs, nb_max_runs=self.nb_runs,
-                              nb_jobs=self.nb_jobs, train_epochs=self.train_epochs,
-                              test_epochs=self.test_epochs, verbose=self.verbose, gpu=self.gpu)  # Pairwise method
+        og = gnn.orient_graph(data, umg)  # Pairwise method
         # print(nx.adj_matrix(og).todense().shape)
         # print(list(og.edges()))
         dag = dagify_min_edge(og)

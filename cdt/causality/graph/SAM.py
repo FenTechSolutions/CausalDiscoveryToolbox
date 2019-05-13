@@ -29,11 +29,10 @@ Date: 09/3/2018
 import math
 import torch as th
 import networkx as nx
-from torch.autograd import Variable
 from torch.utils.data import DataLoader
-from joblib import Parallel, delayed
 from .model import GraphModel
 from ...utils.Settings import SETTINGS
+from ...utils.parallel import parallel_run
 
 
 class CNormalized_Linear(th.nn.Module):
@@ -114,8 +113,6 @@ class SAM_block(th.nn.Module):
     def __init__(self, sizes, zero_components=[], **kwargs):
         """Initialize a generator."""
         super(SAM_block, self).__init__()
-        gpu = kwargs.get('gpu', False)
-        gpu_no = kwargs.get('gpu_no', 0)
         activation_function = kwargs.get('activation_function', th.nn.Tanh)
         activation_argument = kwargs.get('activation_argument', None)
         batch_norm = kwargs.get("batch_norm", False)
@@ -134,15 +131,12 @@ class SAM_block(th.nn.Module):
         self.layers = th.nn.Sequential(*layers)
 
         # Filtering the unconnected nodes.
-        self._filter = th.ones(1, sizes[0])
+        _filter = th.ones(1, sizes[0])
         for i in zero_components:
-            self._filter[:, i].zero_()
+            _filter[:, i].zero_()
 
-        self._filter = Variable(self._filter, requires_grad=False)
-        self.fs_filter = th.nn.Parameter(self._filter.data)
-
-        if gpu:
-            self._filter = self._filter.cuda(gpu_no)
+        self.register_buffer('_filter', _filter)
+        self.fs_filter = th.nn.Parameter(_filter.data)
 
     def forward(self, x):
         """Feed-forward the model."""
@@ -158,15 +152,14 @@ class SAM_generators(th.nn.Module):
         super(SAM_generators, self).__init__()
         if batch_size == -1:
             batch_size = data_shape[0]
-        gpu = kwargs.get('gpu', False)
-        gpu_no = kwargs.get('gpu_no', 0)
         rows, self.cols = data_shape
 
         # building the computation graph
-        self.noise = [Variable(th.FloatTensor(batch_size, 1))
-                      for i in range(self.cols)]
-        if gpu:
-            self.noise = [i.cuda(gpu_no) for i in self.noise]
+        self.noise = []
+        for i in range(self.cols):
+            pname = 'noise_{}'.format(i)
+            self.register_buffer(pname, th.FloatTensor(batch_size, 1))
+            self.noise.append(getattr(self, pname))
         self.blocks = th.nn.ModuleList()
 
         # Init all the blocks
@@ -244,14 +237,12 @@ def plot_gen(epoch, batch, generated_variables, pairs_to_plot=[[0, 1]]):
     plt.pause(0.01)
 
 
-def run_SAM(df_data, skeleton=None, **kwargs):
+def run_SAM(df_data, skeleton=None, device=None, **kwargs):
     """Execute the SAM model.
 
     :param df_data: Input data; either np.array or pd.DataFrame
     """
-    gpu = kwargs.get('gpu', False)
-    gpu_no = kwargs.get('gpu_no', 0)
-
+    device = SETTINGS.get_default(device=device)
     train_epochs = kwargs.get('train_epochs', 1000)
     test_epochs = kwargs.get('test_epochs', 1000)
     batch_size = kwargs.get('batch_size', -1)
@@ -286,7 +277,6 @@ def run_SAM(df_data, skeleton=None, **kwargs):
         zero_components = [[i] for i in range(cols)]
     sam = SAM_generators((rows, cols), zero_components, batch_norm=True, **kwargs)
 
-    # Begin UGLY
     activation_function = kwargs.get('activation_function', th.nn.Tanh)
     try:
         del kwargs["activation_function"]
@@ -297,12 +287,10 @@ def run_SAM(df_data, skeleton=None, **kwargs):
         activation_function=th.nn.LeakyReLU,
         activation_argument=0.2, **kwargs)
     kwargs["activation_function"] = activation_function
-    # End of UGLY
 
-    if gpu:
-        sam = sam.cuda(gpu_no)
-        discriminator_sam = discriminator_sam.cuda(gpu_no)
-        data = data.cuda(gpu_no)
+    sam = sam.to(device)
+    discriminator_sam = discriminator_sam.to(device)
+    data = data.to(device)
 
     # Select parameters to optimize : ignore the non connected nodes
     criterion = th.nn.BCEWithLogitsLoss()
@@ -310,23 +298,19 @@ def run_SAM(df_data, skeleton=None, **kwargs):
     d_optimizer = th.optim.Adam(
         discriminator_sam.parameters(), lr=lr_disc)
 
-    true_variable = Variable(
-        th.ones(batch_size, 1), requires_grad=False)
-    false_variable = Variable(
-        th.zeros(batch_size, 1), requires_grad=False)
+    true_variable = th.ones(batch_size, 1)
+    false_variable = th.zeros(batch_size, 1)
     causal_filters = th.zeros(data.shape[1], data.shape[1])
 
-    if gpu:
-        true_variable = true_variable.cuda(gpu_no)
-        false_variable = false_variable.cuda(gpu_no)
-        causal_filters = causal_filters.cuda(gpu_no)
+    true_variable = true_variable.to(device)
+    false_variable = false_variable.to(device)
+    causal_filters = causal_filters.to(device)
 
     data_iterator = DataLoader(data, batch_size=batch_size, shuffle=True)
 
     # TRAIN
     for epoch in range(train_epochs + test_epochs):
         for i_batch, batch in enumerate(data_iterator):
-            batch = Variable(batch)
             batch_vectors = [batch[:, [i]] for i in range(cols)]
 
             g_optimizer.zero_grad()
@@ -399,6 +383,12 @@ class SAM(GraphModel):
         train_epochs (int): Number of training epochs
         test_epochs (int): Number of test epochs (saving and averaging the causal filters)
         batchsize (int): Size of the batches to be fed to the SAM model.
+        nruns (int): Number of runs to be made for causal estimation.
+               Recommended: >=12 for optimal performance.
+        njobs (int): Numbers of jobs to be run in Parallel.
+               Recommended: 1 if no GPU available, 2*number of GPUs else.
+        gpus (int): Number of available GPUs for the algorithm.
+        verbose (bool): verbose mode
 
     .. note::
        Ref: Kalainathan, Diviyan & Goudet, Olivier & Guyon, Isabelle &
@@ -407,7 +397,8 @@ class SAM(GraphModel):
     """
 
     def __init__(self, lr=0.1, dlr=0.1, l1=0.1, nh=200, dnh=200,
-                 train_epochs=1000, test_epochs=1000, batchsize=-1):
+                 train_epochs=1000, test_epochs=1000, batchsize=-1,
+                 nruns=6, njobs=None, gpus=0, verbose=None):
         """Init and parametrize the SAM model.
 
         """
@@ -420,8 +411,12 @@ class SAM(GraphModel):
         self.train = train_epochs
         self.test = test_epochs
         self.batchsize = batchsize
+        self.nruns = nruns
+        self.njobs = SETTINGS.get_default(nb_jobs=njobs)
+        self.gpus = SETTINGS.get_default(gpu=gpus)
+        self.verbose = SETTINGS.get_default(verbose=verbose)
 
-    def predict(self, data, graph=None, nruns=6, njobs=None, gpus=0, verbose=None,
+    def predict(self, data, graph=None,
                 plot=False, plot_generated_pair=False, return_list_results=False):
         """Execute SAM on a dataset given a skeleton or not.
 
@@ -429,44 +424,41 @@ class SAM(GraphModel):
             data (pandas.DataFrame): Observational data for estimation of causal relationships by SAM
             skeleton (numpy.ndarray): A priori knowledge about the causal relationships as an adjacency matrix.
                       Can be fed either directed or undirected links.
-            nruns (int): Number of runs to be made for causal estimation.
-                   Recommended: >=12 for optimal performance.
-            njobs (int): Numbers of jobs to be run in Parallel.
-                   Recommended: 1 if no GPU available, 2*number of GPUs else.
-            gpus (int): Number of available GPUs for the algorithm.
-            verbose (bool): verbose mode
             plot (bool): Plot losses interactively. Not recommended if nruns>1
             plot_generated_pair (bool): plots a generated pair interactively.  Not recommended if nruns>1
         Returns:
             networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term
             of the ith variable for the jth generator.
         """
-        verbose, njobs = SETTINGS.get_default(('verbose', verbose), ('nb_jobs', njobs))
-        if njobs != 1:
-            list_out = Parallel(n_jobs=njobs)(delayed(run_SAM)(data,
-                                                               skeleton=graph,
-                                                               lr_gen=self.lr, lr_disc=self.dlr,
-                                                               regul_param=self.l1, nh=self.nh, dnh=self.dnh,
-                                                               gpu=bool(gpus), train_epochs=self.train,
-                                                               test_epochs=self.test, batch_size=self.batchsize,
-                                                               plot=plot, verbose=verbose, gpu_no=idx % max(gpus, 1))
-                                              for idx in range(nruns))
+        if self.njobs != 1:
+            list_out = parallel_run(run_SAM, data, n_jobs=self.njobs,
+                                    skeleton=graph,
+                                    lr_gen=self.lr, lr_disc=self.dlr,
+                                    regul_param=self.l1, nh=self.nh,
+                                    dnh=self.dnh, gpus=self.gpus,
+                                    train_epochs=self.train,
+                                    test_epochs=self.test,
+                                    batch_size=self.batchsize, plot=plot,
+                                    verbose=self.verbose, nruns=self.nruns)
         else:
             list_out = [run_SAM(data, skeleton=graph,
                                 lr_gen=self.lr, lr_disc=self.dlr,
                                 regul_param=self.l1, nh=self.nh, dnh=self.dnh,
-                                gpu=bool(gpus), train_epochs=self.train,
+                                device=None,
+                                train_epochs=self.train,
                                 test_epochs=self.test, batch_size=self.batchsize,
-                                plot=plot, verbose=verbose, gpu_no=0)
-                        for idx in range(nruns)]
+                                plot=plot, verbose=self.verbose)
+                        for idx in range(self.nruns)]
         if return_list_results:
             return list_out
         else:
             W = list_out[0]
             for w in list_out[1:]:
                 W += w
-            W /= nruns
-        return nx.relabel_nodes(nx.DiGraph(W), {idx: i for idx, i in enumerate(data.columns)})
+            W /= self.nruns
+        return nx.relabel_nodes(nx.DiGraph(W),
+                                {idx: i for idx,
+                                 i in enumerate(data.columns)})
 
     def orient_directed_graph(self, *args, **kwargs):
         """Orient a (partially directed) graph."""

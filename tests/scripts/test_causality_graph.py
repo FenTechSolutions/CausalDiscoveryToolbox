@@ -22,8 +22,8 @@ def test_graph():
 
 
 def test_SAM():
-    m = SAM(train_epochs=10, test_epochs=10, nh=10, dnh=10)
-    assert isinstance(m.predict(data_graph, nruns=1, njobs=1), nx.DiGraph)
+    m = SAM(train_epochs=10, test_epochs=10, nh=10, dnh=10, nruns=1, njobs=1)
+    assert isinstance(m.predict(data_graph), nx.DiGraph)
     return 0
 
 

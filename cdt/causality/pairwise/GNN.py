@@ -27,13 +27,13 @@ Date : 10/05/2017
 .. SOFTWARE.
 """
 import numpy as np
-from ...utils.loss import MMDloss, TTestCriterion
-from ...utils.Settings import SETTINGS
-from joblib import Parallel, delayed
 from sklearn.preprocessing import scale
 import torch as th
 from torch.autograd import Variable
 from .model import PairwiseModel
+from ...utils.loss import MMDloss, TTestCriterion
+from ...utils.Settings import SETTINGS
+from ...utils.parallel import parallel_run
 
 
 class GNN_model(th.nn.Module):
@@ -69,7 +69,8 @@ class GNN_model(th.nn.Module):
         self.noise.normal_()
         return self.layers(th.cat([x, self.noise], 1))
 
-    def run(self, x, y, lr=0.01, train_epochs=1000, test_epochs=1000, idx=0, verbose=None, **kwargs):
+    def run(self, x, y, lr=0.01, train_epochs=1000, test_epochs=1000, idx=0,
+            verbose=None, **kwargs):
         """Run the GNN on a pair x,y of FloatTensor data."""
         verbose = SETTINGS.get_default(verbose=verbose)
         optim = th.optim.Adam(self.parameters(), lr=lr)
@@ -95,12 +96,12 @@ class GNN_model(th.nn.Module):
                 running_loss = 0.0
 
         return teloss / test_epochs
-    
+
     def reset_parameters(self):
         for layer in self.layers:
             if hasattr(layer, "reset_parameters"):
                 layer.reset_parameters()
-        
+
 
 def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
     """Run an instance of GNN, testing causal direction.
@@ -128,12 +129,26 @@ def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
 class GNN(PairwiseModel):
     """Shallow Generative Neural networks.
 
-    Models the causal directions x->y and y->x with a 1-hidden layer neural network
-    and a MMD loss. The causal direction is considered as the "best-fit" between the two directions
+    Models the causal directions x->y and y->x with a 1-hidden layer neural
+    network and a MMD loss. The causal direction is considered as the "best-fit"
+    between the two causal directions.
 
     Args:
         nh (int): number of hidden units in the neural network
         lr (float): learning rate of the optimizer
+        nb_runs (int): number of runs to execute per batch
+           (before testing for significance with t-test).
+        nb_jobs (int): number of runs to execute in parallel.
+           (defaults to ``cdt.SETTINGS.NB_JOBS``)
+        gpus (bool): Number of available gpus
+           (defaults to ``cdt.SETTINGS.GPU``)
+        idx (int): (optional) index of the pair, for printing purposes
+        verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
+        ttest_threshold (float): threshold to stop the boostraps before
+           ``nb_max_runs`` if the difference is significant
+        nb_max_runs (int): Max number of bootstraps
+        train_epochs (int): Number of epochs used for training
+        test_epochs (int): Number of epochs used for evaluation
 
     .. note::
        Ref : Learning Functional Causal Models with Generative Neural Networks
@@ -142,59 +157,63 @@ class GNN(PairwiseModel):
 
     """
 
-    def __init__(self, nh=20, lr=0.01):
+    def __init__(self, nh=20, lr=0.01, nb_runs=6, nb_jobs=None, gpus=None,
+                 verbose=None, ttest_threshold=0.01,
+                 nb_max_runs=16, train_epochs=1000, test_epochs=1000):
         """Init the model."""
         super(GNN, self).__init__()
+        self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+        self.gpus = SETTINGS.get_default(gpu=gpus)
         self.nh = nh
         self.lr = lr
+        self.nb_runs = nb_runs
+        self.nb_max_runs = nb_max_runs
+        self.train_epochs = train_epochs
+        self.test_epochs = test_epochs
+        self.verbose = SETTINGS.get_default(verbose=verbose)
+        self.ttest_threshold = ttest_threshold
 
-    def predict_proba(self, a, b, nb_runs=6, nb_jobs=None, gpu=None,
-                      idx=0, verbose=None, ttest_threshold=0.01,
-                      nb_max_runs=16, train_epochs=1000, test_epochs=1000):
+    def predict_proba(self, a, b, idx=0):
         """Run multiple times GNN to estimate the causal direction.
 
         Args:
             a (np.ndarray): Variable 1
             b (np.ndarray): Variable 2
-            nb_runs (int): number of runs to execute per batch (before testing for significance with t-test).
-            nb_jobs (int): number of runs to execute in parallel. (Initialized with ``cdt.SETTINGS.NB_JOBS``)
-            gpu (bool): use gpu (Initialized with ``cdt.SETTINGS.GPU``)
-            idx (int): (optional) index of the pair, for printing purposes
-            verbose (bool): verbosity (Initialized with ``cdt.SETTINGS.verbose``)
-            ttest_threshold (float): threshold to stop the boostraps before ``nb_max_runs`` if the difference is significant
-            nb_max_runs (int): Max number of bootstraps
-            train_epochs (int): Number of epochs during which the model is going to be trained
-            test_epochs (int): Number of epochs during which the model is going to be tested
 
         Returns:
             float: Causal score of the pair (Value : 1 if a->b and -1 if b->a)
         """
-        Nb_jobs, verbose, gpu = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose), ('gpu', gpu))
+
         x = np.stack([a.ravel(), b.ravel()], 1)
         ttest_criterion = TTestCriterion(
-            max_iter=nb_max_runs, runs_per_iter=nb_runs, threshold=ttest_threshold)
+            max_iter=self.nb_max_runs, runs_per_iter=self.nb_runs,
+            threshold=self.ttest_threshold)
 
         AB = []
         BA = []
 
         while ttest_criterion.loop(AB, BA):
-            if nb_jobs != 1:
-                result_pair = Parallel(n_jobs=nb_jobs)(delayed(GNN_instance)(
-                    x, idx=idx, device='cuda:{}'.format(run % gpu) if gpu else 'cpu',
-                    verbose=verbose, train_epochs=train_epochs, test_epochs=test_epochs) for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs))
+            if self.nb_jobs != 1:
+                result_pair = parallel_run(GNN_instance, x, n_jobs=self.nb_jobs,
+                                           gpus=self.gpus, verbose=self.verbose,
+                                           train_epochs=self.train_epochs,
+                                           test_epochs=self.test_epochs,
+                                           nruns=self.nb_runs)
             else:
-                result_pair = [GNN_instance(x, idx=idx,
-                                            device='cuda:0' if gpu else 'cpu',
-                                            verbose=verbose,
-                                            train_epochs=train_epochs,
-                                            test_epochs=test_epochs)
-                               for run in range(ttest_criterion.iter, ttest_criterion.iter + nb_runs)]
+                result_pair = [GNN_instance(x, device=SETTINGS.default_device,
+                                            verbose=self.verbose,
+                                            train_epochs=self.train_epochs,
+                                            test_epochs=self.test_epochs)
+                               for run in range(ttest_criterion.iter,
+                                                ttest_criterion.iter +
+                                                self.nb_runs)]
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
 
-        if verbose:
-            print("P-value after {} runs : {}".format(ttest_criterion.iter,
-                                                      ttest_criterion.p_value))
+        if self.verbose:
+            print("{} P-value after {} runs : {}".format(idx,
+                                                         ttest_criterion.iter,
+                                                         ttest_criterion.p_value))
 
         score_AB = np.mean(AB)
         score_BA = np.mean(BA)
