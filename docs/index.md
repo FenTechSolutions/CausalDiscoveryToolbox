@@ -1,4 +1,4 @@
-# Causal Discovery Toolbox
+# Causal Discovery Toolbox Documentation
 
 Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
@@ -10,8 +10,6 @@ Package for causal inference in graphs and in the pairwise settings for Python>=
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 
-## [Check out the DOCS here !](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html) 
-
 An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb)
 
 Install it using pip: (See more details on installation below)
@@ -20,11 +18,9 @@ pip install cdt
 ```
 ## Docker images
 Docker images are available, including all the dependencies, and enabled functionalities:
-
-|  python ver. 	|  cpu 	| gpu 	|
-|--------------	|-----------------------------------------------------------------------------------------------------------------------------	|----------------------------------------------------------------------------------------------------------------------------------------	|
-| 3.6 	| [![d36cpu](https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/) 	| [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.0-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
-| 3.7 	| [![d37cpu](https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/) 	| [![d37gpu](https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200)](#) 	|
+Python 3.6 - CPU: [![d36cpu](https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)
+Python 3.7 - CPU: [![d37cpu](https://img.shields.io/badge/docker-0.4.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)
+Python 3.6 - GPU: [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.0-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
 
 ## Installation
 

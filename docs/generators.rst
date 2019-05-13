@@ -1,4 +1,0 @@
-cdt.generators
-==============
-
-ToDo

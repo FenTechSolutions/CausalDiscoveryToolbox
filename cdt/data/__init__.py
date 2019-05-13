@@ -1,4 +1,23 @@
-"""
+""" This module focusses on data: data generation but also provides the user
+with standard and well known datasets, useful for validation and benchmarking.
+
+The generators provide the user the ability to choose which causal mechanism to
+be used in the data generation process, as well as the type of noise
+contribution (additive and/or multiplicative). Currently, the implemented
+mechanisms are (:math:`+\\times` denotes either addition or multiplication, and
+:math:`\\mathbf{X}` denotes the vector of causes, and :math:`E` represents the
+noise variable accounting for all unobserved variables):
+
+- Linear: :math:`y = \\mathbf{X}W +\\times E`
+- Polynomial: :math:`y = W_0 + \\mathbf{X}W_1 + ...+ \\mathbf{X}^d W_d +\\times E`
+- Gaussian Process: :math:`y = GP(\\mathbf{X}) +\\times E`
+- Sigmoid: :math:`y = \\sum_i^d W_i * sigmoid(\\mathbf{X_i}) +\\times E`
+- Randomly init. Neural network: :math:`y = \\sigma((\\mathbf{X},E) W_in)W_out`
+
+Causal pairs can be generated using the ``cdt.data.CausalPairGenerator`` class,
+and acyclic graphs can be generated using the ``cdt.data.AcyclicGraphGenerator`` class.
+
+
 .. MIT License
 ..
 .. Copyright (c) 2018 Diviyan Kalainathan
@@ -22,5 +41,5 @@
 .. SOFTWARE.
 """
 
-from .cyclic_graph_generator import CyclicGraphGenerator
 from .acyclic_graph_generator import AcyclicGraphGenerator
+from .causal_pair_generator import CausalPairGenerator
