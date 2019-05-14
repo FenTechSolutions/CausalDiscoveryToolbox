@@ -412,7 +412,7 @@ class SAM(GraphModel):
         self.test = test_epochs
         self.batchsize = batchsize
         self.nruns = nruns
-        self.njobs = SETTINGS.get_default(nb_jobs=njobs)
+        self.njobs = SETTINGS.get_default(njobs=njobs)
         self.gpus = SETTINGS.get_default(gpu=gpus)
         self.verbose = SETTINGS.get_default(verbose=verbose)
 
@@ -431,7 +431,7 @@ class SAM(GraphModel):
             of the ith variable for the jth generator.
         """
         if self.njobs != 1:
-            list_out = parallel_run(run_SAM, data, n_jobs=self.njobs,
+            list_out = parallel_run(run_SAM, data, njobs=self.njobs,
                                     skeleton=graph,
                                     lr_gen=self.lr, lr_disc=self.dlr,
                                     regul_param=self.l1, nh=self.nh,

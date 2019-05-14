@@ -8,7 +8,7 @@ from cdt.independence.graph import Glasso
 from cdt.utils.io import read_causal_pairs
 from cdt import SETTINGS
 
-SETTINGS.NB_JOBS = 1
+SETTINGS.NJOBS = 1
 
 
 train_data = read_causal_pairs("{}/../datasets/Example_pairwise_pairs.csv".format(os.path.dirname(os.path.realpath(__file__)))).iloc[:, :50]

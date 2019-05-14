@@ -246,16 +246,16 @@ def calculate_method(args):
     method = getattr(obj, name)
     return method(*margs)
 
-def pmap(func, mlist, n_jobs):
-    if n_jobs != 1:
-        pool = Pool(n_jobs if n_jobs != -1 else None)
+def pmap(func, mlist, njobs):
+    if njobs != 1:
+        pool = Pool(njobs if njobs != -1 else None)
         mmap = pool.map
     else:
         mmap = map
     return mmap(func, mlist)
 
 class CauseEffectSystemCombination(BaseEstimator):  
-    def __init__(self, extractor=extract_features, weights=None, symmetrize=True, n_jobs=-1):
+    def __init__(self, extractor=extract_features, weights=None, symmetrize=True, njobs=-1):
         self.extractor = extractor
         self.features = selected_features
         self.systems = [
@@ -277,29 +277,29 @@ class CauseEffectSystemCombination(BaseEstimator):
                 symmetrize=symmetrize),
         ]
         self.weights = weights
-        self.n_jobs = n_jobs
+        self.njobs = njobs
 
     def extract(self, features):
-        return self.extractor(features, n_jobs=self.n_jobs)
+        return self.extractor(features, njobs=self.njobs)
 
     def fit(self, X, y=None):
         # print(X.columns)
         task = [(m, 'fit', (X, y)) for m in self.systems]
-        self.systems = pmap(calculate_method, task, self.n_jobs)
+        self.systems = pmap(calculate_method, task, self.njobs)
         return self
 
     def fit_transform(self, X, y=None):
         task = [(m, 'fit_transform', (X, y)) for m in self.systems]
-        return pmap(calculate_method, task, self.n_jobs)
+        return pmap(calculate_method, task, self.njobs)
 
     def transform(self, X):
         task = [(m, 'transform', (X,)) for m in self.systems]
-        return pmap(calculate_method, task, self.n_jobs)
+        return pmap(calculate_method, task, self.njobs)
 
     def predict(self, X):
         task = [(m, 'predict', (X,)) for m in self.systems]
-        # print(calculate_method, task, self.n_jobs)
-        a = np.array(list(pmap(calculate_method, task, self.n_jobs)))
+        # print(calculate_method, task, self.njobs)
+        a = np.array(list(pmap(calculate_method, task, self.njobs)))
         # print(a, self.weights)
         if self.weights is not None:
             return np.dot(self.weights, a)

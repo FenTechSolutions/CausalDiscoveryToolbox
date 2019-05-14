@@ -65,9 +65,7 @@ class CausalPairGenerator(object):
         self.noise_coeff = noise_coeff
         self.initial_generator = initial_variable_generator
 
-
-
-    def generate(self, npairs, npoints=500, rescale=True, nb_jobs=None):
+    def generate(self, npairs, npoints=500, rescale=True, njobs=None):
         """Generate data """
 
         def generate_pair(npoints, label, rescale):
@@ -77,9 +75,12 @@ class CausalPairGenerator(object):
             effect = self.mechanism(1, npoints, self.noise,
                                     noise_coeff=self.noise_coeff)(cause).squeeze(1)
             cause = cause.squeeze(1)
+            if rescale:
+                cause = scale(cause)
+                effect = scale(effect)
             return (cause, effect) if label == 1 else (effect, cause)
 
-        nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+        njobs = SETTINGS.get_default(njobs=njobs)
         self.labels = (np.random.randint(2, size=npairs) - .5) * 2
         output = [generate_pair(npoints, self.labels[i], rescale) for i in range(npairs)]
         self.data = pd.DataFrame(output, columns=['A', 'B'])

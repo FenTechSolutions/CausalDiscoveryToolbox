@@ -46,7 +46,7 @@ class AcyclicGraphGenerator(object):
     def __init__(self, causal_mechanism, noise=normal_noise,
                  noise_coeff=.4,
                  initial_variable_generator=gmm_cause,
-                 points=500, nodes=20, parents_max=5):
+                 npoints=500, nodes=20, parents_max=5):
         """Generate an acyclic graph, given a causal mechanism.
 
         :param initial_variable_generator: init variables of the graph
@@ -65,7 +65,7 @@ class AcyclicGraphGenerator(object):
 
         self.data = pd.DataFrame(None, columns=["V{}".format(i) for i in range(nodes)])
         self.nodes = nodes
-        self.points = points
+        self.npoints = npoints
         self.noise = normal_noise
         self.noise_coeff = noise_coeff
         self.adjacency_matrix = np.zeros((nodes, nodes))
@@ -92,7 +92,7 @@ class AcyclicGraphGenerator(object):
 
         # Mechanisms
         self.cfunctions = [self.mechanism(int(sum(self.adjacency_matrix[:, i])),
-                                          self.points, self.noise, noise_coeff=self.noise_coeff)
+                                          self.npoints, self.noise, noise_coeff=self.noise_coeff)
                            if sum(self.adjacency_matrix[:, i])
                            else self.initial_generator for i in range(self.nodes)]
 
@@ -105,7 +105,7 @@ class AcyclicGraphGenerator(object):
             # Root cause
 
             if not sum(self.adjacency_matrix[:, i]):
-                self.data['V{}'.format(i)] = self.cfunctions[i](self.points)
+                self.data['V{}'.format(i)] = self.cfunctions[i](self.npoints)
             # Generating causes
             else:
                 self.data['V{}'.format(i)] = self.cfunctions[i](self.data.iloc[:, self.adjacency_matrix[:, i].nonzero()[0]].values)

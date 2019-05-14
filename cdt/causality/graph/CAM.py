@@ -54,7 +54,7 @@ class CAM(GraphModel):
         selmethod (str): Method used for variable selection.
         pruning (bool): Perform an initial pruning step.
         prunmethod (str): Method used for pruning.
-        nb_jobs (int): Number of jobs to run in parallel.
+        njobs (int): Number of jobs to run in parallel.
         verbose (bool): Sets the verbosity of the output.
 
     Available scores:
@@ -75,7 +75,7 @@ class CAM(GraphModel):
        + SELMETHOD: 'selGamBoost'
        + PRUNING: 'TRUE'
        + PRUNMETHOD: 'selGam'
-       + NJOBS: str(SETTINGS.NB_JOBS)
+       + NJOBS: str(SETTINGS.NJOBS)
        + CUTOFF: str(0.001)
        + VERBOSE: 'FALSE'
        + OUTPUT: '/tmp/cdt_CAM/result.csv'
@@ -93,7 +93,7 @@ class CAM(GraphModel):
 
     def __init__(self, score='nonlinear', cutoff=0.001, variablesel=True,
                  selmethod='gamboost', pruning=False, prunmethod='gam',
-                 nb_jobs=None, verbose=None):
+                 njobs=None, verbose=None):
         """Init the model and its available arguments."""
         if not RPackages.CAM:
             raise ImportError("R Package CAM is not available.")
@@ -113,7 +113,7 @@ class CAM(GraphModel):
                           '{SELMETHOD}': 'selGamBoost',
                           '{PRUNING}': 'TRUE',
                           '{PRUNMETHOD}': 'selGam',
-                          '{NJOBS}': str(SETTINGS.NB_JOBS),
+                          '{NJOBS}': str(SETTINGS.NJOBS),
                           '{CUTOFF}': str(0.001),
                           '{VERBOSE}': 'FALSE',
                           '{OUTPUT}': 'result.csv'}
@@ -123,7 +123,7 @@ class CAM(GraphModel):
         self.selmethod = selmethod
         self.pruning = pruning
         self.prunmethod = prunmethod
-        self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+        self.njobs = SETTINGS.get_default(njobs=njobs)
         self.verbose = SETTINGS.get_default(verbose=verbose)
 
     def orient_undirected_graph(self, data, graph, score='obs',
@@ -152,7 +152,7 @@ class CAM(GraphModel):
         self.arguments['{SELMETHOD}'] = self.var_selection[self.selmethod]
         self.arguments['{PRUNING}'] = str(self.pruning).upper()
         self.arguments['{PRUNMETHOD}'] = self.var_selection[self.prunmethod]
-        self.arguments['{NJOBS}'] = str(self.nb_jobs)
+        self.arguments['{NJOBS}'] = str(self.njobs)
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
         results = self._run_cam(data, verbose=self.verbose)
 

@@ -29,6 +29,7 @@ Date : 10/05/2017
 import numpy as np
 from sklearn.preprocessing import scale
 import torch as th
+from tqdm import trange
 from torch.autograd import Variable
 from .model import PairwiseModel
 from ...utils.loss import MMDloss, TTestCriterion
@@ -54,7 +55,7 @@ class GNN_model(th.nn.Module):
         self.noise = Variable(th.FloatTensor(
             batch_size, 1), requires_grad=False).to(device)
         self.act = th.nn.ReLU()
-        self.criterion = MMDloss(batch_size, device=device)
+        self.criterion = MMDloss(batch_size).to(device)
         self.layers = th.nn.Sequential(self.l1, self.act, self.l2)
 
     def forward(self, x):
@@ -76,8 +77,8 @@ class GNN_model(th.nn.Module):
         optim = th.optim.Adam(self.parameters(), lr=lr)
         running_loss = 0
         teloss = 0
-
-        for i in range(train_epochs + test_epochs):
+        pbar = trange(train_epochs + test_epochs, disable=not verbose)
+        for i in pbar:
             optim.zero_grad()
             pred = self.forward(x)
             loss = self.criterion(pred, y)
@@ -90,9 +91,8 @@ class GNN_model(th.nn.Module):
                 teloss += running_loss
 
             # print statistics
-            if verbose and not i % 300:
-                print('Idx:{}; epoch:{}; score:{}'.
-                      format(idx, i, running_loss/300))
+            if not i % 300:
+                pbar.set_postfix(Idx=idx, epoch=i, score=running_loss/300)
                 running_loss = 0.0
 
         return teloss / test_epochs
@@ -136,10 +136,10 @@ class GNN(PairwiseModel):
     Args:
         nh (int): number of hidden units in the neural network
         lr (float): learning rate of the optimizer
-        nb_runs (int): number of runs to execute per batch
+        nruns (int): number of runs to execute per batch
            (before testing for significance with t-test).
-        nb_jobs (int): number of runs to execute in parallel.
-           (defaults to ``cdt.SETTINGS.NB_JOBS``)
+        njobs (int): number of runs to execute in parallel.
+           (defaults to ``cdt.SETTINGS.NJOBS``)
         gpus (bool): Number of available gpus
            (defaults to ``cdt.SETTINGS.GPU``)
         idx (int): (optional) index of the pair, for printing purposes
@@ -157,16 +157,16 @@ class GNN(PairwiseModel):
 
     """
 
-    def __init__(self, nh=20, lr=0.01, nb_runs=6, nb_jobs=None, gpus=None,
+    def __init__(self, nh=20, lr=0.01, nruns=6, njobs=None, gpus=None,
                  verbose=None, ttest_threshold=0.01,
                  nb_max_runs=16, train_epochs=1000, test_epochs=1000):
         """Init the model."""
         super(GNN, self).__init__()
-        self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+        self.njobs = SETTINGS.get_default(njobs=njobs)
         self.gpus = SETTINGS.get_default(gpu=gpus)
         self.nh = nh
         self.lr = lr
-        self.nb_runs = nb_runs
+        self.nruns = nruns
         self.nb_max_runs = nb_max_runs
         self.train_epochs = train_epochs
         self.test_epochs = test_epochs
@@ -186,19 +186,19 @@ class GNN(PairwiseModel):
 
         x = np.stack([a.ravel(), b.ravel()], 1)
         ttest_criterion = TTestCriterion(
-            max_iter=self.nb_max_runs, runs_per_iter=self.nb_runs,
+            max_iter=self.nb_max_runs, runs_per_iter=self.nruns,
             threshold=self.ttest_threshold)
 
         AB = []
         BA = []
 
         while ttest_criterion.loop(AB, BA):
-            if self.nb_jobs != 1:
-                result_pair = parallel_run(GNN_instance, x, n_jobs=self.nb_jobs,
+            if self.njobs != 1:
+                result_pair = parallel_run(GNN_instance, x, njobs=self.njobs,
                                            gpus=self.gpus, verbose=self.verbose,
                                            train_epochs=self.train_epochs,
                                            test_epochs=self.test_epochs,
-                                           nruns=self.nb_runs)
+                                           nruns=self.nruns)
             else:
                 result_pair = [GNN_instance(x, device=SETTINGS.default_device,
                                             verbose=self.verbose,
@@ -206,7 +206,7 @@ class GNN(PairwiseModel):
                                             test_epochs=self.test_epochs)
                                for run in range(ttest_criterion.iter,
                                                 ttest_criterion.iter +
-                                                self.nb_runs)]
+                                                self.nruns)]
             AB.extend([runpair[0] for runpair in result_pair])
             BA.extend([runpair[1] for runpair in result_pair])
 

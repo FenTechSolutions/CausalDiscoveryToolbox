@@ -80,7 +80,7 @@ class FSGNN_model(th.nn.Module):
         output = th.zeros(x.size()[1])
         output = th.zeros(x.size()[1]).to(device)
 
-        criterion = MMDloss(input_size=x.shape[0], device=device)
+        criterion = MMDloss(input_size=x.shape[0]).to(device)
         if batch_size == -1:
             batch_size = x.size()[0]
         # Printout value
@@ -117,7 +117,7 @@ class FSGNN(FeatureSelectionModel):
     def predict_features(self, df_features, df_target, nh=20, idx=0, dropout=0.,
                          activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  batch_size=-1,
                          train_epochs=1000, test_epochs=1000, device=None,
-                         verbose=None, nb_runs=3):
+                         verbose=None, nruns=3):
         """For one variable, predict its neighbours.
 
         Args:
@@ -134,7 +134,7 @@ class FSGNN(FeatureSelectionModel):
             test_epochs (int): number of test epochs
             device (str): cuda or cpu device (defaults to ``cdt.SETTINGS.default_device``)
             verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
-            nb_runs (int): number of bootstrap runs
+            nruns (int): number of bootstrap runs
 
         Returns:
             list: scores of each feature relatively to the target
@@ -144,7 +144,7 @@ class FSGNN(FeatureSelectionModel):
         x = th.FloatTensor(scale(df_features.values)).to(device)
         y = th.FloatTensor(scale(df_target.values)).to(device)
         out = []
-        for i in range(nb_runs):
+        for i in range(nruns):
             model = FSGNN_model([x.size()[1] + 1, nh, 1],
                                 dropout=dropout,
                                 activation_function=activation_function).to(device)

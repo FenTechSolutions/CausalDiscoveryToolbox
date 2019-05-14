@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import networkx as nx
 
-SETTINGS.NB_JOBS = 1
+SETTINGS.NJOBS = 1
 
 
 def test_pipeline_CGNN():
@@ -23,7 +23,7 @@ def test_pipeline_CGNN():
     # print(nx.adj_matrix(ugraph).todense().shape)
     # Orient the edges of the graph
 
-    Cgnn = CGNN(nb_runs=1, train_epochs=2, test_epochs=2)
+    Cgnn = CGNN(nruns=1, train_epochs=2, test_epochs=2)
     assert type(Cgnn.predict(data, graph=ugraph)) == nx.DiGraph
     return 0
 
@@ -38,9 +38,22 @@ def test_multiprocessing_CGNN():
     # List results
     # print(nx.adj_matrix(ugraph).todense().shape)
     # Orient the edges of the graph
-
-    Cgnn = CGNN(nb_runs=6, nb_jobs=3, train_epochs=2, test_epochs=2)
+    Cgnn = CGNN(nruns=6, njobs=2, train_epochs=2, test_epochs=2)
     assert type(Cgnn.predict(data, graph=ugraph)) == nx.DiGraph
+    return 0
+
+
+def test_multiprocessing_ete_CGNN():
+    data = pd.read_csv('{}/../datasets/NUM_LUCAS.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, :3]
+
+    # Finding the structure of the graph
+
+    # List results
+    # print(nx.adj_matrix(ugraph).todense().shape)
+    # Orient the edges of the graph
+
+    Cgnn = CGNN(nruns=6, njobs=2, train_epochs=2, test_epochs=2)
+    assert type(Cgnn.predict(data)) == nx.DiGraph
     return 0
 
 
@@ -52,13 +65,13 @@ def test_scratch_CGNN():
     # print(nx.adj_matrix(ugraph).todense().shape)
     # Orient the edges of the graph
 
-    Cgnn = CGNN(nb_runs=1, train_epochs=2, test_epochs=2)
+    Cgnn = CGNN(nruns=1, train_epochs=2, test_epochs=2)
     assert type(Cgnn.predict(data)) == nx.DiGraph
 
     return 0
 
 
 if __name__ == '__main__':
-    test_pipeline_CGNN()
-    test_scratch_CGNN()
-    test_multiprocessing_CGNN()
+    # test_pipeline_CGNN()
+    # test_scratch_CGNN()
+    test_multiprocessing_ete_CGNN()

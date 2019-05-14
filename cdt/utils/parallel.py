@@ -6,7 +6,8 @@ at the end of each task, thus keeping in GPU memory the pytorch execution
 context.
 
 This module introduces equivalent tools for multiprocessing while
-avoiding GPU memory leak.
+avoiding GPU memory leak. This tool provides functions that make use
+GPUs: otherwise, joblib is called.
 
 
 .. MIT License
@@ -36,6 +37,7 @@ import multiprocessing as mp
 from multiprocessing import Manager
 from time import sleep
 import os
+from joblib import Parallel, delayed
 import signal
 from .Settings import SETTINGS
 
@@ -49,14 +51,14 @@ def worker_subprocess(function, devices, lockd, results, lockr,
                     device = devices.pop()
                 except IndexError:
                     pass
-            sleep(2)
-        with lockp:
-            for pid in pids:
-                try:
-                    os.kill(pid, signal.SIGKILL)
-                    pids.remove(pid)
-                except ProcessLookupError:
-                    pass
+            sleep(1)
+        # with lockp:
+        #     for pid in pids:
+        #         try:
+        #             os.kill(pid, signal.SIGKILL)
+        #             pids.remove(pid)
+        #         except ProcessLookupError:
+        #             pass
         output = function(*args, **kwargs, device=device, idx=idx)
         with lockd:
             devices.append(device)
@@ -66,9 +68,11 @@ def worker_subprocess(function, devices, lockd, results, lockr,
             pids.append(os.getpid())
 
 
-def parallel_run(function, *args, nruns=1, njobs=None, gpus=None, **kwargs):
-    njobs = SETTINGS.get_default(nb_jobs=njobs)
+def parallel_run(function, *args, nruns=None, njobs=None, gpus=None, **kwargs):
+    njobs = SETTINGS.get_default(njobs=njobs)
     gpus = SETTINGS.get_default(gpu=gpus)
+    if gpus == 0 and njobs > 1:
+        return Parallel(n_jobs=njobs)(delayed(function)(*args, **kwargs) for i in range(nruns))
     manager = Manager()
     devices = manager.list([f'cuda:{i%gpus}' if gpus !=0
                             else 'cpu' for i in range(njobs)])

@@ -112,10 +112,10 @@ class FeatureSelectionModel(GraphSkeletonModel):
         Returns:
             networkx.Graph: predicted skeleton of the graph.
         """
-        nb_jobs = kwargs.get("nb_jobs", SETTINGS.NB_JOBS)
+        njobs = kwargs.get("njobs", SETTINGS.NJOBS)
         list_nodes = list(df_data.columns.values)
-        if nb_jobs != 1:
-            result_feature_selection = Parallel(n_jobs=nb_jobs)(delayed(self.run_feature_selection)
+        if njobs != 1:
+            result_feature_selection = Parallel(njobs=njobs)(delayed(self.run_feature_selection)
                                                                 (df_data, node, idx, **kwargs)
                                                                 for idx, node in enumerate(list_nodes))
         else:

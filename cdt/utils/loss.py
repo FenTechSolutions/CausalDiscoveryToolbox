@@ -107,10 +107,9 @@ class MMDloss(th.nn.Module):
         Journal of Machine Learning Research, 13(Mar), 723-773.
     """
 
-    def __init__(self, input_size, bandwidths=None, device=None):
+    def __init__(self, input_size, bandwidths=None):
         """Init the model."""
         super(MMDloss, self).__init__()
-        device = SETTINGS.get_default(device=device)
         if bandwidths is None:
             self.bandwidths = [0.01, 0.1, 1, 10, 100]
         else:
@@ -118,7 +117,7 @@ class MMDloss(th.nn.Module):
         s = th.cat([th.ones([input_size, 1]) / input_size,
                     th.ones([input_size, 1]) / -input_size], 0)
 
-        self.S = (s @ s.t()).to(device)
+        self.register_buffer('S', (s @ s.t()))
 
     def forward(self, x, y):
         X = th.cat([x, y], 0)

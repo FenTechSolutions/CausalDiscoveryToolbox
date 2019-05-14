@@ -8,7 +8,6 @@ Cause-effect model training
 # License: Apache, Version 2.0
 
 import sys
-from .data_io import write_data, save_model
 import numpy as np
 from .estimator import CauseEffectSystemCombination
 # import features as f
@@ -19,10 +18,10 @@ from .util import random_permutation
 
 
 MODEL = CauseEffectSystemCombination
-MODEL_PARAMS = {'weights': [0.383, 0.370, 0.247], 'n_jobs': 1}
+MODEL_PARAMS = {'weights': [0.383, 0.370, 0.247], 'njobs': 1}
 
 
-def train(df, tar, save = False):
+def train(df, tar):
     set1 = 'train' if len(sys.argv) < 2 else sys.argv[1]
     # set2 = [] if len(sys.argv) < 3 else sys.argv[2:]
     train_filter = None
@@ -34,9 +33,9 @@ def train(df, tar, save = False):
     train = df
     print("Extracting features")
     train = model.extract(train)
-    if save:
-        print("Saving train features")
-        write_data(set1, train)
+    # if save:
+    #     print("Saving train features")
+    #     write_data(set1, train)
     # target = data_io.read_target(set1)
 
 
@@ -53,9 +52,8 @@ def train(df, tar, save = False):
     X = pd.concat([train])
     y = np.concatenate((tar.values))
     model.fit(X, y)
-    if save:
-        model_path = "model.pkl"
-        print("Saving model", model_path)
-        save_model(model, model_path)
+    # if save:
+    #     model_path = "model.pkl"
+    #     print("Saving model", model_path)
+    #     save_model(model, model_path)
     return model
-

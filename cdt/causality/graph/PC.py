@@ -124,7 +124,7 @@ class PC(GraphModel):
     """
 
     def __init__(self, CItest="gaussian", method_indep='corr', alpha=0.01,
-                 nb_jobs=None, verbose=None):
+                 njobs=None, verbose=None):
         """Init the model and its available arguments."""
         if not (RPackages.pcalg and RPackages.kpcalg and RPackages.RCIT):
             raise ImportError("R Package (k)pcalg/RCIT is not available. "
@@ -147,7 +147,7 @@ class PC(GraphModel):
         self.CI_test = CItest
         self.method_indep = method_indep
         self.alpha = alpha
-        self.nb_jobs = SETTINGS.get_default(nb_jobs=nb_jobs)
+        self.njobs = SETTINGS.get_default(njobs=njobs)
         self.verbose = SETTINGS.get_default(verbose=verbose)
         # Define default args
         self.arguments = {'{FOLDER}': '/tmp/cdt_pc/',
@@ -179,7 +179,7 @@ class PC(GraphModel):
         self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.method_indep]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(self.alpha)
-        self.arguments['{NJOBS}'] = str(self.nb_jobs)
+        self.arguments['{NJOBS}'] = str(self.njobs)
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
 
         fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
@@ -222,7 +222,7 @@ class PC(GraphModel):
         self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.method_indep]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(self.alpha)
-        self.arguments['{NJOBS}'] = str(self.nb_jobs)
+        self.arguments['{NJOBS}'] = str(self.njobs)
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
 
         results = self._run_pc(data, verbose=self.verbose)

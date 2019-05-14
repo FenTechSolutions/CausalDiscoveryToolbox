@@ -5,7 +5,7 @@ object, a unique instance of the ``cdt.utils.ConfigSettings`` class.
 
 The various attributes of the ``cdt.SETTINGS`` configuration object are:
 
-1. ``cdt.SETTINGS.NB_JOBS``
+1. ``cdt.SETTINGS.NJOBS``
 2. ``cdt.SETTINGS.GPU``
 3. ``cdt.SETTINGS.default_device``
 4. ``cdt.SETTINGS.autoset_config``
@@ -66,7 +66,7 @@ class ConfigSettings(object):
 
     """
 
-    __slots__ = ("NB_JOBS",  # Number of parallel jobs runnable
+    __slots__ = ("NJOBS",  # Number of parallel jobs runnable
                  "GPU",  # Number of GPUs Available
                  "default_device",  # Default device for gpu (pytorch 0.4)
                  "autoset_config",
@@ -75,7 +75,7 @@ class ConfigSettings(object):
     def __init__(self):
         """Define here the default values of the parameters."""
         super(ConfigSettings, self).__init__()
-        self.NB_JOBS = 8
+        self.NJOBS = 8
         self.GPU = 0
         self.autoset_config = True
         self.verbose = True
@@ -144,7 +144,7 @@ def autoset_settings(set_var):
             devices = [devices]
         if len(devices) != 0:
             set_var.GPU = len(devices)
-            set_var.NB_JOBS = len(devices)
+            set_var.NJOBS = len(devices)
             warnings.warn("Detecting CUDA devices : {}".format(devices))
 
     except KeyError:
@@ -153,11 +153,11 @@ def autoset_settings(set_var):
                                               includeNan=False))
         if not set_var.GPU:
             warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to 0, " +
-                          "and SETTINGS.NB_JOBS to cpu_count.")
+                          "and SETTINGS.NJOBS to cpu_count.")
             set_var.GPU = 0
-            set_var.NB_JOBS = multiprocessing.cpu_count()
+            set_var.NJOBS = multiprocessing.cpu_count()
         else:
-            set_var.NB_JOBS = set_var.GPU
+            set_var.NJOBS = set_var.GPU
             warnings.warn("Detecting {} CUDA devices.".format(set_var.GPU))
 
     return set_var

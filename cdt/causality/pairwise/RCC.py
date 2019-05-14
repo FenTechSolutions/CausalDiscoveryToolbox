@@ -47,7 +47,7 @@ class RCC(PairwiseModel):
         nb_min_leaves (int): number of min samples leaves of the estimator
         max_depth (): (optional) max depth of the model
         s (float): scaling
-        n_jobs (int): number of jobs to be run on parallel (defaults to ``cdt.SETTINGS.NB_JOBS``)
+        njobs (int): number of jobs to be run on parallel (defaults to ``cdt.SETTINGS.NJOBS``)
         verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
 
     .. note::
@@ -56,14 +56,14 @@ class RCC(PairwiseModel):
     """
 
     def __init__(self, rand_coeff=333, nb_estimators=500, nb_min_leaves=20,
-                 max_depth=None, s=10, nb_jobs=None, verbose=None):
+                 max_depth=None, s=10, njobs=None, verbose=None):
         """Initialize the model w/ its parameters.
         """
         np.random.seed(0)
         self.K = rand_coeff
         self.E = nb_estimators
         self.L = nb_min_leaves
-        self.n_jobs, self.verbose = SETTINGS.get_default(('nb_jobs', nb_jobs), ('verbose', verbose))
+        self.njobs, self.verbose = SETTINGS.get_default(('njobs', njobs), ('verbose', verbose))
         self.max_depth = max_depth
 
         self.W = np.hstack((s * np.random.randn(self.K, 2),
@@ -111,7 +111,7 @@ class RCC(PairwiseModel):
                        min_samples_leaf=self.L,
                        n_estimators=self.E,
                        max_depth=self.max_depth,
-                       n_jobs=self.n_jobs).fit(train, labels)
+                       n_jobs=self.njobs).fit(train, labels)
 
     def predict_proba(self, x, y=None, **kwargs):
         """ Predict the causal score using a trained RCC model

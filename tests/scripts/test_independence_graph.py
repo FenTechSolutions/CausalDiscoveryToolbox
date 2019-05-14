@@ -9,7 +9,7 @@ from cdt.independence.graph import (Glasso, ARD, DecisionTreeRegression,
                                     RFECVLinearSVR, RRelief)
 from cdt.utils.graph import remove_indirect_links
 
-SETTINGS.NB_JOBS = 1
+SETTINGS.NJOBS = 1
 
 
 def init():

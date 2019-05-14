@@ -782,9 +782,9 @@ def calculate_method(args):
     return method(*margs)
 
 
-def extract_features(X, features=all_features, y=None, n_jobs=-1):
-    if n_jobs != 1:
-        pool = Pool(n_jobs if n_jobs != -1 else None)
+def extract_features(X, features=all_features, y=None, njobs=-1):
+    if njobs != 1:
+        pool = Pool(njobs if njobs != -1 else None)
         pmap = pool.map
     else:
         pmap = map

@@ -97,7 +97,7 @@ class Jarfo(PairwiseModel):
         Args:
             df_data (pandas.DataFrame): Data
             umg (networkx.Graph): Graph to orient
-            nb_runs (int): number of times to rerun for each pair (bootstrap)
+            nruns (int): number of times to rerun for each pair (bootstrap)
             printout (str): (optional) Path to file where to save temporary results
 
         Returns:
