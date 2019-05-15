@@ -115,7 +115,7 @@ class FeatureSelectionModel(GraphSkeletonModel):
         njobs = kwargs.get("njobs", SETTINGS.NJOBS)
         list_nodes = list(df_data.columns.values)
         if njobs != 1:
-            result_feature_selection = Parallel(njobs=njobs)(delayed(self.run_feature_selection)
+            result_feature_selection = Parallel(n_jobs=njobs)(delayed(self.run_feature_selection)
                                                                 (df_data, node, idx, **kwargs)
                                                                 for idx, node in enumerate(list_nodes))
         else:
