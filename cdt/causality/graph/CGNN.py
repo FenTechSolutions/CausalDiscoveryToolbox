@@ -78,12 +78,10 @@ class CGNN_block(th.nn.Module):
 class CGNN_model(th.nn.Module):
     """Class for one CGNN instance."""
 
-    def __init__(self, adj_matrix, batch_size, nh=20, gpu=None,
-                 gpu_id=0, confounding=False, initial_graph=None, **kwargs):
+    def __init__(self, adj_matrix, batch_size, nh=20, device=None,
+                 confounding=False, initial_graph=None, **kwargs):
         """Init the model by creating the blocks and extracting the topological order."""
         super(CGNN_model, self).__init__()
-        gpu = SETTINGS.get_default(gpu=gpu)
-        device = 'cuda:{}'.format(gpu_id) if gpu else 'cpu'
         self.topological_order = [i for i in nx.topological_sort(nx.DiGraph(adj_matrix))]
         self.adjacency_matrix = adj_matrix
         self.confounding = confounding
@@ -94,11 +92,20 @@ class CGNN_model(th.nn.Module):
             self.i_adj_matrix = initial_graph
         self.blocks = th.nn.ModuleList()
         self.generated = [None for i in range(self.adjacency_matrix.shape[0])]
-        self.noise = th.zeros(batch_size, self.adjacency_matrix.shape[0]).to(device)
-        self.corr_noise = dict([[(i, j), th.zeros(batch_size, 1).to(device)] for i, j
-                                in zip(*np.nonzero(self.i_adj_matrix)) if i < j])
-        self.criterion = MMDloss(batch_size).to(device)
-        self.score = th.FloatTensor([0]).to(device)
+        self.register_buffer('noise', th.zeros(batch_size,
+                                               self.adjacency_matrix.shape[0]))
+        corr_noises = []
+        for i, j in zip(*np.nonzero(self.i_adj_matrix)):
+            if i < j:
+                pname = 'cnoise_{}'.format(i)
+                self.register_buffer(pname, th.FloatTensor(batch_size, 1))
+                corr_noises.append(getattr(self, pname))
+
+        self.corr_noise = dict([[(i, j), corr_noises[idx]] for idx, (i, j)
+                                in enumerate(zip(*np.nonzero(self.i_adj_matrix)))
+                                if i < j])
+        self.criterion = MMDloss(batch_size)
+        self.register_buffer('score', th.FloatTensor([0]))
 
         for i in range(self.adjacency_matrix.shape[0]):
             if not confounding:
