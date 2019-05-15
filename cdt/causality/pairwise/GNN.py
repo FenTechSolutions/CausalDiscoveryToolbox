@@ -92,7 +92,7 @@ class GNN_model(th.nn.Module):
 
             # print statistics
             if not i % 300:
-                pbar.set_postfix(Idx=idx, epoch=i, score=running_loss/300)
+                pbar.set_postfix(idx=idx, score=running_loss/300)
                 running_loss = 0.0
 
         return teloss / test_epochs

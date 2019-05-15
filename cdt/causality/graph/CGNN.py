@@ -142,7 +142,7 @@ class CGNN_model(th.nn.Module):
                 generated_data = self.forward()
                 mmd = self.criterion(generated_data, data)
                 if not epoch % 200:
-                    t.set_postfix(idx=idx, epoch=epoch, loss=mmd.item())
+                    t.set_postfix(idx=idx, loss=mmd.item())
                 mmd.backward()
                 optim.step()
                 if epoch >= test_epochs:
