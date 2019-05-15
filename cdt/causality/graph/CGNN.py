@@ -86,7 +86,6 @@ class CGNN_model(th.nn.Module):
         self.adjacency_matrix = adj_matrix
         self.confounding = confounding
         if initial_graph is None:
-
             self.i_adj_matrix = self.adjacency_matrix
         else:
             self.i_adj_matrix = initial_graph
@@ -94,16 +93,15 @@ class CGNN_model(th.nn.Module):
         self.generated = [None for i in range(self.adjacency_matrix.shape[0])]
         self.register_buffer('noise', th.zeros(batch_size,
                                                self.adjacency_matrix.shape[0]))
-        corr_noises = []
-        for i, j in zip(*np.nonzero(self.i_adj_matrix)):
-            if i < j:
-                pname = 'cnoise_{}'.format(i)
-                self.register_buffer(pname, th.FloatTensor(batch_size, 1))
-                corr_noises.append(getattr(self, pname))
+        if self.confounding:
+            corr_noises = []
+            for i, j in zip(*np.nonzero(self.i_adj_matrix)):
+                if i < j:
+                    pname = 'cnoise_{}'.format(i)
+                    self.register_buffer(pname, th.FloatTensor(batch_size, 1))
+                    corr_noises.append([(i, j), getattr(self, pname)])
 
-        self.corr_noise = dict([[(i, j), corr_noises[idx]] for idx, (i, j)
-                                in enumerate(zip(*np.nonzero(self.i_adj_matrix)))
-                                if i < j])
+            self.corr_noise = dict(corr_noises)
         self.criterion = MMDloss(batch_size)
         self.register_buffer('score', th.FloatTensor([0]))
 
