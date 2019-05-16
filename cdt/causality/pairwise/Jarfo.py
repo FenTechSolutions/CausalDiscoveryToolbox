@@ -30,7 +30,6 @@ from pandas import DataFrame
 import networkx as nx
 from .Jarfo_model import train
 from .model import PairwiseModel
-from .Jarfo_model import predict
 from copy import deepcopy
 
 
@@ -66,6 +65,14 @@ class Jarfo(PairwiseModel):
         Returns:
             pandas.DataFrame: a Dataframe with the predictions.
         """
+
+        def predict(df, model):
+            df.columns = ["A", "B"]
+            # print(df)
+            df2 = model.extract(df)
+            # print(df2)
+            return model.predict(df2)
+
         if len(list(df.columns)) == 2:
             df.columns = ["A", "B"]
         if self.model is None:
@@ -75,7 +82,7 @@ class Jarfo(PairwiseModel):
         for idx, row in df.iterrows():
             df2 = df2.append(row, ignore_index=True)
             df2 = df2.append({'A': row["B"], 'B': row["A"]}, ignore_index=True)
-        return predict.predict(deepcopy(df2), deepcopy(self.model))[::2]
+        return predict(deepcopy(df2), deepcopy(self.model))[::2]
 
     def predict_proba(self, a, b, idx=0, **kwargs):
         """ Use Jarfo to predict the causal direction of a pair of vars.
