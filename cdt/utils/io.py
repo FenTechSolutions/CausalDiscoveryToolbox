@@ -132,6 +132,10 @@ def read_list_edges(filename, directed=True, **kwargs):
         graph = nx.DiGraph()
     else:
         graph = nx.Graph()
+    if len(data.columns) == 3:
+        data.columns = ['Cause', 'Effect', 'Score']
+    else:
+        data.columns = ['Cause', 'Effect']
 
     for idx, row in data.iterrows():
         try:
