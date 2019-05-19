@@ -75,7 +75,7 @@ class PC(GraphModel):
         + dcc: "data=X, ic.method=\"dcc\""
         + hsic_gamma: "data=X, ic.method=\"hsic.gamma\""
         + hsic_perm: "data=X, ic.method=\"hsic.perm\""
-        + hsic_clus: "data=X, ic.method=\"hsic.clus\""
+        + hsic_clust: "data=X, ic.method=\"hsic.clust\""
         + corr: "C = cor(X), n = nrow(X)"
         + rcit: "data=X, ic.method=\"RCIT::RCIT\""
         + rcot: "data=X, ic.method=\"RCIT::RCoT\""
@@ -140,7 +140,7 @@ class PC(GraphModel):
         self.dir_method_indep = {'dcc': "data=X, ic.method=\"dcc\"",
                                  'hsic_gamma': "data=X, ic.method=\"hsic.gamma\"",
                                  'hsic_perm': "data=X, ic.method=\"hsic.perm\"",
-                                 'hsic_clus': "data=X, ic.method=\"hsic.clus\"",
+                                 'hsic_clust': "data=X, ic.method=\"hsic.clust\"",
                                  'corr': "C = cor(X), n = nrow(X)",
                                  'rcit': "data=X, ic.method=\"RCIT::RCIT\"",
                                  'rcot': "data=X, ic.method=\"RCIT::RCoT\""}

@@ -510,7 +510,9 @@ def correlation(x, tx, y, ty):
             y = to_numerical(y, x)
         x = (x - np.mean(x)) / np.std(x)
         y = (y - np.mean(y)) / np.std(y)
-        r = pearsonr(x, y)[0]
+        r = np.corrcoef(x, y)[0][1]
+        if np.isnan(r):
+            return 0
     return r
 
 
