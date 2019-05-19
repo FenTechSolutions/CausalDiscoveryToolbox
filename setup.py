@@ -16,7 +16,7 @@ def setup_package():
     setup(name='cdt',
           version='0.4.1',
           description='A Toolbox for causal graph inference',
-          long_description=long_description,
+          long_description="Documentation available at https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html",
           long_description_content_type="text/markdown",
           packages=find_packages(exclude=['examples', 'tests', 'tests.*']),
           url='https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox',

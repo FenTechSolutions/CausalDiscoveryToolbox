@@ -8,6 +8,7 @@ conditions: v1
 branches:
   only:
   - master
+  - dev
 
 services:
   - docker
@@ -47,6 +48,7 @@ jobs:
         - git push deploy HEAD:master
     - stage: deploy 1st stage
       name: "Build and push 3.6"
+      if: branch = master AND fork = false
       script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
@@ -71,6 +73,7 @@ jobs:
       - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
       name: "Build and push nv-3.6"
     - stage: deploy 2nd stage
+      if: branch = master AND fork = false
       name: "Push on Pypi"
       script:
       - git pull
