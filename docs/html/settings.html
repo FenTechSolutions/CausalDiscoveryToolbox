@@ -167,11 +167,11 @@ hardware. All parameters are overridable by accessing the <code class="docutils 
 object, a unique instance of the <code class="docutils literal notranslate"><span class="pre">cdt.utils.ConfigSettings</span></code> class.</p>
 <p>The various attributes of the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> configuration object are:</p>
 <ol class="arabic simple">
-<li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.autoset_config</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.autoset_config</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code></p></li>
 </ol>
 <p>The hardware detection revolves around the presence of GPUs. If GPUs are
 present, <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> and the number of jobs
@@ -182,21 +182,17 @@ is available, unlocking additional features of the toolbox.</p>
 <dt id="cdt.utils.Settings.ConfigSettings">
 <em class="property">class </em><code class="descclassname">cdt.utils.Settings.</code><code class="descname">ConfigSettings</code><a class="reference internal" href="_modules/cdt/utils/Settings.html#ConfigSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defining the class for the hardware/high level settings of the CDT.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>NB_JOBS</strong> (<em>int</em>) – Number of parallel jobs that can be executed on current
-hardware.</li>
-<li><strong>GPU</strong> (<em>int</em>) – The number of available GPUs ; defaults to <cite>0</cite>.</li>
-<li><strong>default_device</strong> (<em>str</em>) – Default device used for pytorch jobs.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the toolbox algorithms.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NB_JOBS</strong> (<em>int</em>) – Number of parallel jobs that can be executed on current
+hardware.</p></li>
+<li><p><strong>GPU</strong> (<em>int</em>) – The number of available GPUs ; defaults to <cite>0</cite>.</p></li>
+<li><p><strong>default_device</strong> (<em>str</em>) – Default device used for pytorch jobs.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the toolbox algorithms.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="cdt.utils.Settings.ConfigSettings.get_default">
 <code class="descname">get_default</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/Settings.html#ConfigSettings.get_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.get_default" title="Permalink to this definition">¶</a></dt>
@@ -208,8 +204,8 @@ be set to <code class="docutils literal notranslate"><span class="pre">None</spa
 parameters as defined by the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> ‘s attributes.</p>
 <p>It has two modes of processing:</p>
 <ol class="arabic simple">
-<li><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs for retrieving a single argument: <code class="docutils literal notranslate"><span class="pre">get_default(argument_name=value)</span></code>.</li>
-<li><a href="#id3"><span class="problematic" id="id4">*</span></a>args through a list of tuples of the shape <code class="docutils literal notranslate"><span class="pre">('argument_name',</span> <span class="pre">value)</span></code> to retrieve multiple values at once.</li>
+<li><p><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs for retrieving a single argument: <code class="docutils literal notranslate"><span class="pre">get_default(argument_name=value)</span></code>.</p></li>
+<li><p><a href="#id3"><span class="problematic" id="id4">*</span></a>args through a list of tuples of the shape <code class="docutils literal notranslate"><span class="pre">('argument_name',</span> <span class="pre">value)</span></code> to retrieve multiple values at once.</p></li>
 </ol>
 </dd></dl>
 
@@ -235,8 +231,8 @@ make the code Pythonic. It’s meant as a general demonstration on how
 to obtain CUDA device information from Python without resorting to
 nvidia-smi or a compiled Python extension.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Author: Jan Schlüter, <a class="reference external" href="https://gist.github.com/63a664160d016a491b2cbea15913d549.git">https://gist.github.com/63a664160d016a491b2cbea15913d549.git</a></p>
+<p class="admonition-title">Note</p>
+<p>Author: Jan Schlüter, <a class="reference external" href="https://gist.github.com/63a664160d016a491b2cbea15913d549.git">https://gist.github.com/63a664160d016a491b2cbea15913d549.git</a></p>
 </div>
 </dd></dl>
 

@@ -167,8 +167,8 @@ algorithm given a ground truth. All these metrics are in the form
 <cite>metric(target, prediction)</cite>, where any of those arguments are either numpy
 matrixes that represent the adjacency matrix or <cite>networkx.DiGraph</cite> instances.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">in the case of heterogeneous types of arguments, special care has
+<p class="admonition-title">Warning</p>
+<p>in the case of heterogeneous types of arguments, special care has
 to be given to the order of the nodes, as the type <cite>networkx.DiGraph</cite> does
 not retain node order.</p>
 </div>
@@ -188,36 +188,32 @@ imbalance.</p>
 total classification accuracy given a confidence threshold. On the other
 hand, Recall is defined by: <span class="math notranslate nohighlight">\(Re=tp/(tp+fn)\)</span> and denotes
 misclassification given a threshold.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
-ones and zeros.</li>
-<li><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
-algorithm to evaluate.</li>
-<li><strong>low_confidence_undirected</strong> – Put the lowest confidence possible to
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
+ones and zeros.</p></li>
+<li><p><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
+algorithm to evaluate.</p></li>
+<li><p><strong>low_confidence_undirected</strong> – Put the lowest confidence possible to
 undirected edges (edges that are symmetric in the confidence score).
-Default: False</li>
+Default: False</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>tuple containing:</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>tuple containing:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Area under the precision recall curve (float)</li>
-<li>Tuple of data points of the precision-recall curve used in the computation of the score (tuple).</li>
+<li><p>Area under the precision recall curve (float)</p></li>
+<li><p>Tuple of data points of the precision-recall curve used in the computation of the score (tuple).</p></li>
 </ul>
 </div></blockquote>
 </p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
@@ -240,32 +236,28 @@ for directed graph, two mistakes can be counted as the edge in the wrong
 direction is false and the edge in the good direction is missing ; the
 <cite>double_for_anticausal</cite> argument accounts for this remark. Setting it to
 <cite>False</cite> will count this as a single mistake.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
-ones and zeros.</li>
-<li><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
-algorithm to evaluate.</li>
-<li><strong>double_for_anticausal</strong> (<em>bool</em>) – Count the badly oriented edges as two
-mistakes. Default: True</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
+ones and zeros.</p></li>
+<li><p><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
+algorithm to evaluate.</p></li>
+<li><p><strong>double_for_anticausal</strong> (<em>bool</em>) – Count the badly oriented edges as two
+mistakes. Default: True</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>Structural Hamming Distance (int).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Structural Hamming Distance (int).</p>
 <blockquote>
 <div><p>The value tends to zero as the graphs tend to be identical.</p>
 </div></blockquote>
 </p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span> <span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
@@ -285,34 +277,30 @@ sense.
 It consists in computing the path between all the pairs of variables, and
 checks if the causal relationship between the variables is respected.
 The given graphs have to be DAGs for the SID metric to make sense.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Target graph, must be of
 ones and zeros, and instance of either numpy.ndarray or
-networkx.DiGraph. Must be a DAG.</li>
-<li><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
-algorithm to evaluate. Must be a DAG.</li>
+networkx.DiGraph. Must be a DAG.</p></li>
+<li><p><strong>prediction</strong> (<em>numpy.ndarray</em><em> or </em><em>networkx.DiGraph</em>) – Prediction made by the
+algorithm to evaluate. Must be a DAG.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>Structural Intervention Distance.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Structural Intervention Distance.</p>
 <blockquote>
 <div><p>The value tends to zero as the graphs tends to be identical.</p>
 </div></blockquote>
 </p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,
+<p class="admonition-title">Note</p>
+<p>Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,
 Jonas Peters, Peter Bühlmann: <a class="reference external" href="https://arxiv.org/abs/1306.1043">https://arxiv.org/abs/1306.1043</a></p>
 </div>
 <p class="rubric">Examples</p>
