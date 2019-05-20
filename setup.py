@@ -23,7 +23,7 @@ def setup_package():
           package_data={'': ['**/*.R']},
           install_requires=['numpy', 'scipy', 'scikit-learn',
                             'joblib', 'pandas',
-                            'networkx',
+                            'networkx', 'statsmodels',
                             'skrebate', 'tqdm'],
           include_package_data=True,
           author='Diviyan Kalainathan',

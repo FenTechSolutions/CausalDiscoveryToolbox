@@ -7,3 +7,4 @@ networkx
 skrebate
 torch
 tqdm
+statsmodels

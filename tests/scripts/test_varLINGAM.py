@@ -26,7 +26,6 @@ Author: Georgios Koutroulis
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 from statsmodels.tsa.vector_ar.var_model import VAR
 from cdt.timeseries.graph import VarLiNGAM
 import networkx as nx
@@ -60,7 +59,7 @@ def setRCmatrix(m, p):
     return (rowsZeros, columnsZeros)
 
 
-def test_VARLiNGAM(m=5, n=300, plot=False):
+def test_VARLiNGAM(m=5, n=300):
     # Test VARLiNGAM on simulated data reproduced from the paper
     # - A. HyvÃ¤rinen, K. Zhang, S. Shimizu, P.O. Hoyer (JMLR-2010). Estimation of
     #   a Structural Vector Autoregression Model Using Non-Gaussianity;
@@ -108,30 +107,6 @@ def test_VARLiNGAM(m=5, n=300, plot=False):
     #Test VARLiNGAM
     model = VarLiNGAM()
     Bo_, Bhat_ = model._run_varLiNGAM(xt)
-
-    if plot:
-        fig = plt.figure(figsize=(12,4))
-        fig.subplots_adjust(hspace=0.1, wspace=0.3)
-        ax1 = fig.add_subplot(1, 2, 1)
-        ax2 = fig.add_subplot(1, 2, 2)
-        ax1.set_xlim((-1, 1))
-        ax1.set_ylim((-1, 1))
-        ax1.set_xlabel("Generating Bo")
-        ax1.set_ylabel("Estimated Bo")
-        ax2.set_xlim((-1, 1))
-        ax2.set_ylim((-1, 1))
-        ax2.set_xlabel("Generating Bhat")
-        ax2.set_ylabel("Estimated Bhat")
-        ax1.plot((-1, 1), (-1, 1), "r--")
-        ax2.plot((-1, 1), (-1, 1), "r--")
-
-        idR, idC = np.where(Bo != 0)
-        for ij in list(zip(idR, idC)):
-            ax1.scatter(Bo[ij], Bo_[ij], c="b")
-            ax2.scatter(B1[ij], Bhat_[ij], c="b")
-        plt.show()
-    else:
-        return (Bo_, Bhat_)
 
 
 def test_pipeline():
