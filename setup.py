@@ -14,7 +14,7 @@ with open('README.md', encoding="utf-8") as f:
 
 def setup_package():
     setup(name='cdt',
-          version='0.4.2',
+          version='0.4.3',
           description='A Toolbox for causal graph inference',
           long_description="Documentation available at https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html",
           long_description_content_type="text/markdown",
