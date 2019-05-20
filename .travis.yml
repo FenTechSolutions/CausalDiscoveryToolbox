@@ -22,8 +22,17 @@ before_install:
 install: true
 jobs:
   include:
+    - stage: test for other branches
+      if: branch != master OR fork = true
+      name: "Build and test"
+      script:
+      - docker pull divkal/cdt-env-base:1.1
+      - docker build --build-arg python=3.6 -t divkal/cdt-test .
+      - docker push divkal/cdt-test
+      - docker run --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest'
     - stage: build docker image
-      name: "Build 3.6 image for testing"
+      if: branch = master AND fork = false
+      name: "Build and push 3.6 image for testing"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-env-base:1.1
@@ -31,6 +40,7 @@ jobs:
       - docker push divkal/cdt-test
     - stage: test
       name: "Test and bumpversion"
+      if: branch = master AND fork = false
       script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov=./cdt && codecov --token $CODECOV_TOKEN'
       after_success:
         - git config --global user.email "travis-bumpversion@example.com"
