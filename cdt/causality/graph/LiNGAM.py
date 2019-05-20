@@ -90,7 +90,7 @@ class LiNGAM(GraphModel):
             data (pandas.DataFrame): DataFrame containing the data
 
         Returns:
-            networkx.DiGraph: Solution given by the LiNGAM algorithm.
+            networkx.DiGraph: Prediction given by the LiNGAM algorithm.
 
         """
         # Building setup w/ arguments.

@@ -181,12 +181,12 @@ available packages is limited and the list is defined in <code class="docutils l
 <p>If the package is available, the <code class="docutils literal notranslate"><span class="pre">launch_R_script</span></code> proceeds to the execution
 of the function, by:</p>
 <ol class="arabic simple">
-<li>Copying the R script template and modifying it with the given arguments</li>
-<li>Copying all the data to a temporary folder in /tmp</li>
-<li>Launching a R subprocess using the modified template and the data, and
-the script saves the results in a folder in /tmp</li>
-<li>Retrieving all the results in the Python process and cleaning up all the
-temporary files.</li>
+<li><p>Copying the R script template and modifying it with the given arguments</p></li>
+<li><p>Copying all the data to a temporary folder in /tmp</p></li>
+<li><p>Launching a R subprocess using the modified template and the data, and
+the script saves the results in a folder in /tmp</p></li>
+<li><p>Retrieving all the results in the Python process and cleaning up all the
+temporary files.</p></li>
 </ol>
 <dl class="class">
 <dt id="cdt.utils.R.DefaultRPackages">
@@ -197,26 +197,22 @@ is initialized to <code class="docutils literal notranslate"><span class="pre">N
 will be checked and their value will be set to either <cite>True</cite> or <cite>False</cite>
 depending on the results. A package already tested (which value is not
 <cite>None</cite>) will not be tested again.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>pcalg</strong> (<em>bool</em>) – Availability of the <cite>pcalg</cite> R package</li>
-<li><strong>kpcalg</strong> (<em>bool</em>) – Availability of the <cite>kpcalg</cite> R package</li>
-<li><strong>bnlearn</strong> (<em>bool</em>) – Availability of the <cite>bnlearn</cite> R package</li>
-<li><strong>D2C</strong> (<em>bool</em>) – Availability of the <cite>D2C</cite> R package</li>
-<li><strong>SID</strong> (<em>bool</em>) – Availability of the <cite>SID</cite> R package</li>
-<li><strong>CAM</strong> (<em>bool</em>) – Availability of the <cite>CAM</cite> R package</li>
-<li><strong>RCIT</strong> (<em>bool</em>) – Availability of the <cite>RCIT</cite> R package</li>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pcalg</strong> (<em>bool</em>) – Availability of the <cite>pcalg</cite> R package</p></li>
+<li><p><strong>kpcalg</strong> (<em>bool</em>) – Availability of the <cite>kpcalg</cite> R package</p></li>
+<li><p><strong>bnlearn</strong> (<em>bool</em>) – Availability of the <cite>bnlearn</cite> R package</p></li>
+<li><p><strong>D2C</strong> (<em>bool</em>) – Availability of the <cite>D2C</cite> R package</p></li>
+<li><p><strong>SID</strong> (<em>bool</em>) – Availability of the <cite>SID</cite> R package</p></li>
+<li><p><strong>CAM</strong> (<em>bool</em>) – Availability of the <cite>CAM</cite> R package</p></li>
+<li><p><strong>RCIT</strong> (<em>bool</em>) – Availability of the <cite>RCIT</cite> R package</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The RCIT package is not the original one (github.com/ericstrobl/RCIT)
+<p class="admonition-title">Warning</p>
+<p>The RCIT package is not the original one (github.com/ericstrobl/RCIT)
 but an adaptation made to fit in the PC algorithm, available at:
 <a class="reference external" href="https://github.com/Diviyan-Kalainathan/RCIT">https://github.com/Diviyan-Kalainathan/RCIT</a></p>
 </div>
@@ -224,50 +220,46 @@ but an adaptation made to fit in the PC algorithm, available at:
 <dt id="cdt.utils.R.DefaultRPackages.check_R_package">
 <code class="descname">check_R_package</code><span class="sig-paren">(</span><em>package</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages.check_R_package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.check_R_package" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute a subprocess to check the package’s availability.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package</strong> (<em>str</em>) – Name of the package to be tested.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>True</cite> if the package is available, <cite>False</cite> otherwise</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>package</strong> (<em>str</em>) – Name of the package to be tested.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if the package is available, <cite>False</cite> otherwise</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="cdt.utils.R.launch_R_script">
-<code class="descclassname">cdt.utils.R.</code><code class="descname">launch_R_script</code><span class="sig-paren">(</span><em>template</em>, <em>arguments</em>, <em>output_function=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#launch_R_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.launch_R_script" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cdt.utils.R.</code><code class="descname">launch_R_script</code><span class="sig-paren">(</span><em>template</em>, <em>arguments</em>, <em>output_function=None</em>, <em>verbose=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#launch_R_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.launch_R_script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Launch an R script, starting from a template and replacing text in file
 before execution.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>template</strong> (<em>str</em>) – path to the template of the R script</li>
-<li><strong>arguments</strong> (<em>dict</em>) – Arguments that modify the template’s placeholders
-with arguments</li>
-<li><strong>output_function</strong> (<em>function</em>) – Function to execute <strong>after</strong> the execution
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template</strong> (<em>str</em>) – path to the template of the R script</p></li>
+<li><p><strong>arguments</strong> (<em>dict</em>) – Arguments that modify the template’s placeholders
+with arguments</p></li>
+<li><p><strong>output_function</strong> (<em>function</em>) – Function to execute <strong>after</strong> the execution
 of the R script, and its output is returned by this function. Used
 traditionally as a function to retrieve the results of the
-execution.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the R subprocess.</li>
+execution.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the R subprocess.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em>) – If True, the generated scripts are not deleted.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Returns the output of the <code class="docutils literal notranslate"><span class="pre">output_function</span></code> if not <cite>None</cite>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the output of the <code class="docutils literal notranslate"><span class="pre">output_function</span></code> if not <cite>None</cite>
 else <cite>True</cite> or <cite>False</cite> depending on whether the execution was
 successful.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -280,25 +272,21 @@ Date : 2/06/17</p>
 <dt id="cdt.utils.io.read_causal_pairs">
 <code class="descclassname">cdt.utils.io.</code><code class="descname">read_causal_pairs</code><span class="sig-paren">(</span><em>filename</em>, <em>scale=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_causal_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_causal_pairs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – path of the file to read or DataFrame containing the data</li>
-<li><strong>scale</strong> (<em>bool</em>) – Scale the data</li>
-<li><strong>kwargs</strong> – parameters to be passed to pandas.read_csv</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – path of the file to read or DataFrame containing the data</p></li>
+<li><p><strong>scale</strong> (<em>bool</em>) – Scale the data</p></li>
+<li><p><strong>kwargs</strong> – parameters to be passed to pandas.read_csv</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -306,26 +294,22 @@ Date : 2/06/17</p>
 <code class="descclassname">cdt.utils.io.</code><code class="descname">read_adjacency_matrix</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_adjacency_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a file (containing an adjacency matrix) and convert it into a
 directed or undirected networkx graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – file to read or DataFrame containing the data</li>
-<li><strong>directed</strong> (<em>bool</em>) – Return directed graph</li>
-<li><strong>kwargs</strong> – extra parameters to be passed to pandas.read_csv</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – file to read or DataFrame containing the data</p></li>
+<li><p><strong>directed</strong> (<em>bool</em>) – Return directed graph</p></li>
+<li><p><strong>kwargs</strong> – extra parameters to be passed to pandas.read_csv</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">networkx graph containing the graph.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><strong>networkx.DiGraph</strong> or <strong>networkx.Graph</strong> depending on the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>networkx graph containing the graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><strong>networkx.DiGraph</strong> or <strong>networkx.Graph</strong> depending on the
 <code class="docutils literal notranslate"><span class="pre">directed</span></code> parameter.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -333,26 +317,22 @@ directed or undirected networkx graph.</p>
 <code class="descclassname">cdt.utils.io.</code><code class="descname">read_list_edges</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_list_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_list_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a file (containing list of edges) and convert it into a directed
 or undirected networkx graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – file to read or DataFrame containing the data</li>
-<li><strong>directed</strong> (<em>bool</em>) – Return directed graph</li>
-<li><strong>kwargs</strong> – extra parameters to be passed to pandas.read_csv</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>pandas.DataFrame</em>) – file to read or DataFrame containing the data</p></li>
+<li><p><strong>directed</strong> (<em>bool</em>) – Return directed graph</p></li>
+<li><p><strong>kwargs</strong> – extra parameters to be passed to pandas.read_csv</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">networkx graph containing the graph.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><strong>networkx.DiGraph</strong> or <strong>networkx.Graph</strong> depending on the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>networkx graph containing the graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><strong>networkx.DiGraph</strong> or <strong>networkx.Graph</strong> depending on the
 <code class="docutils literal notranslate"><span class="pre">directed</span></code> parameter.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -364,7 +344,7 @@ or undirected networkx graph.</p>
 <code class="descclassname">cdt.utils.graph.</code><code class="descname">network_deconvolution</code><span class="sig-paren">(</span><em>mat</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#network_deconvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.network_deconvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Python implementation/translation of network deconvolution by MIT-KELLIS LAB.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>code author:gidonro [Github username](https://github.com/gidonro/Network-Deconvolution)</p>
 <p>LICENSE: MIT-KELLIS LAB</p>
 <p>AUTHORS:
@@ -374,41 +354,38 @@ Python implementation: Gideon Rosenthal</p>
 <p>For more details, see the following paper:
 Network Deconvolution as a General Method to Distinguish
 Direct Dependencies over Networks</p>
-<p class="last">By: Soheil Feizi, Daniel Marbach,  Muriel Médard and Manolis Kellis
+<p>By: Soheil Feizi, Daniel Marbach,  Muriel Médard and Manolis Kellis
 Nature Biotechnology</p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>mat</strong> (<em>numpy.ndarray</em>) – matrix, if it is a square matrix, the program assumes
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat</strong> (<em>numpy.ndarray</em>) – matrix, if it is a square matrix, the program assumes
 it is a relevance matrix where mat(i,j) represents the similarity content
 between nodes i and j. Elements of matrix should be
-non-negative.</li>
-<li><strong>beta</strong> (<em>float</em>) – Scaling parameter, the program maps the largest absolute eigenvalue
+non-negative.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Scaling parameter, the program maps the largest absolute eigenvalue
 of the direct dependency matrix to beta. It should be
-between 0 and 1.</li>
-<li><strong>alpha</strong> (<em>float</em>) – fraction of edges of the observed dependency matrix to be kept in
-deconvolution process.</li>
-<li><strong>control</strong> (<em>int</em>) – if 0, displaying direct weights for observed
+between 0 and 1.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – fraction of edges of the observed dependency matrix to be kept in
+deconvolution process.</p></li>
+<li><p><strong>control</strong> (<em>int</em>) – if 0, displaying direct weights for observed
 interactions, if 1, displaying direct weights for both observed and
-non-observed interactions.</li>
+non-observed interactions.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>Returns:
 mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</p>
 <blockquote>
 <div><blockquote>
-<div>represent direct edge weights of observed interactions.
+<div><p>represent direct edge weights of observed interactions.
 Choosing top direct interactions (a cut-off) depends on the application and
-is not implemented in this code.</div></blockquote>
+is not implemented in this code.</p>
+</div></blockquote>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">To apply ND on regulatory networks, follow steps explained in Supplementary notes
+<p class="admonition-title">Note</p>
+<p>To apply ND on regulatory networks, follow steps explained in Supplementary notes
 1.4.1 and 2.1 and 2.3 of the paper.
 In this implementation, input matrices are made symmetric.</p>
 </div>
@@ -419,24 +396,22 @@ In this implementation, input matrices are made symmetric.</p>
 <dt id="cdt.utils.graph.aracne">
 <code class="descclassname">cdt.utils.graph.</code><code class="descname">aracne</code><span class="sig-paren">(</span><em>m</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#aracne"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.aracne" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of the ARACNE algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mat</strong> (<em>numpy.ndarray</em>) – matrix, if it is a square matrix, the program assumes
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mat</strong> (<em>numpy.ndarray</em>) – matrix, if it is a square matrix, the program assumes
 it is a relevance matrix where mat(i,j) represents the similarity content
 between nodes i and j. Elements of matrix should be
-non-negative.</td>
-</tr>
-</tbody>
-</table>
+non-negative.</p>
+</dd>
+</dl>
 <p>Returns:
 mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</p>
 <blockquote>
-<div>represent direct edge weights of observed interactions.</div></blockquote>
+<div><p>represent direct edge weights of observed interactions.</p>
+</div></blockquote>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context
+<p class="admonition-title">Note</p>
+<p>Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context
 Adam A Margolin, Ilya Nemenman, Katia Basso, Chris Wiggins, Gustavo Stolovitzky, Riccardo Dalla Favera and Andrea Califano
 DOI: <a class="reference external" href="https://doi.org/10.1186/1471-2105-7-S1-S7">https://doi.org/10.1186/1471-2105-7-S1-S7</a></p>
 </div>
@@ -446,24 +421,22 @@ DOI: <a class="reference external" href="https://doi.org/10.1186/1471-2105-7-S1-
 <dt id="cdt.utils.graph.clr">
 <code class="descclassname">cdt.utils.graph.</code><code class="descname">clr</code><span class="sig-paren">(</span><em>M</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#clr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.clr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of the Context Likelihood or Relatedness Network algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mat</strong> (<em>numpy.ndarray</em>) – matrix, if it is a square matrix, the program assumes
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mat</strong> (<em>numpy.ndarray</em>) – matrix, if it is a square matrix, the program assumes
 it is a relevance matrix where mat(i,j) represents the similarity content
 between nodes i and j. Elements of matrix should be
-non-negative.</td>
-</tr>
-</tbody>
-</table>
+non-negative.</p>
+</dd>
+</dl>
 <p>Returns:
 mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</p>
 <blockquote>
-<div>represent direct edge weights of observed interactions.</div></blockquote>
+<div><p>represent direct edge weights of observed interactions.</p>
+</div></blockquote>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey
+<p class="admonition-title">Note</p>
+<p>Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey
 Wierzbowski, Guillaume Cottarel, Simon Kasif, James J. Collins, and Timothy
 S. Gardner. Large-scale mapping and validation of escherichia coli
 transcriptional regulation from a compendium of expression profiles.
@@ -475,25 +448,21 @@ PLoS Biology, 2007</p>
 <dt id="cdt.utils.graph.remove_indirect_links">
 <code class="descclassname">cdt.utils.graph.</code><code class="descname">remove_indirect_links</code><span class="sig-paren">(</span><em>g</em>, <em>alg='aracne'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#remove_indirect_links"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.remove_indirect_links" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply deconvolution to a networkx graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>g</strong> (<em>networkx.Graph</em>) – Graph to apply deconvolution to</li>
-<li><strong>alg</strong> (<em>str</em>) – Algorithm to use (‘aracne’, ‘clr’, ‘nd’)</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – extra options for algorithms</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>g</strong> (<em>networkx.Graph</em>) – Graph to apply deconvolution to</p></li>
+<li><p><strong>alg</strong> (<em>str</em>) – Algorithm to use (‘aracne’, ‘clr’, ‘nd’)</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – extra options for algorithms</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">graph with undirected links removed.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.Graph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>graph with undirected links removed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.Graph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -502,18 +471,17 @@ PLoS Biology, 2007</p>
 <dd><p>Input a graph and output a DAG.</p>
 <p>The heuristic is to reverse the edge with the lowest score of the cycle
 if possible, else remove it.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>g</strong> (<em>networkx.DiGraph</em>) – Graph to modify to output a DAG</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">DAG made out of the input graph.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>g</strong> (<em>networkx.DiGraph</em>) – Graph to modify to output a DAG</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DAG made out of the input graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -534,41 +502,35 @@ empirical distributions.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{D} \text{ and } \widehat{\mathcal{D}}\)</span> represent
 respectively the observed and empirical distributions, <span class="math notranslate nohighlight">\(k\)</span> represents
 the RBF kernel and <span class="math notranslate nohighlight">\(n\)</span> the batch size.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_size</strong> (<em>int</em>) – Fixed batch size.</li>
-<li><strong>bandwiths</strong> (<em>list</em>) – List of bandwiths to take account of. Defaults at
-[0.01, 0.1, 1, 10, 100]</li>
-<li><strong>device</strong> (<em>str</em>) – PyTorch device on which the computation will be made.
-Defaults at <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Inputs: empirical, observed</dt>
-<dd><p class="first">Forward pass: Takes both the true samples and the generated sample in any order
-and returns the MMD score between the two empirical distributions.</p>
-<ul class="last simple">
-<li><strong>empirical</strong> distribution of shape <cite>(batch_size, features)</cite>: torch.Tensor
-containing the empirical distribution</li>
-<li><strong>observed</strong> distribution of shape <cite>(batch_size, features)</cite>: torch.Tensor
-containing the observed distribution.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_size</strong> (<em>int</em>) – Fixed batch size.</p></li>
+<li><p><strong>bandwiths</strong> (<em>list</em>) – List of bandwiths to take account of. Defaults at
+[0.01, 0.1, 1, 10, 100]</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – PyTorch device on which the computation will be made.
+Defaults at <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>.</p></li>
 </ul>
 </dd>
-<dt>Outputs: score</dt>
-<dd><ul class="first last simple">
-<li><strong>score</strong> of shape <cite>(1)</cite>: Torch.Tensor containing the loss value.</li>
+</dl>
+<dl class="simple">
+<dt>Inputs: empirical, observed</dt><dd><p>Forward pass: Takes both the true samples and the generated sample in any order
+and returns the MMD score between the two empirical distributions.</p>
+<ul class="simple">
+<li><p><strong>empirical</strong> distribution of shape <cite>(batch_size, features)</cite>: torch.Tensor
+containing the empirical distribution</p></li>
+<li><p><strong>observed</strong> distribution of shape <cite>(batch_size, features)</cite>: torch.Tensor
+containing the observed distribution.</p></li>
+</ul>
+</dd>
+<dt>Outputs: score</dt><dd><ul class="simple">
+<li><p><strong>score</strong> of shape <cite>(1)</cite>: Torch.Tensor containing the loss value.</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf,
+<p class="admonition-title">Note</p>
+<p>Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf,
 B., &amp; Smola, A. (2012). A kernel two-sample test.
 Journal of Machine Learning Research, 13(Mar), 723-773.</p>
 </div>
@@ -585,27 +547,22 @@ The loss is an L2 loss between the moments:</p>
 \[MML(X, Y) = \sum_{m=1}^{m^*} \left( \frac{1}{n_x} \sum_{i=1}^{n_x} {x_i}^m
 - \frac{1}{n_y} \sum_{j=1}^{n_y} {y_j}^m \right)^2\]</div>
 <p>where <span class="math notranslate nohighlight">\(m^*\)</span> represent the number of moments to compute.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n_moments</strong> (<em>int</em>) – Number of moments to compute.</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Input: (X, Y)</dt>
-<dd><ul class="first last simple">
-<li><strong>X</strong> represents the first empirical distribution in a torch.Tensor of
-shape <cite>(?, features)</cite></li>
-<li><strong>Y</strong> represents the second empirical distribution in a torch.Tensor of
-shape <cite>(?, features)</cite></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n_moments</strong> (<em>int</em>) – Number of moments to compute.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Input: (X, Y)</dt><dd><ul class="simple">
+<li><p><strong>X</strong> represents the first empirical distribution in a torch.Tensor of
+shape <cite>(?, features)</cite></p></li>
+<li><p><strong>Y</strong> represents the second empirical distribution in a torch.Tensor of
+shape <cite>(?, features)</cite></p></li>
 </ul>
 </dd>
-<dt>Output: mml</dt>
-<dd><ul class="first last simple">
-<li><strong>mml</strong> is the output of the forward pass and is differenciable.
-torch.Tensor of shape <cite>(1)</cite></li>
+<dt>Output: mml</dt><dd><ul class="simple">
+<li><p><strong>mml</strong> is the output of the forward pass and is differenciable.
+torch.Tensor of shape <cite>(1)</cite></p></li>
 </ul>
 </dd>
 </dl>
@@ -615,42 +572,34 @@ torch.Tensor of shape <cite>(1)</cite></li>
 <dt id="cdt.utils.loss.TTestCriterion">
 <em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">TTestCriterion</code><span class="sig-paren">(</span><em>max_iter</em>, <em>runs_per_iter</em>, <em>threshold=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion" title="Permalink to this definition">¶</a></dt>
 <dd><p>A loop criterion based on t-test to check significance of results.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>max_iter</strong> (<em>int</em>) – Maximum number of iterations authorized</li>
-<li><strong>runs_per_iter</strong> (<em>int</em>) – Number of runs performed per iteration</li>
-<li><strong>threshold</strong> (<em>float</em>) – p-value threshold, under which the loop is stopped.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_iter</strong> (<em>int</em>) – Maximum number of iterations authorized</p></li>
+<li><p><strong>runs_per_iter</strong> (<em>int</em>) – Number of runs performed per iteration</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – p-value threshold, under which the loop is stopped.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="cdt.utils.loss.TTestCriterion.loop">
 <code class="descname">loop</code><span class="sig-paren">(</span><em>xy</em>, <em>yx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion.loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion.loop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests the loop condition based on the new results and the
 parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>xy</strong> (<em>list</em>) – list containing all the results for one set of samples</li>
-<li><strong>yx</strong> (<em>list</em>) – list containing all the results for the other set.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xy</strong> (<em>list</em>) – list containing all the results for one set of samples</p></li>
+<li><p><strong>yx</strong> (<em>list</em>) – list containing all the results for the other set.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if the loop has to continue, False otherwise.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the loop has to continue, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

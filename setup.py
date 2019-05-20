@@ -14,15 +14,15 @@ with open('README.md', encoding="utf-8") as f:
 
 def setup_package():
     setup(name='cdt',
-          version='0.4.0',
+          version='0.4.4',
           description='A Toolbox for causal graph inference',
-          long_description=long_description,
+          long_description="Documentation available at https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html",
           long_description_content_type="text/markdown",
           packages=find_packages(exclude=['examples', 'tests', 'tests.*']),
           url='https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox',
           package_data={'': ['**/*.R']},
           install_requires=['numpy', 'scipy', 'scikit-learn',
-                            'joblib', 'pandas',
+                            'joblib', 'pandas', 'statsmodels',
                             'networkx', 'skrebate', 'tqdm', 'GPUtil'],
           include_package_data=True,
           author='Diviyan Kalainathan',

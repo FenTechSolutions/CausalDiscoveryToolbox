@@ -295,7 +295,8 @@
         <span class="k">return</span> <span class="n">test_package</span></div></div>
 
 
-<div class="viewcode-block" id="launch_R_script"><a class="viewcode-back" href="../../../utils.html#cdt.utils.R.launch_R_script">[docs]</a><span class="k">def</span> <span class="nf">launch_R_script</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">output_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="launch_R_script"><a class="viewcode-back" href="../../../utils.html#cdt.utils.R.launch_R_script">[docs]</a><span class="k">def</span> <span class="nf">launch_R_script</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">output_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Launch an R script, starting from a template and replacing text in file</span>
 <span class="sd">    before execution.</span>
 
@@ -308,6 +309,7 @@
 <span class="sd">            traditionally as a function to retrieve the results of the</span>
 <span class="sd">            execution.</span>
 <span class="sd">        verbose (bool): Sets the verbosity of the R subprocess.</span>
+<span class="sd">        debug (bool): If True, the generated scripts are not deleted.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        Returns the output of the ``output_function`` if not `None`</span>
@@ -341,12 +343,15 @@
 
     <span class="c1"># Cleaning up</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">e</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
-    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_R_script_&#39;</span> <span class="o">+</span> <span class="nb">id</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 

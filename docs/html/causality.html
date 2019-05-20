@@ -206,26 +206,22 @@
 <code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>nb_runs=6</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.orient_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient an undirected graph using the pairwise method defined by the subclass.</p>
 <p>The pairwise method is ran on every undirected edge.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</li>
-<li><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</li>
-<li><strong>nb_runs</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</li>
-<li><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</p></li>
+<li><p><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</p></li>
+<li><p><strong>nb_runs</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</p></li>
+<li><p><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a directed graph, which might contain cycles</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a directed graph, which might contain cycles</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -236,29 +232,25 @@ suited.</p>
 <p>Depending on the type of <cite>x</cite> and of <cite>*args</cite>, this function process to execute
 different functions in the priority order:</p>
 <ol class="arabic simple">
-<li>If <code class="docutils literal notranslate"><span class="pre">args[0]</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.(Di)Graph</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.orient_graph</span></code> is executed.</li>
-<li>If <code class="docutils literal notranslate"><span class="pre">args[0]</span></code> exists, then <code class="docutils literal notranslate"><span class="pre">self.predict_proba</span></code> is executed.</li>
-<li>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.predict_dataset</span></code> is executed.</li>
-<li>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.predict_proba</span></code> is executed.</li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">args[0]</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.(Di)Graph</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.orient_graph</span></code> is executed.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">args[0]</span></code> exists, then <code class="docutils literal notranslate"><span class="pre">self.predict_proba</span></code> is executed.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.predict_dataset</span></code> is executed.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is a <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.predict_proba</span></code> is executed.</p></li>
 </ol>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>numpy.array</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – First variable or dataset.</li>
-<li><strong>args</strong> (<em>numpy.array</em><em> or </em><em>networkx.Graph</em>) – graph or second variable.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – First variable or dataset.</p></li>
+<li><p><strong>args</strong> (<em>numpy.array</em><em> or </em><em>networkx.Graph</em>) – graph or second variable.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">predictions output</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.Dataframe or networkx.Digraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>predictions output</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.Dataframe or networkx.Digraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -266,24 +258,20 @@ different functions in the priority order:</p>
 <code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>x</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic dataset prediction function.</p>
 <p>Runs the score independently on all pairs.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a Dataframe with the predictions.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a Dataframe with the predictions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -291,25 +279,21 @@ different functions in the priority order:</p>
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prediction method for pairwise causal inference.</p>
 <p>predict_proba is meant to be overridden in all subclasses</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
-<li><strong>idx</strong> (<em>int</em>) – (optional) index number for printing purposes</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>idx</strong> (<em>int</em>) – (optional) index number for printing purposes</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -327,56 +311,48 @@ It is proven that in such case if the data is generated using an additive noise 
 to fit in the true causal direction.
 Ref: <a class="reference external" href="https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf">https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf</a></p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,
+<p class="admonition-title">Note</p>
+<p>Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,
 “Nonlinear causal discovery with additive noise models”, NIPS 2009</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.ANM.anm_score">
 <code class="descname">anm_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM.anm_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.anm_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the fitness score of the ANM model in the x-&gt;y direction.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable seen as cause</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable seen as effect</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable seen as cause</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable seen as effect</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">ANM fit score</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ANM fit score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.ANM.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prediction method for pairwise causal inference using the ANM model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -394,48 +370,40 @@ Used as weak baseline.</p>
 <dt id="cdt.causality.pairwise.BivariateFit.b_fit_score">
 <code class="descname">b_fit_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.b_fit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit.b_fit_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the cds statistic from variable 1 to variable 2</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">BF fit score</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BF fit score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.BivariateFit.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal relationships between 2 variables using regression.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -450,55 +418,47 @@ Used as weak baseline.</p>
 <p>Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
 The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
+<p class="admonition-title">Note</p>
+<p>Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.CDS.cds_score">
 <code class="descname">cds_score</code><span class="sig-paren">(</span><em>x_te</em>, <em>y_te</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS.cds_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.cds_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the cds statistic from variable 1 to variable 2</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x_te</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>y_te</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_te</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>y_te</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">CDS fit score</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CDS fit score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.CDS.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal relationships between 2 variables using the CDS statistic</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -512,21 +472,17 @@ The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
 <dd><p>Shallow Generative Neural networks.</p>
 <p>Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural network
 and a MMD loss. The causal direction is considered as the “best-fit” between the two directions</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>nh</strong> (<em>int</em>) – number of hidden units in the neural network</li>
-<li><strong>lr</strong> (<em>float</em>) – learning rate of the optimizer</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nh</strong> (<em>int</em>) – number of hidden units in the neural network</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – learning rate of the optimizer</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref : Learning Functional Causal Models with Generative Neural Networks
+<p class="admonition-title">Note</p>
+<p>Ref : Learning Functional Causal Models with Generative Neural Networks
 Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 (<a class="reference external" href="https://arxiv.org/abs/1709.05321">https://arxiv.org/abs/1709.05321</a>)</p>
 </div>
@@ -534,33 +490,29 @@ Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 <dt id="cdt.causality.pairwise.GNN.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>nb_runs=6</em>, <em>nb_jobs=None</em>, <em>gpu=None</em>, <em>idx=0</em>, <em>verbose=None</em>, <em>ttest_threshold=0.01</em>, <em>nb_max_runs=16</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run multiple times GNN to estimate the causal direction.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>np.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>np.ndarray</em>) – Variable 2</li>
-<li><strong>nb_runs</strong> (<em>int</em>) – number of runs to execute per batch (before testing for significance with t-test).</li>
-<li><strong>nb_jobs</strong> (<em>int</em>) – number of runs to execute in parallel. (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>)</li>
-<li><strong>gpu</strong> (<em>bool</em>) – use gpu (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</li>
-<li><strong>idx</strong> (<em>int</em>) – (optional) index of the pair, for printing purposes</li>
-<li><strong>verbose</strong> (<em>bool</em>) – verbosity (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</li>
-<li><strong>ttest_threshold</strong> (<em>float</em>) – threshold to stop the boostraps before <code class="docutils literal notranslate"><span class="pre">nb_max_runs</span></code> if the difference is significant</li>
-<li><strong>nb_max_runs</strong> (<em>int</em>) – Max number of bootstraps</li>
-<li><strong>train_epochs</strong> (<em>int</em>) – Number of epochs during which the model is going to be trained</li>
-<li><strong>test_epochs</strong> (<em>int</em>) – Number of epochs during which the model is going to be tested</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>np.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>np.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>nb_runs</strong> (<em>int</em>) – number of runs to execute per batch (before testing for significance with t-test).</p></li>
+<li><p><strong>nb_jobs</strong> (<em>int</em>) – number of runs to execute in parallel. (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>)</p></li>
+<li><p><strong>gpu</strong> (<em>bool</em>) – use gpu (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</p></li>
+<li><p><strong>idx</strong> (<em>int</em>) – (optional) index of the pair, for printing purposes</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
+<li><p><strong>ttest_threshold</strong> (<em>float</em>) – threshold to stop the boostraps before <code class="docutils literal notranslate"><span class="pre">nb_max_runs</span></code> if the difference is significant</p></li>
+<li><p><strong>nb_max_runs</strong> (<em>int</em>) – Max number of bootstraps</p></li>
+<li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs during which the model is going to be trained</p></li>
+<li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs during which the model is going to be tested</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causal score of the pair (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causal score of the pair (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -573,8 +525,8 @@ Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 <em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">IGCI</code><a class="reference internal" href="_modules/cdt/causality/pairwise/IGCI.html#IGCI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Information Geometric Causal Inference (IGCI) model.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
+<p class="admonition-title">Note</p>
+<p>P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
 K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
 Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
 <a class="reference external" href="http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf">http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf</a></p>
@@ -583,23 +535,19 @@ Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intellig
 <dt id="cdt.causality.pairwise.IGCI.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/IGCI.html#IGCI.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate a pair using the IGCI model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> – Input variable 1D</li>
-<li><strong>b</strong> – Input variable 1D</li>
-<li><strong>kwargs</strong> – {refMeasure: Scaling method (gaussian, integral or None),
-estimator: method used to evaluate the pairs (entropy or integral)}</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – Input variable 1D</p></li>
+<li><p><strong>b</strong> – Input variable 1D</p></li>
+<li><p><strong>kwargs</strong> – {refMeasure: Scaling method (gaussian, integral or None),
+estimator: method used to evaluate the pairs (entropy or integral)}</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Return value of the IGCI model &gt;0 if a-&gt;b otherwise if return &lt;0</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return value of the IGCI model &gt;0 if a-&gt;b otherwise if return &lt;0</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -614,82 +562,70 @@ estimator: method used to evaluate the pairs (entropy or integral)}</li>
 1st of the Fast Causation Challenge.
 Builds lots of features on top of a gradient boosting classifier.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
+<p class="admonition-title">Note</p>
+<p>Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.Jarfo.orient_graph">
 <code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.orient_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient an undirected graph using Jarfo, function modified for optimization.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</li>
-<li><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</li>
-<li><strong>nb_runs</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</li>
-<li><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</p></li>
+<li><p><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</p></li>
+<li><p><strong>nb_runs</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</p></li>
+<li><p><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a directed graph, which might contain cycles</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a directed graph, which might contain cycles</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.Jarfo.predict_dataset">
 <code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.predict_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs Jarfo independently on all pairs.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a Dataframe with the predictions.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a Dataframe with the predictions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.Jarfo.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use Jarfo to predict the causal direction of a pair of vars.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
-<li><strong>idx</strong> (<em>int</em>) – (optional) index number for printing purposes</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>idx</strong> (<em>int</em>) – (optional) index number for printing purposes</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -706,74 +642,62 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <dt id="cdt.causality.pairwise.NCC.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>x_tr</em>, <em>y_tr</em>, <em>epochs=50</em>, <em>batchsize=32</em>, <em>learning_rate=0.01</em>, <em>verbose=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the NCC model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>x_tr</strong> (<em>pd.DataFrame</em>) – CEPC format dataframe containing the pairs</li>
-<li><strong>y_tr</strong> (<em>pd.DataFrame</em><em> or </em><em>np.ndarray</em>) – labels associated to the pairs</li>
-<li><strong>epochs</strong> (<em>int</em>) – number of train epochs</li>
-<li><strong>learning_rate</strong> (<em>float</em>) – learning rate of Adam</li>
-<li><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</li>
-<li><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_tr</strong> (<em>pd.DataFrame</em>) – CEPC format dataframe containing the pairs</p></li>
+<li><p><strong>y_tr</strong> (<em>pd.DataFrame</em><em> or </em><em>np.ndarray</em>) – labels associated to the pairs</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – number of train epochs</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – learning rate of Adam</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.NCC.predict_dataset">
 <code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>df</em>, <em>device=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.predict_dataset" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x_tr</strong> (<em>pd.DataFrame</em>) – CEPC format dataframe containing the pairs</li>
-<li><strong>y_tr</strong> (<em>pd.DataFrame</em><em> or </em><em>np.ndarray</em>) – labels associated to the pairs</li>
-<li><strong>epochs</strong> (<em>int</em>) – number of train epochs</li>
-<li><strong>rate</strong> (<em>learning</em>) – learning rate of Adam</li>
-<li><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</li>
-<li><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</li>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_tr</strong> (<em>pd.DataFrame</em>) – CEPC format dataframe containing the pairs</p></li>
+<li><p><strong>y_tr</strong> (<em>pd.DataFrame</em><em> or </em><em>np.ndarray</em>) – labels associated to the pairs</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – number of train epochs</p></li>
+<li><p><strong>rate</strong> (<em>learning</em>) – learning rate of Adam</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataframe containing the predicted causation coefficients</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe containing the predicted causation coefficients</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.NCC.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal directions using the trained NCC pairwise model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
-<li><strong>device</strong> (<em>str</em>) – Device to run the algorithm on (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Device to run the algorithm on (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -787,116 +711,96 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <dd><p>Randomized Causation Coefficient model.</p>
 <p>Projection of the empirical distributions into a RKHS using random cosine
 embeddings, then classfying the pairs using a random forest.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>rand_coeff</strong> (<em>int</em>) – number of randomized coefficients</li>
-<li><strong>nb_estimators</strong> (<em>int</em>) – number of estimators</li>
-<li><strong>nb_min_leaves</strong> (<em>int</em>) – number of min samples leaves of the estimator</li>
-<li><strong>(</strong><strong>)</strong> (<em>max_depth</em>) – (optional) max depth of the model</li>
-<li><strong>s</strong> (<em>float</em>) – scaling</li>
-<li><strong>n_jobs</strong> (<em>int</em>) – number of jobs to be run on parallel (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>)</li>
-<li><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rand_coeff</strong> (<em>int</em>) – number of randomized coefficients</p></li>
+<li><p><strong>nb_estimators</strong> (<em>int</em>) – number of estimators</p></li>
+<li><p><strong>nb_min_leaves</strong> (<em>int</em>) – number of min samples leaves of the estimator</p></li>
+<li><p><strong>(</strong><strong>)</strong> (<em>max_depth</em>) – (optional) max depth of the model</p></li>
+<li><p><strong>s</strong> (<em>float</em>) – scaling</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – number of jobs to be run on parallel (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>)</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,
+<p class="admonition-title">Note</p>
+<p>Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,
 “Towards a Learning Theory of Cause-Effect Inference”, ICML 2015.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.RCC.featurize_row">
 <code class="descname">featurize_row</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.featurize_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.featurize_row" title="Permalink to this definition">¶</a></dt>
 <dd><p>Projects the causal pair to the RKHS using the sampled kernel approximation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>np.ndarray</em>) – Variable 1</li>
-<li><strong>y</strong> (<em>np.ndarray</em>) – Variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>y</strong> (<em>np.ndarray</em>) – Variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">projected empirical distributions into a single fixed-size vector.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>projected empirical distributions into a single fixed-size vector.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.RCC.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train the model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>x_tr</strong> (<em>pd.DataFrame</em>) – CEPC format dataframe containing the pairs</li>
-<li><strong>y_tr</strong> (<em>pd.DataFrame</em><em> or </em><em>np.ndarray</em>) – labels associated to the pairs</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_tr</strong> (<em>pd.DataFrame</em>) – CEPC format dataframe containing the pairs</p></li>
+<li><p><strong>y_tr</strong> (<em>pd.DataFrame</em><em> or </em><em>np.ndarray</em>) – labels associated to the pairs</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.RCC.predict_dataset">
 <code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.predict_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override of <code class="docutils literal notranslate"><span class="pre">self.predict_dataset</span></code> for better computational efficency.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</li>
-<li><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a Dataframe with the predictions.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas.DataFrame</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a Dataframe with the predictions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.RCC.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>x</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the causal score using a trained RCC model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>numpy.array</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – First variable or dataset.</li>
-<li><strong>args</strong> (<em>numpy.array</em>) – second variable (optional depending on the 1st argument).</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – First variable or dataset.</p></li>
+<li><p><strong>args</strong> (<em>numpy.array</em>) – second variable (optional depending on the 1st argument).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -908,17 +812,14 @@ embeddings, then classfying the pairs using a random forest.</p>
 <dt id="cdt.causality.pairwise.RECI">
 <em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">RECI</code><span class="sig-paren">(</span><em>degree=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI" title="Permalink to this definition">¶</a></dt>
 <dd><p>RECI, Best-fit mse with monome regressor and [0,1] rescaling</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>degree</strong> (<em>int</em>) – Degree of the polynomial regression.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>degree</strong> (<em>int</em>) – Degree of the polynomial regression.</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Bloebaum, P., Janzing, D., Washio, T., Shimizu, S., &amp; Schoelkopf, B.
+<p class="admonition-title">Note</p>
+<p>Bloebaum, P., Janzing, D., Washio, T., Shimizu, S., &amp; Schoelkopf, B.
 (2018, March). Cause-Effect Inference by Comparing Regression Errors.
 In International Conference on Artificial Intelligence and Statistics (pp. 900-909).</p>
 </div>
@@ -926,48 +827,40 @@ In International Conference on Artificial Intelligence and Statistics (pp. 900-9
 <dt id="cdt.causality.pairwise.RECI.b_fit_score">
 <code class="descname">b_fit_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI.b_fit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI.b_fit_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the RECI fit score</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>numpy.ndarray</em>) – Variable 1</li>
-<li><strong>y</strong> (<em>numpy.ndarray</em>) – Variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
+<li><p><strong>y</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">RECI fit score</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>RECI fit score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.RECI.predict_proba">
 <code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal relationships between 2 variables using the RECI statistic</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> – Input variable 1</li>
-<li><strong>b</strong> – Input variable 2</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – Input variable 1</p></li>
+<li><p><strong>b</strong> – Input variable 2</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Causation coefficient (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Causation coefficient (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -990,8 +883,8 @@ given arguments.</p>
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer a directed graph out of data.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Not implemented: will be implemented by the model classes.</p>
+<p class="admonition-title">Note</p>
+<p>Not implemented: will be implemented by the model classes.</p>
 </div>
 </dd></dl>
 
@@ -1000,8 +893,8 @@ given arguments.</p>
 <code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>dag</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re/Orient an undirected graph.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Not implemented: will be implemented by the model classes.</p>
+<p class="admonition-title">Note</p>
+<p>Not implemented: will be implemented by the model classes.</p>
 </div>
 </dd></dl>
 
@@ -1010,8 +903,8 @@ given arguments.</p>
 <code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>umg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient an undirected graph.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Not implemented: will be implemented by the model classes.</p>
+<p class="admonition-title">Note</p>
+<p>Not implemented: will be implemented by the model classes.</p>
 </div>
 </dd></dl>
 
@@ -1022,25 +915,21 @@ given arguments.</p>
 <p>Depending on the type of <cite>graph</cite>, this function process to execute
 different functions:</p>
 <ol class="arabic simple">
-<li>If <code class="docutils literal notranslate"><span class="pre">graph</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.orient_directed_graph</span></code> is executed.</li>
-<li>If <code class="docutils literal notranslate"><span class="pre">graph</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.Graph</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.orient_undirected_graph</span></code> is executed.</li>
-<li>If <code class="docutils literal notranslate"><span class="pre">graph</span></code> is a <code class="docutils literal notranslate"><span class="pre">None</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.create_graph_from_data</span></code> is executed.</li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">graph</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.orient_directed_graph</span></code> is executed.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">graph</span></code> is a <code class="docutils literal notranslate"><span class="pre">networkx.Graph</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.orient_undirected_graph</span></code> is executed.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">graph</span></code> is a <code class="docutils literal notranslate"><span class="pre">None</span></code>, then <code class="docutils literal notranslate"><span class="pre">self.create_graph_from_data</span></code> is executed.</p></li>
 </ol>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>df_data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the observational data.</li>
-<li><strong>graph</strong> (<em>networkx.DiGraph</em><em> or </em><em>networkx.Graph</em><em> or </em><em>None</em>) – Prior knowledge on the causal graph.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the observational data.</p></li>
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em><em> or </em><em>networkx.Graph</em><em> or </em><em>None</em>) – Prior knowledge on the causal graph.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Requirement : Name of the nodes in the graph must correspond to the
+<p class="admonition-title">Warning</p>
+<p>Requirement : Name of the nodes in the graph must correspond to the
 name of the variables in df_data</p>
 </div>
 </dd></dl>
@@ -1054,95 +943,86 @@ name of the variables in df_data</p>
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">BNlearnAlgorithm</code><span class="sig-paren">(</span><em>score='NULL'</em>, <em>alpha=0.05</em>, <em>beta='NULL'</em>, <em>optim=False</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="Permalink to this definition">¶</a></dt>
 <dd><p>BNlearn algorithm. All these models imported from bnlearn revolve around
 this base class and have all the same attributes/interface.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>score</strong> (<em>str</em>) – the label of the conditional independence test to be used in the
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score</strong> (<em>str</em>) – the label of the conditional independence test to be used in the
 algorithm. If none is specified, the default test statistic is the mutual information
 for categorical variables, the Jonckheere-Terpstra test for ordered factors and the
-linear correlation for continuous variables. See below for available tests.</li>
-<li><strong>alpha</strong> (<em>float</em>) – a numeric value, the target nominal type I error rate.</li>
-<li><strong>beta</strong> (<em>int</em>) – a positive integer, the number of permutations considered for each permutation
+linear correlation for continuous variables. See below for available tests.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – a numeric value, the target nominal type I error rate.</p></li>
+<li><p><strong>beta</strong> (<em>int</em>) – a positive integer, the number of permutations considered for each permutation
 test. It will be ignored with a warning if the conditional independence test specified by the
-score argument is not a permutation test.</li>
-<li><strong>optim</strong> (<em>bool</em>) – See bnlearn-package for details.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity. Defaults to SETTINGS.verbose</li>
+score argument is not a permutation test.</p></li>
+<li><p><strong>optim</strong> (<em>bool</em>) – See bnlearn-package for details.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity. Defaults to SETTINGS.verbose</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Available tests:</dt>
-<dd><ul class="first last simple">
-<li><dl class="first docutils">
-<dt>discrete case (categorical variables)</dt>
-<dd><dl class="first last docutils">
-<dt>– mutual information: an information-theoretic distance measure.</dt>
-<dd>It’s proportional to the log-likelihood ratio (they differ by a 2n factor)
+</dd>
+</dl>
+<dl class="simple">
+<dt>Available tests:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>discrete case (categorical variables)</dt><dd><dl class="simple">
+<dt>– mutual information: an information-theoretic distance measure.</dt><dd><p>It’s proportional to the log-likelihood ratio (they differ by a 2n factor)
 and is related to the deviance of the tested models. The asymptotic χ2 test
 (mi and mi-adf,  with  adjusted  degrees  of  freedom), the Monte Carlo
 permutation test (mc-mi), the sequential Monte Carlo permutation
-test (smc-mi), and the semiparametric test (sp-mi) are implemented.</dd>
-<dt>– shrinkage estimator for the mutual information (mi-sh)</dt>
-<dd>An improved
+test (smc-mi), and the semiparametric test (sp-mi) are implemented.</p>
+</dd>
+<dt>– shrinkage estimator for the mutual information (mi-sh)</dt><dd><p>An improved
 asymptotic χ2 test based on the James-Stein estimator for the mutual
-information.</dd>
-<dt>– Pearson’s X2 <span class="classifier-delimiter">:</span> <span class="classifier">the classical Pearson’s X2 test for contingency tables.</span></dt>
-<dd>The asymptotic χ2 test (x2 and x2-adf, with adjusted degrees of freedom),
+information.</p>
+</dd>
+<dt>– Pearson’s X2<span class="classifier">the classical Pearson’s X2 test for contingency tables.</span></dt><dd><p>The asymptotic χ2 test (x2 and x2-adf, with adjusted degrees of freedom),
 the Monte Carlo permutation test (mc-x2), the sequential Monte Carlo
-permutation test (smc-x2) and semiparametric test (sp-x2) are implemented  .</dd>
+permutation test (smc-x2) and semiparametric test (sp-x2) are implemented  .</p>
+</dd>
 </dl>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>discrete case (ordered factors)</dt>
-<dd><dl class="first last docutils">
-<dt>– Jonckheere-Terpstra <span class="classifier-delimiter">:</span> <span class="classifier">a trend test for ordinal variables.</span></dt>
-<dd>The
+<li><dl class="simple">
+<dt>discrete case (ordered factors)</dt><dd><dl class="simple">
+<dt>– Jonckheere-Terpstra<span class="classifier">a trend test for ordinal variables.</span></dt><dd><p>The
 asymptotic normal test (jt), the Monte Carlo permutation test (mc-jt)
-and the sequential Monte Carlo permutation test (smc-jt) are implemented.</dd>
+and the sequential Monte Carlo permutation test (smc-jt) are implemented.</p>
+</dd>
 </dl>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>continuous case (normal variables)</dt>
-<dd><dl class="first last docutils">
-<dt>– linear  correlation:  Pearson’s  linear  correlation.</dt>
-<dd>The exact
+<li><dl class="simple">
+<dt>continuous case (normal variables)</dt><dd><dl class="simple">
+<dt>– linear  correlation:  Pearson’s  linear  correlation.</dt><dd><p>The exact
 Student’s  t  test  (cor),  the Monte Carlo permutation test (mc-cor)
-and the sequential Monte Carlo permutation test (smc-cor) are implemented.</dd>
-<dt>– Fisher’s Z: a transformation of the linear correlation with asymptotic normal distribution.</dt>
-<dd>Used by commercial software (such as TETRAD II)
+and the sequential Monte Carlo permutation test (smc-cor) are implemented.</p>
+</dd>
+<dt>– Fisher’s Z: a transformation of the linear correlation with asymptotic normal distribution.</dt><dd><p>Used by commercial software (such as TETRAD II)
 for the PC algorithm (an R implementation is present in the pcalg
 package on CRAN). The asymptotic normal test (zf), the Monte Carlo
 permutation test (mc-zf) and the sequential Monte Carlo permutation
-test (smc-zf) are implemented.</dd>
-<dt>– mutual information: an information-theoretic distance measure.</dt>
-<dd>Again
+test (smc-zf) are implemented.</p>
+</dd>
+<dt>– mutual information: an information-theoretic distance measure.</dt><dd><p>Again
 it is proportional to the log-likelihood ratio (they differ by a 2n
 factor). The asymptotic χ2 test (mi-g), the Monte Carlo permutation
 test (mc-mi-g) and the sequential Monte Carlo permutation test
-(smc-mi-g) are implemented.</dd>
-<dt>– shrinkage estimator for the mutual information(mi-g-sh):</dt>
-<dd>an improved
+(smc-mi-g) are implemented.</p>
+</dd>
+<dt>– shrinkage estimator for the mutual information(mi-g-sh):</dt><dd><p>an improved
 asymptotic χ2 test based on the James-Stein estimator for the mutual
-information.</dd>
+information.</p>
+</dd>
 </dl>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>hybrid case (mixed discrete and normal variables)</dt>
-<dd><dl class="first last docutils">
-<dt>– mutual information: an information-theoretic distance measure.</dt>
-<dd>Again
+<li><dl class="simple">
+<dt>hybrid case (mixed discrete and normal variables)</dt><dd><dl class="simple">
+<dt>– mutual information: an information-theoretic distance measure.</dt><dd><p>Again
 it is proportional to the log-likelihood ratio (they differ by a 2n
-factor). Only the asymptotic χ2 test (mi-cg) is implemented.</dd>
+factor). Only the asymptotic χ2 test (mi-cg) is implemented.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -1154,45 +1034,40 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</dd>
 <dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data">
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm on data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the algorithm.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph">
 <code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm on a directed_graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution on the given skeleton.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution on the given skeleton.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The algorithm is ran on the skeleton of the given graph.</p>
+<p class="admonition-title">Warning</p>
+<p>The algorithm is ran on the skeleton of the given graph.</p>
 </div>
 </dd></dl>
 
@@ -1200,24 +1075,20 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</dd>
 <dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph">
 <code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm on an undirected graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution on the given skeleton.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution on the given skeleton.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1229,8 +1100,8 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</dd>
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">GS</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#GS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.GS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grow-Shrink algorithm.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Margaritis D (2003).
+<p class="admonition-title">Note</p>
+<p>Margaritis D (2003).
 Learning Bayesian Network Model Structure from Data
 . Ph.D. thesis, School
 of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report
@@ -1246,8 +1117,8 @@ CMU-CS-03-153</p>
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.IAMB" title="Permalink to this definition">¶</a></dt>
 <dd><p>IAMB algorithm.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   “Algorithms  for  Large  Scale  Markov  Blanket
+<p class="admonition-title">Note</p>
+<p>Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   “Algorithms  for  Large  Scale  Markov  Blanket
 Discovery”.  In “Proceedings of the Sixteenth International Florida Artificial Intelligence Research
 Society Conference”, pp. 376-381. AAAI Press.</p>
 </div>
@@ -1261,8 +1132,8 @@ Society Conference”, pp. 376-381. AAAI Press.</p>
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">Fast_IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#Fast_IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Fast_IAMB" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fast IAMB algorithm.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Yaramakala S, Margaritis D (2005).  “Speculative Markov Blanket Discovery for Optimal Feature
+<p class="admonition-title">Note</p>
+<p>Yaramakala S, Margaritis D (2005).  “Speculative Markov Blanket Discovery for Optimal Feature
 Selection”.  In “ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data
 Mining”, pp. 809-812. IEEE Computer Society.</p>
 </div>
@@ -1276,8 +1147,8 @@ Mining”, pp. 809-812. IEEE Computer Society.</p>
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">MMPC</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#MMPC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.MMPC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Max-Min Parents-Children algorithm.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Tsamardinos I, Aliferis CF, Statnikov A (2003). “Time and Sample Efficient Discovery of Markov
+<p class="admonition-title">Note</p>
+<p>Tsamardinos I, Aliferis CF, Statnikov A (2003). “Time and Sample Efficient Discovery of Markov
 Blankets and Direct Causal Relations”.  In “KDD ’03:  Proceedings of the Ninth ACM SIGKDD
 International Conference on Knowledge Discovery and Data Mining”, pp. 673-678. ACM.
 Tsamardinos I, Brown LE, Aliferis CF (2006).  “The Max-Min Hill-Climbing Bayesian Network
@@ -1294,83 +1165,75 @@ Machine Learning,65(1), 31-78.</p>
 <dt id="cdt.causality.graph.CAM">
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CAM</code><span class="sig-paren">(</span><em>score='nonlinear'</em>, <em>cutoff=0.001</em>, <em>variablesel=True</em>, <em>selmethod='gamboost'</em>, <em>pruning=False</em>, <em>prunmethod='gam'</em>, <em>nb_jobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>CAM algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>score</strong> (<em>str</em>) – Score used to fit the gaussian processes.</li>
-<li><strong>cutoff</strong> (<em>float</em>) – threshold value for variable selection.</li>
-<li><strong>variablesel</strong> (<em>bool</em>) – Perform a variable selection step.</li>
-<li><strong>selmethod</strong> (<em>str</em>) – Method used for variable selection.</li>
-<li><strong>pruning</strong> (<em>bool</em>) – Perform an initial pruning step.</li>
-<li><strong>prunmethod</strong> (<em>str</em>) – Method used for pruning.</li>
-<li><strong>nb_jobs</strong> (<em>int</em>) – Number of jobs to run in parallel.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the output.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Available scores:</dt>
-<dd><ul class="first last simple">
-<li>nonlinear: ‘SEMGAM’</li>
-<li>linear: ‘SEMLIN’</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score</strong> (<em>str</em>) – Score used to fit the gaussian processes.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – threshold value for variable selection.</p></li>
+<li><p><strong>variablesel</strong> (<em>bool</em>) – Perform a variable selection step.</p></li>
+<li><p><strong>selmethod</strong> (<em>str</em>) – Method used for variable selection.</p></li>
+<li><p><strong>pruning</strong> (<em>bool</em>) – Perform an initial pruning step.</p></li>
+<li><p><strong>prunmethod</strong> (<em>str</em>) – Method used for pruning.</p></li>
+<li><p><strong>nb_jobs</strong> (<em>int</em>) – Number of jobs to run in parallel.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the output.</p></li>
 </ul>
 </dd>
-<dt>Available variable selection methods:</dt>
-<dd><ul class="first last simple">
-<li>gamboost’: ‘selGamBoost’</li>
-<li>gam’: ‘selGam’</li>
-<li>lasso’: ‘selLasso’</li>
-<li>linear’: ‘selLm’</li>
-<li>linearboost’: ‘selLmBoost’</li>
+</dl>
+<dl class="simple">
+<dt>Available scores:</dt><dd><ul class="simple">
+<li><p>nonlinear: ‘SEMGAM’</p></li>
+<li><p>linear: ‘SEMLIN’</p></li>
 </ul>
 </dd>
-<dt>Default Parameters:</dt>
-<dd><ul class="first last simple">
-<li>FILE: ‘/tmp/cdt_CAM/data.csv’</li>
-<li>SCORE: ‘SEMGAM’</li>
-<li>VARSEL: ‘TRUE’</li>
-<li>SELMETHOD: ‘selGamBoost’</li>
-<li>PRUNING: ‘TRUE’</li>
-<li>PRUNMETHOD: ‘selGam’</li>
-<li>NJOBS: str(SETTINGS.NB_JOBS)</li>
-<li>CUTOFF: str(0.001)</li>
-<li>VERBOSE: ‘FALSE’</li>
-<li>OUTPUT: ‘/tmp/cdt_CAM/result.csv’</li>
+<dt>Available variable selection methods:</dt><dd><ul class="simple">
+<li><p>gamboost’: ‘selGamBoost’</p></li>
+<li><p>gam’: ‘selGam’</p></li>
+<li><p>lasso’: ‘selLasso’</p></li>
+<li><p>linear’: ‘selLm’</p></li>
+<li><p>linearboost’: ‘selLmBoost’</p></li>
+</ul>
+</dd>
+<dt>Default Parameters:</dt><dd><ul class="simple">
+<li><p>FILE: ‘/tmp/cdt_CAM/data.csv’</p></li>
+<li><p>SCORE: ‘SEMGAM’</p></li>
+<li><p>VARSEL: ‘TRUE’</p></li>
+<li><p>SELMETHOD: ‘selGamBoost’</p></li>
+<li><p>PRUNING: ‘TRUE’</p></li>
+<li><p>PRUNMETHOD: ‘selGam’</p></li>
+<li><p>NJOBS: str(SETTINGS.NB_JOBS)</p></li>
+<li><p>CUTOFF: str(0.001)</p></li>
+<li><p>VERBOSE: ‘FALSE’</p></li>
+<li><p>OUTPUT: ‘/tmp/cdt_CAM/result.csv’</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref:
+<p class="admonition-title">Note</p>
+<p>Ref:
 J. Peters, J. Mooij, D. Janzing, B. Schölkopf:
 Causal Discovery with Continuous Additive Noise Models,
 JMLR 15:2009-2053, 2014.</p>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This implementation of CAM does not support starting with a graph.
+<p class="admonition-title">Warning</p>
+<p>This implementation of CAM does not support starting with a graph.
 The adaptation will be made at a later date.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.CAM.create_graph_from_data">
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply causal discovery on observational data using CAM.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the CAM algorithm.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the CAM algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1388,25 +1251,24 @@ score based method for learning Bayesian networks that uses sparse
 regularization and block-cyclic coordinate descent.</p>
 <p>Imported from the ‘sparsebn’ package.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This implementation of CCDr does not support starting with a graph.</p>
+<p class="admonition-title">Warning</p>
+<p>This implementation of CCDr does not support starting with a graph.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.CCDr.create_graph_from_data">
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply causal discovery on observational data using CCDr.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the CCDR algorithm.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the CCDR algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1420,32 +1282,28 @@ regularization and block-cyclic coordinate descent.</p>
 <dd><p>Causal Generative Neural Netwoks : Generate the whole causal graph in a
 topological manner using neural networks and predict causal directions in
 the graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>nh</strong> (<em>int</em>) – Number of hidden units in each generative neural network.</li>
-<li><strong>nb_runs</strong> (<em>int</em>) – Number of times to run CGNN to have a stable
-evaluation.</li>
-<li><strong>nb_jobs</strong> (<em>int</em>) – Number of jobs to run in parallel. Defaults to
-<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>.</li>
-<li><strong>gpu</strong> (<em>bool</em>) – True if the GPUs are to be used. Defaults to
-<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>.</li>
-<li><strong>lr</strong> (<em>float</em>) – Learning rate for the generative neural networks.</li>
-<li><strong>train_epochs</strong> (<em>int</em>) – Number of epochs used to train the network.</li>
-<li><strong>test_epochs</strong> (<em>int</em>) – Number of epochs during which the results are
-harvested. The network still trains at this stage.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the execution. Defaults to
-<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nh</strong> (<em>int</em>) – Number of hidden units in each generative neural network.</p></li>
+<li><p><strong>nb_runs</strong> (<em>int</em>) – Number of times to run CGNN to have a stable
+evaluation.</p></li>
+<li><p><strong>nb_jobs</strong> (<em>int</em>) – Number of jobs to run in parallel. Defaults to
+<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>.</p></li>
+<li><p><strong>gpu</strong> (<em>bool</em>) – True if the GPUs are to be used. Defaults to
+<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – Learning rate for the generative neural networks.</p></li>
+<li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs used to train the network.</p></li>
+<li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs during which the results are
+harvested. The network still trains at this stage.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the execution. Defaults to
+<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref : Learning Functional Causal Models with Generative Neural Networks
+<p class="admonition-title">Note</p>
+<p>Ref : Learning Functional Causal Models with Generative Neural Networks
 Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 (<a class="reference external" href="https://arxiv.org/abs/1709.05321">https://arxiv.org/abs/1709.05321</a>)</p>
 </div>
@@ -1455,78 +1313,69 @@ Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 <dd><p>Use CGNN to create a graph from scratch. All the possible structures
 are tested, which leads to a super exponential complexity. It would be
 preferable to start from a graph skeleton for large graphs.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
-discovery has to be performed.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by CGNN.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
+discovery has to be performed.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by CGNN.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.graph.CGNN.orient_directed_graph">
 <code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>dag</em>, <em>alg='HC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modify and improve a directed acyclic graph solution using CGNN.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
-discovery has to be performed.</li>
-<li><strong>dag</strong> (<em>nx.DiGraph</em>) – Graph that provides the initial solution,
-on which the CGNN algorithm will be applied.</li>
-<li><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, among [“HC”, “HCr”,
-“tabu”, “EHC”]</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
+discovery has to be performed.</p></li>
+<li><p><strong>dag</strong> (<em>nx.DiGraph</em>) – Graph that provides the initial solution,
+on which the CGNN algorithm will be applied.</p></li>
+<li><p><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, among [“HC”, “HCr”,
+“tabu”, “EHC”]</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by CGNN.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by CGNN.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.graph.CGNN.orient_undirected_graph">
 <code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>umg</em>, <em>alg='HC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient the undirected graph using GNN and apply CGNN to improve the graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
-discovery has to be performed.</li>
-<li><strong>umg</strong> (<em>nx.Graph</em>) – Graph that provides the skeleton, on which the GNN
-then the CGNN algorithm will be applied.</li>
-<li><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, among [“HC”, “HCr”,
-“tabu”, “EHC”]</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
+discovery has to be performed.</p></li>
+<li><p><strong>umg</strong> (<em>nx.Graph</em>) – Graph that provides the skeleton, on which the GNN
+then the CGNN algorithm will be applied.</p></li>
+<li><p><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, among [“HC”, “HCr”,
+“tabu”, “EHC”]</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by CGNN.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by CGNN.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">GNN (<code class="docutils literal notranslate"><span class="pre">cdt.causality.pairwise.GNN</span></code>) is first used to orient the
+<p class="admonition-title">Note</p>
+<p>GNN (<code class="docutils literal notranslate"><span class="pre">cdt.causality.pairwise.GNN</span></code>) is first used to orient the
 undirected graph and output a DAG before applying CGNN.</p>
 </div>
 </dd></dl>
@@ -1540,28 +1389,23 @@ undirected graph and output a DAG before applying CGNN.</p>
 <dt id="cdt.causality.graph.GES">
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">GES</code><span class="sig-paren">(</span><em>score='obs'</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES" title="Permalink to this definition">¶</a></dt>
 <dd><p>GES algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>score</strong> (<em>str</em>) – Sets the score used by GES.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score</strong> (<em>str</em>) – Sets the score used by GES.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Available scores:</dt>
-<dd><ul class="first last simple">
-<li>int: GaussL0penIntScore</li>
-<li>obs: GaussL0penObsScore</li>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Available scores:</dt><dd><ul class="simple">
+<li><p>int: GaussL0penIntScore</p></li>
+<li><p>obs: GaussL0penObsScore</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>Ref:
 D.M. Chickering (2002).  Optimal structure identification with greedy search.
 Journal of Machine Learning Research 3 , 507–554</p>
@@ -1571,73 +1415,64 @@ Journal of Machine Learning Research 13, 2409–2464.</p>
 <p>P. Nandy, A. Hauser and M. Maathuis (2015). Understanding consistency in
 hybrid causal structure learning.
 arXiv preprint 1507.02608</p>
-<p class="last">P. Spirtes, C.N. Glymour, and R. Scheines (2000).
+<p>P. Spirtes, C.N. Glymour, and R. Scheines (2000).
 Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.GES.create_graph_from_data">
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the GES algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the GES algorithm.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the GES algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GES.orient_directed_graph">
 <code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GES on a directed graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by the GES algorithm.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the GES algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GES.orient_undirected_graph">
 <code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GES on an undirected graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by the GES algorithm.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the GES algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1649,28 +1484,23 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 <dt id="cdt.causality.graph.GIES">
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">GIES</code><span class="sig-paren">(</span><em>score='obs'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES" title="Permalink to this definition">¶</a></dt>
 <dd><p>GIES algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>score</strong> (<em>str</em>) – Sets the score used by GES.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>score</strong> (<em>str</em>) – Sets the score used by GES.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Available scores:</dt>
-<dd><ul class="first last simple">
-<li>int: GaussL0penIntScore</li>
-<li>obs: GaussL0penObsScore</li>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Available scores:</dt><dd><ul class="simple">
+<li><p>int: GaussL0penIntScore</p></li>
+<li><p>obs: GaussL0penObsScore</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>Ref:
 D.M. Chickering (2002).  Optimal structure identification with greedy search.
 Journal of Machine Learning Research 3 , 507–554</p>
@@ -1680,73 +1510,64 @@ Journal of Machine Learning Research 13, 2409–2464.</p>
 <p>P. Nandy, A. Hauser and M. Maathuis (2015). Understanding consistency in
 hybrid causal structure learning.
 arXiv preprint 1507.02608</p>
-<p class="last">P. Spirtes, C.N. Glymour, and R. Scheines (2000).
+<p>P. Spirtes, C.N. Glymour, and R. Scheines (2000).
 Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.GIES.create_graph_from_data">
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the GIES algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the GIES algorithm.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the GIES algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GIES.orient_directed_graph">
 <code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GIES on a directed_graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by the GIES algorithm.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the GIES algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GIES.orient_undirected_graph">
 <code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GIES on an undirected graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by the GIES algorithm.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by the GIES algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1758,41 +1579,37 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 <dt id="cdt.causality.graph.LiNGAM">
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">LiNGAM</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/LiNGAM.html#LiNGAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>LiNGAM algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the algorithm. Defaults to
-<cite>cdt.SETTINGS.verbose</cite></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the algorithm. Defaults to
+<cite>cdt.SETTINGS.verbose</cite></p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref: S.  Shimizu,  P.O.  Hoyer,  A.  Hyvärinen,  A.  Kerminen  (2006)
+<p class="admonition-title">Note</p>
+<p>Ref: S.  Shimizu,  P.O.  Hoyer,  A.  Hyvärinen,  A.  Kerminen  (2006)
 A  Linear  Non-Gaussian  Acyclic Model for Causal Discovery;
 Journal of Machine Learning Research 7, 2003–2030.</p>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This implementation of LiNGAM does not support starting with a graph.</p>
+<p class="admonition-title">Warning</p>
+<p>This implementation of LiNGAM does not support starting with a graph.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.LiNGAM.create_graph_from_data">
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/LiNGAM.html#LiNGAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the LiNGAM algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by the LiNGAM algorithm.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Prediction given by the LiNGAM algorithm.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1804,73 +1621,66 @@ Journal of Machine Learning Research 7, 2003–2030.</p>
 <dt id="cdt.causality.graph.PC">
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">PC</code><span class="sig-paren">(</span><em>CItest='gaussian'</em>, <em>method_indep='corr'</em>, <em>alpha=0.01</em>, <em>nb_jobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC" title="Permalink to this definition">¶</a></dt>
 <dd><p>PC algorithm by C.Glymour &amp; P.Sprites.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>CItest</strong> (<em>str</em>) – Test for conditional independence.</li>
-<li><strong>method</strong> (<em>str</em>) – Heuristic for testing CI.</li>
-<li><strong>alpha</strong> (<em>float</em>) – significance level (number in (0, 1) for the individual
-conditional independence tests.</li>
-<li><strong>njobs</strong> (<em>int</em>) – number of processor cores to use for parallel computation.
-Only available for method = “stable.fast” (set as default).</li>
-<li><strong>verbose</strong> – if TRUE, detailed output is provided.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arguments</strong> (<em>dict</em>) – contains all current parameters used in the PC
-algorithm execution.</li>
-<li><strong>dir_CI_test</strong> (<em>dict</em>) – contains all available conditional independence
-tests.</li>
-<li><strong>dir_method_indep</strong> (<em>dict</em>) – contains all available heuristics for CI
-testing.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Available heuristics for conditional independence tests:</dt>
-<dd><ul class="first last simple">
-<li>gaussian: “pcalg::gaussCItest”</li>
-<li>hsic: “kpcalg::kernelCItest”</li>
-<li>discrete: “pcalg::disCItest”</li>
-<li>binary: “pcalg::binCItest”</li>
-<li>randomized: “RCIT:::CItest”</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CItest</strong> (<em>str</em>) – Test for conditional independence.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Heuristic for testing CI.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – significance level (number in (0, 1) for the individual
+conditional independence tests.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – number of processor cores to use for parallel computation.
+Only available for method = “stable.fast” (set as default).</p></li>
+<li><p><strong>verbose</strong> – if TRUE, detailed output is provided.</p></li>
 </ul>
 </dd>
-<dt>Available CI tests:</dt>
-<dd><ul class="first last simple">
-<li>dcc: “data=X, ic.method=”dcc”“</li>
-<li>hsic_gamma: “data=X, ic.method=”hsic.gamma”“</li>
-<li>hsic_perm: “data=X, ic.method=”hsic.perm”“</li>
-<li>hsic_clus: “data=X, ic.method=”hsic.clus”“</li>
-<li>corr: “C = cor(X), n = nrow(X)”</li>
-<li>rcit: “data=X, ic.method=”RCIT::RCIT”“</li>
-<li>rcot: “data=X, ic.method=”RCIT::RCoT”“</li>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>arguments</strong> (<em>dict</em>) – contains all current parameters used in the PC
+algorithm execution.</p></li>
+<li><p><strong>dir_CI_test</strong> (<em>dict</em>) – contains all available conditional independence
+tests.</p></li>
+<li><p><strong>dir_method_indep</strong> (<em>dict</em>) – contains all available heuristics for CI
+testing.</p></li>
 </ul>
 </dd>
-<dt>Default Parameters:</dt>
-<dd><ul class="first last simple">
-<li>FILE: ‘/tmp/cdt_pc/data.csv’</li>
-<li>SKELETON: ‘FALSE’</li>
-<li>EDGES: ‘/tmp/cdt_pc/fixededges.csv’</li>
-<li>GAPS: ‘/tmp/cdt_pc/fixedgaps.csv’</li>
-<li>CITEST: “pcalg::gaussCItest”</li>
-<li>METHOD_INDEP: “C = cor(X), n = nrow(X)”</li>
-<li>SELMAT: ‘NULL’</li>
-<li>DIRECTED: ‘TRUE’</li>
-<li>SETOPTIONS: ‘NULL’</li>
-<li>ALPHA: ‘0.01’</li>
-<li>VERBOSE: ‘FALSE’</li>
-<li>OUTPUT: ‘/tmp/cdt_pc/result.csv’</li>
+</dl>
+<dl class="simple">
+<dt>Available heuristics for conditional independence tests:</dt><dd><ul class="simple">
+<li><p>gaussian: “pcalg::gaussCItest”</p></li>
+<li><p>hsic: “kpcalg::kernelCItest”</p></li>
+<li><p>discrete: “pcalg::disCItest”</p></li>
+<li><p>binary: “pcalg::binCItest”</p></li>
+<li><p>randomized: “RCIT:::CItest”</p></li>
+</ul>
+</dd>
+<dt>Available CI tests:</dt><dd><ul class="simple">
+<li><p>dcc: “data=X, ic.method=”dcc”“</p></li>
+<li><p>hsic_gamma: “data=X, ic.method=”hsic.gamma”“</p></li>
+<li><p>hsic_perm: “data=X, ic.method=”hsic.perm”“</p></li>
+<li><p>hsic_clust: “data=X, ic.method=”hsic.clust”“</p></li>
+<li><p>corr: “C = cor(X), n = nrow(X)”</p></li>
+<li><p>rcit: “data=X, ic.method=”RCIT::RCIT”“</p></li>
+<li><p>rcot: “data=X, ic.method=”RCIT::RCoT”“</p></li>
+</ul>
+</dd>
+<dt>Default Parameters:</dt><dd><ul class="simple">
+<li><p>FILE: ‘/tmp/cdt_pc/data.csv’</p></li>
+<li><p>SKELETON: ‘FALSE’</p></li>
+<li><p>EDGES: ‘/tmp/cdt_pc/fixededges.csv’</p></li>
+<li><p>GAPS: ‘/tmp/cdt_pc/fixedgaps.csv’</p></li>
+<li><p>CITEST: “pcalg::gaussCItest”</p></li>
+<li><p>METHOD_INDEP: “C = cor(X), n = nrow(X)”</p></li>
+<li><p>SELMAT: ‘NULL’</p></li>
+<li><p>DIRECTED: ‘TRUE’</p></li>
+<li><p>SETOPTIONS: ‘NULL’</p></li>
+<li><p>ALPHA: ‘0.01’</p></li>
+<li><p>VERBOSE: ‘FALSE’</p></li>
+<li><p>OUTPUT: ‘/tmp/cdt_pc/result.csv’</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>Ref:
 D.Colombo and M.H. Maathuis (2014).
 Order-independent constraint-based causal structure learning.
@@ -1890,24 +1700,23 @@ Causation, Prediction, and Search, 2nd edition. The MIT Press</p>
 <p>Strobl, E. V., Zhang, K., &amp; Visweswaran, S. (2017). Approximate
 Kernel-based Conditional Independence Tests for Fast Non-Parametric
 Causal Discovery. arXiv preprint arXiv:1702.03877.</p>
-<p class="last">Imported from the Pcalg package.</p>
+<p>Imported from the Pcalg package.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.PC.create_graph_from_data">
 <code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the PC algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Solution given by PC on the given data.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">networkx.DiGraph</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by PC on the given data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1915,27 +1724,23 @@ Causal Discovery. arXiv preprint arXiv:1702.03877.</p>
 <code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run PC on a directed_graph (Only takes account of the skeleton of
 the graph).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.DiGraph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by PC on the given skeleton.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by PC on the given skeleton.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The algorithm is ran on the skeleton of the given graph.</p>
+<p class="admonition-title">Warning</p>
+<p>The algorithm is ran on the skeleton of the given graph.</p>
 </div>
 </dd></dl>
 
@@ -1943,24 +1748,20 @@ the graph).</p>
 <dt id="cdt.causality.graph.PC.orient_undirected_graph">
 <code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run PC on an undirected graph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</li>
-<li><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the data</p></li>
+<li><p><strong>graph</strong> (<em>networkx.Graph</em>) – Skeleton of the graph to orient</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Solution given by PC on the given skeleton.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Solution given by PC on the given skeleton.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1972,27 +1773,23 @@ the graph).</p>
 <dt id="cdt.causality.graph.SAM">
 <em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">SAM</code><span class="sig-paren">(</span><em>lr=0.1</em>, <em>dlr=0.1</em>, <em>l1=0.1</em>, <em>nh=200</em>, <em>dnh=200</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>batchsize=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Structural Agnostic Model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>lr</strong> (<em>float</em>) – Learning rate of the generators</li>
-<li><strong>dlr</strong> (<em>float</em>) – Learning rate of the discriminator</li>
-<li><strong>l1</strong> (<em>float</em>) – L1 penalization on the causal filters</li>
-<li><strong>nh</strong> (<em>int</em>) – Number of hidden units in the generators’ hidden layers</li>
-<li><strong>dnh</strong> (<em>int</em>) – Number of hidden units in the discriminator’s hidden layer$</li>
-<li><strong>train_epochs</strong> (<em>int</em>) – Number of training epochs</li>
-<li><strong>test_epochs</strong> (<em>int</em>) – Number of test epochs (saving and averaging the causal filters)</li>
-<li><strong>batchsize</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lr</strong> (<em>float</em>) – Learning rate of the generators</p></li>
+<li><p><strong>dlr</strong> (<em>float</em>) – Learning rate of the discriminator</p></li>
+<li><p><strong>l1</strong> (<em>float</em>) – L1 penalization on the causal filters</p></li>
+<li><p><strong>nh</strong> (<em>int</em>) – Number of hidden units in the generators’ hidden layers</p></li>
+<li><p><strong>dnh</strong> (<em>int</em>) – Number of hidden units in the discriminator’s hidden layer$</p></li>
+<li><p><strong>train_epochs</strong> (<em>int</em>) – Number of training epochs</p></li>
+<li><p><strong>test_epochs</strong> (<em>int</em>) – Number of test epochs (saving and averaging the causal filters)</p></li>
+<li><p><strong>batchsize</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Ref: Kalainathan, Diviyan &amp; Goudet, Olivier &amp; Guyon, Isabelle &amp;
+<p class="admonition-title">Note</p>
+<p>Ref: Kalainathan, Diviyan &amp; Goudet, Olivier &amp; Guyon, Isabelle &amp;
 Lopez-Paz, David &amp; Sebag, Michèle. (2018). SAM: Structural Agnostic
 Model, Causal Discovery and Penalized Adversarial Learning.</p>
 </div>
@@ -2000,34 +1797,30 @@ Model, Causal Discovery and Penalized Adversarial Learning.</p>
 <dt id="cdt.causality.graph.SAM.predict">
 <code class="descname">predict</code><span class="sig-paren">(</span><em>data</em>, <em>graph=None</em>, <em>nruns=6</em>, <em>njobs=None</em>, <em>gpus=0</em>, <em>verbose=None</em>, <em>plot=False</em>, <em>plot_generated_pair=False</em>, <em>return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute SAM on a dataset given a skeleton or not.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data for estimation of causal relationships by SAM</li>
-<li><strong>skeleton</strong> (<em>numpy.ndarray</em>) – A priori knowledge about the causal relationships as an adjacency matrix.
-Can be fed either directed or undirected links.</li>
-<li><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation.
-Recommended: &gt;=12 for optimal performance.</li>
-<li><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel.
-Recommended: 1 if no GPU available, 2*number of GPUs else.</li>
-<li><strong>gpus</strong> (<em>int</em>) – Number of available GPUs for the algorithm.</li>
-<li><strong>verbose</strong> (<em>bool</em>) – verbose mode</li>
-<li><strong>plot</strong> (<em>bool</em>) – Plot losses interactively. Not recommended if nruns&gt;1</li>
-<li><strong>plot_generated_pair</strong> (<em>bool</em>) – plots a generated pair interactively.  Not recommended if nruns&gt;1</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data for estimation of causal relationships by SAM</p></li>
+<li><p><strong>skeleton</strong> (<em>numpy.ndarray</em>) – A priori knowledge about the causal relationships as an adjacency matrix.
+Can be fed either directed or undirected links.</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation.
+Recommended: &gt;=12 for optimal performance.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel.
+Recommended: 1 if no GPU available, 2*number of GPUs else.</p></li>
+<li><p><strong>gpus</strong> (<em>int</em>) – Number of available GPUs for the algorithm.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbose mode</p></li>
+<li><p><strong>plot</strong> (<em>bool</em>) – Plot losses interactively. Not recommended if nruns&gt;1</p></li>
+<li><p><strong>plot_generated_pair</strong> (<em>bool</em>) – plots a generated pair interactively.  Not recommended if nruns&gt;1</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Graph estimated by SAM, where A[i,j] is the term
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Graph estimated by SAM, where A[i,j] is the term
 of the ith variable for the jth generator.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">networkx.DiGraph</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
