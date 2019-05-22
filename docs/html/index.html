@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Causal Discovery Toolbox &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>Causal Discovery Toolbox Documentation &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
   
 
   
@@ -86,12 +86,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
@@ -140,7 +139,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Causal Discovery Toolbox</li>
+      <li>Causal Discovery Toolbox Documentation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -159,8 +158,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="causal-discovery-toolbox">
-<h1>Causal Discovery Toolbox<a class="headerlink" href="#causal-discovery-toolbox" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="causal-discovery-toolbox-documentation">
+<h1>Causal Discovery Toolbox Documentation<a class="headerlink" href="#causal-discovery-toolbox-documentation" title="Permalink to this headline">¶</a></h1>
 <p>Package for causal inference in graphs and in the pairwise settings for Python&gt;=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.</p>
 <p><a class="reference external" href="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master" src="https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master" />Build Status</a>
 <a class="reference external" href="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox"><img alt="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg" src="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg" />codecov</a>
@@ -168,21 +167,17 @@
 <a class="reference external" href="#"><img alt="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200" src="https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200" />Python.pm</a>
 <a class="reference external" href="#"><img alt="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200" src="https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200" />version</a></p>
 <p>It implements lots of algorithms for graph structure recovery (including algorithms from the <strong>bnlearn</strong>, <strong>pcalg</strong> packages), mainly based out of observational data.</p>
-<div class="section" id="check-out-the-docs-here">
-<h2><a class="reference external" href="https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html">Check out the DOCS here !</a><a class="headerlink" href="#check-out-the-docs-here" title="Permalink to this headline">¶</a></h2>
 <p>An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb">jupyter-notebook</a></p>
 <p>Install it using pip: (See more details on installation below)</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install cdt
 </pre></div>
 </div>
-</div>
 <div class="section" id="docker-images">
 <h2>Docker images<a class="headerlink" href="#docker-images" title="Permalink to this headline">¶</a></h2>
-<p>Docker images are available, including all the dependencies, and enabled functionalities:</p>
-<p>|  python ver. 	|  cpu 	| gpu 	|
-|————–	|—————————————————————————————————————————–	|—————————————————————————————————————————————-	|
-| 3.6 	| <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.6/"><img alt="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" src="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" />d36cpu</a> 	| <a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-py3.6/"><img alt="https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200" src="https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200" />d36gpu</a> 	|
-| 3.7 	| <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.7/"><img alt="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" src="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" />d37cpu</a> 	| <a class="reference external" href="#"><img alt="https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200" src="https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200" />d37gpu</a> 	|</p>
+<p>Docker images are available, including all the dependencies, and enabled functionalities:
+Python 3.6 - CPU: <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.6/"><img alt="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" src="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" />d36cpu</a>
+Python 3.7 - CPU: <a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.7/"><img alt="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" src="https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200" />d37cpu</a>
+Python 3.6 - GPU: <a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-py3.6/"><img alt="https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200" src="https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200" />d36gpu</a> 	|</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
@@ -320,7 +315,6 @@ The <a class="reference external" href="https://github.com/Diviyan-Kalainathan/C
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>

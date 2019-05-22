@@ -85,12 +85,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
@@ -261,7 +260,7 @@
 <span class="sd">                        estimator: method used to evaluate the pairs (entropy or integral)}</span>
 <span class="sd">        :return: Return value of the IGCI model &gt;0 if a-&gt;b otherwise if return &lt;0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">estimators</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;entropy&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">eval_entropy</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">eval_entropy</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;integral&#39;</span><span class="p">:</span> <span class="n">integral_approx_estimator</span><span class="p">}</span>
+        <span class="n">estimators</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;entropy&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">eval_entropy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">eval_entropy</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="s1">&#39;integral&#39;</span><span class="p">:</span> <span class="n">integral_approx_estimator</span><span class="p">}</span>
         <span class="n">ref_measures</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gaussian&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">standard_scale</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))),</span>
                         <span class="s1">&#39;uniform&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">min_max_scale</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))),</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">}</span>
 

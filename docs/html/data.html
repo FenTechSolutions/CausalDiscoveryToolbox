@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.data &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>cdt.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/data.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-cdt.data">
+<span id="cdt-data"></span><h1>cdt.data<a class="headerlink" href="#module-cdt.data" title="Permalink to this headline">¶</a></h1>
+<p>This module focusses on data: data generation but also provides the user
+with standard and well known datasets, useful for validation and benchmarking.</p>
+<p>The generators provide the user the ability to choose which causal mechanism to
+be used in the data generation process, as well as the type of noise
+contribution (additive and/or multiplicative). Currently, the implemented
+mechanisms are (<span class="math notranslate nohighlight">\(+\times\)</span> denotes either addition or multiplication, and
+<span class="math notranslate nohighlight">\(\mathbf{X}\)</span> denotes the vector of causes, and <span class="math notranslate nohighlight">\(E\)</span> represents the
+noise variable accounting for all unobserved variables):</p>
+<ul class="simple">
+<li><p>Linear: <span class="math notranslate nohighlight">\(y = \mathbf{X}W +\times E\)</span></p></li>
+<li><p>Polynomial: <span class="math notranslate nohighlight">\(y = W_0 + \mathbf{X}W_1 + ...+ \mathbf{X}^d W_d +\times E\)</span></p></li>
+<li><p>Gaussian Process: <span class="math notranslate nohighlight">\(y = GP(\mathbf{X}) +\times E\)</span></p></li>
+<li><p>Sigmoid: <span class="math notranslate nohighlight">\(y = \sum_i^d W_i * sigmoid(\mathbf{X_i}) +\times E\)</span></p></li>
+<li><p>Randomly init. Neural network: <span class="math notranslate nohighlight">\(y = \sigma((\mathbf{X},E) W_in)W_out\)</span></p></li>
+</ul>
+<p>Causal pairs can be generated using the <code class="docutils literal notranslate"><span class="pre">cdt.data.CausalPairGenerator</span></code> class,
+and acyclic graphs can be generated using the <code class="docutils literal notranslate"><span class="pre">cdt.data.AcyclicGraphGenerator</span></code> class.</p>
+<div class="section" id="causalpairgenerator">
+<h2><span class="hidden-section">CausalPairGenerator</span><a class="headerlink" href="#causalpairgenerator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cdt.data.CausalPairGenerator">
+<em class="property">class </em><code class="descclassname">cdt.data.</code><code class="descname">CausalPairGenerator</code><span class="sig-paren">(</span><em>causal_mechanism</em>, <em>noise=&lt;function normal_noise&gt;</em>, <em>noise_coeff=0.4</em>, <em>initial_variable_generator=&lt;function gmm_cause&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates Bivariate Causal Distributions.</p>
+<dl class="method">
+<dt id="cdt.data.CausalPairGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>npairs</em>, <em>npoints=500</em>, <em>rescale=True</em>, <em>njobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.data.CausalPairGenerator.to_csv">
+<code class="descname">to_csv</code><span class="sig-paren">(</span><em>fname_radical</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data to the csv format by default, in two separate files.</p>
+<p>Optional keyword arguments can be passed to pandas.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="acyclicgraphgenerator">
+<h2><span class="hidden-section">AcyclicGraphGenerator</span><a class="headerlink" href="#acyclicgraphgenerator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cdt.data.AcyclicGraphGenerator">
+<em class="property">class </em><code class="descclassname">cdt.data.</code><code class="descname">AcyclicGraphGenerator</code><span class="sig-paren">(</span><em>causal_mechanism</em>, <em>noise=&lt;function normal_noise&gt;</em>, <em>noise_coeff=0.4</em>, <em>initial_variable_generator=&lt;function gmm_cause&gt;</em>, <em>npoints=500</em>, <em>nodes=20</em>, <em>parents_max=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a cross-sectional dataset out of a cyclic FCM.</p>
+<dl class="method">
+<dt id="cdt.data.AcyclicGraphGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>rescale=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate data from an FCM containing cycles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.data.AcyclicGraphGenerator.init_variables">
+<code class="descname">init_variables</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redefine the causes of the graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.data.AcyclicGraphGenerator.to_csv">
+<code class="descname">to_csv</code><span class="sig-paren">(</span><em>fname_radical</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data to the csv format by default, in two separate files.</p>
+<p>Optional keyword arguments can be passed to pandas.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

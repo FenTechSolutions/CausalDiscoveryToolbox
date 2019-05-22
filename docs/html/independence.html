@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="cdt.generators" href="generators.html" />
+    <link rel="next" title="cdt.utils" href="utils.html" />
     <link rel="prev" title="cdt.causality" href="causality.html" /> 
 </head>
 
@@ -87,7 +87,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
@@ -115,7 +115,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
@@ -658,7 +657,7 @@ on each variable independently.</p>
 <dd><p>Feature Selection using MMD and Generative Neural Networks.</p>
 <dl class="method">
 <dt id="cdt.independence.graph.FSGNN.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>nh=20</em>, <em>idx=0</em>, <em>dropout=0.0</em>, <em>activation_function=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>lr=0.01</em>, <em>l1=0.1</em>, <em>batch_size=-1</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>device=None</em>, <em>verbose=None</em>, <em>nb_runs=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>nh=20</em>, <em>idx=0</em>, <em>dropout=0.0</em>, <em>activation_function=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>lr=0.01</em>, <em>l1=0.1</em>, <em>batch_size=-1</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>device=None</em>, <em>verbose=None</em>, <em>nruns=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbours.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -676,7 +675,7 @@ on each variable independently.</p>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – number of test epochs</p></li>
 <li><p><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
-<li><p><strong>nb_runs</strong> (<em>int</em>) – number of bootstrap runs</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – number of bootstrap runs</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -874,7 +873,7 @@ Mach. Learn., 46(1-3), 389–422, 2002.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="generators.html" class="btn btn-neutral float-right" title="cdt.generators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="cdt.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="causality.html" class="btn btn-neutral float-left" title="cdt.causality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

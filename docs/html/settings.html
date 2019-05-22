@@ -86,12 +86,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Toolbox Settings</a></li>
@@ -167,7 +166,7 @@ hardware. All parameters are overridable by accessing the <code class="docutils 
 object, a unique instance of the <code class="docutils literal notranslate"><span class="pre">cdt.utils.ConfigSettings</span></code> class.</p>
 <p>The various attributes of the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> configuration object are:</p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NJOBS</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.autoset_config</span></code></p></li>
@@ -217,23 +216,6 @@ parameters as defined by the <code class="docutils literal notranslate"><span cl
 <dd><p>Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.</p>
 <p>Return default config if variable not set.
 :param set_var: Variable to set. Must be of type ConfigSettings</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="cdt.utils.Settings.check_cuda_devices">
-<code class="descclassname">cdt.utils.Settings.</code><code class="descname">check_cuda_devices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/Settings.html#check_cuda_devices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.check_cuda_devices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output some information on CUDA-enabled devices on your computer,
-including current memory usage. Modified to only get number of devices.</p>
-<p>It’s a port of <a class="reference external" href="https://gist.github.com/f0k/0d6431e3faa60bffc788f8b4daa029b1">https://gist.github.com/f0k/0d6431e3faa60bffc788f8b4daa029b1</a>
-from C to Python with ctypes, so it can run without compiling
-anything. Note that this is a direct translation with no attempt to
-make the code Pythonic. It’s meant as a general demonstration on how
-to obtain CUDA device information from Python without resorting to
-nvidia-smi or a compiled Python extension.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Author: Jan Schlüter, <a class="reference external" href="https://gist.github.com/63a664160d016a491b2cbea15913d549.git">https://gist.github.com/63a664160d016a491b2cbea15913d549.git</a></p>
-</div>
 </dd></dl>
 
 </div>

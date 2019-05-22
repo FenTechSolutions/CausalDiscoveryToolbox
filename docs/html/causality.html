@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cdt.independence" href="independence.html" />
-    <link rel="prev" title="Causal Discovery Toolbox" href="index.html" /> 
+    <link rel="prev" title="Causal Discovery Toolbox Documentation" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -87,7 +87,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.causality</a><ul>
@@ -124,7 +124,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
@@ -203,7 +202,7 @@
 <p>Usage for undirected/directed graphs and CEPC df format.</p>
 <dl class="method">
 <dt id="cdt.causality.pairwise.model.PairwiseModel.orient_graph">
-<code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>nb_runs=6</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.orient_graph" title="Permalink to this definition">¶</a></dt>
+<code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.orient_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient an undirected graph using the pairwise method defined by the subclass.</p>
 <p>The pairwise method is ran on every undirected edge.</p>
 <dl class="field-list simple">
@@ -211,7 +210,6 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</p></li>
 <li><p><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</p></li>
-<li><p><strong>nb_runs</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</p></li>
 <li><p><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</p></li>
 </ul>
 </dd>
@@ -468,15 +466,29 @@ The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
 <h3><span class="hidden-section">GNN</span><a class="headerlink" href="#gnn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.GNN">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">GNN</code><span class="sig-paren">(</span><em>nh=20</em>, <em>lr=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">GNN</code><span class="sig-paren">(</span><em>nh=20</em>, <em>lr=0.01</em>, <em>nruns=6</em>, <em>njobs=None</em>, <em>gpus=None</em>, <em>verbose=None</em>, <em>ttest_threshold=0.01</em>, <em>nb_max_runs=16</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shallow Generative Neural networks.</p>
-<p>Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural network
-and a MMD loss. The causal direction is considered as the “best-fit” between the two directions</p>
+<p>Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural
+network and a MMD loss. The causal direction is considered as the “best-fit”
+between the two causal directions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nh</strong> (<em>int</em>) – number of hidden units in the neural network</p></li>
 <li><p><strong>lr</strong> (<em>float</em>) – learning rate of the optimizer</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – number of runs to execute per batch
+(before testing for significance with t-test).</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – number of runs to execute in parallel.
+(defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NJOBS</span></code>)</p></li>
+<li><p><strong>gpus</strong> (<em>bool</em>) – Number of available gpus
+(defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</p></li>
+<li><p><strong>idx</strong> (<em>int</em>) – (optional) index of the pair, for printing purposes</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
+<li><p><strong>ttest_threshold</strong> (<em>float</em>) – threshold to stop the boostraps before
+<code class="docutils literal notranslate"><span class="pre">nb_max_runs</span></code> if the difference is significant</p></li>
+<li><p><strong>nb_max_runs</strong> (<em>int</em>) – Max number of bootstraps</p></li>
+<li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs used for training</p></li>
+<li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs used for evaluation</p></li>
 </ul>
 </dd>
 </dl>
@@ -488,22 +500,13 @@ Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 </div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.GNN.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>nb_runs=6</em>, <em>nb_jobs=None</em>, <em>gpu=None</em>, <em>idx=0</em>, <em>verbose=None</em>, <em>ttest_threshold=0.01</em>, <em>nb_max_runs=16</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run multiple times GNN to estimate the causal direction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>a</strong> (<em>np.ndarray</em>) – Variable 1</p></li>
 <li><p><strong>b</strong> (<em>np.ndarray</em>) – Variable 2</p></li>
-<li><p><strong>nb_runs</strong> (<em>int</em>) – number of runs to execute per batch (before testing for significance with t-test).</p></li>
-<li><p><strong>nb_jobs</strong> (<em>int</em>) – number of runs to execute in parallel. (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>)</p></li>
-<li><p><strong>gpu</strong> (<em>bool</em>) – use gpu (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</p></li>
-<li><p><strong>idx</strong> (<em>int</em>) – (optional) index of the pair, for printing purposes</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
-<li><p><strong>ttest_threshold</strong> (<em>float</em>) – threshold to stop the boostraps before <code class="docutils literal notranslate"><span class="pre">nb_max_runs</span></code> if the difference is significant</p></li>
-<li><p><strong>nb_max_runs</strong> (<em>int</em>) – Max number of bootstraps</p></li>
-<li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs during which the model is going to be trained</p></li>
-<li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs during which the model is going to be tested</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -574,7 +577,7 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</p></li>
 <li><p><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</p></li>
-<li><p><strong>nb_runs</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – number of times to rerun for each pair (bootstrap)</p></li>
 <li><p><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</p></li>
 </ul>
 </dd>
@@ -707,7 +710,7 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <h3><span class="hidden-section">RCC</span><a class="headerlink" href="#rcc" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.RCC">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">RCC</code><span class="sig-paren">(</span><em>rand_coeff=333</em>, <em>nb_estimators=500</em>, <em>nb_min_leaves=20</em>, <em>max_depth=None</em>, <em>s=10</em>, <em>nb_jobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">RCC</code><span class="sig-paren">(</span><em>rand_coeff=333</em>, <em>nb_estimators=500</em>, <em>nb_min_leaves=20</em>, <em>max_depth=None</em>, <em>s=10</em>, <em>njobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Randomized Causation Coefficient model.</p>
 <p>Projection of the empirical distributions into a RKHS using random cosine
 embeddings, then classfying the pairs using a random forest.</p>
@@ -719,7 +722,7 @@ embeddings, then classfying the pairs using a random forest.</p>
 <li><p><strong>nb_min_leaves</strong> (<em>int</em>) – number of min samples leaves of the estimator</p></li>
 <li><p><strong>(</strong><strong>)</strong> (<em>max_depth</em>) – (optional) max depth of the model</p></li>
 <li><p><strong>s</strong> (<em>float</em>) – scaling</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em>) – number of jobs to be run on parallel (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>)</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – number of jobs to be run on parallel (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NJOBS</span></code>)</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
 </ul>
 </dd>
@@ -1163,7 +1166,7 @@ Machine Learning,65(1), 31-78.</p>
 <h3><span class="hidden-section">CAM</span><a class="headerlink" href="#cam" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.CAM">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CAM</code><span class="sig-paren">(</span><em>score='nonlinear'</em>, <em>cutoff=0.001</em>, <em>variablesel=True</em>, <em>selmethod='gamboost'</em>, <em>pruning=False</em>, <em>prunmethod='gam'</em>, <em>nb_jobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CAM</code><span class="sig-paren">(</span><em>score='nonlinear'</em>, <em>cutoff=0.001</em>, <em>variablesel=True</em>, <em>selmethod='gamboost'</em>, <em>pruning=False</em>, <em>prunmethod='gam'</em>, <em>njobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>CAM algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1174,7 +1177,7 @@ Machine Learning,65(1), 31-78.</p>
 <li><p><strong>selmethod</strong> (<em>str</em>) – Method used for variable selection.</p></li>
 <li><p><strong>pruning</strong> (<em>bool</em>) – Perform an initial pruning step.</p></li>
 <li><p><strong>prunmethod</strong> (<em>str</em>) – Method used for pruning.</p></li>
-<li><p><strong>nb_jobs</strong> (<em>int</em>) – Number of jobs to run in parallel.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Number of jobs to run in parallel.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the output.</p></li>
 </ul>
 </dd>
@@ -1200,7 +1203,7 @@ Machine Learning,65(1), 31-78.</p>
 <li><p>SELMETHOD: ‘selGamBoost’</p></li>
 <li><p>PRUNING: ‘TRUE’</p></li>
 <li><p>PRUNMETHOD: ‘selGam’</p></li>
-<li><p>NJOBS: str(SETTINGS.NB_JOBS)</p></li>
+<li><p>NJOBS: str(SETTINGS.NJOBS)</p></li>
 <li><p>CUTOFF: str(0.001)</p></li>
 <li><p>VERBOSE: ‘FALSE’</p></li>
 <li><p>OUTPUT: ‘/tmp/cdt_CAM/result.csv’</p></li>
@@ -1278,7 +1281,7 @@ regularization and block-cyclic coordinate descent.</p>
 <h3><span class="hidden-section">CGNN</span><a class="headerlink" href="#cgnn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.CGNN">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CGNN</code><span class="sig-paren">(</span><em>nh=20</em>, <em>nb_runs=16</em>, <em>nb_jobs=None</em>, <em>gpu=None</em>, <em>lr=0.01</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CGNN</code><span class="sig-paren">(</span><em>nh=20</em>, <em>nruns=16</em>, <em>njobs=None</em>, <em>gpus=None</em>, <em>lr=0.01</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Causal Generative Neural Netwoks : Generate the whole causal graph in a
 topological manner using neural networks and predict causal directions in
 the graph.</p>
@@ -1286,12 +1289,12 @@ the graph.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nh</strong> (<em>int</em>) – Number of hidden units in each generative neural network.</p></li>
-<li><p><strong>nb_runs</strong> (<em>int</em>) – Number of times to run CGNN to have a stable
+<li><p><strong>nruns</strong> (<em>int</em>) – Number of times to run CGNN to have a stable
 evaluation.</p></li>
-<li><p><strong>nb_jobs</strong> (<em>int</em>) – Number of jobs to run in parallel. Defaults to
-<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NB_JOBS</span></code>.</p></li>
-<li><p><strong>gpu</strong> (<em>bool</em>) – True if the GPUs are to be used. Defaults to
-<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Number of jobs to run in parallel. Defaults to
+<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NJOBS</span></code>.</p></li>
+<li><p><strong>gpus</strong> (<em>bool</em>) – Number of available gpus
+(Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</p></li>
 <li><p><strong>lr</strong> (<em>float</em>) – Learning rate for the generative neural networks.</p></li>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs used to train the network.</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs during which the results are
@@ -1619,7 +1622,7 @@ Journal of Machine Learning Research 7, 2003–2030.</p>
 <h3><span class="hidden-section">PC</span><a class="headerlink" href="#pc" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.PC">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">PC</code><span class="sig-paren">(</span><em>CItest='gaussian'</em>, <em>method_indep='corr'</em>, <em>alpha=0.01</em>, <em>nb_jobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">PC</code><span class="sig-paren">(</span><em>CItest='gaussian'</em>, <em>method_indep='corr'</em>, <em>alpha=0.01</em>, <em>njobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC" title="Permalink to this definition">¶</a></dt>
 <dd><p>PC algorithm by C.Glymour &amp; P.Sprites.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1771,7 +1774,7 @@ the graph).</p>
 <h3><span class="hidden-section">SAM</span><a class="headerlink" href="#sam" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.SAM">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">SAM</code><span class="sig-paren">(</span><em>lr=0.1</em>, <em>dlr=0.1</em>, <em>l1=0.1</em>, <em>nh=200</em>, <em>dnh=200</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>batchsize=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">SAM</code><span class="sig-paren">(</span><em>lr=0.1</em>, <em>dlr=0.1</em>, <em>l1=0.1</em>, <em>nh=200</em>, <em>dnh=200</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>batchsize=-1</em>, <em>nruns=6</em>, <em>njobs=None</em>, <em>gpus=0</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Structural Agnostic Model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1784,6 +1787,12 @@ the graph).</p>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – Number of training epochs</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – Number of test epochs (saving and averaging the causal filters)</p></li>
 <li><p><strong>batchsize</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model.</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation.
+Recommended: &gt;=12 for optimal performance.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel.
+Recommended: 1 if no GPU available, 2*number of GPUs else.</p></li>
+<li><p><strong>gpus</strong> (<em>int</em>) – Number of available GPUs for the algorithm.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbose mode</p></li>
 </ul>
 </dd>
 </dl>
@@ -1795,7 +1804,7 @@ Model, Causal Discovery and Penalized Adversarial Learning.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.SAM.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em>, <em>graph=None</em>, <em>nruns=6</em>, <em>njobs=None</em>, <em>gpus=0</em>, <em>verbose=None</em>, <em>plot=False</em>, <em>plot_generated_pair=False</em>, <em>return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em>, <em>graph=None</em>, <em>plot=False</em>, <em>plot_generated_pair=False</em>, <em>return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute SAM on a dataset given a skeleton or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1803,12 +1812,6 @@ Model, Causal Discovery and Penalized Adversarial Learning.</p>
 <li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data for estimation of causal relationships by SAM</p></li>
 <li><p><strong>skeleton</strong> (<em>numpy.ndarray</em>) – A priori knowledge about the causal relationships as an adjacency matrix.
 Can be fed either directed or undirected links.</p></li>
-<li><p><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation.
-Recommended: &gt;=12 for optimal performance.</p></li>
-<li><p><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel.
-Recommended: 1 if no GPU available, 2*number of GPUs else.</p></li>
-<li><p><strong>gpus</strong> (<em>int</em>) – Number of available GPUs for the algorithm.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – verbose mode</p></li>
 <li><p><strong>plot</strong> (<em>bool</em>) – Plot losses interactively. Not recommended if nruns&gt;1</p></li>
 <li><p><strong>plot_generated_pair</strong> (<em>bool</em>) – plots a generated pair interactively.  Not recommended if nruns&gt;1</p></li>
 </ul>
@@ -1840,7 +1843,7 @@ of the ith variable for the jth generator.</p>
         <a href="independence.html" class="btn btn-neutral float-right" title="cdt.independence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Causal Discovery Toolbox" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Causal Discovery Toolbox Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

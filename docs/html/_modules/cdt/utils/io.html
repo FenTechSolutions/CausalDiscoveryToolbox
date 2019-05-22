@@ -85,12 +85,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
@@ -291,6 +290,10 @@
         <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cause&#39;</span><span class="p">,</span> <span class="s1">&#39;Effect&#39;</span><span class="p">,</span> <span class="s1">&#39;Score&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cause&#39;</span><span class="p">,</span> <span class="s1">&#39;Effect&#39;</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>
