@@ -70,14 +70,13 @@ class PairwiseModel(object):
         elif type(x) == Series:
             return self.predict_proba(x.iloc[0], x.iloc[1], *args, **kwargs)
 
-    def predict_proba(self, a, b, idx=0, **kwargs):
+    def predict_proba(self, dataset, idx=0, **kwargs):
         """Prediction method for pairwise causal inference.
 
         predict_proba is meant to be overridden in all subclasses
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
             idx (int): (optional) index number for printing purposes
 
         Returns:
@@ -120,17 +119,17 @@ class PairwiseModel(object):
 
         Args:
             df_data (pandas.DataFrame): Data
-            umg (networkx.Graph): Graph to orient
+            graph (networkx.Graph): Graph to orient
             printout (str): (optional) Path to file where to save temporary results
 
         Returns:
             networkx.DiGraph: a directed graph, which might contain cycles
 
-        .. warning:
+        .. warning::
            Requirement : Name of the nodes in the graph correspond to name of
            the variables in df_data
         """
-        if type(graph) == nx.DiGraph:
+        if isinstance(graph, nx.DiGraph):
             edges = [a for a in list(graph.edges()) if (a[1], a[0]) in list(graph.edges())]
             oriented_edges = [a for a in list(graph.edges()) if (a[1], a[0]) not in list(graph.edges())]
             for a in edges:
@@ -140,7 +139,7 @@ class PairwiseModel(object):
             for i in oriented_edges:
                 output.add_edge(*i)
 
-        elif type(graph) == nx.Graph:
+        elif isinstance(graph, nx.Graph):
             edges = list(graph.edges())
             output = nx.DiGraph()
 
@@ -156,7 +155,7 @@ class PairwiseModel(object):
                 **kwargs)
             if weight > 0:  # a causes b
                 output.add_edge(a, b, weight=weight)
-            else:
+            elif weight < 0:
                 output.add_edge(b, a, weight=abs(weight))
             if printout is not None:
                 res.append([str(a) + '-' + str(b), weight])

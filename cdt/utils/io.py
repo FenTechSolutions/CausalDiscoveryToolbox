@@ -29,6 +29,8 @@ from pandas import DataFrame, read_csv
 from numpy import array
 from sklearn.preprocessing import scale as scaler
 import networkx as nx
+from torch.utils.data import Dataset
+import torch as th
 
 
 def read_causal_pairs(filename, scale=True, **kwargs):
@@ -145,3 +147,49 @@ def read_list_edges(filename, directed=True, **kwargs):
         graph.add_edge(row['Cause'], row["Effect"], weight=score)
 
     return graph
+
+
+class SimpleDataset(Dataset):
+    def __init__(self, data):
+        super(MetaDataset, self).__init__()
+        self.data = data
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def to(self, device):
+        self.data = self.data.to(device)
+        return self
+
+
+class MetaDataset(Dataset):
+    def __init__(self, data, names=None, device=None):
+        super(MetaDataset, self).__init__()
+        if names is not None:
+            self.names = names
+        else:
+            self.names = {i: idx for idx, i in enumerate(data.columns)}
+
+        if isinstance(data, DataFrame):
+            self.data = th.Tensor(data.values)
+        else:
+            self.data = th.Tensor(data)
+        if device is not None:
+            self.data = self.data.to(device)
+
+    def to(self, device):
+        return MetaDataset(self.data, self.names, device)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def dataset(self, a, b):
+        return SimpleDataset(th.cat([self.data[:, self.names[a]],
+                                     self.data[:, self.names[b]]],
+                                    1))
