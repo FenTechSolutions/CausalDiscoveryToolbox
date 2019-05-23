@@ -131,16 +131,16 @@ class ANM(PairwiseModel):
         """Init the model."""
         super(ANM, self).__init__()
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, data, **kwargs):
         """Prediction method for pairwise causal inference using the ANM model.
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = data
         a = scale(a).reshape((-1, 1))
         b = scale(b).reshape((-1, 1))
 

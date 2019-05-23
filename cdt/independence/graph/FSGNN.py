@@ -36,23 +36,29 @@ from ...utils.loss import MMDloss
 
 
 class Dataset(data.Dataset):
-  'Characterizes a dataset for PyTorch'
-  def __init__(self, dataset, labels):
+    """Characterizes a dataset for PyTorch
+
+    Args:
+        features (pandas.DataFrame): Features given as input
+        target (pandas.DataFrame): Feature considered as target
+    """
+    def __init__(self, features, target, device):
         'Initialization'
-        self.labels = labels
-        self.dataset = dataset
+        self.target = th.Tensor(scale(target.values)).to(device)
+        self.features = th.Tensor(scale(features.values)).to(device)
 
-  def __len__(self):
+    def __len__(self):
         'Denotes the total number of samples'
-        return len(self.dataset)
+        return len(self.features)
 
-  def __getitem__(self, index):
+    def __featurelen__(self):
+        "Number of features of the dataset"
+        return self.features.shape[1]
+
+    def __getitem__(self, index):
         'Generates one sample of data'
-        # Select sample
-
         # Load data and get label
-
-        return self.dataset[index], self.labels[index]
+        return self.features[index], self.target[index]
 
 
 class FSGNN_model(th.nn.Module):
@@ -72,21 +78,21 @@ class FSGNN_model(th.nn.Module):
     def forward(self, x):
         self.layers(x)
 
-    def train(self, x, y, lr=0.01, l1=0.1, batch_size=-1,
+    def train(self, dataset, lr=0.01, l1=0.1, batch_size=-1,
               train_epochs=1000, test_epochs=1000, device=None,
-              verbose=None):
+              verbose=None, dataloader_workers=0):
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         optim = th.optim.Adam(self.parameters(), lr=lr)
-        output = th.zeros(x.size()[1])
-        output = th.zeros(x.size()[1]).to(device)
+        output = th.zeros(dataset.__featurelen__()).to(device)
 
-        criterion = MMDloss(input_size=x.shape[0]).to(device)
         if batch_size == -1:
-            batch_size = x.size()[0]
+            batch_size = dataset.__len__()
+        criterion = MMDloss(input_size=batch_size).to(device)
         # Printout value
         noise = th.randn(batch_size, 1).to(device)
-        data_iterator = th.utils.data.DataLoader(Dataset(x, y), batch_size=batch_size,
-                                                 shuffle=True, drop_last=True)
+        data_iterator = th.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                                 shuffle=True, drop_last=True,
+                                                 num_workers=dataloader_workers)
         # TRAIN
         with trange(train_epochs + test_epochs, disable=not verbose) as t:
             for epoch in t:
@@ -104,52 +110,75 @@ class FSGNN_model(th.nn.Module):
                     loss.backward()
                     optim.step()
 
-        return list(output.div_(test_epochs).div_(x.shape[0]//batch_size).cpu().numpy())
+        return list(output.div_(test_epochs).div_(dataset.__len__()//batch_size).cpu().numpy())
 
 
 class FSGNN(FeatureSelectionModel):
-    """Feature Selection using MMD and Generative Neural Networks."""
+    """Feature Selection using MMD and Generative Neural Networks.
 
-    def __init__(self):
+    Args:
+        nh (int): number of hidden units
+        dropout (float): probability of dropout (between 0 and 1)
+        activation_function (torch.nn.Module): activation function of the NN
+        lr (float): learning rate of Adam
+        l1 (float): L1 penalization coefficient
+        batch_size (int): batch size, defaults to full-batch
+        train_epochs (int): number of train epochs
+        test_epochs (int): number of test epochs
+        verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
+        nruns (int): number of bootstrap runs
+        dataloader_workers (int): how many subprocesses to use for data
+           loading. 0 means that the data will be loaded in the main
+           process. (default: 0)
+    """
+
+    def __init__(self, nh=20, dropout=0., activation_function=th.nn.ReLU,
+                 lr=0.01, l1=0.1,  batch_size=-1, train_epochs=1000,
+                 test_epochs=1000, verbose=None, nruns=3,
+                 dataloader_workers=0):
         """Init the model."""
         super(FSGNN, self).__init__()
+        self.nh = nh
+        self.dropout = dropout
+        self.activation_function = activation_function
+        self.lr = lr
+        self.l1 = l1
+        self.batch_size = batch_size
+        self.train_epochs = train_epochs
+        self.test_epochs = test_epochs
+        self.verbose = SETTINGS.get_default(verbose=verbose)
+        self.nruns = nruns
+        self.dataloader_workers = dataloader_workers
 
-    def predict_features(self, df_features, df_target, nh=20, idx=0, dropout=0.,
-                         activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  batch_size=-1,
-                         train_epochs=1000, test_epochs=1000, device=None,
-                         verbose=None, nruns=3):
+    def predict_features(self, df_features, df_target, datasetclass=Dataset,
+                         device=None, idx=0):
         """For one variable, predict its neighbours.
 
         Args:
-            df_features (pandas.DataFrame):
-            df_target (pandas.Series):
-            nh (int): number of hidden units
+            df_features (pandas.DataFrame): Features to select
+            df_target (pandas.Series): Target variable to predict
+            datasetclass (torch.utils.data.Dataset): Class to override for
+               custom loading of data.
             idx (int): (optional) for printing purposes
-            dropout (float): probability of dropout (between 0 and 1)
-            activation_function (torch.nn.Module): activation function of the NN
-            lr (float): learning rate of Adam
-            l1 (float): L1 penalization coefficient
-            batch_size (int): batch size, defaults to full-batch
-            train_epochs (int): number of train epochs
-            test_epochs (int): number of test epochs
-            device (str): cuda or cpu device (defaults to ``cdt.SETTINGS.default_device``)
-            verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
-            nruns (int): number of bootstrap runs
+            device (str): cuda or cpu device (defaults to
+               ``cdt.SETTINGS.default_device``)
 
         Returns:
             list: scores of each feature relatively to the target
 
         """
-        device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
-        x = th.FloatTensor(scale(df_features.values)).to(device)
-        y = th.FloatTensor(scale(df_target.values)).to(device)
+        device = SETTINGS.get_default(device=device)
+        dataset = datasetclass(df_features, df_target, device)
         out = []
-        for i in range(nruns):
-            model = FSGNN_model([x.size()[1] + 1, nh, 1],
-                                dropout=dropout,
-                                activation_function=activation_function).to(device)
+        for i in range(self.nruns):
+            model = FSGNN_model([dataset.__featurelen__() + 1, self.nh, 1],
+                                activation_function=self.activation_function,
+                                dropout=self.dropout).to(device)
 
-            out.append(model.train(x, y, lr=0.01, l1=0.1, batch_size=-1,
-                                   train_epochs=train_epochs, test_epochs=test_epochs,
-                                   device=device, verbose=verbose))
+            out.append(model.train(dataset, lr=0.01, l1=0.1,
+                                   batch_size=self.batch_size,
+                                   train_epochs=self.train_epochs,
+                                   test_epochs=self.test_epochs,
+                                   device=device, verbose=self.verbose,
+                                   dataloader_workers=self.dataloader_workers))
         return list(np.mean(np.array(out), axis=0))

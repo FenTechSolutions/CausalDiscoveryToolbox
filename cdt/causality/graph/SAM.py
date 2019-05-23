@@ -382,7 +382,7 @@ class SAM(GraphModel):
         dnh (int): Number of hidden units in the discriminator's hidden layer$
         train_epochs (int): Number of training epochs
         test_epochs (int): Number of test epochs (saving and averaging the causal filters)
-        batchsize (int): Size of the batches to be fed to the SAM model.
+        batch_size (int): Size of the batches to be fed to the SAM model.
         nruns (int): Number of runs to be made for causal estimation.
                Recommended: >=12 for optimal performance.
         njobs (int): Numbers of jobs to be run in Parallel.
@@ -397,7 +397,7 @@ class SAM(GraphModel):
     """
 
     def __init__(self, lr=0.1, dlr=0.1, l1=0.1, nh=200, dnh=200,
-                 train_epochs=1000, test_epochs=1000, batchsize=-1,
+                 train_epochs=1000, test_epochs=1000, batch_size=-1,
                  nruns=6, njobs=None, gpus=0, verbose=None):
         """Init and parametrize the SAM model.
 
@@ -410,7 +410,7 @@ class SAM(GraphModel):
         self.dnh = dnh
         self.train = train_epochs
         self.test = test_epochs
-        self.batchsize = batchsize
+        self.batch_size = batch_size
         self.nruns = nruns
         self.njobs = SETTINGS.get_default(njobs=njobs)
         self.gpus = SETTINGS.get_default(gpu=gpus)
@@ -438,7 +438,7 @@ class SAM(GraphModel):
                                     dnh=self.dnh, gpus=self.gpus,
                                     train_epochs=self.train,
                                     test_epochs=self.test,
-                                    batch_size=self.batchsize, plot=plot,
+                                    batch_size=self.batch_size, plot=plot,
                                     verbose=self.verbose, nruns=self.nruns)
         else:
             list_out = [run_SAM(data, skeleton=graph,
@@ -446,7 +446,7 @@ class SAM(GraphModel):
                                 regul_param=self.l1, nh=self.nh, dnh=self.dnh,
                                 device=None,
                                 train_epochs=self.train,
-                                test_epochs=self.test, batch_size=self.batchsize,
+                                test_epochs=self.test, batch_size=self.batch_size,
                                 plot=plot, verbose=self.verbose)
                         for idx in range(self.nruns)]
         if return_list_results:

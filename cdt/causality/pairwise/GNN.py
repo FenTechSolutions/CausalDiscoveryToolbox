@@ -27,20 +27,25 @@ Date : 10/05/2017
 .. SOFTWARE.
 """
 import numpy as np
-from sklearn.preprocessing import scale
 import torch as th
+import networkx as nx
 from tqdm import trange
-from torch.autograd import Variable
+from pandas import DataFrame
+from torch.utils.data import Dataset, DataLoader
+from sklearn.preprocessing import scale
 from .model import PairwiseModel
 from ...utils.loss import MMDloss, TTestCriterion
 from ...utils.Settings import SETTINGS
 from ...utils.parallel import parallel_run
+from ...utils.io import MetaDataset, PairwiseDataset
 
 
 class GNN_model(th.nn.Module):
     """Torch model for the GNN structure."""
 
-    def __init__(self, batch_size, nh=20, device=None):
+    def __init__(self, batch_size, nh=20, lr=0.01, train_epochs=1000,
+                 test_epochs=1000, idx=0, verbose=None,
+                 dataloader_workers=0, **kwargs):
         """Build the Torch graph.
 
         :param batch_size: size of the batch going to be fed to the model
@@ -49,14 +54,19 @@ class GNN_model(th.nn.Module):
         :param device: device on with the algorithm is going to be run on.
         """
         super(GNN_model, self).__init__()
-        device = SETTINGS.get_default(device=device)
         self.l1 = th.nn.Linear(2, nh)
         self.l2 = th.nn.Linear(nh, 1)
-        self.noise = Variable(th.FloatTensor(
-            batch_size, 1), requires_grad=False).to(device)
+        self.register_buffer('noise', th.Tensor(batch_size, 1))
         self.act = th.nn.ReLU()
-        self.criterion = MMDloss(batch_size).to(device)
+        self.criterion = MMDloss(batch_size)
         self.layers = th.nn.Sequential(self.l1, self.act, self.l2)
+        self.batch_size = batch_size
+        self.lr = lr
+        self.train_epochs = train_epochs
+        self.test_epochs = test_epochs
+        self.verbose = SETTINGS.get_default(verbose=verbose)
+        self.idx = idx
+        self.dataloader_workers = dataloader_workers
 
     def forward(self, x):
         """Pass data through the net structure.
@@ -70,32 +80,31 @@ class GNN_model(th.nn.Module):
         self.noise.normal_()
         return self.layers(th.cat([x, self.noise], 1))
 
-    def run(self, x, y, lr=0.01, train_epochs=1000, test_epochs=1000, idx=0,
-            verbose=None, **kwargs):
+    def run(self, dataset):
         """Run the GNN on a pair x,y of FloatTensor data."""
-        verbose = SETTINGS.get_default(verbose=verbose)
-        optim = th.optim.Adam(self.parameters(), lr=lr)
-        running_loss = 0
+        optim = th.optim.Adam(self.parameters(), lr=self.lr)
         teloss = 0
-        pbar = trange(train_epochs + test_epochs, disable=not verbose)
-        for i in pbar:
-            optim.zero_grad()
-            pred = self.forward(x)
-            loss = self.criterion(pred, y)
-            running_loss += loss.item()
+        pbar = trange(self.train_epochs + self.test_epochs,
+                      disable=not self.verbose)
+        dataloader = DataLoader(dataset, batch_size=self.batch_size,
+                                shuffle=True, drop_last=True,
+                                num_workers=self.dataloader_workers)
+        for epoch in pbar:
+            for i, (x, y) in enumerate(dataloader):
+                optim.zero_grad()
+                pred = self.forward(x)
+                loss = self.criterion(pred, y)
+                if epoch < self.train_epochs:
+                    loss.backward()
+                    optim.step()
+                else:
+                    teloss += loss.data
 
-            if i < train_epochs:
-                loss.backward()
-                optim.step()
-            else:
-                teloss += running_loss
+                # print statistics
+                if not epoch % 50 and i == 0:
+                    pbar.set_postfix(idx=self.idx, score=loss.item())
 
-            # print statistics
-            if not i % 300:
-                pbar.set_postfix(idx=idx, score=running_loss/300)
-                running_loss = 0.0
-
-        return teloss / test_epochs
+        return teloss.cpu().numpy() / self.test_epochs
 
     def reset_parameters(self):
         for layer in self.layers:
@@ -103,7 +112,7 @@ class GNN_model(th.nn.Module):
                 layer.reset_parameters()
 
 
-def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
+def GNN_instance(data, batch_size=-1, idx=0, device=None, nh=20, **kwargs):
     """Run an instance of GNN, testing causal direction.
 
     :param m: data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect
@@ -112,16 +121,15 @@ def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
     :param device: device on with the algorithm is going to be run on.
     :return:
     """
+    if batch_size == -1:
+        batch_size = data.__len__()
     device = SETTINGS.get_default(device=device)
-    xy = scale(x).astype('float32')
-    inputx = th.FloatTensor(xy[:, [0]]).to(device)
-    target = th.FloatTensor(xy[:, [1]]).to(device)
-    GNNXY = GNN_model(x.shape[0], device=device, nh=nh).to(device)
-    GNNYX = GNN_model(x.shape[0], device=device, nh=nh).to(device)
+    GNNXY = GNN_model(batch_size, nh=nh, **kwargs).to(device)
+    GNNYX = GNN_model(batch_size, nh=nh, **kwargs).to(device)
     GNNXY.reset_parameters()
     GNNYX.reset_parameters()
-    XY = GNNXY.run(inputx, target, **kwargs)
-    YX = GNNYX.run(target, inputx, **kwargs)
+    XY = GNNXY.run(data.to(device, flip=False))
+    YX = GNNYX.run(data.to(device, flip=True))
 
     return [XY, YX]
 
@@ -146,9 +154,13 @@ class GNN(PairwiseModel):
         verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
         ttest_threshold (float): threshold to stop the boostraps before
            ``nb_max_runs`` if the difference is significant
+        batch_size (int): batch size, defaults to full-batch
         nb_max_runs (int): Max number of bootstraps
         train_epochs (int): Number of epochs used for training
         test_epochs (int): Number of epochs used for evaluation
+        dataloader_workers (int): how many subprocesses to use for data
+           loading. 0 means that the data will be loaded in the main
+           process. (default: 0)
 
     .. note::
        Ref : Learning Functional Causal Models with Generative Neural Networks
@@ -158,8 +170,9 @@ class GNN(PairwiseModel):
     """
 
     def __init__(self, nh=20, lr=0.01, nruns=6, njobs=None, gpus=None,
-                 verbose=None, ttest_threshold=0.01,
-                 nb_max_runs=16, train_epochs=1000, test_epochs=1000):
+                 verbose=None, ttest_threshold=0.01, batch_size=-1,
+                 nb_max_runs=16, train_epochs=1000, test_epochs=1000,
+                 dataloader_workers=0):
         """Init the model."""
         super(GNN, self).__init__()
         self.njobs = SETTINGS.get_default(njobs=njobs)
@@ -167,24 +180,30 @@ class GNN(PairwiseModel):
         self.nh = nh
         self.lr = lr
         self.nruns = nruns
+        self.batch_size = batch_size
         self.nb_max_runs = nb_max_runs
         self.train_epochs = train_epochs
         self.test_epochs = test_epochs
         self.verbose = SETTINGS.get_default(verbose=verbose)
         self.ttest_threshold = ttest_threshold
+        self.dataloader_workers = dataloader_workers
 
-    def predict_proba(self, a, b, idx=0):
+    def predict_proba(self, dataset, idx=0):
         """Run multiple times GNN to estimate the causal direction.
 
         Args:
-            a (np.ndarray): Variable 1
-            b (np.ndarray): Variable 2
+            dataset (torch.utils.data.Dataset or tuple): pair (x, y) to
+               classify. Either a tuple or a torch dataset.
 
         Returns:
             float: Causal score of the pair (Value : 1 if a->b and -1 if b->a)
         """
-
-        x = np.stack([a.ravel(), b.ravel()], 1)
+        if isinstance(dataset, Dataset):
+            data = dataset
+        else:
+            tensors = [th.Tensor(scale(th.Tensor(i).view(-1, 1)))
+                       for i in dataset]
+            data = PairwiseDataset(*tensors)
         ttest_criterion = TTestCriterion(
             max_iter=self.nb_max_runs, runs_per_iter=self.nruns,
             threshold=self.ttest_threshold)
@@ -194,16 +213,20 @@ class GNN(PairwiseModel):
 
         while ttest_criterion.loop(AB, BA):
             if self.njobs != 1:
-                result_pair = parallel_run(GNN_instance, x, njobs=self.njobs,
+                result_pair = parallel_run(GNN_instance, data, njobs=self.njobs,
                                            gpus=self.gpus, verbose=self.verbose,
                                            train_epochs=self.train_epochs,
                                            test_epochs=self.test_epochs,
-                                           nruns=self.nruns)
+                                           nruns=self.nruns,
+                                           batch_size=self.batch_size,
+                                           dataloader_workers=self.dataloader_workers)
             else:
-                result_pair = [GNN_instance(x, device=SETTINGS.default_device,
+                result_pair = [GNN_instance(data, device=SETTINGS.default_device,
                                             verbose=self.verbose,
                                             train_epochs=self.train_epochs,
-                                            test_epochs=self.test_epochs)
+                                            test_epochs=self.test_epochs,
+                                            batch_size=self.batch_size,
+                                            dataloader_workers=self.dataloader_workers)
                                for run in range(ttest_criterion.iter,
                                                 ttest_criterion.iter +
                                                 self.nruns)]
@@ -219,3 +242,72 @@ class GNN(PairwiseModel):
         score_BA = np.mean(BA)
 
         return (score_BA - score_AB) / (score_BA + score_AB)
+
+    def orient_graph(self, df_data, graph, printout=None, **kwargs):
+        """Orient an undirected graph using the pairwise method defined by the subclass.
+
+        The pairwise method is ran on every undirected edge.
+
+        Args:
+            df_data (pandas.DataFrame or MetaDataset): Data (check cdt.utils.io.MetaDataset)
+            graph (networkx.Graph): Graph to orient
+            printout (str): (optional) Path to file where to save temporary results
+
+        Returns:
+            networkx.DiGraph: a directed graph, which might contain cycles
+
+        .. note::
+           This function is an override of the base class, in order to be able
+           to use the torch.utils.data.Dataset classes
+
+        .. warning::
+           Requirement : Name of the nodes in the graph correspond to name of
+           the variables in df_data
+        """
+        if isinstance(graph, nx.DiGraph):
+            edges = [a for a in list(graph.edges()) if (a[1], a[0]) in list(graph.edges())]
+            oriented_edges = [a for a in list(graph.edges()) if (a[1], a[0]) not in list(graph.edges())]
+            for a in edges:
+                if (a[1], a[0]) in list(graph.edges()):
+                    edges.remove(a)
+            output = nx.DiGraph()
+            for i in oriented_edges:
+                output.add_edge(*i)
+
+        elif isinstance(graph, nx.Graph):
+            edges = list(graph.edges())
+            output = nx.DiGraph()
+
+        else:
+            raise TypeError("Data type not understood.")
+
+        res = []
+        if isinstance(df_data, DataFrame):
+            var_names = list(df_data.columns)
+        elif isinstance(df_data, MetaDataset):
+            var_names = df_data.get_names()
+
+        for idx, (a, b) in enumerate(edges):
+            if isinstance(df_data, DataFrame):
+                dataset = PairwiseDataset(th.Tensor(scale(df_data[a].values)).view(-1, 1),
+                                          th.Tensor(scale(df_data[b].values)).view(-1, 1))
+                weight = self.predict_proba(dataset, idx=idx, **kwargs)
+            elif isinstance(df_data, MetaDataset):
+                weight = self.predict_proba(df_data.dataset(a, b, scale=True),
+                                            idx=idx, **kwargs)
+            else:
+                raise TypeError("Data type not understood.")
+            if weight > 0:  # a causes b
+                output.add_edge(a, b, weight=weight)
+            elif weight < 0:
+                output.add_edge(b, a, weight=abs(weight))
+            if printout is not None:
+                res.append([str(a) + '-' + str(b), weight])
+                DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
+                    printout, index=False)
+
+        for node in var_names:
+            if node not in output.nodes():
+                output.add_node(node)
+
+        return output

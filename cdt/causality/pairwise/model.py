@@ -64,20 +64,20 @@ class PairwiseModel(object):
             if type(args[0]) == nx.Graph or type(args[0]) == nx.DiGraph:
                 return self.orient_graph(x, *args, **kwargs)
             else:
-                return self.predict_proba(x, *args, **kwargs)
+                y = args.pop(0)
+                return self.predict_proba((x, y), *args, **kwargs)
         elif type(x) == DataFrame:
             return self.predict_dataset(x, *args, **kwargs)
         elif type(x) == Series:
-            return self.predict_proba(x.iloc[0], x.iloc[1], *args, **kwargs)
+            return self.predict_proba((x.iloc[0], x.iloc[1]), *args, **kwargs)
 
-    def predict_proba(self, a, b, idx=0, **kwargs):
+    def predict_proba(self, dataset, idx=0, **kwargs):
         """Prediction method for pairwise causal inference.
 
         predict_proba is meant to be overridden in all subclasses
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
             idx (int): (optional) index number for printing purposes
 
         Returns:
@@ -105,7 +105,7 @@ class PairwiseModel(object):
             a = scale(row['A'].reshape((len(row['A']), 1)))
             b = scale(row['B'].reshape((len(row['B']), 1)))
 
-            pred.append(self.predict_proba(a, b, idx=idx))
+            pred.append(self.predict_proba((a, b), idx=idx))
 
             if printout is not None:
                 res.append([row['SampleID'], pred[-1]])
@@ -120,17 +120,17 @@ class PairwiseModel(object):
 
         Args:
             df_data (pandas.DataFrame): Data
-            umg (networkx.Graph): Graph to orient
+            graph (networkx.Graph): Graph to orient
             printout (str): (optional) Path to file where to save temporary results
 
         Returns:
             networkx.DiGraph: a directed graph, which might contain cycles
 
-        .. warning:
+        .. warning::
            Requirement : Name of the nodes in the graph correspond to name of
            the variables in df_data
         """
-        if type(graph) == nx.DiGraph:
+        if isinstance(graph, nx.DiGraph):
             edges = [a for a in list(graph.edges()) if (a[1], a[0]) in list(graph.edges())]
             oriented_edges = [a for a in list(graph.edges()) if (a[1], a[0]) not in list(graph.edges())]
             for a in edges:
@@ -140,7 +140,7 @@ class PairwiseModel(object):
             for i in oriented_edges:
                 output.add_edge(*i)
 
-        elif type(graph) == nx.Graph:
+        elif isinstance(graph, nx.Graph):
             edges = list(graph.edges())
             output = nx.DiGraph()
 
@@ -151,12 +151,12 @@ class PairwiseModel(object):
 
         for idx, (a, b) in enumerate(edges):
             weight = self.predict_proba(
-                df_data[a].values.reshape((-1, 1)),
-                df_data[b].values.reshape((-1, 1)), idx=idx,
+                (df_data[a].values.reshape((-1, 1)),
+                 df_data[b].values.reshape((-1, 1))), idx=idx,
                 **kwargs)
             if weight > 0:  # a causes b
                 output.add_edge(a, b, weight=weight)
-            else:
+            elif weight < 0:
                 output.add_edge(b, a, weight=abs(weight))
             if printout is not None:
                 res.append([str(a) + '-' + str(b), weight])

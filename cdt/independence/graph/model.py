@@ -119,7 +119,9 @@ class FeatureSelectionModel(GraphSkeletonModel):
                                                                 (df_data, node, idx, **kwargs)
                                                                 for idx, node in enumerate(list_nodes))
         else:
-            result_feature_selection = [self.run_feature_selection(df_data, node, idx, **kwargs) for idx, node in enumerate(list_nodes)]
+            result_feature_selection = [self.run_feature_selection(df_data, node,
+                                                                   idx, **kwargs)
+                                        for idx, node in enumerate(list_nodes)]
         for idx, i in enumerate(result_feature_selection):
             try:
                 i.insert(idx, 0)
@@ -140,4 +142,3 @@ class FeatureSelectionModel(GraphSkeletonModel):
             if node not in graph.nodes():
                 graph.add_node(node)
         return graph
-

@@ -44,16 +44,16 @@ class BivariateFit(PairwiseModel):
     def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(BivariateFit, self).__init__()
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, dataset, **kwargs):
         """ Infer causal relationships between 2 variables using regression.
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = dataset
         return self.b_fit_score(b, a) - self.b_fit_score(a, b)
 
     def b_fit_score(self, x, y):
