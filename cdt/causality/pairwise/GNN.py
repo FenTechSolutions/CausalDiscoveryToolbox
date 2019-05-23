@@ -31,20 +31,21 @@ import torch as th
 import networkx as nx
 from tqdm import trange
 from pandas import DataFrame
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import scale
 from .model import PairwiseModel
 from ...utils.loss import MMDloss, TTestCriterion
 from ...utils.Settings import SETTINGS
 from ...utils.parallel import parallel_run
-from ...utils.io import MetaDataset, SimpleDataset
+from ...utils.io import MetaDataset, PairwiseDataset
 
 
 class GNN_model(th.nn.Module):
     """Torch model for the GNN structure."""
 
-    def __init__(self, batch_size, nh=20, lr=0.01, train_epochs=1000, test_epochs=1000, idx=0,
-            verbose=None, **kwargs):
+    def __init__(self, batch_size, nh=20, lr=0.01, train_epochs=1000,
+                 test_epochs=1000, idx=0, verbose=None,
+                 dataloader_workers=0, **kwargs):
         """Build the Torch graph.
 
         :param batch_size: size of the batch going to be fed to the model
@@ -55,10 +56,17 @@ class GNN_model(th.nn.Module):
         super(GNN_model, self).__init__()
         self.l1 = th.nn.Linear(2, nh)
         self.l2 = th.nn.Linear(nh, 1)
-        self.register_buffer('noise', th.FloatTensor(batch_size, 1))
+        self.register_buffer('noise', th.Tensor(batch_size, 1))
         self.act = th.nn.ReLU()
         self.criterion = MMDloss(batch_size)
         self.layers = th.nn.Sequential(self.l1, self.act, self.l2)
+        self.batch_size = batch_size
+        self.lr = lr
+        self.train_epochs = train_epochs
+        self.test_epochs = test_epochs
+        self.verbose = SETTINGS.get_default(verbose=verbose)
+        self.idx = idx
+        self.dataloader_workers = dataloader_workers
 
     def forward(self, x):
         """Pass data through the net structure.
@@ -72,31 +80,31 @@ class GNN_model(th.nn.Module):
         self.noise.normal_()
         return self.layers(th.cat([x, self.noise], 1))
 
-    def run(self, x, y):
+    def run(self, dataset):
         """Run the GNN on a pair x,y of FloatTensor data."""
-        verbose = SETTINGS.get_default(verbose=verbose)
-        optim = th.optim.Adam(self.parameters(), lr=lr)
-        running_loss = 0
+        optim = th.optim.Adam(self.parameters(), lr=self.lr)
         teloss = 0
-        pbar = trange(train_epochs + test_epochs, disable=not verbose)
-        for i in pbar:
-            optim.zero_grad()
-            pred = self.forward(x)
-            loss = self.criterion(pred, y)
-            running_loss += loss.item()
+        pbar = trange(self.train_epochs + self.test_epochs,
+                      disable=not self.verbose)
+        dataloader = DataLoader(dataset, batch_size=self.batch_size,
+                                shuffle=True, drop_last=True,
+                                num_workers=self.dataloader_workers)
+        for epoch in pbar:
+            for i, (x, y) in enumerate(dataloader):
+                optim.zero_grad()
+                pred = self.forward(x)
+                loss = self.criterion(pred, y)
+                if epoch < self.train_epochs:
+                    loss.backward()
+                    optim.step()
+                else:
+                    teloss += loss.data
 
-            if i < train_epochs:
-                loss.backward()
-                optim.step()
-            else:
-                teloss += running_loss
+                # print statistics
+                if not epoch % 50 and i == 0:
+                    pbar.set_postfix(idx=self.idx, score=loss.item())
 
-            # print statistics
-            if not i % 300:
-                pbar.set_postfix(idx=idx, score=running_loss/300)
-                running_loss = 0.0
-
-        return teloss / test_epochs
+        return teloss.cpu().numpy() / self.test_epochs
 
     def reset_parameters(self):
         for layer in self.layers:
@@ -104,7 +112,7 @@ class GNN_model(th.nn.Module):
                 layer.reset_parameters()
 
 
-def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
+def GNN_instance(data, batch_size=-1, idx=0, device=None, nh=20, **kwargs):
     """Run an instance of GNN, testing causal direction.
 
     :param m: data corresponding to the config : (N, 2) data, [:, 0] cause and [:, 1] effect
@@ -113,15 +121,15 @@ def GNN_instance(x, idx=0, device=None, nh=20, **kwargs):
     :param device: device on with the algorithm is going to be run on.
     :return:
     """
+    if batch_size == -1:
+        batch_size = data.__len__()
     device = SETTINGS.get_default(device=device)
-    inputx = th.FloatTensor(xy[:, [0]]).to(device)
-    target = th.FloatTensor(xy[:, [1]]).to(device)
-    GNNXY = GNN_model(x.shape[0], nh=nh).to(device)
-    GNNYX = GNN_model(x.shape[0], nh=nh).to(device)
+    GNNXY = GNN_model(batch_size, nh=nh, **kwargs).to(device)
+    GNNYX = GNN_model(batch_size, nh=nh, **kwargs).to(device)
     GNNXY.reset_parameters()
     GNNYX.reset_parameters()
-    XY = GNNXY.run(inputx, target, **kwargs)
-    YX = GNNYX.run(target, inputx, **kwargs)
+    XY = GNNXY.run(data.to(device, flip=False))
+    YX = GNNYX.run(data.to(device, flip=True))
 
     return [XY, YX]
 
@@ -146,9 +154,13 @@ class GNN(PairwiseModel):
         verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
         ttest_threshold (float): threshold to stop the boostraps before
            ``nb_max_runs`` if the difference is significant
+        batch_size (int): batch size, defaults to full-batch
         nb_max_runs (int): Max number of bootstraps
         train_epochs (int): Number of epochs used for training
         test_epochs (int): Number of epochs used for evaluation
+        dataloader_workers (int): how many subprocesses to use for data
+           loading. 0 means that the data will be loaded in the main
+           process. (default: 0)
 
     .. note::
        Ref : Learning Functional Causal Models with Generative Neural Networks
@@ -158,8 +170,9 @@ class GNN(PairwiseModel):
     """
 
     def __init__(self, nh=20, lr=0.01, nruns=6, njobs=None, gpus=None,
-                 verbose=None, ttest_threshold=0.01,
-                 nb_max_runs=16, train_epochs=1000, test_epochs=1000):
+                 verbose=None, ttest_threshold=0.01, batch_size=-1,
+                 nb_max_runs=16, train_epochs=1000, test_epochs=1000,
+                 dataloader_workers=0):
         """Init the model."""
         super(GNN, self).__init__()
         self.njobs = SETTINGS.get_default(njobs=njobs)
@@ -167,11 +180,13 @@ class GNN(PairwiseModel):
         self.nh = nh
         self.lr = lr
         self.nruns = nruns
+        self.batch_size = batch_size
         self.nb_max_runs = nb_max_runs
         self.train_epochs = train_epochs
         self.test_epochs = test_epochs
         self.verbose = SETTINGS.get_default(verbose=verbose)
         self.ttest_threshold = ttest_threshold
+        self.dataloader_workers = dataloader_workers
 
     def predict_proba(self, dataset, idx=0):
         """Run multiple times GNN to estimate the causal direction.
@@ -186,8 +201,9 @@ class GNN(PairwiseModel):
         if isinstance(dataset, Dataset):
             data = dataset
         else:
-            data = SimpleDataset(th.Tensor(scale(th.stack([th.Tensor(i).view(-1)
-                                                           for i in dataset], 1))))
+            tensors = [th.Tensor(scale(th.Tensor(i).view(-1, 1)))
+                       for i in dataset]
+            data = PairwiseDataset(*tensors)
         ttest_criterion = TTestCriterion(
             max_iter=self.nb_max_runs, runs_per_iter=self.nruns,
             threshold=self.ttest_threshold)
@@ -201,12 +217,16 @@ class GNN(PairwiseModel):
                                            gpus=self.gpus, verbose=self.verbose,
                                            train_epochs=self.train_epochs,
                                            test_epochs=self.test_epochs,
-                                           nruns=self.nruns)
+                                           nruns=self.nruns,
+                                           batch_size=self.batch_size,
+                                           dataloader_workers=self.dataloader_workers)
             else:
                 result_pair = [GNN_instance(data, device=SETTINGS.default_device,
                                             verbose=self.verbose,
                                             train_epochs=self.train_epochs,
-                                            test_epochs=self.test_epochs)
+                                            test_epochs=self.test_epochs,
+                                            batch_size=self.batch_size,
+                                            dataloader_workers=self.dataloader_workers)
                                for run in range(ttest_criterion.iter,
                                                 ttest_criterion.iter +
                                                 self.nruns)]
@@ -262,12 +282,18 @@ class GNN(PairwiseModel):
             raise TypeError("Data type not understood.")
 
         res = []
+        if isinstance(df_data, DataFrame):
+            var_names = list(df_data.columns)
+        elif isinstance(df_data, MetaDataset):
+            var_names = df_data.get_names()
+
         for idx, (a, b) in enumerate(edges):
             if isinstance(df_data, DataFrame):
-                dataset = SimpleDataset(th.Tensor(df_data[[a, b]].values))
+                dataset = PairwiseDataset(th.Tensor(scale(df_data[a].values)).view(-1, 1),
+                                          th.Tensor(scale(df_data[b].values)).view(-1, 1))
                 weight = self.predict_proba(dataset, idx=idx, **kwargs)
             elif isinstance(df_data, MetaDataset):
-                weight = self.predict_proba(df_data.dataset(a, b),
+                weight = self.predict_proba(df_data.dataset(a, b, scale=True),
                                             idx=idx, **kwargs)
             else:
                 raise TypeError("Data type not understood.")
@@ -280,7 +306,7 @@ class GNN(PairwiseModel):
                 DataFrame(res, columns=['SampleID', 'Predictions']).to_csv(
                     printout, index=False)
 
-        for node in list(df_data.columns.values):
+        for node in var_names:
             if node not in output.nodes():
                 output.add_node(node)
 

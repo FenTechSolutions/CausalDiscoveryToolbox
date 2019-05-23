@@ -101,16 +101,16 @@ class CDS(PairwiseModel):
         self.maxdev = maxdev
         self.minc = minc
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, dataset, **kwargs):
         """ Infer causal relationships between 2 variables using the CDS statistic
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = dataset
         return self.cds_score(b, a) - self.cds_score(a, b)
 
     def cds_score(self, x_te, y_te):

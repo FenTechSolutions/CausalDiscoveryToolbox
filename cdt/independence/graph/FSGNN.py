@@ -83,11 +83,11 @@ class FSGNN_model(th.nn.Module):
               verbose=None, dataloader_workers=0):
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         optim = th.optim.Adam(self.parameters(), lr=lr)
-        output = th.zeros(dataset.__featurelen__).to(device)
+        output = th.zeros(dataset.__featurelen__()).to(device)
 
-        criterion = MMDloss(input_size=dataset.__len__).to(device)
         if batch_size == -1:
-            batch_size = dataset.__len__
+            batch_size = dataset.__len__()
+        criterion = MMDloss(input_size=batch_size).to(device)
         # Printout value
         noise = th.randn(batch_size, 1).to(device)
         data_iterator = th.utils.data.DataLoader(dataset, batch_size=batch_size,
@@ -110,7 +110,7 @@ class FSGNN_model(th.nn.Module):
                     loss.backward()
                     optim.step()
 
-        return list(output.div_(test_epochs).div_(x.shape[0]//batch_size).cpu().numpy())
+        return list(output.div_(test_epochs).div_(dataset.__len__()//batch_size).cpu().numpy())
 
 
 class FSGNN(FeatureSelectionModel):
@@ -171,7 +171,7 @@ class FSGNN(FeatureSelectionModel):
         dataset = datasetclass(df_features, df_target, device)
         out = []
         for i in range(self.nruns):
-            model = FSGNN_model([dataset.__featurelen__ + 1, self.nh, 1],
+            model = FSGNN_model([dataset.__featurelen__() + 1, self.nh, 1],
                                 activation_function=self.activation_function,
                                 dropout=self.dropout).to(device)
 

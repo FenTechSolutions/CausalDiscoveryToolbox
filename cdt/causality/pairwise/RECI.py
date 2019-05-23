@@ -50,14 +50,16 @@ class RECI(PairwiseModel):
         super(RECI, self).__init__()
         self.degree = degree
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, dataset, **kwargs):
         """ Infer causal relationships between 2 variables using the RECI statistic
 
-        :param a: Input variable 1
-        :param b: Input variable 2
-        :return: Causation coefficient (Value : 1 if a->b and -1 if b->a)
-        :rtype: float
+        Args:
+            dataset (tuple): Couple of np.ndarray variables to classify
+
+        Returns:
+            float: Causation coefficient (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = dataset
         return self.b_fit_score(b, a) - self.b_fit_score(a, b)
 
     def b_fit_score(self, x, y):
