@@ -66,22 +66,24 @@ jobs:
       - docker pull divkal/cdt-env-base:19.04
       - docker build --build-arg python=3.6 -t divkal/cdt-py3.6:$VERSION_NEW .
       - docker push divkal/cdt-py3.6:$VERSION_NEW
-    - script:
+    - if: (branch = master) AND (fork = false)
+      name: "Build and push 3.7"
+      script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-env-base:19.04
       - docker build --build-arg python=3.7 -t divkal/cdt-py3.7:$VERSION_NEW .
       - docker push divkal/cdt-py3.7:$VERSION_NEW
-      name: "Build and push 3.7"
-    - script:
+    - if: (branch = master) AND (fork = false)
+      name: "Build and push nv-3.6"
+      script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/nv-cdt-env-base:19.04
       - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
       - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
-      name: "Build and push nv-3.6"
     - stage: deploy 2nd stage
       if: (branch = master) AND (fork = false)
       name: "Push on Pypi"
@@ -91,7 +93,9 @@ jobs:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
       - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
-    - script:
+    - if: (branch = master) AND (fork = false)
+      name: "Compile docs and push"
+      script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -107,4 +111,3 @@ jobs:
       - git add ./docs
       - git commit -m "[DEPLOY] Docs $VERSION_NEW [skip travis-ci]"
       - git push deploy HEAD:master
-      name: "Compile docs and push"
