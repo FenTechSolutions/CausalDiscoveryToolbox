@@ -79,6 +79,13 @@ class NormMI(IndependenceModel):
 
     The dependency metric relies on using the clustering metric adjusted mutual information applied
     to binned variables using the Freedman Diaconis Estimator.
+    :param a: input data
+    :param b: input data
+    :type a: array-like, numerical data
+    :type b: array-like, numerical data
+    :return: dependency statistic (1=Highly dependent, 0=Not dependent)
+    :rtype: float
+
     .. note::
        Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, "Information theoretic measures for clusterings
        comparison: Variants, properties, normalization and correction for chance", Journal of Machine Learning
@@ -87,12 +94,6 @@ class NormMI(IndependenceModel):
        "Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete", 1981, issn=1432-2064,
        doi=10.1007/BF01025868.
 
-    :param a: input data
-    :param b: input data
-    :type a: array-like, numerical data
-    :type b: array-like, numerical data
-    :return: dependency statistic (1=Highly dependent, 0=Not dependent)
-    :rtype: float
     """
 
     def __init__(self):

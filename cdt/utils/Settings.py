@@ -103,8 +103,8 @@ class ConfigSettings(object):
 
         It has two modes of processing:
 
-        1. **kwargs for retrieving a single argument: ``get_default(argument_name=value)``.
-        2. *args through a list of tuples of the shape ``('argument_name', value)`` to retrieve multiple values at once.
+        1. \**kwargs for retrieving a single argument: ``get_default(argument_name=value)``.
+        2. \*args through a list of tuples of the shape ``('argument_name', value)`` to retrieve multiple values at once.
         """
         def retrieve_param(i):
             try:

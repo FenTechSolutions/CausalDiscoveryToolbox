@@ -53,24 +53,24 @@ def network_deconvolution(mat, **kwargs):
        Nature Biotechnology
 
     Args:
-     mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
-         it is a relevance matrix where mat(i,j) represents the similarity content
-         between nodes i and j. Elements of matrix should be
-         non-negative.
-     beta (float): Scaling parameter, the program maps the largest absolute eigenvalue
-         of the direct dependency matrix to beta. It should be
-         between 0 and 1.
-     alpha (float): fraction of edges of the observed dependency matrix to be kept in
-         deconvolution process.
-     control (int): if 0, displaying direct weights for observed
-         interactions, if 1, displaying direct weights for both observed and
-         non-observed interactions.
+         mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
+             it is a relevance matrix where mat(i,j) represents the similarity content
+             between nodes i and j. Elements of matrix should be
+             non-negative.
+         beta (float): Scaling parameter, the program maps the largest absolute eigenvalue
+             of the direct dependency matrix to beta. It should be
+             between 0 and 1.
+         alpha (float): fraction of edges of the observed dependency matrix to be kept in
+             deconvolution process.
+         control (int): if 0, displaying direct weights for observed
+             interactions, if 1, displaying direct weights for both observed and
+             non-observed interactions.
 
     Returns:
-    mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components
-        represent direct edge weights of observed interactions.
-        Choosing top direct interactions (a cut-off) depends on the application and
-        is not implemented in this code.
+        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
+            represent direct edge weights of observed interactions.
+            Choosing top direct interactions (a cut-off) depends on the application and
+            is not implemented in this code.
 
      .. note::
         To apply ND on regulatory networks, follow steps explained in Supplementary notes
@@ -140,14 +140,14 @@ def clr(M, **kwargs):
     """Implementation of the Context Likelihood or Relatedness Network algorithm.
 
     Args:
-     mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
-         it is a relevance matrix where mat(i,j) represents the similarity content
-         between nodes i and j. Elements of matrix should be
-         non-negative.
+        mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
+            it is a relevance matrix where mat(i,j) represents the similarity content
+            between nodes i and j. Elements of matrix should be
+            non-negative.
 
     Returns:
-    mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components
-        represent direct edge weights of observed interactions.
+        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
+            represent direct edge weights of observed interactions.
 
     .. note::
        Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey
@@ -177,14 +177,14 @@ def aracne(m, **kwargs):
     """Implementation of the ARACNE algorithm.
 
     Args:
-     mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
-         it is a relevance matrix where mat(i,j) represents the similarity content
-         between nodes i and j. Elements of matrix should be
-         non-negative.
+        mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
+            it is a relevance matrix where mat(i,j) represents the similarity content
+            between nodes i and j. Elements of matrix should be
+            non-negative.
 
     Returns:
-    mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components
-        represent direct edge weights of observed interactions.
+        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
+            represent direct edge weights of observed interactions.
 
     .. note::
        Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context
