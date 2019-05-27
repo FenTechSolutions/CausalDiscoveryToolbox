@@ -20,7 +20,7 @@ def setup_package():
           long_description_content_type="text/markdown",
           packages=find_packages(exclude=['examples', 'tests', 'tests.*']),
           url='https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox',
-          package_data={'': ['**/*.R']},
+          package_data={'': ['**/*.R', '**/*.csv']},
           install_requires=['numpy', 'scipy', 'scikit-learn',
                             'joblib', 'pandas', 'statsmodels',
                             'networkx', 'skrebate', 'tqdm', 'GPUtil'],

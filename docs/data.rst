@@ -14,3 +14,7 @@ cdt.data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: AcyclicGraphGenerator
    :members:
+
+:hidden:`load_dataset`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autofunction:: load_dataset
