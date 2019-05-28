@@ -62,6 +62,26 @@ To submit a pull request, the following are required:
        $ git commit -m "[DEV] Your commit message"
        $ git push -u origin dev
 
+   The commits must begin with a tag, defining the main purpose of the commit.
+   Examples of tags are:
+
+   - ``[DEV]`` for development
+
+   - ``[TRAVIS]`` for changes on the continuous integration
+
+   - ``[DOC]`` for documentation
+
+   - ``[TEST]`` for testing and coverage
+
+   - ``[FIX]`` for bugfixes
+
+   - ``[REL]`` and ``[MREL]`` are reserved names for releases and major releases.
+     They trigger package version updates on the continuous integration.
+
+   - ``[DEPLOY]`` is a reserved tag for the continuous integration to upload
+     its changes.
+
+
 6. Please check that your pull request complies with all the rules of the checklist:
 
    - Respected the pattern design of the package, using the ``networkx.DiGraph``
