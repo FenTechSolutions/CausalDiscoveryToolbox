@@ -29,9 +29,9 @@ jobs:
       script:
       - docker pull divkal/cdt-env-base:19.04
       - docker build --build-arg python=3.6 -t divkal/cdt-test .
-      - if [[ $TRAVIS_BRANCH == "dev" ]]; then
-            docker run --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
-            else docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report --cov=./cdt && codecov --token $CODECOV_TOKEN';
+      - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
+            docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report --cov=./cdt && codecov --token $CODECOV_TOKEN';
+            else docker run --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
         fi
     - stage: build docker image
       if: (branch = master) AND (fork = false)
@@ -53,7 +53,12 @@ jobs:
         - ssh-add rel_travis
         - git config --global push.default simple
         - pip install bumpversion
-        - if [[ $TRAVIS_COMMIT_MESSAGE == *"[REL]"* ]]; then bumpversion --current-version $VERSION minor setup.py README.md docs/index.md docs/conf.py cdt/__init__.py; elif [[ $TRAVIS_COMMIT_MESSAGE == *"[MREL]"* ]]; then bumpversion --current-version $VERSION major setup.py README.md docs/index.md docs/conf.py cdt/__init__.py; else bumpversion --current-version $VERSION patch setup.py README.md docs/index.md docs/conf.py cdt/__init__.py; fi
+        - if [[ $TRAVIS_COMMIT_MESSAGE == *"[REL]"* ]];
+              then bumpversion --current-version $VERSION minor setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
+              elif [[ $TRAVIS_COMMIT_MESSAGE == *"[MREL]"* ]];
+              then bumpversion --current-version $VERSION major setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
+              else bumpversion --current-version $VERSION patch setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
+          fi
         - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
         - git add -u
         - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
