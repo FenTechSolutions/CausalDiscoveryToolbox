@@ -27,7 +27,6 @@ import networkx as nx
 from copy import deepcopy
 import operator
 import numpy as np
-import networkx as nx
 import scipy.stats.mstats as stat
 from numpy import linalg as LA
 
@@ -68,9 +67,9 @@ def network_deconvolution(mat, **kwargs):
 
     Returns:
         numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
-            represent direct edge weights of observed interactions.
-            Choosing top direct interactions (a cut-off) depends on the application and
-            is not implemented in this code.
+        represent direct edge weights of observed interactions.
+        Choosing top direct interactions (a cut-off) depends on the application and
+        is not implemented in this code.
 
      .. note::
         To apply ND on regulatory networks, follow steps explained in Supplementary notes
@@ -147,7 +146,7 @@ def clr(M, **kwargs):
 
     Returns:
         numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
-            represent direct edge weights of observed interactions.
+        represent direct edge weights of observed interactions.
 
     .. note::
        Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey
@@ -184,7 +183,7 @@ def aracne(m, **kwargs):
 
     Returns:
         numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
-            represent direct edge weights of observed interactions.
+        represent direct edge weights of observed interactions.
 
     .. note::
        Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context

@@ -9,7 +9,7 @@ mechanisms are (:math:`+\\times` denotes either addition or multiplication, and
 noise variable accounting for all unobserved variables):
 
 - Linear: :math:`y = \\mathbf{X}W +\\times E`
-- Polynomial: :math:`y = W_0 + \\mathbf{X}W_1 + ...+ \\mathbf{X}^d W_d +\\times E`
+- Polynomial: :math:`y = \\left( W_0 + \\mathbf{X}W_1 + ...+ \\mathbf{X}^d W_d \\right) +\\times E`
 - Gaussian Process: :math:`y = GP(\\mathbf{X}) +\\times E`
 - Sigmoid: :math:`y = \\sum_i^d W_i * sigmoid(\\mathbf{X_i}) +\\times E`
 - Randomly init. Neural network: :math:`y = \\sigma((\\mathbf{X},E) W_{in})W_{out}`

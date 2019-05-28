@@ -37,23 +37,30 @@ from .causal_mechanisms import (LinearMechanism,
                                 GaussianProcessAdd_Mechanism,
                                 GaussianProcessMix_Mechanism,
                                 NN_Mechanism,
-                                gmm_cause, normal_noise)
+                                gmm_cause, normal_noise, uniform_noise)
 
 
 class AcyclicGraphGenerator(object):
-    """Generates a cross-sectional dataset out of a cyclic FCM."""
+    """Generate an acyclic graph and data given a causal mechanism.
 
-    def __init__(self, causal_mechanism, noise=normal_noise,
+    Args:
+        causal_mechanism (str): currently implemented mechanisms:
+            ['linear', 'polynomial', 'sigmoid_add',
+            'sigmoid_mix', 'gp_add', 'gp_mix'].
+        noise (str or function): type of noise to use in the generative process
+            ('normal', 'uniform' or a custom noise function).
+        noise_coeff (float): Proportion of noise in the mechanisms.
+        initial_variable_generator (function): Function used to init variables
+            of the graph, defaults to a Gaussian Mixture model.
+        npoints (int): Number of data points to generate.
+        nodes (int): Number of nodes in the graph to generate.
+        parents_max (int): Maximum number of parents of a node.
+    """
+
+    def __init__(self, causal_mechanism, noise='normal',
                  noise_coeff=.4,
                  initial_variable_generator=gmm_cause,
                  npoints=500, nodes=20, parents_max=5):
-        """Generate an acyclic graph, given a causal mechanism.
-
-        :param initial_variable_generator: init variables of the graph
-        :param causal_mechanism: generating causes in the graph to
-            choose between: ['linear', 'polynomial', 'sigmoid_add',
-            'sigmoid_mix', 'gp_add', 'gp_mix']
-        """
         super(AcyclicGraphGenerator, self).__init__()
         self.mechanism = {'linear': LinearMechanism,
                           'polynomial': Polynomial_Mechanism,
@@ -66,7 +73,11 @@ class AcyclicGraphGenerator(object):
         self.data = pd.DataFrame(None, columns=["V{}".format(i) for i in range(nodes)])
         self.nodes = nodes
         self.npoints = npoints
-        self.noise = normal_noise
+        try:
+            self.noise = {'normal': normal_noise,
+                          'uniform': uniform_noise}[noise]
+        except KeyError:
+            self.noise = noise
         self.noise_coeff = noise_coeff
         self.adjacency_matrix = np.zeros((nodes, nodes))
         self.parents_max = parents_max
@@ -75,7 +86,12 @@ class AcyclicGraphGenerator(object):
         self.g = None
 
     def init_variables(self, verbose=False):
-        """Redefine the causes of the graph."""
+        """Redefine the causes, mechanisms and the structure of the graph,
+        called by ``self.generate()`` if never called.
+
+        Args:
+            verbose (bool): Verbosity
+        """
         for j in range(1, self.nodes):
             nb_parents = np.random.randint(0, min([self.parents_max, j])+1)
             for i in np.random.choice(range(0, j), nb_parents, replace=False):
@@ -88,7 +104,7 @@ class AcyclicGraphGenerator(object):
         except AssertionError:
             if verbose:
                 print("Regenerating, graph non valid...")
-            self.init_variables()
+            self.init_variables(verbose=verbose)
 
         # Mechanisms
         self.cfunctions = [self.mechanism(int(sum(self.adjacency_matrix[:, i])),
@@ -97,7 +113,15 @@ class AcyclicGraphGenerator(object):
                            else self.initial_generator for i in range(self.nodes)]
 
     def generate(self, rescale=True):
-        """Generate data from an FCM containing cycles."""
+        """Generate data from an FCM defined in ``self.init_variables()``.
+
+        Args:
+            rescale (bool): rescale the generated data (recommended)
+
+        Returns:
+            tuple: (networkx.DiGraph, pandas.DataFrame), respectively the
+            generated graph and data.
+        """
         if self.cfunctions is None:
             self.init_variables()
 
@@ -116,9 +140,15 @@ class AcyclicGraphGenerator(object):
 
     def to_csv(self, fname_radical, **kwargs):
         """
-        Save data to the csv format by default, in two separate files.
+        Save the generated data to the csv format by default,
+        in two separate files: data, and the adjacency matrix of the
+        corresponding graph.
 
-        Optional keyword arguments can be passed to pandas.
+        Args:
+            fname_radical (str): radical of the file names. Completed by
+               ``_data.csv`` for the data file and ``_target.csv`` for the
+               adjacency matrix of the generated graph.
+            \**kwargs: Optional keyword arguments can be passed to pandas.
         """
         if self.data is not None:
             self.data.to_csv(fname_radical+'_data.csv', index=False, **kwargs)

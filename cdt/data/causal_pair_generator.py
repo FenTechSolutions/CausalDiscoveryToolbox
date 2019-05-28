@@ -41,17 +41,21 @@ from ..utils.Settings import SETTINGS
 
 
 class CausalPairGenerator(object):
-    """Generates Bivariate Causal Distributions."""
+    """Generates Bivariate Causal Distributions.
+
+    Args:
+        causal_mechanism (str): currently implemented mechanisms:
+            ['linear', 'polynomial', 'sigmoid_add',
+            'sigmoid_mix', 'gp_add', 'gp_mix'].
+        noise (str or function): type of noise to use in the generative process
+            ('normal', 'uniform' or a custom noise function).
+        noise_coeff (float): Proportion of noise in the mechanisms.
+        initial_variable_generator (function): Function used to init variables
+            of the graph, defaults to a Gaussian Mixture model.
+    """
 
     def __init__(self, causal_mechanism, noise=normal_noise,
                  noise_coeff=.4, initial_variable_generator=gmm_cause):
-        """Generate an acyclic graph, given a causal mechanism.
-
-        :param initial_variable_generator: init variables of the graph
-        :param causal_mechanism: generating causes in the graph to
-            choose between: ['linear', 'polynomial', 'sigmoid_add',
-            'sigmoid_mix', 'gp_add', 'gp_mix']
-        """
         super(CausalPairGenerator, self).__init__()
         self.mechanism = {'linear': LinearMechanism,
                           'polynomial': Polynomial_Mechanism,
@@ -66,8 +70,20 @@ class CausalPairGenerator(object):
         self.initial_generator = initial_variable_generator
 
     def generate(self, npairs, npoints=500, rescale=True, njobs=None):
-        """Generate data """
+        """Generate Causal pairs, such that one variable causes the other.
 
+        Args:
+            npairs (int): Number of pairs of variables to generate.
+            npoints (int): Number of data points to generate.
+            rescale (bool): Rescale the output with zero mean and unit variance.
+            njobs (int): Number of parallel jobs to execute. Defaults to
+                cdt.SETTINGS.NJOBS
+
+        Returns:
+            tuple: (pandas.DataFrame, pandas.DataFrame) data and corresponding
+            labels. The data is at the ``SampleID, a (numpy.ndarray) , b (numpy.ndarray))``
+            format.
+        """
         def generate_pair(npoints, label, rescale):
             root = self.initial_generator(npoints)[:, np.newaxis]
             cause = self.mechanism(1, npoints, self.noise,
