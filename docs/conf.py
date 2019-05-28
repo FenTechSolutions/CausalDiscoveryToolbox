@@ -26,10 +26,10 @@ copyright = '2018, Diviyan Kalainathan, Olivier Goudet'
 author = 'Diviyan Kalainathan, Olivier Goudet'
 
 # The short X.Y version
-version = '0.4'
+# version = '0.4'
 # The full version, including alpha/beta/rc tags
 release = '0.4.4'
-
+version = release
 
 # -- General configuration ---------------------------------------------------
 

@@ -5,9 +5,9 @@
 Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
 [![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
+[![Dev Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=dev)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
-[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
-[![Python.pm](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200)](#)
+[![Hex.pm](https://img.shields.io/aur/license/pac.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
 [![version](https://img.shields.io/badge/version-0.4.4-yellow.svg?maxAge=259200)](#)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
@@ -20,7 +20,7 @@ pip install cdt
 ```
 
 ## Open-source project
-The package is open-source and under the MIT license, available at : [https://github.com/diviyan-kalainathan/causaldiscoverytoolbox](https://github.com/diviyan-kalainathan/causaldiscoverytoolbox)
+The package is open-source and under the MIT license, the source code is available at : [https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox](https://github.com/diviyan-kalainathan/causaldiscoverytoolbox)
 
 When using this package, please cite: [Kalainathan, D., & Goudet, O. (2019). Causal Discovery Toolbox: Uncover causal relationships in Python. arXiv preprint arXiv:1903.02278.](https://arxiv.org/abs/1903.02278)
 

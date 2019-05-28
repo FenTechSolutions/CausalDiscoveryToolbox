@@ -23,3 +23,6 @@
  font-weight:normal;
  color: #1cb39a;
 }
+.rst-content dl:not(.docutils) dt {
+    color: #189b85;
+}
