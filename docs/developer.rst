@@ -104,6 +104,16 @@ built and updated online by the Continuous Integration Tool at each push on the
 When writing your docstrings, please use the Google Style format:
 https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
+Your docstrings must include:
+
+- A presentation of the functionality
+
+- A detailed description or the arguments and returns
+
+- A scientific source in ``..note::`` if applicable
+
+- A short example
+
 Testing
 =======
 The package is thouroughly tested using ``pytest`` and ``codecov`` for code

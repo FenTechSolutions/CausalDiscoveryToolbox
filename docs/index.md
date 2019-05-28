@@ -1,3 +1,5 @@
+![](banner.png)
+
 # Causal Discovery Toolbox Documentation
 
 Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
@@ -170,6 +172,7 @@ The whole package revolves around using the **DiGraph** and **Graph** classes fr
 .. toctree::
    :maxdepth: 1 
    
+   tutorial
    causality
    independence
    data
