@@ -30,7 +30,7 @@ jobs:
       - docker pull divkal/cdt-env-base:19.04
       - docker build --build-arg python=3.6 -t divkal/cdt-test .
       - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-            docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report --cov=./cdt && codecov --token $CODECOV_TOKEN';
+            docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN';
             else docker run --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
         fi
     - stage: build docker image
@@ -44,7 +44,7 @@ jobs:
     - stage: test
       if: (branch = master) AND (fork = false)
       name: "Test and bumpversion"
-      script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report --cov=./cdt && codecov --token $CODECOV_TOKEN'
+      script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN'
       after_success:
         - git config --global user.email "travis-bumpversion@example.com"
         - git config --global user.name "Travis CI Bumpversion"
