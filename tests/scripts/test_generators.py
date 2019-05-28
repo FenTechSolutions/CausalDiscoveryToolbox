@@ -34,12 +34,14 @@ def test_causes():
 
 
 def test_noises():
-        for noise in ['normal', 'uniform']:
+        for noise in ['gaussian', 'uniform']:
             agg, data = AcyclicGraphGenerator("linear", npoints=200, nodes=10, parents_max=3, noise=noise).generate()
             assert type(agg) == nx.DiGraph
             assert nx.is_directed_acyclic_graph(agg)
 
 
 if __name__ == "__main__":
+    test_acyclic_generators()
+    test_causal_pairs()
     test_causes()
     test_noises()

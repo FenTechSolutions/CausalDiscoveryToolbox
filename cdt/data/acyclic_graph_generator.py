@@ -48,7 +48,7 @@ class AcyclicGraphGenerator(object):
             ['linear', 'polynomial', 'sigmoid_add',
             'sigmoid_mix', 'gp_add', 'gp_mix'].
         noise (str or function): type of noise to use in the generative process
-            ('normal', 'uniform' or a custom noise function).
+            ('gaussian', 'uniform' or a custom noise function).
         noise_coeff (float): Proportion of noise in the mechanisms.
         initial_variable_generator (function): Function used to init variables
             of the graph, defaults to a Gaussian Mixture model.
@@ -57,7 +57,7 @@ class AcyclicGraphGenerator(object):
         parents_max (int): Maximum number of parents of a node.
     """
 
-    def __init__(self, causal_mechanism, noise='normal',
+    def __init__(self, causal_mechanism, noise='gaussian',
                  noise_coeff=.4,
                  initial_variable_generator=gmm_cause,
                  npoints=500, nodes=20, parents_max=5):
@@ -74,7 +74,7 @@ class AcyclicGraphGenerator(object):
         self.nodes = nodes
         self.npoints = npoints
         try:
-            self.noise = {'normal': normal_noise,
+            self.noise = {'gaussian': normal_noise,
                           'uniform': uniform_noise}[noise]
         except KeyError:
             self.noise = noise
