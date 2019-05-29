@@ -85,12 +85,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
@@ -186,13 +185,14 @@
 <span class="sd">.. SOFTWARE.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span><span class="p">,</span> <span class="n">TTestCriterion</span>
-<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">trange</span>
 <span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="k">import</span> <span class="n">Variable</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">PairwiseModel</span>
+<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span><span class="p">,</span> <span class="n">TTestCriterion</span>
+<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
 
 
 <span class="k">class</span> <span class="nc">GNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -213,7 +213,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span>
             <span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">MMDloss</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">MMDloss</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -228,14 +228,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">normal_</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run the GNN on a pair x,y of FloatTensor data.&quot;&quot;&quot;</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
         <span class="n">running_loss</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">teloss</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">):</span>
+        <span class="n">pbar</span> <span class="o">=</span> <span class="n">trange</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
             <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -248,18 +249,17 @@
                 <span class="n">teloss</span> <span class="o">+=</span> <span class="n">running_loss</span>
 
             <span class="c1"># print statistics</span>
-            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">300</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Idx:</span><span class="si">{}</span><span class="s1">; epoch:</span><span class="si">{}</span><span class="s1">; score:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span>
-                      <span class="nb">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">running_loss</span><span class="o">/</span><span class="mi">300</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">300</span><span class="p">:</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">running_loss</span><span class="o">/</span><span class="mi">300</span><span class="p">)</span>
                 <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="k">return</span> <span class="n">teloss</span> <span class="o">/</span> <span class="n">test_epochs</span>
-    
+
     <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="s2">&quot;reset_parameters&quot;</span><span class="p">):</span>
                 <span class="n">layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
-        
+
 
 <span class="k">def</span> <span class="nf">GNN_instance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run an instance of GNN, testing causal direction.</span>
@@ -287,12 +287,26 @@
 <div class="viewcode-block" id="GNN"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.GNN">[docs]</a><span class="k">class</span> <span class="nc">GNN</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Shallow Generative Neural networks.</span>
 
-<span class="sd">    Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural network</span>
-<span class="sd">    and a MMD loss. The causal direction is considered as the &quot;best-fit&quot; between the two directions</span>
+<span class="sd">    Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural</span>
+<span class="sd">    network and a MMD loss. The causal direction is considered as the &quot;best-fit&quot;</span>
+<span class="sd">    between the two causal directions.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nh (int): number of hidden units in the neural network</span>
 <span class="sd">        lr (float): learning rate of the optimizer</span>
+<span class="sd">        nruns (int): number of runs to execute per batch</span>
+<span class="sd">           (before testing for significance with t-test).</span>
+<span class="sd">        njobs (int): number of runs to execute in parallel.</span>
+<span class="sd">           (defaults to ``cdt.SETTINGS.NJOBS``)</span>
+<span class="sd">        gpus (bool): Number of available gpus</span>
+<span class="sd">           (defaults to ``cdt.SETTINGS.GPU``)</span>
+<span class="sd">        idx (int): (optional) index of the pair, for printing purposes</span>
+<span class="sd">        verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)</span>
+<span class="sd">        ttest_threshold (float): threshold to stop the boostraps before</span>
+<span class="sd">           ``nb_max_runs`` if the difference is significant</span>
+<span class="sd">        nb_max_runs (int): Max number of bootstraps</span>
+<span class="sd">        train_epochs (int): Number of epochs used for training</span>
+<span class="sd">        test_epochs (int): Number of epochs used for evaluation</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref : Learning Functional Causal Models with Generative Neural Networks</span>
@@ -301,59 +315,63 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ttest_threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">nb_max_runs</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpus</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nh</span> <span class="o">=</span> <span class="n">nh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span> <span class="o">=</span> <span class="n">nruns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_max_runs</span> <span class="o">=</span> <span class="n">nb_max_runs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span> <span class="o">=</span> <span class="n">train_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span> <span class="o">=</span> <span class="n">test_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ttest_threshold</span> <span class="o">=</span> <span class="n">ttest_threshold</span>
 
-<div class="viewcode-block" id="GNN.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.GNN.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">nb_runs</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">nb_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                      <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ttest_threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-                      <span class="n">nb_max_runs</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<div class="viewcode-block" id="GNN.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.GNN.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run multiple times GNN to estimate the causal direction.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            a (np.ndarray): Variable 1</span>
 <span class="sd">            b (np.ndarray): Variable 2</span>
-<span class="sd">            nb_runs (int): number of runs to execute per batch (before testing for significance with t-test).</span>
-<span class="sd">            nb_jobs (int): number of runs to execute in parallel. (Initialized with ``cdt.SETTINGS.NB_JOBS``)</span>
-<span class="sd">            gpu (bool): use gpu (Initialized with ``cdt.SETTINGS.GPU``)</span>
-<span class="sd">            idx (int): (optional) index of the pair, for printing purposes</span>
-<span class="sd">            verbose (bool): verbosity (Initialized with ``cdt.SETTINGS.verbose``)</span>
-<span class="sd">            ttest_threshold (float): threshold to stop the boostraps before ``nb_max_runs`` if the difference is significant</span>
-<span class="sd">            nb_max_runs (int): Max number of bootstraps</span>
-<span class="sd">            train_epochs (int): Number of epochs during which the model is going to be trained</span>
-<span class="sd">            test_epochs (int): Number of epochs during which the model is going to be tested</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Causal score of the pair (Value : 1 if a-&gt;b and -1 if b-&gt;a)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">Nb_jobs</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">gpu</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">((</span><span class="s1">&#39;nb_jobs&#39;</span><span class="p">,</span> <span class="n">nb_jobs</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span> <span class="n">gpu</span><span class="p">))</span>
+
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">b</span><span class="o">.</span><span class="n">ravel</span><span class="p">()],</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">ttest_criterion</span> <span class="o">=</span> <span class="n">TTestCriterion</span><span class="p">(</span>
-            <span class="n">max_iter</span><span class="o">=</span><span class="n">nb_max_runs</span><span class="p">,</span> <span class="n">runs_per_iter</span><span class="o">=</span><span class="n">nb_runs</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">ttest_threshold</span><span class="p">)</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_max_runs</span><span class="p">,</span> <span class="n">runs_per_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ttest_threshold</span><span class="p">)</span>
 
         <span class="n">AB</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">BA</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">while</span> <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">AB</span><span class="p">,</span> <span class="n">BA</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">nb_jobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">result_pair</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">nb_jobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">GNN_instance</span><span class="p">)(</span>
-                    <span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run</span> <span class="o">%</span> <span class="n">gpu</span><span class="p">)</span> <span class="k">if</span> <span class="n">gpu</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
-                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="n">train_epochs</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="n">test_epochs</span><span class="p">)</span> <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span> <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span> <span class="o">+</span> <span class="n">nb_runs</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">result_pair</span> <span class="o">=</span> <span class="n">parallel_run</span><span class="p">(</span><span class="n">GNN_instance</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span>
+                                           <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                           <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
+                                           <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
+                                           <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">result_pair</span> <span class="o">=</span> <span class="p">[</span><span class="n">GNN_instance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
-                                            <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda:0&#39;</span> <span class="k">if</span> <span class="n">gpu</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
-                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-                                            <span class="n">train_epochs</span><span class="o">=</span><span class="n">train_epochs</span><span class="p">,</span>
-                                            <span class="n">test_epochs</span><span class="o">=</span><span class="n">test_epochs</span><span class="p">)</span>
-                               <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span> <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span> <span class="o">+</span> <span class="n">nb_runs</span><span class="p">)]</span>
+                <span class="n">result_pair</span> <span class="o">=</span> <span class="p">[</span><span class="n">GNN_instance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">default_device</span><span class="p">,</span>
+                                            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                            <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
+                                            <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
+                                                <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span> <span class="o">+</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)]</span>
             <span class="n">AB</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
             <span class="n">BA</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P-value after </span><span class="si">{}</span><span class="s2"> runs : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
-                                                      <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">p_value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> P-value after </span><span class="si">{}</span><span class="s2"> runs : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span>
+                                                         <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
+                                                         <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">p_value</span><span class="p">))</span>
 
         <span class="n">score_AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">AB</span><span class="p">)</span>
         <span class="n">score_BA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">BA</span><span class="p">)</span>

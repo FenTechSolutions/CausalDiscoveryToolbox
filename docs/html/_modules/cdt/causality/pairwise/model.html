@@ -85,12 +85,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
@@ -272,7 +271,7 @@
                     <span class="n">printout</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pred</span></div>
 
-<div class="viewcode-block" id="PairwiseModel.orient_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.model.PairwiseModel.orient_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">nb_runs</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">printout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PairwiseModel.orient_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.model.PairwiseModel.orient_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">printout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Orient an undirected graph using the pairwise method defined by the subclass.</span>
 
 <span class="sd">        The pairwise method is ran on every undirected edge.</span>
@@ -280,7 +279,6 @@
 <span class="sd">        Args:</span>
 <span class="sd">            df_data (pandas.DataFrame): Data</span>
 <span class="sd">            umg (networkx.Graph): Graph to orient</span>
-<span class="sd">            nb_runs (int): number of times to rerun for each pair (bootstrap)</span>
 <span class="sd">            printout (str): (optional) Path to file where to save temporary results</span>
 
 <span class="sd">        Returns:</span>
@@ -311,8 +309,9 @@
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">edges</span><span class="p">):</span>
             <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span>
-                <span class="n">df_data</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">df_data</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
-                <span class="n">nb_runs</span><span class="o">=</span><span class="n">nb_runs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">df_data</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                <span class="n">df_data</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">weight</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># a causes b</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>

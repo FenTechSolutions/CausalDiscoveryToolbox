@@ -85,12 +85,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../generators.html">cdt.generators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
@@ -213,7 +212,7 @@
 <span class="sd">        selmethod (str): Method used for variable selection.</span>
 <span class="sd">        pruning (bool): Perform an initial pruning step.</span>
 <span class="sd">        prunmethod (str): Method used for pruning.</span>
-<span class="sd">        nb_jobs (int): Number of jobs to run in parallel.</span>
+<span class="sd">        njobs (int): Number of jobs to run in parallel.</span>
 <span class="sd">        verbose (bool): Sets the verbosity of the output.</span>
 
 <span class="sd">    Available scores:</span>
@@ -234,7 +233,7 @@
 <span class="sd">       + SELMETHOD: &#39;selGamBoost&#39;</span>
 <span class="sd">       + PRUNING: &#39;TRUE&#39;</span>
 <span class="sd">       + PRUNMETHOD: &#39;selGam&#39;</span>
-<span class="sd">       + NJOBS: str(SETTINGS.NB_JOBS)</span>
+<span class="sd">       + NJOBS: str(SETTINGS.NJOBS)</span>
 <span class="sd">       + CUTOFF: str(0.001)</span>
 <span class="sd">       + VERBOSE: &#39;FALSE&#39;</span>
 <span class="sd">       + OUTPUT: &#39;/tmp/cdt_CAM/result.csv&#39;</span>
@@ -252,7 +251,7 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">variablesel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">selmethod</span><span class="o">=</span><span class="s1">&#39;gamboost&#39;</span><span class="p">,</span> <span class="n">pruning</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">prunmethod</span><span class="o">=</span><span class="s1">&#39;gam&#39;</span><span class="p">,</span>
-                 <span class="n">nb_jobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model and its available arguments.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">CAM</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;R Package CAM is not available.&quot;</span><span class="p">)</span>
@@ -272,7 +271,7 @@
                           <span class="s1">&#39;</span><span class="si">{SELMETHOD}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;selGamBoost&#39;</span><span class="p">,</span>
                           <span class="s1">&#39;</span><span class="si">{PRUNING}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">,</span>
                           <span class="s1">&#39;</span><span class="si">{PRUNMETHOD}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;selGam&#39;</span><span class="p">,</span>
-                          <span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">NB_JOBS</span><span class="p">),</span>
+                          <span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">NJOBS</span><span class="p">),</span>
                           <span class="s1">&#39;</span><span class="si">{CUTOFF}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mf">0.001</span><span class="p">),</span>
                           <span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
                           <span class="s1">&#39;</span><span class="si">{OUTPUT}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;result.csv&#39;</span><span class="p">}</span>
@@ -282,7 +281,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">selmethod</span> <span class="o">=</span> <span class="n">selmethod</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pruning</span> <span class="o">=</span> <span class="n">pruning</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prunmethod</span> <span class="o">=</span> <span class="n">prunmethod</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nb_jobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">nb_jobs</span><span class="o">=</span><span class="n">nb_jobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span>
@@ -311,7 +310,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{SELMETHOD}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_selection</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selmethod</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{PRUNING}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruning</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{PRUNMETHOD}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_selection</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prunmethod</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_jobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{VERBOSE}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_cam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
 
