@@ -156,14 +156,22 @@ class BNlearnAlgorithm(GraphModel):
         self.arguments['{ALPHA}'] = str(self.alpha)
 
         whitelist = DataFrame(list(nx.edges(graph)), columns=["from", "to"])
-        blacklist = DataFrame(list(nx.edges(nx.DiGraph(DataFrame(-nx.adj_matrix(graph, weight=None).to_dense() + 1,
+        blacklist = DataFrame(list(nx.edges(nx.DiGraph(DataFrame(-nx.adj_matrix(graph, weight=None).todense() + 1,
                                                                  columns=list(graph.nodes()),
                                                                  index=list(graph.nodes()))))), columns=["from", "to"])
         results = self._run_bnlearn(data, whitelist=whitelist,
                                    blacklist=blacklist, verbose=self.verbose)
+        try:
+            return nx.relabel_nodes(nx.DiGraph(results),
+                                    {idx: i for idx, i in enumerate(data.columns)})
 
-        return nx.relabel_nodes(nx.DiGraph(results),
-                                {idx: i for idx, i in enumerate(data.columns)})
+        except nx.exception.NetworkXError as e:
+            if results.shape[1] == 2:
+                output = nx.DiGraph()
+                output.add_edges_from(results)
+                return output
+            else:
+                raise e
 
     def orient_directed_graph(self, data, graph):
         """Run the algorithm on a directed_graph.
