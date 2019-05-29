@@ -27,6 +27,7 @@ import os
 import requests
 import zipfile
 import io
+from numpy import random
 from ..utils.io import read_causal_pairs, read_list_edges
 
 
@@ -79,11 +80,21 @@ def load_sachs():
             read_list_edges('{}/resources/cyto_target.csv'.format(dirname)))
 
 
-def load_tuebingen():
+def load_tuebingen(shuffle=True):
     dirname = os.path.dirname(os.path.realpath(__file__))
 
-    return (read_causal_pairs('{}/resources/Tuebingen_pairs.csv'.format(dirname), scale=False),
-            pd.read_csv('{}/resources/Tuebingen_targets.csv'.format(dirname)))
+    data = read_causal_pairs('{}/resources/Tuebingen_pairs.csv'.format(dirname), scale=False)
+    labels = pd.read_csv('{}/resources/Tuebingen_targets.csv'.format(dirname)).set_index('SampleID')
+
+    if shuffle:
+        for i in range(len(data)):
+            if random.choice([True, False]):
+                labels.iloc[i, 0] = -1
+                buffer = data.iloc[i, 0]
+                data.iloc[i, 0] = data.iloc[i, 1]
+                data.iloc[i, 1] = buffer
+
+    return data, labels
 
 
 def load_dream_multifactorial(num):
