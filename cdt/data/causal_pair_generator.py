@@ -46,7 +46,7 @@ class CausalPairGenerator(object):
     Args:
         causal_mechanism (str): currently implemented mechanisms:
             ['linear', 'polynomial', 'sigmoid_add',
-            'sigmoid_mix', 'gp_add', 'gp_mix'].
+            'sigmoid_mix', 'gp_add', 'gp_mix', 'nn'].
         noise (str or function): type of noise to use in the generative process
             ('normal', 'uniform' or a custom noise function).
         noise_coeff (float): Proportion of noise in the mechanisms.
@@ -63,7 +63,7 @@ class CausalPairGenerator(object):
                           'sigmoid_mix': SigmoidMix_Mechanism,
                           'gp_add': GaussianProcessAdd_Mechanism,
                           'gp_mix': GaussianProcessMix_Mechanism,
-                          'NN': NN_Mechanism}[causal_mechanism]
+                          'nn': NN_Mechanism}[causal_mechanism]
 
         self.noise = noise
         self.noise_coeff = noise_coeff

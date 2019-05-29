@@ -6,6 +6,8 @@ import networkx as nx
 from cdt import SETTINGS
 from cdt.causality.graph import (CAM, GS, GIES, IAMB, CCDr, GES,
                                  Fast_IAMB, PC, LiNGAM, SAM)
+from cdt.independence.stats import AdjMI
+
 
 data_graph = pd.read_csv('{}/../datasets/Example_graph_numdata.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, :5]
 
@@ -17,7 +19,32 @@ def test_graph():
                    PC, LiNGAM, CCDr, GES]:
         print(method)
         m = method()
-        assert isinstance(m.predict(data_graph), nx.DiGraph)
+        output1 = m.predict(data_graph)
+        assert isinstance(output1, nx.DiGraph)
+    return 0
+
+
+def test_directed():
+    for method in [GS, GIES,  IAMB, Fast_IAMB,
+                   PC, GES]:
+        print(method)
+        m = method()
+        output1 = m.predict(data_graph)
+        print(nx.adj_matrix(output1).todense())
+        output2 = m.predict(data_graph, output1)
+        assert isinstance(output2, nx.DiGraph)
+    return 0
+
+
+def test_undirected():
+    for method in [GS, GIES,  IAMB, Fast_IAMB,
+                   PC, GES]:
+        print(method)
+        s = AdjMI()
+        un = s.predict_undirected_graph(data_graph)
+        m = method()
+        output1 = m.predict(data_graph, un)
+        assert isinstance(output1, nx.DiGraph)
     return 0
 
 
@@ -28,5 +55,5 @@ def test_SAM():
 
 
 if __name__ == "__main__":
-    test_graph()
-    test_SAM()
+    test_directed()
+    test_undirected()

@@ -189,10 +189,13 @@ class CauseEffectEstimatorID(BaseEstimator):
         train_independence = X
         target_independence = np.array(y)
         target_independence[target_independence != 0] = 1
+        if all([i == 1 for i in target_independence]):
+            target_independence[-1] = 0
+        if all([i == 0 for i in target_independence]):
+            target_independence[-1] = 1
         weight_independence = np.ones(len(target_independence))
         weight_independence[target_independence==0] = sum(target_independence==1)/float(sum(target_independence==0))        
         try:
-            # print(target_independence)
             self.classifier_independence.fit(train_independence, target_independence, regressor__sample_weight=weight_independence)
         except TypeError:
             self.classifier_independence.fit(train_independence, target_independence)

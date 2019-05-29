@@ -243,11 +243,12 @@ def dagify_min_edge(g):
     Returns:
         networkx.DiGraph: DAG made out of the input graph.
     """
+    ncycles = len(list(nx.simple_cycles(g)))
     while not nx.is_directed_acyclic_graph(g):
         cycle = next(nx.simple_cycles(g))
-        scores = []
-        edges = []
-        for i, j in zip(cycle[:1], cycle[:1]):
+        edges = [(cycle[-1], cycle[0])]
+        scores = [(g[cycle[-1]][cycle[0]]['weight'])]
+        for i, j in zip(cycle[:-1], cycle[1:]):
             edges.append((i, j))
             scores.append(g[i][j]['weight'])
 
@@ -255,8 +256,9 @@ def dagify_min_edge(g):
         gc = deepcopy(g)
         gc.remove_edge(i, j)
         gc.add_edge(j, i)
-
-        if len(list(nx.simple_cycles(gc))) < len(list(nx.simple_cycles(g))):
+        ngc = len(list(nx.simple_cycles(gc)))
+        if ngc < ncycles:
             g.add_edge(j, i, weight=min(scores))
         g.remove_edge(i, j)
+        ncycles = ngc
     return g

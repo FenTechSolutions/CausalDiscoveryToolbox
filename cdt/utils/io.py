@@ -150,21 +150,21 @@ def read_list_edges(filename, directed=True, **kwargs):
     return graph
 
 
-class SimpleDataset(Dataset):
-    def __init__(self, data, device=None):
-        super(SimpleDataset, self).__init__()
-        self.data = data
-        if device is not None:
-            self.data = data.to(device)
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, index):
-        return self.data[index]
-
-    def to(self, device):
-        return SimpleDataset(self.data, device)
+# class SimpleDataset(Dataset):
+#     def __init__(self, data, device=None):
+#         super(SimpleDataset, self).__init__()
+#         self.data = data
+#         if device is not None:
+#             self.data = data.to(device)
+#
+#     def __len__(self):
+#         return len(self.data)
+#
+#     def __getitem__(self, index):
+#         return self.data[index]
+#
+#     def to(self, device):
+#         return SimpleDataset(self.data, device)
 
 
 class PairwiseDataset(Dataset):

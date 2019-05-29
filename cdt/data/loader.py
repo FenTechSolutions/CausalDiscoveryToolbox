@@ -31,7 +31,7 @@ from numpy import random
 from ..utils.io import read_causal_pairs, read_list_edges
 
 
-def load_dataset(name):
+def load_dataset(name, **kwargs):
     """Main function of this module, allows to easily import well-known causal
     datasets into python.
 
@@ -58,6 +58,9 @@ def load_dataset(name):
         name (str): Name of the dataset. currenly supported datasets:
            [`tuebingen`, `sachs`, `dream4-1`, `dream4-2`, `dream4-3`,
            `dream4-4`, `dream4-5`]
+        \**kwargs: Optional additional arguments for dataset loaders.
+           ``tuebingen`` dataset accepts the ``shuffle (bool)`` option to
+           shuffle the causal pairs and their according labels.
 
     Returns:
         tuple: (pandas.DataFrame, pandas.DataFrame or networkx.DiGraph) Standard
@@ -74,7 +77,7 @@ def load_dataset(name):
         raise ValueError("Unknown dataset name.")
 
 
-def load_sachs():
+def load_sachs(**kwargs):
     dirname = os.path.dirname(os.path.realpath(__file__))
     return (pd.read_csv('{}/resources/cyto_full_data.csv'.format(dirname)),
             read_list_edges('{}/resources/cyto_target.csv'.format(dirname)))
@@ -97,7 +100,7 @@ def load_tuebingen(shuffle=True):
     return data, labels
 
 
-def load_dream_multifactorial(num):
+def load_dream_multifactorial(num, **kwargs):
     idx = num
 
     def load_d():
