@@ -213,6 +213,6 @@ class NCC(PairwiseModel):
             dataset.append(m)
 
         dataset = [m.to(device) for m in dataset]
-        return pd.DataFrame((th.cat([self.model(m) for m, t in zip(dataset, trange(len(dataset)),
-                                                      disable=not verbose)]\
-                       , 0).data.cpu().numpy() -.5) * 2)
+        return pd.DataFrame((th.cat([self.model(m) for
+                                     m, t in zip(dataset, trange(len(dataset)))]\
+                                    , 0).data.cpu().numpy() -.5) * 2)

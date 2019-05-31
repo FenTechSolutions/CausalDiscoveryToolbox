@@ -129,14 +129,3 @@ class RCC(PairwiseModel):
         input_ = self.featurize_row(x, y).reshape((1, -1))
         return self.clf.predict(input_)
 
-    def predict_dataset(self, data, **kwargs):
-        """ Override of ``self.predict_dataset`` for better computational efficency.
-
-        Args:
-            x (pandas.DataFrame): a CEPC format Dataframe.
-            kwargs (dict): additional arguments for the algorithms
-
-        Returns:
-            pandas.DataFrame: a Dataframe with the predictions.
-        """
-        return self.predict_proba(data, **kwargs)
