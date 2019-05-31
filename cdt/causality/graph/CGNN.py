@@ -214,19 +214,6 @@ def hill_climbing(data, graph, **kwargs):
     return best_candidate
 
 
-def hill_climbing_with_removal():
-    raise NotImplementedError
-
-
-def exploratory_hill_climbing(data, graph, proba=0.1, decay=0.95, max_trials=20, **kwargs):
-    """Hill climbing with a bit more exploration."""
-    raise NotImplementedError
-
-
-def tabu_search():
-    raise NotImplementedError
-
-
 class CGNN(GraphModel):
     """Causal Generative Neural Netwoks : Generate the whole causal graph in a
     topological manner using neural networks and predict causal directions in
@@ -332,14 +319,14 @@ class CGNN(GraphModel):
                data on which causal discovery has to be performed.
             dag (nx.DiGraph): Graph that provides the initial solution,
                on which the CGNN algorithm will be applied.
-            alg (str): Exploration heuristic to use, among ["HC", "HCr",
-               "tabu", "EHC"]
+            alg (str): Exploration heuristic to use, only "HC" is supported for
+               now.
         Returns:
             networkx.DiGraph: Solution given by CGNN.
 
         """
-        alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
-                   'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
+        alg_dic = {'HC': hill_climbing}  # , 'HCr': hill_climbing_with_removal,
+        # 'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
         if not isinstance(data, th.utils.data.Dataset):
             data = MetaDataset(data)
 
@@ -358,8 +345,8 @@ class CGNN(GraphModel):
                discovery has to be performed.
             umg (nx.Graph): Graph that provides the skeleton, on which the GNN
                then the CGNN algorithm will be applied.
-            alg (str): Exploration heuristic to use, among ["HC", "HCr",
-               "tabu", "EHC"]
+            alg (str): Exploration heuristic to use, only "HC" is supported for
+               now.
         Returns:
             networkx.DiGraph: Solution given by CGNN.
 

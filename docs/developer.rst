@@ -167,3 +167,28 @@ Continuous integration (travis-ci) is enabled on this project, it allows for:
 5. Compile the new documentation and upload its website.
 
 All the tasks described above are defined in the ``.travis.yml`` file.
+
+R integration
+=============
+
+One of this project's main features is wrapping around R-libraries. In order to
+do it in the most efficient way, the `R` tasks are executed in a different process
+than the main `python` process.
+
+A `/tmp/` folder is used as buffer, and everything is executed with the
+subprocess library. Check out :ref:`cdt.utils.R` for more
+detailed information.
+
+Parallelization
+===============
+
+Many algorithms are computationally heavy, but parallelizable, as they include
+bootsrapped functions, mutltiple runs of a same computation.
+
+Therefore, using mutiprocessing allows to alleviate the required computation
+time. For CPU jobs, we use the ``joblib`` library, for its efficiency and ease
+of use. However, for GPU jobs, the multiprocessing interface was recoded,
+in order to account for available resources and a memory leak issue between
+`joblib` and `PyTorch`.
+
+Check out :ref:`cdt.utils.parallel` for more detailed information.

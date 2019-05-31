@@ -38,7 +38,6 @@ from multiprocessing import Manager
 from time import sleep
 import os
 from joblib import Parallel, delayed
-import signal
 from .Settings import SETTINGS
 
 
@@ -52,13 +51,6 @@ def worker_subprocess(function, devices, lockd, results, lockr,
                 except IndexError:
                     pass
             sleep(1)
-        # with lockp:
-        #     for pid in pids:
-        #         try:
-        #             os.kill(pid, signal.SIGKILL)
-        #             pids.remove(pid)
-        #         except ProcessLookupError:
-        #             pass
         output = function(*args, **kwargs, device=device, idx=idx)
         with lockd:
             devices.append(device)
@@ -69,6 +61,23 @@ def worker_subprocess(function, devices, lockd, results, lockr,
 
 
 def parallel_run(function, *args, nruns=None, njobs=None, gpus=None, **kwargs):
+    """ Mutiprocessed execution of a function with parameters, with GPU management.
+
+    This function is useful when the used wants to execute a bootstrap on a
+    function on GPU devices, as joblib does not include such feature.
+
+    Args:
+        function (function): Function to execute.
+        \*args: arguments going to be fed to the function.
+        nruns (int): Total number of executions of the function.
+        njobs (int): Number of parallel executions (defaults to ``cdt.SETTINGS.NJOBS``).
+        gpus (int): Number of GPU devices allocated to the job (defaults to ``cdt.SETTINGS.GPU``)
+        \**kwargs: Keyword arguments going to be fed to the function.
+
+    Returns:
+        list: concatenated list of outputs of executions. The order of elements
+        does not correspond to the initial order.
+    """
     njobs = SETTINGS.get_default(njobs=njobs)
     gpus = SETTINGS.get_default(gpu=gpus)
     if gpus == 0 and njobs > 1:
