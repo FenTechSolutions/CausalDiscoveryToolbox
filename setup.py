@@ -23,7 +23,7 @@ def setup_package():
           package_data={'': ['**/*.R', '**/*.csv']},
           install_requires=['numpy', 'scipy', 'scikit-learn',
                             'joblib', 'pandas', 'statsmodels',
-                            'networkx', 'skrebate', 'tqdm', 'GPUtil'],
+                            'networkx', 'skrebate', 'tqdm', 'GPUtil', 'requests'],
           include_package_data=True,
           author='Diviyan Kalainathan',
           author_email='diviyan.kalainathan@lri.fr',
