@@ -119,8 +119,8 @@ class AcyclicGraphGenerator(object):
             rescale (bool): rescale the generated data (recommended)
 
         Returns:
-            tuple: (networkx.DiGraph, pandas.DataFrame), respectively the
-            generated graph and data.
+            tuple: (pandas.DataFrame, networkx.DiGraph), respectively the
+            generated data and graph.
         """
         if self.cfunctions is None:
             self.init_variables()
@@ -136,7 +136,7 @@ class AcyclicGraphGenerator(object):
             if rescale:
                 self.data['V{}'.format(i)] = scale(self.data['V{}'.format(i)].values)
 
-        return self.g, self.data
+        return self.data, self.g
 
     def to_csv(self, fname_radical, **kwargs):
         """
