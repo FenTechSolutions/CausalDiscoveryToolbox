@@ -80,7 +80,7 @@ def load_dataset(name, **kwargs):
 def load_sachs(**kwargs):
     dirname = os.path.dirname(os.path.realpath(__file__))
     return (pd.read_csv('{}/resources/cyto_full_data.csv'.format(dirname)),
-            read_list_edges('{}/resources/cyto_target.csv'.format(dirname)))
+            read_list_edges('{}/resources/cyto_full_target.csv'.format(dirname)))
 
 
 def load_tuebingen(shuffle=True):
