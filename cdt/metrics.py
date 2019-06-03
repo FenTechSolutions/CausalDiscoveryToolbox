@@ -3,9 +3,9 @@ algorithm given a ground truth. All these metrics are in the form
 `metric(target, prediction)`, where any of those arguments are either numpy 
 matrixes that represent the adjacency matrix or `networkx.DiGraph` instances.
 
-.. warning:: in the case of heterogeneous types of arguments, special care has
-    to be given to the order of the nodes, as the type `networkx.DiGraph` does 
-    not retain node order.
+.. warning:: in the case of heterogeneous types of arguments ``target`` and
+    ``prediction``, special care has to be given to the order of the nodes,
+    as the type `networkx.DiGraph` does not retain node order.
 
 .. MIT License
 ..
@@ -35,7 +35,7 @@ import numpy as np
 import networkx as nx
 from shutil import rmtree
 from sklearn.metrics import auc, precision_recall_curve
-from .R import launch_R_script, RPackages
+from .utils.R import launch_R_script, RPackages
 
 
 def retrieve_adjacency_matrix(graph, order_nodes=None, weight=False):
