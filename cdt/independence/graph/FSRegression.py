@@ -59,10 +59,19 @@ class RFECVLinearSVR(FeatureSelectionModel):
 
         Returns:
             list: scores of each feature relatively to the target
+            
+        Example:
+            >>> from cdt.independence.graph import FSRegression
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = FSRegression.RFECVLinearSVR()
+            >>> output = obj.predict_features(df_features, df_target)
         """
         estimator = SVR(kernel='linear')
         selector = RFECV(estimator, step=1)
-        selector = selector.fit(df_features.values, df_target.values[:, 0])
+        selector = selector.fit(df_features.values, np.ravel(df_target.values))
 
         return selector.grid_scores_
 
@@ -85,8 +94,17 @@ class LinearSVRL2(FeatureSelectionModel):
 
         Returns:
             list: scores of each feature relatively to the target
+            
+        Example:
+            >>> from cdt.independence.graph import FSRegression
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = FSRegression.LinearSVRL2()
+            >>> output = obj.predict_features(df_features, df_target)
         """
-        lsvc = LinearSVR(C=C).fit(df_features.values, df_target.values)
+        lsvc = LinearSVR(C=C).fit(df_features.values, np.ravel(df_target.values))
 
         return np.abs(lsvc.coef_)
 
@@ -108,6 +126,15 @@ class DecisionTreeRegression(FeatureSelectionModel):
 
         Returns:
             list: scores of each feature relatively to the target
+            
+        Example:
+            >>> from cdt.independence.graph import FSRegression
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = FSRegression.DecisionTreeRegression()
+            >>> output = obj.predict_features(df_features, df_target)
         """
         X = df_features.values
         y = df_target.values
@@ -133,6 +160,15 @@ class ARD(FeatureSelectionModel):
 
         Returns:
             list: scores of each feature relatively to the target
+            
+        Example:
+            >>> from cdt.independence.graph import FSRegression
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = FSRegression.ARD()
+            >>> output = obj.predict_features(df_features, df_target)
         """
         X = df_features.values
         y = df_target.values
@@ -158,9 +194,18 @@ class RRelief(FeatureSelectionModel):
 
         Returns:
             list: scores of each feature relatively to the target
+        
+        Example:
+            >>> from cdt.independence.graph import FSRegression
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = FSRegression.RRelief()
+            >>> output = obj.predict_features(df_features, df_target)
         """
         X = df_features.values
-        y = df_target.values[:, 0]
+        y = np.ravel(df_target.values)
         rr = ReliefF()
         rr.fit(X, y)
 

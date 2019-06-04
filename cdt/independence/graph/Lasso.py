@@ -55,6 +55,12 @@ class Glasso(GraphSkeletonModel):
 
         Returns:
             networkx.Graph: Graph skeleton
+        
+        Example:
+            >>> from cdt.independence.graph import Lasso
+            >>> df = pd.DataFrame(np.random.randint(0,100,size=(100, 4)), columns=list('ABCD'))
+            >>> obj = Lasso.Glasso()
+            >>> output = obj.predict(df)
         """
         edge_model = GraphLasso(alpha=alpha, max_iter=max_iter)
         edge_model.fit(data.values)
@@ -82,6 +88,15 @@ class HSICLasso(FeatureSelectionModel):
 
         .. warning::
            Not implemented. Implemented by the algorithms.
+        
+        Example:
+            >>> from cdt.independence.graph import Lasso
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = Lasso.HSICLasso()
+            >>> output = obj.predict_features(df_features, df_target)
         """
 
         y = np.transpose(df_target.values)

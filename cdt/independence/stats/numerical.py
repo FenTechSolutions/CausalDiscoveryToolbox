@@ -123,6 +123,13 @@ class PearsonCorrelation(IndependenceModel):
 
         Returns:
             float: test statistic
+            
+        Example:
+            >>> from cdt.independence.stats import numerical
+            >>> obj = numerical.PearsonCorrelation()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
         """
         return sp.pearsonr(a, b)[0]
 
@@ -144,6 +151,13 @@ class SpearmanCorrelation(IndependenceModel):
 
         Returns:
             float: test statistic
+        
+        Example:
+            >>> from cdt.independence.stats import numerical
+            >>> obj = numerical.SpearmanCorrelation()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
         """
         return sp.spearmanr(a, b)[0]
 
@@ -162,6 +176,13 @@ class MIRegression(IndependenceModel):
 
         Returns:
             float: test statistic
+            
+        Example:
+            >>> from cdt.independence.stats import numerical
+            >>> obj = numerical.MIRegression()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
         """
         a = np.array(a).reshape((-1, 1))
         b = np.array(b).reshape((-1, 1))
@@ -182,6 +203,13 @@ class KendallTau(IndependenceModel):
 
         Returns:
             float: test statistic
+            
+        Example:
+            >>> from cdt.independence.stats import numerical
+            >>> obj = numerical.KendallTau()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
         """
         a = np.array(a).reshape((-1, 1))
         b = np.array(b).reshape((-1, 1))
@@ -204,6 +232,13 @@ class NormalizedHSIC(IndependenceModel):
 
         Returns:
             float: test statistic
+        
+        Example:
+            >>> from cdt.independence.stats import numerical
+            >>> obj = numerical.NormalizedHSIC()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
         """
         a = (a - np.mean(a)) / np.std(a)
         b = (b - np.mean(b)) / np.std(b)

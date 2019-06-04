@@ -165,6 +165,15 @@ class FSGNN(FeatureSelectionModel):
 
         Returns:
             list: scores of each feature relatively to the target
+            
+        Example:
+            >>> from cdt.independence.graph import FSGNN
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = FSGNN()
+            >>> output = obj.predict_features(df_features, df_target)
 
         """
         device = SETTINGS.get_default(device=device)

@@ -68,6 +68,13 @@ class AdjMI(IndependenceModel):
         :type b: array-like, numerical data
         :return: dependency statistic (1=Highly dependent, 0=Not dependent)
         :rtype: float
+        
+        Example:
+            >>> from cdt.independence.stats import all_types
+            >>> obj = all_types.AdjMI()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
         """
         binning_alg = kwargs.get('bins', 'fd')
         return metrics.adjusted_mutual_info_score(bin_variable(a, bins=binning_alg),
@@ -109,6 +116,13 @@ class NormMI(IndependenceModel):
         :type b: array-like, numerical data
         :return: dependency statistic (1=Highly dependent, 0=Not dependent)
         :rtype: float
+        
+        Example:
+            >>> from cdt.independence.stats import all_types
+            >>> obj = all_types.NormMI()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
         """
         binning_alg = kwargs.get('bins', 'fd')
         return metrics.adjusted_mutual_info_score(bin_variable(a, bins=binning_alg),
