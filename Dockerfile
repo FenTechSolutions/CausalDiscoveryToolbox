@@ -8,7 +8,7 @@ ARG spy
 RUN mkdir -p /CDT
 COPY . /CDT
 RUN cd /CDT && \
-    apt-get update && \
+    apt-get update --allow-unauthenticated && \
     apt-get -q install "python${python}" "python${python}-dev" python3-pip python3-setuptools -y && \
     rm /usr/bin/python3 && ln -s /usr/bin/python${python} /usr/bin/python3 && \
     python3 -m pip install https://download.pytorch.org/whl/cpu/torch-1.1.0-cp"${spy}"-cp"${spy}"m-linux_x86_64.whl && \
