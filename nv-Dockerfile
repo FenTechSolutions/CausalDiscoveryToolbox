@@ -7,7 +7,7 @@ ARG python
 RUN mkdir -p /CDT
 COPY . /CDT
 RUN cd /CDT && \
-    apt-get update && \
+    apt-get update --allow-unauthenticated && \
     python -m pip install -r requirements.txt && \
     python -m pip install pytest pytest-cov && \
     python -m pip install codecov && \
