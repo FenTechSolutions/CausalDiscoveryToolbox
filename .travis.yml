@@ -60,10 +60,10 @@ jobs:
         - git config --global push.default simple
         - pip install bumpversion
         - if [[ $TRAVIS_COMMIT_MESSAGE == *"[REL]"* ]];
-              then bumpversion --current-version $VERSION minor setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
+              then bumpversion --current-version $VERSION minor setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
               elif [[ $TRAVIS_COMMIT_MESSAGE == *"[MREL]"* ]];
-              then bumpversion --current-version $VERSION major setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
-              else bumpversion --current-version $VERSION patch setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
+              then bumpversion --current-version $VERSION major setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
+              else bumpversion --current-version $VERSION patch setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
           fi
         - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
         - git add -u

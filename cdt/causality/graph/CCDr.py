@@ -55,6 +55,11 @@ class CCDr(GraphModel):
 
     .. warning::
        This implementation of CCDr does not support starting with a graph.
+
+    .. note::
+       ref: Aragam, B., & Zhou, Q. (2015). Concave penalized estimation of
+       sparse Gaussian Bayesian networks. Journal of Machine Learning Research,
+       16, 2273-2328.
     """
 
     def __init__(self, verbose=None):
