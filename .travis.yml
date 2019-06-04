@@ -19,7 +19,9 @@ env:
     - VERSION=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
 
 before_install:
-  openssl aes-256-cbc -K $encrypted_7b48abc79884_key -iv $encrypted_7b48abc79884_iv -in rel_travis.enc -out rel_travis -d
+  if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
+         openssl aes-256-cbc -K $encrypted_7b48abc79884_key -iv $encrypted_7b48abc79884_iv -in rel_travis.enc -out rel_travis -d;
+  fi
 install: true
 jobs:
   include:
