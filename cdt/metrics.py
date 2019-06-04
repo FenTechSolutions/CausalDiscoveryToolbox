@@ -203,7 +203,7 @@ def SID(target, pred):
     try:
         np.savetxt('/tmp/cdt_SID/target.csv', true_labels, delimiter=',')
         np.savetxt('/tmp/cdt_SID/pred.csv', predictions, delimiter=',')
-        sid_score = launch_R_script("{}/R_templates/sid.R".format(os.path.dirname(os.path.realpath(__file__))),
+        sid_score = launch_R_script("{}/utils/R_templates/sid.R".format(os.path.dirname(os.path.realpath(__file__))),
                                     {"{target}": '/tmp/cdt_SID/target.csv',
                                      "{prediction}": '/tmp/cdt_SID/pred.csv',
                                      "{result}": '/tmp/cdt_SID/result.csv'},

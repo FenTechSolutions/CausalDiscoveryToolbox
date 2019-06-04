@@ -14,7 +14,7 @@ mechanisms = ['linear', 'polynomial', 'sigmoid_add',
 def test_acyclic_generators():
     for mechanism in mechanisms:
         g = AcyclicGraphGenerator(mechanism, npoints=200, nodes=10, parents_max=3)
-        agg, data = g.generate()
+        data, agg = g.generate()
         g.to_csv('test')
         # cleanup
         os.remove('test_data.csv')
@@ -39,7 +39,7 @@ def test_causal_pairs():
 
 def test_acyclic_generators_bigg():
     for mechanism in mechanisms:
-        agg, data = AcyclicGraphGenerator(mechanism, npoints=500, nodes=100, parents_max=6).generate()
+        data, agg = AcyclicGraphGenerator(mechanism, npoints=500, nodes=100, parents_max=6).generate()
         assert type(agg) == nx.DiGraph
         assert nx.is_directed_acyclic_graph(agg)
 
@@ -52,14 +52,14 @@ def test_acyclic_generators_bigg():
 
 def test_causes():
     for cause in [gmm_cause, gaussian_cause]:
-            agg, data = AcyclicGraphGenerator("linear", npoints=200, nodes=10, parents_max=3, initial_variable_generator=cause).generate()
+            data, agg = AcyclicGraphGenerator("linear", npoints=200, nodes=10, parents_max=3, initial_variable_generator=cause).generate()
             assert type(agg) == nx.DiGraph
             assert nx.is_directed_acyclic_graph(agg)
 
 
 def test_noises():
         for noise in ['gaussian', 'uniform']:
-            agg, data = AcyclicGraphGenerator("linear", npoints=200, nodes=10, parents_max=3, noise=noise).generate()
+            data, agg = AcyclicGraphGenerator("linear", npoints=200, nodes=10, parents_max=3, noise=noise).generate()
             assert type(agg) == nx.DiGraph
             assert nx.is_directed_acyclic_graph(agg)
 
