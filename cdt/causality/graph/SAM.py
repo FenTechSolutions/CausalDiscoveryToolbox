@@ -416,9 +416,9 @@ class SAM(GraphModel):
         >>> plt.show()
     """
 
-    def __init__(self, lr=0.1, dlr=0.1, l1=0.1, nh=200, dnh=200,
+    def __init__(self, lr=0.1, dlr=0.1, l1=0.1, nh=50, dnh=200,
                  train_epochs=1000, test_epochs=1000, batch_size=-1,
-                 nruns=6, njobs=None, gpus=0, verbose=None):
+                 nruns=6, njobs=None, gpus=None, verbose=None):
         """Init and parametrize the SAM model.
 
         """

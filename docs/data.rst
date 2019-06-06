@@ -4,17 +4,17 @@ cdt.data
 .. automodule:: cdt.data
 .. currentmodule:: cdt.data
 
-:hidden:`CausalPairGenerator`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CausalPairGenerator
+---------------------
 .. autoclass:: CausalPairGenerator
    :members:
 
 
-:hidden:`AcyclicGraphGenerator`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+AcyclicGraphGenerator
+-----------------------
 .. autoclass:: AcyclicGraphGenerator
    :members:
 
-:hidden:`load_dataset`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+load_dataset
+---------------------
 .. autofunction:: load_dataset

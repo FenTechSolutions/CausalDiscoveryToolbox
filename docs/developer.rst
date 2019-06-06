@@ -173,7 +173,7 @@ R integration
 
 One of this project's main features is wrapping around R-libraries. In order to
 do it in the most efficient way, the `R` tasks are executed in a different process
-than the main `python` process.
+than the main `python` process thus freeing the computation from the GIL.
 
 A `/tmp/` folder is used as buffer, and everything is executed with the
 subprocess library. Check out :ref:`cdt.utils.R` for more

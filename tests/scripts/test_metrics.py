@@ -1,7 +1,7 @@
 """Test the metrics."""
 import numpy as np
 import networkx as nx
-from cdt.utils.metrics import precision_recall, SHD, SID
+from cdt.metrics import precision_recall, SHD, SID
 from copy import deepcopy
 
 

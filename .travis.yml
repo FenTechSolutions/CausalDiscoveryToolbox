@@ -19,7 +19,9 @@ env:
     - VERSION=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
 
 before_install:
-  openssl aes-256-cbc -K $encrypted_7b48abc79884_key -iv $encrypted_7b48abc79884_iv -in rel_travis.enc -out rel_travis -d
+  if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
+         openssl aes-256-cbc -K $encrypted_7b48abc79884_key -iv $encrypted_7b48abc79884_iv -in rel_travis.enc -out rel_travis -d;
+  fi
 install: true
 jobs:
   include:
@@ -27,19 +29,23 @@ jobs:
       if: (branch != master) OR (fork = true)
       name: "Build and test"
       script:
-      - docker pull divkal/cdt-env-base:19.04
-      - docker build --build-arg python=3.6 -t divkal/cdt-test .
+      - docker pull divkal/cdt-env-base:19.05
+      - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-dev .
       - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-            docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN';
-            else docker run --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
+            docker run -e CODECOV_TOKEN --rm divkal/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN';
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
+            docker push divkal/cdt-dev;
+            docker build -f nv-Dockerfile -t divkal/nv-cdt-dev .;
+            docker push divkal/nv-cdt-dev;
+            else docker run --rm divkal/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
         fi
     - stage: build docker image
       if: (branch = master) AND (fork = false)
       name: "Build and push 3.6 image for testing"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:19.04
-      - docker build --build-arg python=3.6 -t divkal/cdt-test .
+      - docker pull divkal/cdt-env-base:19.05
+      - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-test .
       - docker push divkal/cdt-test
     - stage: test
       if: (branch = master) AND (fork = false)
@@ -54,10 +60,10 @@ jobs:
         - git config --global push.default simple
         - pip install bumpversion
         - if [[ $TRAVIS_COMMIT_MESSAGE == *"[REL]"* ]];
-              then bumpversion --current-version $VERSION minor setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
+              then bumpversion --current-version $VERSION minor setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
               elif [[ $TRAVIS_COMMIT_MESSAGE == *"[MREL]"* ]];
-              then bumpversion --current-version $VERSION major setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
-              else bumpversion --current-version $VERSION patch setup.py README.md docs/index.md docs/conf.py cdt/__init__.py;
+              then bumpversion --current-version $VERSION major setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
+              else bumpversion --current-version $VERSION patch setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
           fi
         - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
         - git add -u
@@ -71,8 +77,8 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:19.04
-      - docker build --build-arg python=3.6 -t divkal/cdt-py3.6:$VERSION_NEW .
+      - docker pull divkal/cdt-env-base:19.05
+      - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-py3.6:$VERSION_NEW .
       - docker push divkal/cdt-py3.6:$VERSION_NEW
     - if: (branch = master) AND (fork = false)
       name: "Build and push 3.7"
@@ -80,8 +86,8 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:19.04
-      - docker build --build-arg python=3.7 -t divkal/cdt-py3.7:$VERSION_NEW .
+      - docker pull divkal/cdt-env-base:19.05
+      - docker build --build-arg python=3.7 --build-arg spy=37 -t divkal/cdt-py3.7:$VERSION_NEW .
       - docker push divkal/cdt-py3.7:$VERSION_NEW
     - if: (branch = master) AND (fork = false)
       name: "Build and push nv-3.6"
@@ -89,7 +95,7 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/nv-cdt-env-base:19.04
+      - docker pull divkal/nv-cdt-env-base:19.05
       - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
       - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
     - stage: deploy 2nd stage

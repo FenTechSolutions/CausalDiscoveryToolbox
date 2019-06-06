@@ -33,6 +33,14 @@ Python 3.7 - CPU: [![d37cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.sv
 
 Python 3.6 - GPU: [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/)
 
+
+|       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
+|:----------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------:|
+| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+| Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
+| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
+
+
 ## Installation
 
 The packages requires a python version >=3.5, as well as some libraries listed in [requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/requirements.txt). For some additional functionalities, more libraries are needed for these extra functions and options to become available. Here is a quick install guide of the package, starting off with the minimal install up to the full installation. 

@@ -28,8 +28,8 @@ It is CUDA-compatible for the most computationally expensive algorithms.
 import cdt.causality
 import cdt.independence
 import cdt.data
+import cdt.metrics
 from cdt.utils import loss
 from cdt.utils.Settings import SETTINGS
-from cdt.utils import metrics
 from cdt.utils.R import RPackages
 __version__ = '0.4.4'

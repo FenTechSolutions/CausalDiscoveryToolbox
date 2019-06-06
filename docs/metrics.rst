@@ -1,6 +1,6 @@
 cdt.metrics
 ===================================
-.. automodule:: cdt.utils.metrics
+.. automodule:: cdt.metrics
 
 .. autofunction:: precision_recall
 

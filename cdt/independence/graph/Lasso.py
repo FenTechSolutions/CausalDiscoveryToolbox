@@ -97,8 +97,6 @@ class HSICLasso(FeatureSelectionModel):
         Returns:
             list: scores of each feature relatively to the target
 
-        .. warning::
-           Not implemented. Implemented by the algorithms.
         """
 
         y = np.transpose(df_target.values)

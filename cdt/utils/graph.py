@@ -226,9 +226,10 @@ def remove_indirect_links(g, alg="aracne", **kwargs):
     alg = {"aracne": aracne,
            "nd": network_deconvolution,
            "clr": clr}[alg]
-    mat = np.array(nx.adjacency_matrix(g).todense())
+    order_list = list(g.nodes())
+    mat = np.array(nx.adjacency_matrix(g, nodelist=order_list).todense())
     return nx.relabel_nodes(nx.DiGraph(alg(mat, **kwargs)),
-                            {idx: i for idx, i in enumerate(list(g.nodes()))})
+                            {idx: i for idx, i in enumerate(order_list)})
 
 
 def dagify_min_edge(g):

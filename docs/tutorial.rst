@@ -17,7 +17,7 @@ For an installation guide, please check :ref:`here <Installation>`
 
 
 .. toctree::
-
+   :hidden:
 
    tutorial_1
    tutorial_2
@@ -32,24 +32,27 @@ The Causal Discovery Toolbox is a package for causal discovery in the
 observational setting. Therefore support for data with interventions is not
 available at the moment, but is considered for later versions.
 
-The package is structured in 4 modules:
+The package is structured in 5 modules:
 
-1. Causality: `cdt.causality` implements algorithms for causal discovery, either
+1. Causality: ``cdt.causality`` implements algorithms for causal discovery, either
    in the pairwise setting, either in the graph setting.
 
-2. Independence: `cdt.independence` includes methods to recovery the dependence
+2. Independence: ``cdt.independence`` includes methods to recovery the dependence
    graph of the data.
 
-3. data: `cdt.data` provides the user with tools to generate data, and load
+3. Data: ``cdt.data`` provides the user with tools to generate data, and load
    benchmark data.
 
-4. utils: `cdt.utils` provides tools to the users for scoring, model
+4. Utils: ``cdt.utils`` provides tools to the users for model
    construction, graph utilities and settings.
 
-All methods for computation adopt a 'scikit-learn' like interface, where ``.predict``
-manages to launch the algorithm on the given data to the toolbox, ``.fit`` allows
+5. Metrics: ``cdt.metrics`` includes scoring metrics for graphs, taking as input
+   ``networkx.DiGraph``
+
+All methods for computation adopt a 'scikit-learn' like interface, where ``.predict()``
+manages to launch the algorithm on the given data to the toolbox, ``.fit()`` allows
 to train learning algorithms  Most of the algorithms are classes, and their
-parameters can be customized in the ``.__init__`` function of the class.
+parameters can be customized in the ``.__init__()`` function of the class.
 
 Hardware and algorithm settings
 -------------------------------
