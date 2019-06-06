@@ -165,11 +165,11 @@ class MIRegression(IndependenceModel):
     """ Test statistic based on a mutual information regression.
 
         Example:
-        >>> from cdt.independence.stats import MIRegression
-        >>> obj = MIRegression()
-        >>> a = np.array([1, 2, 1, 5])
-        >>> b = np.array([1, 3, 0, 6])
-        >>> obj.predict(a, b)
+            >>> from cdt.independence.stats import MIRegression
+            >>> obj = MIRegression()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
 
     """
     def __init__(self):
