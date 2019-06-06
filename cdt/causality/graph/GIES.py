@@ -47,7 +47,7 @@ class GIES(GraphModel):
     Args:
         score (str): Sets the score used by GES.
         verbose (bool): Defaults to ``cdt.SETTINGS.verbose``.
-    
+
     Available scores:
         + int: GaussL0penIntScore
         + obs: GaussL0penObsScore
@@ -68,6 +68,25 @@ class GIES(GraphModel):
        P. Spirtes, C.N. Glymour, and R. Scheines (2000).
        Causation, Prediction, and Search, MIT Press, Cambridge (MA)
 
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import GIES
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> obj = GIES()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self, score='obs', verbose=False):

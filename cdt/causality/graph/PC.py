@@ -52,7 +52,7 @@ class PC(GraphModel):
         method (str): Heuristic for testing CI.
         alpha (float): significance level (number in (0, 1) for the individual
            conditional independence tests.
-        njobs (int): number of processor cores to use for parallel computation. 
+        njobs (int): number of processor cores to use for parallel computation.
            Only available for method = "stable.fast" (set as default).
         verbose: if TRUE, detailed output is provided.
 
@@ -121,6 +121,26 @@ class PC(GraphModel):
        Causal Discovery. arXiv preprint arXiv:1702.03877.
 
        Imported from the Pcalg package.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import PC
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> obj = PC()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self, CItest="gaussian", method_indep='corr', alpha=0.01,

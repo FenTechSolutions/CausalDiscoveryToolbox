@@ -94,6 +94,26 @@ class CDS(PairwiseModel):
 
     .. note::
        Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
+
+    Example:
+        >>> from cdt.causality.pairwise import CDS
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> data, labels = cdt.data.load_dataset('tuebingen')
+        >>> obj = CDS()
+        >>>
+        >>> #This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> #This example uses the orient_graph() method. The dataset used
+        >>> #can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.orient_graph(data, graph)
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
     def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(CDS, self).__init__()

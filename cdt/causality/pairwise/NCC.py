@@ -98,6 +98,26 @@ class NCC(PairwiseModel):
         Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
         "Discovering Causal Signals in Images", CVPR 2017.
 
+    Example:
+        >>> from cdt.causality.pairwise import NCC
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> data, labels = cdt.data.load_dataset('tuebingen')
+        >>> obj = NCC()
+        >>>
+        >>> #This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> #This example uses the orient_graph() method. The dataset used
+        >>> #can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.orient_graph(data, graph)
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
+
     """
 
     def __init__(self):

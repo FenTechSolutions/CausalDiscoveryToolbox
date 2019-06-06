@@ -87,6 +87,26 @@ class IGCI(PairwiseModel):
        K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
        Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
        http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf
+
+    Example:
+        >>> from cdt.causality.pairwise import IGCI
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> data, labels = cdt.data.load_dataset('tuebingen')
+        >>> obj = IGCI()
+        >>>
+        >>> #This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> #This example uses the orient_graph() method. The dataset used
+        >>> #can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.orient_graph(data, graph)
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self):
