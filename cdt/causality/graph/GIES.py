@@ -71,17 +71,15 @@ class GIES(GraphModel):
     Example:
         >>> import networkx as nx
         >>> from cdt.causality.graph import GIES
-        >>> #The dataset used can be found in the examples folder
-        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> from cdt.data import load_dataset
+        >>> data, graph = load_dataset("sachs")
         >>> obj = GIES()
         >>> #The predict() method works without a graph, or with a
         >>> #directed or undirected graph provided as an input
         >>> output = obj.predict(data)    #No graph provided as an argument
         >>>
-        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
-        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>> output = obj.predict(data, nx.Graph(graph))  #With an undirected graph
         >>>
-        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
         >>> output = obj.predict(data, graph)  #With a directed graph
         >>>
         >>> #To view the graph created, run the below commands:

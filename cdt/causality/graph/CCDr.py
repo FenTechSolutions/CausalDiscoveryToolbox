@@ -64,9 +64,8 @@ class CCDr(GraphModel):
     Example:
         >>> import networkx as nx
         >>> from cdt.causality.graph import CCDr
-        >>> #The dataset used can be found in the examples folder
-        >>> data = pd.read_csv("./NUM_LUCAS.csv")
-        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> from cdt.data import load_dataset
+        >>> data, graph = load_dataset("sachs")
         >>> obj = CCCDr()
         >>> output = obj.predict(data)
     """

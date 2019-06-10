@@ -45,17 +45,17 @@ class BivariateFit(PairwiseModel):
         >>> from cdt.causality.pairwise import BivariateFit
         >>> import networkx as nx
         >>> import matplotlib.pyplot as plt
-        >>> data, labels = cdt.data.load_dataset('tuebingen')
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
         >>> obj = BivariateFit()
         >>>
-        >>> #This example uses the predict() method
+        >>> # This example uses the predict() method
         >>> output = obj.predict(data)
         >>>
-        >>> #This example uses the orient_graph() method. The dataset used
-        >>> #can be found in the examples folder
-        >>> data = pd.read_csv("./NUM_LUCAS.csv")
-        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
-        >>> output = obj.orient_graph(data, graph)
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset("sachs")
+        >>> output = obj.orient_graph(data, nx.Graph(graph))
         >>>
         >>> #To view the directed graph run the following command
         >>> nx.draw_networkx(output, font_size=8)
