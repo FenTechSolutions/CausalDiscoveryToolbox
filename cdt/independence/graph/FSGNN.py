@@ -27,12 +27,14 @@ Author : Diviyan Kalainathan & Olivier Goudet
 """
 import torch as th
 import numpy as np
+import networkx as nx
 from torch.utils import data
 from sklearn.preprocessing import scale
 from tqdm import trange
 from .model import FeatureSelectionModel
 from ...utils.Settings import SETTINGS
 from ...utils.loss import MMDloss
+from ...utils.parallel import parallel_run_generator
 
 
 class Dataset(data.Dataset):
@@ -145,7 +147,7 @@ class FSGNN(FeatureSelectionModel):
     def __init__(self, nh=20, dropout=0., activation_function=th.nn.ReLU,
                  lr=0.01, l1=0.1,  batch_size=-1, train_epochs=1000,
                  test_epochs=1000, verbose=None, nruns=3,
-                 dataloader_workers=0):
+                 dataloader_workers=0, njobs=None):
         """Init the model."""
         super(FSGNN, self).__init__()
         self.nh = nh
@@ -158,6 +160,7 @@ class FSGNN(FeatureSelectionModel):
         self.test_epochs = test_epochs
         self.verbose = SETTINGS.get_default(verbose=verbose)
         self.nruns = nruns
+        self.njobs = SETTINGS.get_default(njobs=njobs)
         self.dataloader_workers = dataloader_workers
 
     def predict_features(self, df_features, df_target, datasetclass=Dataset,
@@ -192,3 +195,49 @@ class FSGNN(FeatureSelectionModel):
                                    device=device, verbose=self.verbose,
                                    dataloader_workers=self.dataloader_workers))
         return list(np.mean(np.array(out), axis=0))
+
+    def predict(self, df_data, threshold=0.05, gpus=None, **kwargs):
+        """Predict the skeleton of the graph from raw data.
+
+        Returns iteratively the feature selection algorithm on each node.
+
+        Args:
+            df_data (pandas.DataFrame): data to construct a graph from
+            threshold (float): cutoff value for feature selection scores
+            kwargs (dict): additional arguments for algorithms
+
+        Returns:
+            networkx.Graph: predicted skeleton of the graph.
+        """
+        njobs = self.njobs
+        gpus = SETTINGS.get_default(gpu=gpus)
+        list_nodes = list(df_data.columns.values)
+        if njobs > 1:
+            result_feature_selection = parallel_run_generator(self.run_feature_selection,
+                                                              [([df_data, node, idx], kwargs)
+                                                               for idx, node in enumerate(list_nodes)],
+                                                              gpus=gpus, njobs=njobs)
+        else:
+            result_feature_selection = [self.run_feature_selection(df_data, node,
+                                                                   idx, **kwargs)
+                                        for idx, node in enumerate(list_nodes)]
+        for idx, i in enumerate(result_feature_selection):
+            try:
+                i.insert(idx, 0)
+            except AttributeError:  # if results are numpy arrays
+                result_feature_selection[idx] = np.insert(i, idx, 0)
+        matrix_results = np.array(result_feature_selection)
+        matrix_results *= matrix_results.transpose()
+        np.fill_diagonal(matrix_results, 0)
+        matrix_results /= 2
+
+        graph = nx.Graph()
+
+        for (i, j), x in np.ndenumerate(matrix_results):
+            if matrix_results[i, j] > threshold:
+                graph.add_edge(list_nodes[i], list_nodes[j],
+                               weight=matrix_results[i, j])
+        for node in list_nodes:
+            if node not in graph.nodes():
+                graph.add_node(node)
+        return graph

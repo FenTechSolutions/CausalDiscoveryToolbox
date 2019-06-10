@@ -102,3 +102,48 @@ def parallel_run(function, *args, nruns=None, njobs=None, gpus=None, **kwargs):
         p.join()
 
     return list(results)
+
+
+def parallel_run_generator(function, generator, njobs=None, gpus=None):
+    """ Mutiprocessed execution of a function with parameters, with GPU management.
+
+    This function is useful when the used wants to execute a bootstrap on a
+    function on GPU devices, as joblib does not include such feature.
+
+    Args:
+        function (function): Function to execute.
+        \*args: arguments going to be fed to the function.
+        generator (list or types.GeneratorType): generator with the arguments
+           for each run, each element much be a tuple of ([args], {kwargs}).
+        njobs (int): Number of parallel executions (defaults to ``cdt.SETTINGS.NJOBS``).
+        gpus (int): Number of GPU devices allocated to the job (defaults to ``cdt.SETTINGS.GPU``)
+        \**kwargs: Keyword arguments going to be fed to the function.
+
+    Returns:
+        list: concatenated list of outputs of executions. The order of elements
+        does not correspond to the initial order.
+    """
+    njobs = SETTINGS.get_default(njobs=njobs)
+    gpus = SETTINGS.get_default(gpu=gpus)
+    if gpus == 0 and njobs > 1:
+        return Parallel(n_jobs=njobs)(delayed(function)(*args, **kwargs) for args,kwargs in generator)
+    manager = Manager()
+    devices = manager.list([f'cuda:{i%gpus}' if gpus !=0
+                            else 'cpu' for i in range(njobs)])
+    results = manager.list()
+    pids = manager.list()
+    lockd = manager.Lock()
+    lockr = manager.Lock()
+    lockp = manager.Lock()
+    poll = [mp.Process(target=worker_subprocess,
+                       args=(function, devices,
+                             lockd, results, lockr,
+                             pids, lockp, args,
+                             kwargs, i))
+            for i, (args, kwargs) in generator]
+    for p in poll:
+        p.start()
+    for p in poll:
+        p.join()
+
+    return list(results)
