@@ -79,7 +79,8 @@ class HSICLasso(FeatureSelectionModel):
             >>> df_features = pd.DataFrame(boston['data'])
             >>> df_target = pd.DataFrame(boston['target'])
             >>> obj = HSICLasso()
-            >>> output = obj.predict(df_features, df_target)
+            >>> output = obj.predict_features(df_features, df_target)
+            >>> ugraph = obj.predict(df_features)  # Predict skeleton
     
     """
     def __init__(self):

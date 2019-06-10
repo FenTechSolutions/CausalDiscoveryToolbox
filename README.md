@@ -13,7 +13,7 @@ It implements lots of algorithms for graph structure recovery (including algorit
 ## [Check out the documentation here](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html) 
 ## [Please cite us if you use our software](https://arxiv.org/abs/1903.02278)
 
-An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb)
+[A tutorial is available here](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/tutorial.html)
 
 Install it using pip: (See more details on installation below)
 ```sh

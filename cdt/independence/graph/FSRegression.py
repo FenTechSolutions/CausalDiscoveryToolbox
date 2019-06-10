@@ -51,7 +51,8 @@ class RFECVLinearSVR(FeatureSelectionModel):
        >>> df_features = pd.DataFrame(boston['data'])
        >>> df_target = pd.DataFrame(boston['target'])
        >>> obj = RFECVLinearSVR()
-       >>> output = obj.predict(df_features, df_target)
+       >>> output = obj.predict_features(df_features, df_target)
+       >>> ugraph = obj.predict(df_features)  # Predict skeleton
     """
 
     def __init__(self):
@@ -78,7 +79,7 @@ class RFECVLinearSVR(FeatureSelectionModel):
 
 class LinearSVRL2(FeatureSelectionModel):
     """ Feature selection with Linear Support Vector Regression.
-        
+
         Example:
             >>> from cdt.independence.graph import LinearSVRL2
             >>> from sklearn.datasets import load_boston
@@ -86,7 +87,8 @@ class LinearSVRL2(FeatureSelectionModel):
             >>> df_features = pd.DataFrame(boston['data'])
             >>> df_target = pd.DataFrame(boston['target'])
             >>> obj = LinearSVRL2()
-            >>> output = obj.predict(df_features, df_target)
+            >>> output = obj.predict_features(df_features, df_target)
+            >>> ugraph = obj.predict(df_features)  # Predict skeleton
     """
 
     def __init__(self):
@@ -112,7 +114,7 @@ class LinearSVRL2(FeatureSelectionModel):
 
 class DecisionTreeRegression(FeatureSelectionModel):
     """ Feature selection with decision tree regression.
-        
+
         Example:
             >>> from cdt.independence.graph import DecisionTreeRegression
             >>> from sklearn.datasets import load_boston
@@ -120,8 +122,9 @@ class DecisionTreeRegression(FeatureSelectionModel):
             >>> df_features = pd.DataFrame(boston['data'])
             >>> df_target = pd.DataFrame(boston['target'])
             >>> obj = DecisionTreeRegression()
-            >>> output = obj.predict(df_features, df_target)
-        
+            >>> output = obj.predict_features(df_features, df_target)
+            >>> ugraph = obj.predict(df_features)  # Predict skeleton
+
     """
 
     def __init__(self):
@@ -149,7 +152,7 @@ class DecisionTreeRegression(FeatureSelectionModel):
 
 class ARD(FeatureSelectionModel):
     """ Feature selection with Bayesian ARD regression.
-        
+
         Example:
             >>> from cdt.independence.graph import ARD
             >>> from sklearn.datasets import load_boston
@@ -157,8 +160,8 @@ class ARD(FeatureSelectionModel):
             >>> df_features = pd.DataFrame(boston['data'])
             >>> df_target = pd.DataFrame(boston['target'])
             >>> obj = ARD()
-            >>> output = obj.predict(df_features, df_target)
-    
+            >>> output = obj.predict_features(df_features, df_target)
+            >>> ugraph = obj.predict(df_features)  # Predict skeleton
     """
     def __init__(self):
         super(ARD, self).__init__()
@@ -185,7 +188,7 @@ class ARD(FeatureSelectionModel):
 
 class RRelief(FeatureSelectionModel):
     """ Feature selection with RRelief.
-        
+
         Example:
             >>> from cdt.independence.graph import RRelief
             >>> from sklearn.datasets import load_boston
@@ -194,6 +197,7 @@ class RRelief(FeatureSelectionModel):
             >>> df_target = pd.DataFrame(boston['target'])
             >>> obj = RRelief()
             >>> output = obj.predict_features(df_features, df_target)
+            >>> ugraph = obj.predict(df_features)  # Predict skeleton
     """
     def __init__(self):
         super(RRelief, self).__init__()
