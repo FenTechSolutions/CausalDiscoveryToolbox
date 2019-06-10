@@ -46,7 +46,7 @@ warnings.formatwarning = message_warning
 
 class BNlearnAlgorithm(GraphModel):
     """BNlearn algorithm. All these models imported from bnlearn revolve around
-    this base class and have all the same attributes/interface.  
+    this base class and have all the same attributes/interface.
 
     Args:
         score (str):the label of the conditional independence test to be used in the
@@ -58,8 +58,8 @@ class BNlearnAlgorithm(GraphModel):
            test. It will be ignored with a warning if the conditional independence test specified by the
            score argument is not a permutation test.
         optim (bool): See bnlearn-package for details.
-        verbose (bool): Sets the verbosity. Defaults to SETTINGS.verbose 
-    
+        verbose (bool): Sets the verbosity. Defaults to SETTINGS.verbose
+
     Available tests:
         • discrete case (categorical variables)
            – mutual information: an information-theoretic distance measure.
@@ -76,7 +76,7 @@ class BNlearnAlgorithm(GraphModel):
                The asymptotic χ2 test (x2 and x2-adf, with adjusted degrees of freedom),
                the Monte Carlo permutation test (mc-x2), the sequential Monte Carlo
                permutation test (smc-x2) and semiparametric test (sp-x2) are implemented  .
- 
+
         • discrete case (ordered factors)
            – Jonckheere-Terpstra : a trend test for ordinal variables.
               The
@@ -84,7 +84,7 @@ class BNlearnAlgorithm(GraphModel):
               and the sequential Monte Carlo permutation test (smc-jt) are implemented.
 
         • continuous case (normal variables)
-           – linear  correlation:  Pearson’s  linear  correlation. 
+           – linear  correlation:  Pearson’s  linear  correlation.
                The exact
                Student’s  t  test  (cor),  the Monte Carlo permutation test (mc-cor)
                and the sequential Monte Carlo permutation test (smc-cor) are implemented.
@@ -94,14 +94,14 @@ class BNlearnAlgorithm(GraphModel):
                package on CRAN). The asymptotic normal test (zf), the Monte Carlo
                permutation test (mc-zf) and the sequential Monte Carlo permutation
                test (smc-zf) are implemented.
-           – mutual information: an information-theoretic distance measure.  
+           – mutual information: an information-theoretic distance measure.
                Again
                it is proportional to the log-likelihood ratio (they differ by a 2n
                factor). The asymptotic χ2 test (mi-g), the Monte Carlo permutation
                test (mc-mi-g) and the sequential Monte Carlo permutation test
                (smc-mi-g) are implemented.
 
-           – shrinkage estimator for the mutual information(mi-g-sh): 
+           – shrinkage estimator for the mutual information(mi-g-sh):
                an improved
                asymptotic χ2 test based on the James-Stein estimator for the mutual
                information.
@@ -135,8 +135,8 @@ class BNlearnAlgorithm(GraphModel):
         self.alpha = alpha
         self.beta = beta
         self.optim = optim
-        self.verbose = SETTINGS.get_default(verbose=verbose) 
-        
+        self.verbose = SETTINGS.get_default(verbose=verbose)
+
     def orient_undirected_graph(self, data, graph):
         """Run the algorithm on an undirected graph.
 
@@ -253,6 +253,26 @@ class GS(BNlearnAlgorithm):
        . Ph.D. thesis, School
        of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report
        CMU-CS-03-153
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import GS
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> obj = GS()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self):
@@ -263,11 +283,31 @@ class GS(BNlearnAlgorithm):
 
 class IAMB(BNlearnAlgorithm):
     """IAMB algorithm.
- 
+
     .. note::
        Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   "Algorithms  for  Large  Scale  Markov  Blanket
        Discovery".  In "Proceedings of the Sixteenth International Florida Artificial Intelligence Research
        Society Conference", pp. 376-381. AAAI Press.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import IAMB
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> obj = IAMB()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self):
@@ -281,8 +321,28 @@ class Fast_IAMB(BNlearnAlgorithm):
 
     .. note::
         Yaramakala S, Margaritis D (2005).  "Speculative Markov Blanket Discovery for Optimal Feature
-        Selection".  In "ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data 
+        Selection".  In "ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data
         Mining", pp. 809-812. IEEE Computer Society.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import Fast_IAMB
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> obj = Fast_IAMB()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self):
@@ -294,7 +354,7 @@ class Fast_IAMB(BNlearnAlgorithm):
 class Inter_IAMB(BNlearnAlgorithm):
     """Inter IAMB algorithm.
 
-    .. note:: 
+    .. note::
        Yaramakala S, Margaritis D (2005).  "Speculative Markov Blanket Discovery for Optimal Feature
        Selection".  In "ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-
        ing", pp. 809-812. IEEE Computer Society.
@@ -316,6 +376,26 @@ class MMPC(BNlearnAlgorithm):
        Tsamardinos I, Brown LE, Aliferis CF (2006).  "The Max-Min Hill-Climbing Bayesian Network
        Structure Learning Algorithm".
        Machine Learning,65(1), 31-78.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import MMPC
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> obj = MMPC()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self):

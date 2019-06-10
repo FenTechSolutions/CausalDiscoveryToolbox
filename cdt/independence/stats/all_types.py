@@ -53,6 +53,13 @@ class AdjMI(IndependenceModel):
        Ref: Freedman, David and Diaconis, Persi, "On the histogram as a density estimator:L2 theory",
        "Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete", 1981, issn=1432-2064,
        doi=10.1007/BF01025868.
+       
+   Example:
+       >>> from cdt.independence.stats import AdjMI
+       >>> obj = AdjMI()
+       >>> a = np.array([1, 2, 1, 5])
+       >>> b = np.array([1, 3, 0, 6])
+       >>> obj.predict(a, b)
     """
 
     def __init__(self):
@@ -93,6 +100,13 @@ class NormMI(IndependenceModel):
        Ref: Freedman, David and Diaconis, Persi, "On the histogram as a density estimator:L2 theory",
        "Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete", 1981, issn=1432-2064,
        doi=10.1007/BF01025868.
+       
+    Example:
+        >>> from cdt.independence.stats import NormMI
+        >>> obj = NormMI()
+        >>> a = np.array([1, 2, 1, 5])
+        >>> b = np.array([1, 3, 0, 6])
+        >>> obj.predict(a, b)
 
     """
 

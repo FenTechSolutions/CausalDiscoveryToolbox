@@ -60,6 +60,15 @@ class CCDr(GraphModel):
        ref: Aragam, B., & Zhou, Q. (2015). Concave penalized estimation of
        sparse Gaussian Bayesian networks. Journal of Machine Learning Research,
        16, 2273-2328.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import CCDr
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> obj = CCCDr()
+        >>> output = obj.predict(data)
     """
 
     def __init__(self, verbose=None):

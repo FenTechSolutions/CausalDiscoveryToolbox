@@ -130,6 +130,15 @@ class FSGNN(FeatureSelectionModel):
         dataloader_workers (int): how many subprocesses to use for data
            loading. 0 means that the data will be loaded in the main
            process. (default: 0)
+           
+   Example:
+       >>> from cdt.independence.graph import FSGNN
+       >>> from sklearn.datasets import load_boston
+       >>> boston = load_boston()
+       >>> df_features = pd.DataFrame(boston['data'])
+       >>> df_target = pd.DataFrame(boston['target'])
+       >>> obj = FSGNN()
+       >>> output = obj.predict(df_features, df_target)
     """
 
     def __init__(self, nh=20, dropout=0., activation_function=th.nn.ReLU,

@@ -46,9 +46,9 @@ warnings.formatwarning = message_warning
 
 class LiNGAM(GraphModel):
     r"""LiNGAM algorithm.
-    
+
     Args:
-        verbose (bool): Sets the verbosity of the algorithm. Defaults to 
+        verbose (bool): Sets the verbosity of the algorithm. Defaults to
            `cdt.SETTINGS.verbose`
 
     .. note::
@@ -59,6 +59,14 @@ class LiNGAM(GraphModel):
     .. warning::
        This implementation of LiNGAM does not support starting with a graph.
 
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import LiNGAM
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> obj = LiNGAM()
+        >>> output = obj.predict(data)
     """
 
     def __init__(self, verbose=False):

@@ -40,6 +40,12 @@ class Glasso(GraphSkeletonModel):
        Ref : Friedman, J., Hastie, T., & Tibshirani, R. (2008). Sparse inverse
        covariance estimation with the graphical lasso. Biostatistics, 9(3),
        432-441.
+       
+   Example:
+       >>> from cdt.independence.graph import Glasso
+       >>> df = pd.DataFrame(np.random.randint(0,100,size=(100, 4)), columns=list('ABCD'))
+       >>> obj = Glasso()
+       >>> output = obj.predict(df)
     """
 
     def __init__(self):
@@ -64,7 +70,18 @@ class Glasso(GraphSkeletonModel):
 
 
 class HSICLasso(FeatureSelectionModel):
-    """Graphical Lasso with a kernel-based independence test."""
+    """Graphical Lasso with a kernel-based independence test.
+        
+        Example:
+            >>> from cdt.independence.graph import HSICLasso
+            >>> from sklearn.datasets import load_boston
+            >>> boston = load_boston()
+            >>> df_features = pd.DataFrame(boston['data'])
+            >>> df_target = pd.DataFrame(boston['target'])
+            >>> obj = HSICLasso()
+            >>> output = obj.predict(df_features, df_target)
+    
+    """
     def __init__(self):
         super(HSICLasso, self).__init__()
 

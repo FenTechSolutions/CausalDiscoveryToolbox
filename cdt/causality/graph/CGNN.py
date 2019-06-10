@@ -247,6 +247,26 @@ class CGNN(GraphModel):
        The input data can be of type torch.utils.data.Dataset, or it defaults to
        `cdt.utils.io.MetaDataset`. This class is overridable to write custom
        data loading functions, useful for very large datasets.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import CGNN
+        >>> #The dataset used can be found in the examples folder
+        >>> data = pd.read_csv("./NUM_LUCAS.csv")
+        >>> obj = CGNN()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=False)
+        >>> output = obj.predict(data, graph)  #With an undirected graph
+        >>>
+        >>> graph = cdt.utils.read_list_edges("./Lucas_graph.csv", directed=True)
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self, nh=20, nruns=16, njobs=None, gpus=None, batch_size=-1,
@@ -275,7 +295,6 @@ class CGNN(GraphModel):
                data on which causal discovery has to be performed.
         Returns:
             networkx.DiGraph: Solution given by CGNN.
-
         """
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")
