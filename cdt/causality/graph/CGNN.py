@@ -181,7 +181,7 @@ def parallel_graph_evaluation(data, adj_matrix, nruns=16,
     """Parallelize the various runs of CGNN to evaluate a graph."""
     njobs, gpus = SETTINGS.get_default(('njobs', njobs), ('gpu', gpus))
 
-    if nruns == 1:
+    if gpus == 0:
         return graph_evaluation(data, adj_matrix,
                                 device=SETTINGS.default_device, **kwargs)
     else:
@@ -311,8 +311,10 @@ class CGNN(GraphModel):
         # Building all possible candidates:
         if not isinstance(data, th.utils.data.Dataset):
             nb_vars = len(list(data.columns))
+            names = list(data.columns)
         else:
             nb_vars = data.__featurelen__()
+            names = data.get_names()
         candidates = [np.reshape(np.array(i), (nb_vars, nb_vars)) for i in itertools.product([0, 1], repeat=nb_vars*nb_vars)
                       if (np.trace(np.reshape(np.array(i), (nb_vars, nb_vars))) == 0
                           and nx.is_directed_acyclic_graph(nx.DiGraph(np.reshape(np.array(i), (nb_vars, nb_vars)))))]
@@ -336,7 +338,7 @@ class CGNN(GraphModel):
                 output[i, j] = min(scores) - scores[[np.array_equal(cand, tgraph)
                                                      for tgraph in candidates].index(True)]
         prediction = nx.DiGraph(final_candidate * output)
-        return nx.relabel_nodes(prediction, {idx: i for idx, i in enumerate(data.get_names())})
+        return nx.relabel_nodes(prediction, {idx: i for idx, i in enumerate(names)})
 
     def orient_directed_graph(self, data, dag, alg='HC'):
         """Modify and improve a directed acyclic graph solution using CGNN.

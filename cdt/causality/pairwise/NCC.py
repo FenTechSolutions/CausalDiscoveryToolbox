@@ -178,9 +178,9 @@ class NCC(PairwiseModel):
                         opt.step()
                         output.append(out)
                         labels.append(label)
-                    acc = th.where(th.cat(output, 0) > .5,
+                    acc = th.where(th.cat(output, 0).data.cpu() > .5,
                                    th.ones(len(output)),
-                                   th.zeros(len(output))) - th.cat(labels, 0)
+                                   th.zeros(len(output))) - th.cat(labels, 0).data.cpu()
                     te.set_postfix(Acc=1-acc.abs().mean().item())
 
     def predict_proba(self, dataset, device=None, idx=0):

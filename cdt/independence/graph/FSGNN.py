@@ -28,39 +28,13 @@ Author : Diviyan Kalainathan & Olivier Goudet
 import torch as th
 import numpy as np
 import networkx as nx
-from torch.utils import data
+from torch.utils.data import Dataset, TensorDataset
 from sklearn.preprocessing import scale
 from tqdm import trange
 from .model import FeatureSelectionModel
 from ...utils.Settings import SETTINGS
 from ...utils.loss import MMDloss
 from ...utils.parallel import parallel_run_generator
-
-
-class Dataset(data.Dataset):
-    """Characterizes a dataset for PyTorch
-
-    Args:
-        features (pandas.DataFrame): Features given as input
-        target (pandas.DataFrame): Feature considered as target
-    """
-    def __init__(self, features, target, device):
-        'Initialization'
-        self.target = th.Tensor(scale(target.values)).to(device)
-        self.features = th.Tensor(scale(features.values)).to(device)
-
-    def __len__(self):
-        'Denotes the total number of samples'
-        return len(self.features)
-
-    def __featurelen__(self):
-        "Number of features of the dataset"
-        return self.features.shape[1]
-
-    def __getitem__(self, index):
-        'Generates one sample of data'
-        # Load data and get label
-        return self.features[index], self.target[index]
 
 
 class FSGNN_model(th.nn.Module):
@@ -76,6 +50,7 @@ class FSGNN_model(th.nn.Module):
 
         layers.append(th.nn.Linear(sizes[-2], sizes[-1]))
         self.layers = th.nn.Sequential(*layers)
+        self.sizes = sizes
 
     def forward(self, x):
         self.layers(x)
@@ -85,7 +60,7 @@ class FSGNN_model(th.nn.Module):
               verbose=None, dataloader_workers=0):
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         optim = th.optim.Adam(self.parameters(), lr=lr)
-        output = th.zeros(dataset.__featurelen__()).to(device)
+        output = th.zeros(self.sizes[0] - 1).to(device)
 
         if batch_size == -1:
             batch_size = dataset.__len__()
@@ -163,7 +138,7 @@ class FSGNN(FeatureSelectionModel):
         self.njobs = SETTINGS.get_default(njobs=njobs)
         self.dataloader_workers = dataloader_workers
 
-    def predict_features(self, df_features, df_target, datasetclass=Dataset,
+    def predict_features(self, df_features, df_target, datasetclass=TensorDataset,
                          device=None, idx=0):
         """For one variable, predict its neighbours.
 
@@ -181,10 +156,11 @@ class FSGNN(FeatureSelectionModel):
 
         """
         device = SETTINGS.get_default(device=device)
-        dataset = datasetclass(df_features, df_target, device)
+        dataset = datasetclass(th.Tensor(scale(df_features.values)).to(device),
+                               th.Tensor(scale(df_target.values)).to(device))
         out = []
         for i in range(self.nruns):
-            model = FSGNN_model([dataset.__featurelen__() + 1, self.nh, 1],
+            model = FSGNN_model([df_features.shape[1] + 1, self.nh, 1],
                                 activation_function=self.activation_function,
                                 dropout=self.dropout).to(device)
 
@@ -212,7 +188,7 @@ class FSGNN(FeatureSelectionModel):
         njobs = self.njobs
         gpus = SETTINGS.get_default(gpu=gpus)
         list_nodes = list(df_data.columns.values)
-        if njobs > 1:
+        if gpus > 0:
             result_feature_selection = parallel_run_generator(self.run_feature_selection,
                                                               [([df_data, node], kwargs)
                                                                for node in list_nodes],

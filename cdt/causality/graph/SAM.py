@@ -147,7 +147,8 @@ class SAM_block(th.nn.Module):
 class SAM_generators(th.nn.Module):
     """Ensemble of all the generators."""
 
-    def __init__(self, data_shape, zero_components, nh=200, batch_size=-1, **kwargs):
+    def __init__(self, data_shape, zero_components, nh=200, batch_size=-1,
+                 device='cpu', **kwargs):
         """Init the model."""
         super(SAM_generators, self).__init__()
         if batch_size == -1:
@@ -158,7 +159,7 @@ class SAM_generators(th.nn.Module):
         self.noise = []
         for i in range(self.cols):
             pname = 'noise_{}'.format(i)
-            self.register_buffer(pname, th.FloatTensor(batch_size, 1))
+            self.register_buffer(pname, th.FloatTensor(batch_size, 1).to(device))
             self.noise.append(getattr(self, pname))
         self.blocks = th.nn.ModuleList()
 
@@ -275,7 +276,8 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
             zero_components[j].append(i)
     else:
         zero_components = [[i] for i in range(cols)]
-    sam = SAM_generators((rows, cols), zero_components, batch_norm=True, **kwargs)
+    sam = SAM_generators((rows, cols), zero_components, batch_norm=True,
+                         device=device, **kwargs)
 
     activation_function = kwargs.get('activation_function', th.nn.Tanh)
     try:
@@ -448,7 +450,7 @@ class SAM(GraphModel):
             networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term
             of the ith variable for the jth generator.
         """
-        if self.njobs != 1:
+        if self.gpus > 0:
             list_out = parallel_run(run_SAM, data, njobs=self.njobs,
                                     skeleton=graph,
                                     lr_gen=self.lr, lr_disc=self.dlr,

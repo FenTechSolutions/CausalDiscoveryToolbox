@@ -32,7 +32,7 @@ def test_multiprocessing_CGNN():
     data = pd.read_csv('{}/../datasets/NUM_LUCAS.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, :3]
 
     # Finding the structure of the graph
-    Fsgnn = FSGNN(train_epochs=5, test_epochs=5, l1=0.006)
+    Fsgnn = FSGNN(train_epochs=5, test_epochs=5, l1=0.006, njobs=2)
 
     ugraph = Fsgnn.predict(data, threshold=1e-2)
     # List results
@@ -51,7 +51,7 @@ def test_multiprocessing_ete_CGNN():
     # List results
     # print(nx.adj_matrix(ugraph).todense().shape)
     # Orient the edges of the graph
-
+    SETTINGS.GPU = 0
     Cgnn = CGNN(nruns=6, njobs=2, train_epochs=2, test_epochs=2)
     assert type(Cgnn.predict(data)) == nx.DiGraph
     return 0
@@ -72,7 +72,7 @@ def test_scratch_CGNN():
 
 
 if __name__ == '__main__':
-    test_pipeline_CGNN()
-    test_scratch_CGNN()
-    test_multiprocessing_ete_CGNN()
+    # test_pipeline_CGNN()
+    # test_scratch_CGNN()
+    # test_multiprocessing_ete_CGNN()
     test_multiprocessing_CGNN()

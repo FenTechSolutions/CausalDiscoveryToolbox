@@ -55,5 +55,6 @@ def test_SAM():
 
 
 if __name__ == "__main__":
+    test_SAM()
     test_directed()
     test_undirected()

@@ -268,7 +268,7 @@ class MetaDataset(Dataset):
         """
         cpy = deepcopy(self)
         cpy.data = cpy.data.to(device)
-        return cpy #  MetaDataset(self.data, self.names, device)
+        return cpy  # MetaDataset(self.data, self.names, device)
 
     def __len__(self):
         return len(self.data)
