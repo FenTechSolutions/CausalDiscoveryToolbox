@@ -214,8 +214,8 @@ class FSGNN(FeatureSelectionModel):
         list_nodes = list(df_data.columns.values)
         if njobs > 1:
             result_feature_selection = parallel_run_generator(self.run_feature_selection,
-                                                              [([df_data, node, idx], kwargs)
-                                                               for idx, node in enumerate(list_nodes)],
+                                                              [([df_data, node], kwargs)
+                                                               for node in list_nodes],
                                                               gpus=gpus, njobs=njobs)
         else:
             result_feature_selection = [self.run_feature_selection(df_data, node,

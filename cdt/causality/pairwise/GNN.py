@@ -31,7 +31,7 @@ import torch as th
 import networkx as nx
 from tqdm import trange
 from pandas import DataFrame
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, TensorDataset
 from sklearn.preprocessing import scale
 from .model import PairwiseModel
 from ...utils.loss import MMDloss, TTestCriterion
@@ -128,9 +128,12 @@ def GNN_instance(data, batch_size=-1, idx=0, device=None, nh=20, **kwargs):
     GNNYX = GNN_model(batch_size, nh=nh, **kwargs).to(device)
     GNNXY.reset_parameters()
     GNNYX.reset_parameters()
-    XY = GNNXY.run(data.to(device, flip=False))
-    YX = GNNYX.run(data.to(device, flip=True))
-
+    if isinstance(data, Dataset):
+        XY = GNNXY.run(data.to(device, flip=False))
+        YX = GNNYX.run(data.to(device, flip=True))
+    else:
+        XY = GNNXY.run(TensorDataset(data[0].to(device), data[1].to(device)))
+        YX = GNNYX.run(TensorDataset(data[1].to(device), data[0].to(device)))
     return [XY, YX]
 
 
@@ -220,9 +223,8 @@ class GNN(PairwiseModel):
         if isinstance(dataset, Dataset):
             data = dataset
         else:
-            tensors = [th.Tensor(scale(th.Tensor(i).view(-1, 1)))
+            data = [th.Tensor(scale(th.Tensor(i).view(-1, 1)))
                        for i in dataset]
-            data = PairwiseDataset(*tensors)
         ttest_criterion = TTestCriterion(
             max_iter=self.nb_max_runs, runs_per_iter=self.nruns,
             threshold=self.ttest_threshold)
@@ -231,7 +233,7 @@ class GNN(PairwiseModel):
         BA = []
 
         while ttest_criterion.loop(AB, BA):
-            if self.njobs != 1:
+            if self.njobs > 1:
                 result_pair = parallel_run(GNN_instance, data, njobs=self.njobs,
                                            gpus=self.gpus, verbose=self.verbose,
                                            train_epochs=self.train_epochs,
@@ -308,8 +310,8 @@ class GNN(PairwiseModel):
 
         for idx, (a, b) in enumerate(edges):
             if isinstance(df_data, DataFrame):
-                dataset = PairwiseDataset(th.Tensor(scale(df_data[a].values)).view(-1, 1),
-                                          th.Tensor(scale(df_data[b].values)).view(-1, 1))
+                dataset = (th.Tensor(scale(df_data[a].values)).view(-1, 1),
+                           th.Tensor(scale(df_data[b].values)).view(-1, 1))
                 weight = self.predict_proba(dataset, idx=idx, **kwargs)
             elif isinstance(df_data, MetaDataset):
                 weight = self.predict_proba(df_data.dataset(a, b, scale=True),

@@ -60,6 +60,25 @@ def worker_subprocess(function, devices, lockd, results, lockr,
             pids.append(os.getpid())
 
 
+def worker_subprocess_idx(function, devices, lockd, results, lockr,
+                          pids, lockp, args, kwargs, idx, *others):
+        device = None
+        while device is None:
+            with lockd:
+                try:
+                    device = devices.pop()
+                except IndexError:
+                    pass
+            sleep(1)
+        output = function(*args, **kwargs, device=device, idx=idx)
+        with lockd:
+            devices.append(device)
+        with lockr:
+            results.append((idx, output))
+        with lockp:
+            pids.append(os.getpid())
+
+
 def parallel_run(function, *args, nruns=None, njobs=None, gpus=None, **kwargs):
     """ Mutiprocessed execution of a function with parameters, with GPU management.
 
@@ -135,15 +154,16 @@ def parallel_run_generator(function, generator, njobs=None, gpus=None):
     lockd = manager.Lock()
     lockr = manager.Lock()
     lockp = manager.Lock()
-    poll = [mp.Process(target=worker_subprocess,
+    poll = [mp.Process(target=worker_subprocess_idx,
                        args=(function, devices,
                              lockd, results, lockr,
                              pids, lockp, args,
                              kwargs, i))
-            for i, (args, kwargs) in generator]
+            for i, (args, kwargs) in enumerate(generator)]
     for p in poll:
         p.start()
     for p in poll:
         p.join()
 
-    return list(results)
+    res = sorted(list(results), key=lambda tup:tup[0])
+    return list([out[1] for out in res])

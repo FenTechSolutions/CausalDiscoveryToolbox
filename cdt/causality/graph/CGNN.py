@@ -31,9 +31,11 @@ import numpy as np
 import itertools
 import warnings
 import torch as th
+import pandas as pd
 from copy import deepcopy
 from tqdm import trange
 from torch.utils.data import DataLoader
+from sklearn.preprocessing import scale
 from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.loss import MMDloss
@@ -145,6 +147,7 @@ class CGNN_model(th.nn.Module):
                 for i, data in enumerate(dataloader):
                     optim.zero_grad()
                     generated_data = self.forward()
+
                     mmd = self.criterion(generated_data, data)
                     if not epoch % 200 and i == 0:
                         t.set_postfix(idx=idx, loss=mmd.item())
@@ -162,9 +165,12 @@ class CGNN_model(th.nn.Module):
 
 def graph_evaluation(data, adj_matrix, device='cpu', batch_size=-1, **kwargs):
     """Evaluate a graph taking account of the hardware."""
-    obs = data.to(device)
+    if isinstance(data, th.utils.data.Dataset):
+        obs = data.to(device)
+    else:
+        obs = th.Tensor(scale(data.values)).to(device)
     if batch_size == -1:
-        batch_size = data.__len__()
+        batch_size = obs.__len__()
     cgnn = CGNN_model(adj_matrix, batch_size, **kwargs).to(device)
     cgnn.reset_parameters()
     return cgnn.run(obs, **kwargs)
@@ -187,7 +193,12 @@ def parallel_graph_evaluation(data, adj_matrix, nruns=16,
 
 def hill_climbing(data, graph, **kwargs):
     """Hill Climbing optimization: a greedy exploration algorithm."""
-    nodelist = data.get_names()
+    if isinstance(data, th.utils.data.Dataset):
+        nodelist = data.get_names()
+    elif isinstance(data, pd.DataFrame):
+        nodelist = list(data.columns)
+    else:
+        raise TypeError('Data type not understood')
     tested_candidates = [nx.adj_matrix(graph, nodelist=nodelist, weight=None)]
     best_score = parallel_graph_evaluation(data,
                                            tested_candidates[0].todense(),
@@ -300,7 +311,6 @@ class CGNN(GraphModel):
         # Building all possible candidates:
         if not isinstance(data, th.utils.data.Dataset):
             nb_vars = len(list(data.columns))
-            data = MetaDataset(data)
         else:
             nb_vars = data.__featurelen__()
         candidates = [np.reshape(np.array(i), (nb_vars, nb_vars)) for i in itertools.product([0, 1], repeat=nb_vars*nb_vars)
@@ -344,8 +354,8 @@ class CGNN(GraphModel):
         """
         alg_dic = {'HC': hill_climbing}  # , 'HCr': hill_climbing_with_removal,
         # 'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
-        if not isinstance(data, th.utils.data.Dataset):
-            data = MetaDataset(data)
+        # if not isinstance(data, th.utils.data.Dataset):
+        #     data = MetaDataset(data)
 
         return alg_dic[alg](data, dag, njobs=self.njobs, nh=self.nh,
                             nruns=self.nruns, gpus=self.gpus,
@@ -378,9 +388,6 @@ class CGNN(GraphModel):
                   train_epochs=self.train_epochs, test_epochs=self.test_epochs,
                   verbose=self.verbose, gpus=self.gpus, batch_size=self.batch_size,
                   dataloader_workers=self.dataloader_workers)
-
-        if not isinstance(data, th.utils.data.Dataset):
-            data = MetaDataset(data)
 
         og = gnn.orient_graph(data, umg)  # Pairwise method
         dag = dagify_min_edge(og)

@@ -42,7 +42,7 @@ class TTestCriterion(object):
         self.max_iter = max_iter
         self.runs_per_iter = runs_per_iter
         self.iter = 0
-        self.p_value = np.nan
+        self.p_value = np.inf
 
     def loop(self, xy, yx):
         """ Tests the loop condition based on the new results and the
@@ -55,12 +55,12 @@ class TTestCriterion(object):
         Returns:
             bool: True if the loop has to continue, False otherwise.
         """
-        if len(xy) > 0:
-            self.iter += self.runs_per_iter
         if self.iter < 2:
+            self.iter += self.runs_per_iter
             return True
         t_test, self.p_value = ttest_ind(xy, yx, equal_var=False)
         if self.p_value > self.threshold and self.iter < self.max_iter:
+            self.iter += self.runs_per_iter
             return True
         else:
             return False
@@ -132,8 +132,7 @@ class MMDloss(th.nn.Module):
         # exponent entries of the RBF kernel (without the sigma) for each
         # combination of the rows in 'X'
         exponent = -2*XX + X2.expand_as(XX) + X2.t().expand_as(XX)
-
-        lossMMD = th.sum(sum([self.S *(exponent * -bandwidth).exp() 
+        lossMMD = th.sum(sum([self.S *(exponent * -bandwidth).exp()
                               for bandwidth in self.bandwidths]))
         return lossMMD
 

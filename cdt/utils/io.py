@@ -32,6 +32,7 @@ import networkx as nx
 from torch.utils.data import Dataset
 import torch as th
 from collections import OrderedDict
+from copy import deepcopy
 
 
 def read_causal_pairs(filename, scale=True, **kwargs):
@@ -265,7 +266,9 @@ class MetaDataset(Dataset):
         Returns:
             cdt.utils.io.MetaDataset: the new dataset on device
         """
-        return MetaDataset(self.data, self.names, device)
+        cpy = deepcopy(self)
+        cpy.data = cpy.data.to(device)
+        return cpy #  MetaDataset(self.data, self.names, device)
 
     def __len__(self):
         return len(self.data)
