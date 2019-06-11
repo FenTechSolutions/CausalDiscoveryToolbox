@@ -147,7 +147,8 @@ class SAM_block(th.nn.Module):
 class SAM_generators(th.nn.Module):
     """Ensemble of all the generators."""
 
-    def __init__(self, data_shape, zero_components, nh=200, batch_size=-1, **kwargs):
+    def __init__(self, data_shape, zero_components, nh=200, batch_size=-1,
+                 device='cpu', **kwargs):
         """Init the model."""
         super(SAM_generators, self).__init__()
         if batch_size == -1:
@@ -158,7 +159,7 @@ class SAM_generators(th.nn.Module):
         self.noise = []
         for i in range(self.cols):
             pname = 'noise_{}'.format(i)
-            self.register_buffer(pname, th.FloatTensor(batch_size, 1))
+            self.register_buffer(pname, th.FloatTensor(batch_size, 1).to(device))
             self.noise.append(getattr(self, pname))
         self.blocks = th.nn.ModuleList()
 
@@ -275,7 +276,8 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
             zero_components[j].append(i)
     else:
         zero_components = [[i] for i in range(cols)]
-    sam = SAM_generators((rows, cols), zero_components, batch_norm=True, **kwargs)
+    sam = SAM_generators((rows, cols), zero_components, batch_norm=True,
+                         device=device, **kwargs)
 
     activation_function = kwargs.get('activation_function', th.nn.Tanh)
     try:
@@ -382,7 +384,7 @@ class SAM(GraphModel):
         dnh (int): Number of hidden units in the discriminator's hidden layer$
         train_epochs (int): Number of training epochs
         test_epochs (int): Number of test epochs (saving and averaging the causal filters)
-        batchsize (int): Size of the batches to be fed to the SAM model.
+        batch_size (int): Size of the batches to be fed to the SAM model.
         nruns (int): Number of runs to be made for causal estimation.
                Recommended: >=12 for optimal performance.
         njobs (int): Numbers of jobs to be run in Parallel.
@@ -394,11 +396,29 @@ class SAM(GraphModel):
        Ref: Kalainathan, Diviyan & Goudet, Olivier & Guyon, Isabelle &
        Lopez-Paz, David & Sebag, Michèle. (2018). SAM: Structural Agnostic
        Model, Causal Discovery and Penalized Adversarial Learning.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import SAM
+        >>> from cdt.data import load_dataset
+        >>> data, graph = load_dataset("sachs")
+        >>> obj = SAM()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> output = obj.predict(data, nx.Graph(graph))  #With an undirected graph
+        >>>
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
-    def __init__(self, lr=0.1, dlr=0.1, l1=0.1, nh=200, dnh=200,
-                 train_epochs=1000, test_epochs=1000, batchsize=-1,
-                 nruns=6, njobs=None, gpus=0, verbose=None):
+    def __init__(self, lr=0.1, dlr=0.1, l1=0.1, nh=50, dnh=200,
+                 train_epochs=1000, test_epochs=1000, batch_size=-1,
+                 nruns=6, njobs=None, gpus=None, verbose=None):
         """Init and parametrize the SAM model.
 
         """
@@ -410,7 +430,7 @@ class SAM(GraphModel):
         self.dnh = dnh
         self.train = train_epochs
         self.test = test_epochs
-        self.batchsize = batchsize
+        self.batch_size = batch_size
         self.nruns = nruns
         self.njobs = SETTINGS.get_default(njobs=njobs)
         self.gpus = SETTINGS.get_default(gpu=gpus)
@@ -430,7 +450,7 @@ class SAM(GraphModel):
             networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term
             of the ith variable for the jth generator.
         """
-        if self.njobs != 1:
+        if self.gpus > 0:
             list_out = parallel_run(run_SAM, data, njobs=self.njobs,
                                     skeleton=graph,
                                     lr_gen=self.lr, lr_disc=self.dlr,
@@ -438,7 +458,7 @@ class SAM(GraphModel):
                                     dnh=self.dnh, gpus=self.gpus,
                                     train_epochs=self.train,
                                     test_epochs=self.test,
-                                    batch_size=self.batchsize, plot=plot,
+                                    batch_size=self.batch_size, plot=plot,
                                     verbose=self.verbose, nruns=self.nruns)
         else:
             list_out = [run_SAM(data, skeleton=graph,
@@ -446,7 +466,7 @@ class SAM(GraphModel):
                                 regul_param=self.l1, nh=self.nh, dnh=self.dnh,
                                 device=None,
                                 train_epochs=self.train,
-                                test_epochs=self.test, batch_size=self.batchsize,
+                                test_epochs=self.test, batch_size=self.batch_size,
                                 plot=plot, verbose=self.verbose)
                         for idx in range(self.nruns)]
         if return_list_results:

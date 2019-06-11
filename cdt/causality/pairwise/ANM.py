@@ -125,22 +125,42 @@ class ANM(PairwiseModel):
        Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,
        "Nonlinear causal discovery with additive noise models", NIPS 2009
 
+    Example:
+        >>> from cdt.causality.pairwise import ANM
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
+        >>> obj = ANM()
+        >>>
+        >>> # This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset('sachs')
+        >>> output = obj.orient_graph(data, nx.DiGraph(graph))
+        >>>
+        >>> # To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
+
     """
 
     def __init__(self):
         """Init the model."""
         super(ANM, self).__init__()
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, data, **kwargs):
         """Prediction method for pairwise causal inference using the ANM model.
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = data
         a = scale(a).reshape((-1, 1))
         b = scale(b).reshape((-1, 1))
 

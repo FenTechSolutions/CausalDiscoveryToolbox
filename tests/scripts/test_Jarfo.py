@@ -1,10 +1,13 @@
 import os
+import numpy as np
 import pandas as pd
 import networkx as nx
 from cdt.causality.pairwise.Jarfo import Jarfo
 from cdt.independence.graph import Glasso
 from cdt.utils.io import read_causal_pairs
 from cdt import SETTINGS
+from cdt.data import load_dataset
+
 
 SETTINGS.NJOBS = 1
 
@@ -47,6 +50,37 @@ def test_graph():
     return 0
 
 
+def test_tuebingen():
+    data, labels = load_dataset('tuebingen')
+    data = data[:30]
+    labels = labels[:30]
+    # print(labels)
+    m = Jarfo()
+    m.fit(data, labels[['Target']])
+    r = m.predict(data)
+    print(r)
+    return 0
+
+
+def test_categorical():
+    data, labels = load_dataset('tuebingen')
+    data = data[:10]
+    for idx in range(10):
+        data.iloc[idx, 0] = np.digitize(data.iloc[idx, 0],
+                                        np.histogram(data.iloc[idx, 0])[1])
+        data.iloc[idx, 1] = np.digitize(data.iloc[idx, 1],
+                                        np.histogram(data.iloc[idx, 1])[1])
+    labels = labels[:10]
+    m = Jarfo()
+    m.fit(data, labels[['Target']])
+    r = m.predict(data)
+    print(r)
+    return 0
+
+
+
 if __name__ == "__main__":
-    test_pairwise()
-    test_graph()
+    # test_pairwise()
+    # test_graph()
+    test_tuebingen()
+    test_categorical()

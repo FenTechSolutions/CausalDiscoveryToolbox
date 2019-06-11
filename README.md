@@ -1,11 +1,11 @@
-# Causal Discovery Toolbox
+![](docs/banner.png)
 
-Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
+The Causal Discovery Toolbox is a package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
 [![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
+[![Dev Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=dev)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
-[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
-[![Python.pm](https://img.shields.io/badge/python->3.5-lightgrey.svg?maxAge=259200)](#)
+[![Hex.pm](https://img.shields.io/aur/license/pac.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
 [![version](https://img.shields.io/badge/version-0.4.4-yellow.svg?maxAge=259200)](#)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
@@ -13,7 +13,7 @@ It implements lots of algorithms for graph structure recovery (including algorit
 ## [Check out the documentation here](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html) 
 ## [Please cite us if you use our software](https://arxiv.org/abs/1903.02278)
 
-An example of application of the toolbox on the LUCAS dataset (on Lung cancer) using CGNNs can be found here : [jupyter-notebook](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/examples/Discovery_LUCAS.ipynb)
+[A tutorial is available here](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/tutorial.html)
 
 Install it using pip: (See more details on installation below)
 ```sh
@@ -22,10 +22,11 @@ pip install cdt
 ## Docker images
 Docker images are available, including all the dependencies, and enabled functionalities:
 
-|  python ver. 	|  cpu 	| gpu 	|
-|--------------	|-----------------------------------------------------------------------------------------------------------------------------	|----------------------------------------------------------------------------------------------------------------------------------------	|
-| 3.6 	| [![d36cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/) 	| [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
-| 3.7 	| [![d37cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/) 	| [![d37gpu](https://img.shields.io/badge/nvidia--docker-unavailable-lightgrey.svg?maxAge=259200)](#) 	|
+|       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
+|:----------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------:|
+| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/docker-dev-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+| Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/docker-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
+| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--docker-dev-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
 
 ## Installation
 
@@ -70,47 +71,60 @@ The following figure shows how the package and its algorithms are structured
 
 
 ```
-cdt package
-|
-|- independence
-|  |- skeleton (Infering the skeleton from data, and removing spurious connections)
-|  |  |- Lasso variants (Randomized Lasso[1], Glasso[2], HSICLasso[3])
-|  |  |- FSGNN (CGNN variant for feature selection)
-|  |  |- Network deconvolution[4]
-|  |  |- Skeleton recovery using feature selection algorithms (RFECV[5], LinearSVR[6], RRelief[7], ARD[8,9], DecisionTree)
-|  |- stats (pairwise methods for dependency)
-|     |- Correlation (Pearson, Spearman, KendallTau)
-|     |- Kernel based (NormalizedHSIC[10])
-|     |- Mutual information based (MIRegression, Adjusted Mutual Information[11], Normalized mutual information[11])
-|
-|- generators
-|  |- RandomGraphFromData (Generate a random graph similar to inputdata)
-|  |- RandomGraphGenerator (Generates a random graph, can generate pairs of variables)
-|  |- generate_graph_with_structure (generates a graph with a fixed structure)
-|
-|- causality
-|  |- graph (methods for graph inference)
-|  |  |- CGNN[12] method (In tensorflow, pytorch version needs revision)
-|  |  |- PC[13]
-|  |  |- GES[13]
-|  |  |- GIES[13]
-|  |  |- LiNGAM[13]
-|  |  |- CAM[13]
-|  |- pairwise (methods for pairwise inference)
-|     |- ANM[14] (Additive Noise Model)
-|     |- IGCI[15] (Information Geometric Causal Inference)
-|     |- RCC[16] (Randomized Causation Coefficient)
-|     |- NCC[17] (Neural Causation Coefficient)
-|     |- GNN[12] (Generative Neural Network -- Part of CGNN )
-|     |- Bivariate fit (Baseline method of regression)
-|     |- GPI[18], PNL[19], Jarfo[20] to implement
-|
-|- utils
-   |- Settings -> CGNN_SETTINGS, SETTINGS (hardware settings)
-   |- Loss -> MMD loss [21, 22] & various other loss functions
-   |- metrics -> Implements the metrics for graph scoring
-   |- Formats -> for importing data formats
-   |- Graph -> defines the DirectedGraph and UndirectedGraph class (see below)
+   cdt package
+   |
+   |- independence
+   |  |- graph (Infering the skeleton from data)
+   |  |  |- Lasso variants (Randomized Lasso[1], Glasso[2], HSICLasso[3])
+   |  |  |- FSGNN (CGNN[12] variant for feature selection)
+   |  |  |- Skeleton recovery using feature selection algorithms (RFECV[5], LinearSVR[6], RRelief[7], ARD[8,9], DecisionTree)
+   |  |
+   |  |- stats (pairwise methods for dependency)
+   |     |- Correlation (Pearson, Spearman, KendallTau)
+   |     |- Kernel based (NormalizedHSIC[10])
+   |     |- Mutual information based (MIRegression, Adjusted Mutual Information[11], Normalized mutual information[11])
+   |
+   |- data
+   |  |- CausalPairGenerator (Generate causal pairs)
+   |  |- AcyclicGraphGenerator (Generate FCM-based graphs)
+   |  |- load_dataset (load standard benchmark datasets)
+   |
+   |- causality
+   |  |- graph (methods for graph inference)
+   |  |  |- CGNN[12]
+   |  |  |- PC[13]
+   |  |  |- GES[13]
+   |  |  |- GIES[13]
+   |  |  |- LiNGAM[13]
+   |  |  |- CAM[13]
+   |  |  |- GS[23]
+   |  |  |- IAMB[24]
+   |  |  |- MMPC[25]
+   |  |  |- SAM[26]
+   |  |  |- CCDr[27]
+   |  |
+   |  |- pairwise (methods for pairwise inference)
+   |     |- ANM[14] (Additive Noise Model)
+   |     |- IGCI[15] (Information Geometric Causal Inference)
+   |     |- RCC[16] (Randomized Causation Coefficient)
+   |     |- NCC[17] (Neural Causation Coefficient)
+   |     |- GNN[12] (Generative Neural Network -- Part of CGNN )
+   |     |- Bivariate fit (Baseline method of regression)
+   |     |- Jarfo[20]
+   |     |- CDS[20]
+   |     |- RECI[28]
+   |
+   |- metrics (Implements the metrics for graph scoring)
+   |  |- Precision Recall
+   |  |- SHD
+   |  |- SID [29]
+   |
+   |- utils
+      |- Settings -> SETTINGS class (hardware settings)
+      |- loss -> MMD loss [21, 22] & various other loss functions
+      |- io -> for importing data formats
+      |- graph -> graph utilities
+
 
 
 ```
@@ -154,3 +168,10 @@ The whole package revolves around using the **DiGraph** and **Graph** classes fr
 - [20] Fonollosa, J. A. (2016). Conditional distribution variability measures for causality detection. arXiv preprint arXiv:1601.06680.
 - [21] Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. Journal of Machine Learning Research, 13(Mar), 723-773.
 - [22] Li, Y., Swersky, K., & Zemel, R. (2015). Generative moment matching networks. In Proceedings of the 32nd International Conference on Machine Learning (ICML-15) (pp. 1718-1727).  
+- [23] Margaritis D (2003). Learning Bayesian Network Model Structure from Data . Ph.D. thesis, School of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report CMU-CS-03-153
+- [24] Tsamardinos I, Aliferis CF, Statnikov A (2003). “Algorithms for Large Scale Markov Blanket Discovery”. In “Proceedings of the Sixteenth International Florida Artificial Intelligence Research Society Conference”, pp. 376-381. AAAI Press.
+- [25] Tsamardinos I, Aliferis CF, Statnikov A (2003). “Time and Sample Efficient Discovery of Markov Blankets and Direct Causal Relations”. In “KDD ’03: Proceedings of the Ninth ACM SIGKDD International Conference on Knowledge Discovery and Data Mining”, pp. 673-678. ACM. Tsamardinos I, Brown LE, Aliferis CF (2006). “The Max-Min Hill-Climbing Bayesian Network Structure Learning Algorithm”. Machine Learning,65(1), 31-78.
+- [26] Kalainathan, Diviyan & Goudet, Olivier & Guyon, Isabelle & Lopez-Paz, David & Sebag, Michèle. (2018). SAM: Structural Agnostic Model, Causal Discovery and Penalized Adversarial Learning.
+- [27] Aragam, B., & Zhou, Q. (2015). Concave penalized estimation of sparse Gaussian Bayesian networks. Journal of Machine Learning Research, 16, 2273-2328.
+- [28] Bloebaum, P., Janzing, D., Washio, T., Shimizu, S., & Schoelkopf, B. (2018, March). Cause-Effect Inference by Comparing Regression Errors. In International Conference on Artificial Intelligence and Statistics (pp. 900-909).
+- [29] Structural Intervention Distance (SID) for Evaluating Causal Graphs, Jonas Peters, Peter Bühlmann: https://arxiv.org/abs/1306.1043

@@ -53,6 +53,26 @@ class RCC(PairwiseModel):
     .. note::
        Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,
        "Towards a Learning Theory of Cause-Effect Inference", ICML 2015.
+
+    Example:
+        >>> from cdt.causality.pairwise import RCC
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
+        >>> obj = RCC()
+        >>>
+        >>> # This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset('sachs')
+        >>> output = obj.orient_graph(data, nx.DiGraph(graph))
+        >>>
+        >>> # To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self, rand_coeff=333, nb_estimators=500, nb_min_leaves=20,
@@ -113,36 +133,18 @@ class RCC(PairwiseModel):
                        max_depth=self.max_depth,
                        n_jobs=self.njobs).fit(train, labels)
 
-    def predict_proba(self, x, y=None, **kwargs):
+    def predict_proba(self, dataset, **kwargs):
         """ Predict the causal score using a trained RCC model
 
         Args:
-            x (numpy.array or pandas.DataFrame or pandas.Series): First variable or dataset.
-            args (numpy.array): second variable (optional depending on the 1st argument).
+            dataset (tuple): Couple of np.ndarray variables to classify
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
         if self.clf is None:
             raise ValueError("Model has to be trained before making predictions.")
-        if x is pandas.Series:
-            input_ = self.featurize_row(x.iloc[0], x.iloc[1]).reshape((1, -1))
-        elif x is pandas.DataFrame:
-            input_ = np.array([self.featurize_row(x.iloc[0], x.iloc[1]) for row in x])
-        elif y is not None:
-            input_ = self.featurize_row(x, y).reshape((1, -1))
-        else:
-            raise TypeError("DataType not understood.")
+
+        x, y = dataset
+        input_ = self.featurize_row(x, y).reshape((1, -1))
         return self.clf.predict(input_)
-
-    def predict_dataset(self, data, **kwargs):
-        """ Override of ``self.predict_dataset`` for better computational efficency.
-
-        Args:
-            x (pandas.DataFrame): a CEPC format Dataframe.
-            kwargs (dict): additional arguments for the algorithms
-
-        Returns:
-            pandas.DataFrame: a Dataframe with the predictions.
-        """
-        return self.predict_proba(data, **kwargs)

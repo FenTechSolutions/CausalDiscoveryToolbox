@@ -89,6 +89,14 @@ class CAM(GraphModel):
     .. warning::
        This implementation of CAM does not support starting with a graph.
        The adaptation will be made at a later date.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import CAM
+        >>> from cdt.data import load_dataset
+        >>> data, graph = load_dataset("sachs")
+        >>> obj = CAM()
+        >>> output = obj.predict(data)
     """
 
     def __init__(self, score='nonlinear', cutoff=0.001, variablesel=True,

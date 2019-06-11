@@ -40,6 +40,26 @@ class Jarfo(PairwiseModel):
 
     .. note::
        Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
+
+    Example:
+        >>> from cdt.causality.pairwise import Jarfo
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
+        >>> obj = Jarfo()
+        >>>
+        >>> # This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset("sachs")
+        >>> output = obj.orient_graph(data, nx.Graph(graph))
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
     def __init__(self):
         super(Jarfo, self).__init__()
@@ -84,17 +104,17 @@ class Jarfo(PairwiseModel):
             df2 = df2.append({'A': row["B"], 'B': row["A"]}, ignore_index=True)
         return predict(deepcopy(df2), deepcopy(self.model))[::2]
 
-    def predict_proba(self, a, b, idx=0, **kwargs):
+    def predict_proba(self, dataset, idx=0, **kwargs):
         """ Use Jarfo to predict the causal direction of a pair of vars.
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
             idx (int): (optional) index number for printing purposes
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = dataset
         return self.predict_dataset(DataFrame([[a, b]],
                                               columns=['A', 'B']))
 

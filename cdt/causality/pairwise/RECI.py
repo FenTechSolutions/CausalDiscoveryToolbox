@@ -45,19 +45,41 @@ class RECI(PairwiseModel):
        Bloebaum, P., Janzing, D., Washio, T., Shimizu, S., & Schoelkopf, B.
        (2018, March). Cause-Effect Inference by Comparing Regression Errors.
        In International Conference on Artificial Intelligence and Statistics (pp. 900-909).
+
+    Example:
+        >>> from cdt.causality.pairwise import RECI
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
+        >>> obj = RECI()
+        >>>
+        >>> # This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset("sachs")
+        >>> output = obj.orient_graph(data, nx.Graph(graph))
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
     def __init__(self, degree=3):
         super(RECI, self).__init__()
         self.degree = degree
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, dataset, **kwargs):
         """ Infer causal relationships between 2 variables using the RECI statistic
 
-        :param a: Input variable 1
-        :param b: Input variable 2
-        :return: Causation coefficient (Value : 1 if a->b and -1 if b->a)
-        :rtype: float
+        Args:
+            dataset (tuple): Couple of np.ndarray variables to classify
+
+        Returns:
+            float: Causation coefficient (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = dataset
         return self.b_fit_score(b, a) - self.b_fit_score(a, b)
 
     def b_fit_score(self, x, y):

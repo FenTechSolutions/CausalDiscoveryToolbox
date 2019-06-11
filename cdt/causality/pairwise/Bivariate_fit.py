@@ -40,20 +40,40 @@ class BivariateFit(PairwiseModel):
     Bivariate Fit model.
     Based itself on a best-fit criterion based on a Gaussian Process regressor.
     Used as weak baseline.
+
+    Example:
+        >>> from cdt.causality.pairwise import BivariateFit
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
+        >>> obj = BivariateFit()
+        >>>
+        >>> # This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset("sachs")
+        >>> output = obj.orient_graph(data, nx.Graph(graph))
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
     def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(BivariateFit, self).__init__()
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, dataset, **kwargs):
         """ Infer causal relationships between 2 variables using regression.
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = dataset
         return self.b_fit_score(b, a) - self.b_fit_score(a, b)
 
     def b_fit_score(self, x, y):

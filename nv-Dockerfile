@@ -1,7 +1,6 @@
-FROM divkal/nv-cdt-env-base:1.1
+FROM divkal/nv-cdt-env-base:19.05
 MAINTAINER Diviyan Kalainathan <diviyan@lri.fr>
-LABEL version="0.2.5"
-LABEL description="Docker final image for the Causal Discovery Toolbox"
+LABEL description="Nvidia Docker image for the Causal Discovery Toolbox"
 ARG python
 
 RUN mkdir -p /CDT

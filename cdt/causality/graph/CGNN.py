@@ -31,15 +31,18 @@ import numpy as np
 import itertools
 import warnings
 import torch as th
+import pandas as pd
 from copy import deepcopy
-from sklearn.preprocessing import scale
 from tqdm import trange
+from torch.utils.data import DataLoader
+from sklearn.preprocessing import scale
 from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.loss import MMDloss
 from ...utils.Settings import SETTINGS
 from ...utils.graph import dagify_min_edge
 from ...utils.parallel import parallel_run
+from ...utils.io import MetaDataset
 
 
 def message_warning(msg, *a, **kwargs):
@@ -104,6 +107,7 @@ class CGNN_model(th.nn.Module):
             self.corr_noise = dict(corr_noises)
         self.criterion = MMDloss(batch_size)
         self.register_buffer('score', th.FloatTensor([0]))
+        self.batch_size = batch_size
 
         for i in range(self.adjacency_matrix.shape[0]):
             if not confounding:
@@ -128,23 +132,29 @@ class CGNN_model(th.nn.Module):
                                                    [self.noise[:, [i]]]] for v in c], 1))
         return th.cat(self.generated, 1)
 
-    def run(self, data, train_epochs=1000, test_epochs=1000, verbose=None,
-            idx=0, lr=0.01, **kwargs):
+    def run(self, dataset, train_epochs=1000, test_epochs=1000, verbose=None,
+            idx=0, lr=0.01, dataloader_workers=0, **kwargs):
         """Run the CGNN on a given graph."""
         verbose = SETTINGS.get_default(verbose=verbose)
         optim = th.optim.Adam(self.parameters(), lr=lr)
         self.score.zero_()
+        dataloader = DataLoader(dataset, batch_size=self.batch_size,
+                                shuffle=True, drop_last=True,
+                                num_workers=dataloader_workers)
+
         with trange(train_epochs + test_epochs, disable=not verbose) as t:
             for epoch in t:
-                optim.zero_grad()
-                generated_data = self.forward()
-                mmd = self.criterion(generated_data, data)
-                if not epoch % 200:
-                    t.set_postfix(idx=idx, loss=mmd.item())
-                mmd.backward()
-                optim.step()
-                if epoch >= test_epochs:
-                    self.score.add_(mmd.data)
+                for i, data in enumerate(dataloader):
+                    optim.zero_grad()
+                    generated_data = self.forward()
+
+                    mmd = self.criterion(generated_data, data)
+                    if not epoch % 200 and i == 0:
+                        t.set_postfix(idx=idx, loss=mmd.item())
+                    mmd.backward()
+                    optim.step()
+                    if epoch >= test_epochs:
+                        self.score.add_(mmd.data)
 
         return self.score.cpu().numpy() / test_epochs
 
@@ -153,10 +163,15 @@ class CGNN_model(th.nn.Module):
             block.reset_parameters()
 
 
-def graph_evaluation(data, adj_matrix, device='cpu', **kwargs):
+def graph_evaluation(data, adj_matrix, device='cpu', batch_size=-1, **kwargs):
     """Evaluate a graph taking account of the hardware."""
-    obs = th.FloatTensor(data).to(device)
-    cgnn = CGNN_model(adj_matrix, data.shape[0], **kwargs).to(device)
+    if isinstance(data, th.utils.data.Dataset):
+        obs = data.to(device)
+    else:
+        obs = th.Tensor(scale(data.values)).to(device)
+    if batch_size == -1:
+        batch_size = obs.__len__()
+    cgnn = CGNN_model(adj_matrix, batch_size, **kwargs).to(device)
     cgnn.reset_parameters()
     return cgnn.run(obs, **kwargs)
 
@@ -166,7 +181,7 @@ def parallel_graph_evaluation(data, adj_matrix, nruns=16,
     """Parallelize the various runs of CGNN to evaluate a graph."""
     njobs, gpus = SETTINGS.get_default(('njobs', njobs), ('gpu', gpus))
 
-    if nruns == 1:
+    if gpus == 0:
         return graph_evaluation(data, adj_matrix,
                                 device=SETTINGS.default_device, **kwargs)
     else:
@@ -178,10 +193,16 @@ def parallel_graph_evaluation(data, adj_matrix, nruns=16,
 
 def hill_climbing(data, graph, **kwargs):
     """Hill Climbing optimization: a greedy exploration algorithm."""
-    nodelist = list(data.columns)
-    data = scale(data.values).astype('float32')
+    if isinstance(data, th.utils.data.Dataset):
+        nodelist = data.get_names()
+    elif isinstance(data, pd.DataFrame):
+        nodelist = list(data.columns)
+    else:
+        raise TypeError('Data type not understood')
     tested_candidates = [nx.adj_matrix(graph, nodelist=nodelist, weight=None)]
-    best_score = parallel_graph_evaluation(data, tested_candidates[0].todense(), ** kwargs)
+    best_score = parallel_graph_evaluation(data,
+                                           tested_candidates[0].todense(),
+                                           ** kwargs)
     best_candidate = graph
     can_improve = True
     while can_improve:
@@ -194,26 +215,14 @@ def hill_climbing(data, graph, **kwargs):
             if (nx.is_directed_acyclic_graph(test_graph) and not any([(tadjmat != cand).nnz ==
                                                                       0 for cand in tested_candidates])):
                 tested_candidates.append(tadjmat)
-                score = parallel_graph_evaluation(data, tadjmat.todense(), **kwargs)
+                score = parallel_graph_evaluation(data, tadjmat.todense(),
+                                                  **kwargs)
                 if score < best_score:
                     can_improve = True
                     best_candidate = test_graph
                     best_score = score
                     break
     return best_candidate
-
-
-def hill_climbing_with_removal():
-    pass
-
-
-def exploratory_hill_climbing(data, graph, proba=0.1, decay=0.95, max_trials=20, **kwargs):
-    """Hill climbing with a bit more exploration."""
-    pass
-
-
-def tabu_search():
-    pass
 
 
 class CGNN(GraphModel):
@@ -229,21 +238,49 @@ class CGNN(GraphModel):
            ``cdt.SETTINGS.NJOBS``.
         gpus (bool): Number of available gpus
            (Initialized with ``cdt.SETTINGS.GPU``)
+        batch_size (int): batch size, defaults to full-batch
         lr (float): Learning rate for the generative neural networks.
         train_epochs (int): Number of epochs used to train the network.
         test_epochs (int): Number of epochs during which the results are
            harvested. The network still trains at this stage.
         verbose (bool): Sets the verbosity of the execution. Defaults to
            ``cdt.SETTINGS.verbose``.
+        dataloader_workers (int): how many subprocesses to use for data
+           loading. 0 means that the data will be loaded in the main
+           process. (default: 0)
 
     .. note::
        Ref : Learning Functional Causal Models with Generative Neural Networks
        Olivier Goudet & Diviyan Kalainathan & Al.
        (https://arxiv.org/abs/1709.05321)
+
+    .. note::
+       The input data can be of type torch.utils.data.Dataset, or it defaults to
+       `cdt.utils.io.MetaDataset`. This class is overridable to write custom
+       data loading functions, useful for very large datasets.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import CGNN
+        >>> from cdt.data import load_dataset
+        >>> data, graph = load_dataset("sachs")
+        >>> obj = CGNN()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> output = obj.predict(data, nx.Graph(graph))  #With an undirected graph
+        >>>
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
-    def __init__(self, nh=20, nruns=16, njobs=None, gpus=None,
-                 lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None):
+    def __init__(self, nh=20, nruns=16, njobs=None, gpus=None, batch_size=-1,
+                 lr=0.01, train_epochs=1000, test_epochs=1000, verbose=None,
+                 dataloader_workers=0):
         """ Initialize the CGNN Model."""
         super(CGNN, self).__init__()
         self.nh = nh
@@ -254,6 +291,8 @@ class CGNN(GraphModel):
         self.train_epochs = train_epochs
         self.test_epochs = test_epochs
         self.verbose = SETTINGS.get_default(verbose=verbose)
+        self.batch_size = batch_size
+        self.dataloader_workers = dataloader_workers
 
     def create_graph_from_data(self, data):
         """Use CGNN to create a graph from scratch. All the possible structures
@@ -261,25 +300,33 @@ class CGNN(GraphModel):
         preferable to start from a graph skeleton for large graphs.
 
         Args:
-            data (pandas.DataFrame): Observational data on which causal
-               discovery has to be performed.
+            data (pandas.DataFrame or torch.utils.data.Dataset): Observational
+               data on which causal discovery has to be performed.
         Returns:
             networkx.DiGraph: Solution given by CGNN.
-
         """
         warnings.warn("An exhaustive search of the causal structure of CGNN without"
                       " skeleton is super-exponential in the number of variables.")
 
         # Building all possible candidates:
-        nb_vars = len(list(data.columns))
-        indata = scale(data.values).astype('float32')
+        if not isinstance(data, th.utils.data.Dataset):
+            nb_vars = len(list(data.columns))
+            names = list(data.columns)
+        else:
+            nb_vars = data.__featurelen__()
+            names = data.get_names()
         candidates = [np.reshape(np.array(i), (nb_vars, nb_vars)) for i in itertools.product([0, 1], repeat=nb_vars*nb_vars)
                       if (np.trace(np.reshape(np.array(i), (nb_vars, nb_vars))) == 0
                           and nx.is_directed_acyclic_graph(nx.DiGraph(np.reshape(np.array(i), (nb_vars, nb_vars)))))]
         warnings.warn("A total of {} graphs will be evaluated.".format(len(candidates)))
-        scores = [parallel_graph_evaluation(indata, i, njobs=self.njobs, nh=self.nh, nruns=self.nruns, gpus=self.gpus,
+        scores = [parallel_graph_evaluation(data, i, njobs=self.njobs, nh=self.nh,
+                                            nruns=self.nruns, gpus=self.gpus,
                                             lr=self.lr, train_epochs=self.train_epochs,
-                                            test_epochs=self.test_epochs, verbose=self.verbose) for i in candidates]
+                                            test_epochs=self.test_epochs,
+                                            verbose=self.verbose,
+                                            batch_size=self.batch_size,
+                                            dataloader_workers=self.dataloader_workers)
+                  for i in candidates]
         final_candidate = candidates[scores.index(min(scores))]
         output = np.zeros(final_candidate.shape)
 
@@ -291,29 +338,33 @@ class CGNN(GraphModel):
                 output[i, j] = min(scores) - scores[[np.array_equal(cand, tgraph)
                                                      for tgraph in candidates].index(True)]
         prediction = nx.DiGraph(final_candidate * output)
-        return nx.relabel_nodes(prediction, {idx: i for idx, i in enumerate(data.columns)})
+        return nx.relabel_nodes(prediction, {idx: i for idx, i in enumerate(names)})
 
     def orient_directed_graph(self, data, dag, alg='HC'):
         """Modify and improve a directed acyclic graph solution using CGNN.
 
         Args:
-            data (pandas.DataFrame): Observational data on which causal
-               discovery has to be performed.
+            data (pandas.DataFrame or torch.utils.data.Dataset): Observational
+               data on which causal discovery has to be performed.
             dag (nx.DiGraph): Graph that provides the initial solution,
                on which the CGNN algorithm will be applied.
-            alg (str): Exploration heuristic to use, among ["HC", "HCr",
-               "tabu", "EHC"]
+            alg (str): Exploration heuristic to use, only "HC" is supported for
+               now.
         Returns:
             networkx.DiGraph: Solution given by CGNN.
 
         """
-        alg_dic = {'HC': hill_climbing, 'HCr': hill_climbing_with_removal,
-                   'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
+        alg_dic = {'HC': hill_climbing}  # , 'HCr': hill_climbing_with_removal,
+        # 'tabu': tabu_search, 'EHC': exploratory_hill_climbing}
+        # if not isinstance(data, th.utils.data.Dataset):
+        #     data = MetaDataset(data)
 
         return alg_dic[alg](data, dag, njobs=self.njobs, nh=self.nh,
                             nruns=self.nruns, gpus=self.gpus,
                             lr=self.lr, train_epochs=self.train_epochs,
-                            test_epochs=self.test_epochs, verbose=self.verbose)
+                            test_epochs=self.test_epochs, verbose=self.verbose,
+                            batch_size=self.batch_size,
+                            dataloader_workers=self.dataloader_workers)
 
     def orient_undirected_graph(self, data, umg, alg='HC'):
         """Orient the undirected graph using GNN and apply CGNN to improve the graph.
@@ -323,8 +374,8 @@ class CGNN(GraphModel):
                discovery has to be performed.
             umg (nx.Graph): Graph that provides the skeleton, on which the GNN
                then the CGNN algorithm will be applied.
-            alg (str): Exploration heuristic to use, among ["HC", "HCr",
-               "tabu", "EHC"]
+            alg (str): Exploration heuristic to use, only "HC" is supported for
+               now.
         Returns:
             networkx.DiGraph: Solution given by CGNN.
 
@@ -337,12 +388,10 @@ class CGNN(GraphModel):
         gnn = GNN(nh=self.nh, lr=self.lr, nruns=self.nruns,
                   nb_max_runs=self.nruns, njobs=self.njobs,
                   train_epochs=self.train_epochs, test_epochs=self.test_epochs,
-                  verbose=self.verbose, gpus=self.gpus)
+                  verbose=self.verbose, gpus=self.gpus, batch_size=self.batch_size,
+                  dataloader_workers=self.dataloader_workers)
 
         og = gnn.orient_graph(data, umg)  # Pairwise method
-        # print(nx.adj_matrix(og).todense().shape)
-        # print(list(og.edges()))
         dag = dagify_min_edge(og)
-        # print(nx.adj_matrix(dag).todense().shape)
 
         return self.orient_directed_graph(data, dag, alg=alg)

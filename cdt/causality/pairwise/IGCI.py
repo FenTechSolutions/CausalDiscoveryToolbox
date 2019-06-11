@@ -87,29 +87,55 @@ class IGCI(PairwiseModel):
        K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
        Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
        http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf
+
+    Example:
+        >>> from cdt.causality.pairwise import IGCI
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
+        >>> obj = IGCI()
+        >>>
+        >>> # This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset("sachs")
+        >>> output = obj.orient_graph(data, nx.Graph(graph))
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self):
         """.Initialize the IGCI model."""
         super(IGCI, self).__init__()
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, dataset, ref_measure='gaussian',
+                      estimator='entropy', **kwargs):
         """Evaluate a pair using the IGCI model.
 
-        :param a: Input variable 1D
-        :param b: Input variable 1D
-        :param kwargs: {refMeasure: Scaling method (gaussian, integral or None),
-                        estimator: method used to evaluate the pairs (entropy or integral)}
-        :return: Return value of the IGCI model >0 if a->b otherwise if return <0
+        Args:
+            dataset (tuple): Couple of np.ndarray variables to classify
+            refMeasure (str): Scaling method (gaussian (default),
+               integral or None)
+            estimator (str): method used to evaluate the pairs (entropy (default)
+               or integral)}
+
+        Returns:
+            float: value of the IGCI model >0 if a->b otherwise if return <0
         """
+        a, b = dataset
         estimators = {'entropy': lambda x, y: eval_entropy(x) - eval_entropy(y), 'integral': integral_approx_estimator}
         ref_measures = {'gaussian': lambda x: standard_scale.fit_transform(x.reshape((-1, 1))),
                         'uniform': lambda x: min_max_scale.fit_transform(x.reshape((-1, 1))), 'None': lambda x: x}
 
-        ref_measure = ref_measures[kwargs.get('refMeasure', 'gaussian')]
-        estimator = estimators[kwargs.get('estimator', 'entropy')]
+        ref_measure = ref_measures[ref_measure]
+        _estimator = estimators[estimator]
 
         a = ref_measure(a)
         b = ref_measure(b)
 
-        return estimator(a, b)
+        return _estimator(a, b)

@@ -71,6 +71,23 @@ class GES(GraphModel):
        P. Spirtes, C.N. Glymour, and R. Scheines (2000).
        Causation, Prediction, and Search, MIT Press, Cambridge (MA)
 
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import GES
+        >>> from cdt.data import load_dataset
+        >>> data, graph = load_dataset("sachs")
+        >>> obj = GES()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or udirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> output = obj.predict(data, nx.Graph(graph))  #With an undirected graph
+        >>>
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self, score='obs',verbose=None):

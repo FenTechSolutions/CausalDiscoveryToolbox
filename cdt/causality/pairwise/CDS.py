@@ -94,6 +94,26 @@ class CDS(PairwiseModel):
 
     .. note::
        Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
+
+    Example:
+        >>> from cdt.causality.pairwise import CDS
+        >>> import networkx as nx
+        >>> import matplotlib.pyplot as plt
+        >>> from cdt.data import load_dataset
+        >>> data, labels = load_dataset('tuebingen')
+        >>> obj = CDS()
+        >>>
+        >>> # This example uses the predict() method
+        >>> output = obj.predict(data)
+        >>>
+        >>> # This example uses the orient_graph() method. The dataset used
+        >>> # can be loaded using the cdt.data module
+        >>> data, graph = load_dataset("sachs")
+        >>> output = obj.orient_graph(data, nx.Graph(graph))
+        >>>
+        >>> #To view the directed graph run the following command
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
     def __init__(self, ffactor=2, maxdev=3, minc=12):
         super(CDS, self).__init__()
@@ -101,16 +121,16 @@ class CDS(PairwiseModel):
         self.maxdev = maxdev
         self.minc = minc
 
-    def predict_proba(self, a, b, **kwargs):
+    def predict_proba(self, dataset, **kwargs):
         """ Infer causal relationships between 2 variables using the CDS statistic
 
         Args:
-            a (numpy.ndarray): Variable 1
-            b (numpy.ndarray): Variable 2
+            dataset (tuple): Couple of np.ndarray variables to classify
 
         Returns:
             float: Causation score (Value : 1 if a->b and -1 if b->a)
         """
+        a, b = dataset
         return self.cds_score(b, a) - self.cds_score(a, b)
 
     def cds_score(self, x_te, y_te):

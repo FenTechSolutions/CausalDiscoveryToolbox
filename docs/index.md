@@ -1,12 +1,14 @@
+![](banner.png)
+
 # Causal Discovery Toolbox Documentation
 
 Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
 [![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
+[![Dev Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=dev)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
-[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
-[![Python.pm](https://img.shields.io/badge/python-3.5%2C%203.6-lightgrey.svg?maxAge=259200)](#)
-[![version](https://img.shields.io/badge/version-0.2-yellow.svg?maxAge=259200)](#)
+[![Hex.pm](https://img.shields.io/aur/license/pac.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
+[![version](https://img.shields.io/badge/version-0.4.4-yellow.svg?maxAge=259200)](#)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 
@@ -16,11 +18,28 @@ Install it using pip: (See more details on installation below)
 ```sh
 pip install cdt
 ```
+
+## Open-source project
+The package is open-source and under the MIT license, the source code is available at : [https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox](https://github.com/diviyan-kalainathan/causaldiscoverytoolbox)
+
+When using this package, please cite: [Kalainathan, D., & Goudet, O. (2019). Causal Discovery Toolbox: Uncover causal relationships in Python. arXiv preprint arXiv:1903.02278.](https://arxiv.org/abs/1903.02278)
+
 ## Docker images
 Docker images are available, including all the dependencies, and enabled functionalities:
+
 Python 3.6 - CPU: [![d36cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)
+
 Python 3.7 - CPU: [![d37cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)
-Python 3.6 - GPU: [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) 	|
+
+Python 3.6 - GPU: [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/)
+
+
+|       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
+|:----------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------:|
+| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+| Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
+| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.4.4-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.4.4-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
+
 
 ## Installation
 
@@ -30,7 +49,7 @@ The packages requires a python version >=3.5, as well as some libraries listed i
 
 ### Install PyTorch
 As some of the key algorithms in the _cdt_ package use the PyTorch package, it is required to install it. 
-Check out their website to install the PyTorch version suited to your hardware configuration: http://pytorch.org
+Check out their website to install the PyTorch version suited to your hardware configuration: [https://pytorch.org](https://pytorch.org)
 
 ### Install the CausalDiscoveryToolbox package
 The package is available on PyPi:
@@ -110,20 +129,6 @@ cdt package
 
 ```
 
-### Hardware and algorithm settings
-The toolbox has a SETTINGS class that defines the hardware settings . Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**.
-
-These parameters are accessible and overridable via accessing the class :
-
-```python
-import cdt
-cdt.SETTINGS
-```
-
-Moreover, the hardware parameters are detected and defined automatically (including number of GPUs, CPUs, available optional packages) at the **import** of the package using the **cdt.utils.Settings.autoset_settings** method, run at startup.
-
-### The graph class
-The whole package revolves around using the **DiGraph** and **Graph** classes from the **networkx** package.
 
 ### References
 
@@ -161,12 +166,14 @@ The whole package revolves around using the **DiGraph** and **Graph** classes fr
 .. toctree::
    :maxdepth: 1 
    
+   tutorial
    causality
    independence
-   generators
+   data
    utils
    metrics
    settings
+   developer
 ```
 ## Indices and tables
 ```eval_rst

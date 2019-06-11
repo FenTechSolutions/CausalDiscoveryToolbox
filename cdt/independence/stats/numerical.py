@@ -110,6 +110,12 @@ class PearsonCorrelation(IndependenceModel):
         r(a, b) = \\frac{\\sum_{i=1}^n (a_i - \\bar{a})(b_i - \\bar{b})}
         {\\sqrt{\\sum_{i=1}^n(a_i - \\bar{a})^2 \\sqrt{\\sum_{i=1}^n(b_i - \\bar{b})^2}}}
 
+    Example:
+        >>> from cdt.independence.stats import PearsonCorrelation
+        >>> obj = PearsonCorrelation()
+        >>> a = np.array([1, 2, 1, 5])
+        >>> b = np.array([1, 3, 0, 6])
+        >>> obj.predict(a, b)
     """
     def __init__(self):
         super(PearsonCorrelation, self).__init__()
@@ -131,6 +137,13 @@ class SpearmanCorrelation(IndependenceModel):
     """Spearman correlation.
 
     Applies Pearson's correlation on the rank of the values.
+
+    Example:
+        >>> from cdt.independence.stats import SpearmanCorrelation
+        >>> obj = SpearmanCorrelation()
+        >>> a = np.array([1, 2, 1, 5])
+        >>> b = np.array([1, 3, 0, 6])
+        >>> obj.predict(a, b)
     """
     def __init__(self):
         super(SpearmanCorrelation, self).__init__()
@@ -149,7 +162,16 @@ class SpearmanCorrelation(IndependenceModel):
 
 
 class MIRegression(IndependenceModel):
-    """ Test statistic based on a mutual information regression."""
+    """ Test statistic based on a mutual information regression.
+
+        Example:
+            >>> from cdt.independence.stats import MIRegression
+            >>> obj = MIRegression()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
+
+    """
     def __init__(self):
         super(MIRegression, self).__init__()
 
@@ -169,7 +191,15 @@ class MIRegression(IndependenceModel):
 
 
 class KendallTau(IndependenceModel):
-    """Compute Kendall's Tau."""
+    """Compute Kendall's Tau.
+
+        Example:
+            >>> from cdt.independence.stats import KendallTau
+            >>> obj = KendallTau()
+            >>> a = np.array([1, 2, 1, 5])
+            >>> b = np.array([1, 3, 0, 6])
+            >>> obj.predict(a, b)
+    """
     def __init__(self):
         super(KendallTau, self).__init__()
 
@@ -189,7 +219,15 @@ class KendallTau(IndependenceModel):
 
 
 class NormalizedHSIC(IndependenceModel):
-    """Kernel-based independence test statistic. Uses RBF kernel."""
+    """Kernel-based independence test statistic. Uses RBF kernel.
+
+    Example:
+        >>> from cdt.independence.stats import NormalizedHSIC
+        >>> obj = NormalizedHSIC()
+        >>> a = np.array([1, 2, 1, 5])
+        >>> b = np.array([1, 3, 0, 6])
+        >>> obj.predict(a, b)
+    """
     def __init__(self):
         super(NormalizedHSIC, self).__init__()
 

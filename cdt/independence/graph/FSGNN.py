@@ -27,32 +27,14 @@ Author : Diviyan Kalainathan & Olivier Goudet
 """
 import torch as th
 import numpy as np
-from torch.utils import data
+import networkx as nx
+from torch.utils.data import Dataset, TensorDataset
 from sklearn.preprocessing import scale
 from tqdm import trange
 from .model import FeatureSelectionModel
 from ...utils.Settings import SETTINGS
 from ...utils.loss import MMDloss
-
-
-class Dataset(data.Dataset):
-  'Characterizes a dataset for PyTorch'
-  def __init__(self, dataset, labels):
-        'Initialization'
-        self.labels = labels
-        self.dataset = dataset
-
-  def __len__(self):
-        'Denotes the total number of samples'
-        return len(self.dataset)
-
-  def __getitem__(self, index):
-        'Generates one sample of data'
-        # Select sample
-
-        # Load data and get label
-
-        return self.dataset[index], self.labels[index]
+from ...utils.parallel import parallel_run_generator
 
 
 class FSGNN_model(th.nn.Module):
@@ -68,25 +50,26 @@ class FSGNN_model(th.nn.Module):
 
         layers.append(th.nn.Linear(sizes[-2], sizes[-1]))
         self.layers = th.nn.Sequential(*layers)
+        self.sizes = sizes
 
     def forward(self, x):
         self.layers(x)
 
-    def train(self, x, y, lr=0.01, l1=0.1, batch_size=-1,
+    def train(self, dataset, lr=0.01, l1=0.1, batch_size=-1,
               train_epochs=1000, test_epochs=1000, device=None,
-              verbose=None):
+              verbose=None, dataloader_workers=0):
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         optim = th.optim.Adam(self.parameters(), lr=lr)
-        output = th.zeros(x.size()[1])
-        output = th.zeros(x.size()[1]).to(device)
+        output = th.zeros(self.sizes[0] - 1).to(device)
 
-        criterion = MMDloss(input_size=x.shape[0]).to(device)
         if batch_size == -1:
-            batch_size = x.size()[0]
+            batch_size = dataset.__len__()
+        criterion = MMDloss(input_size=batch_size).to(device)
         # Printout value
         noise = th.randn(batch_size, 1).to(device)
-        data_iterator = th.utils.data.DataLoader(Dataset(x, y), batch_size=batch_size,
-                                                 shuffle=True, drop_last=True)
+        data_iterator = th.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                                 shuffle=True, drop_last=True,
+                                                 num_workers=dataloader_workers)
         # TRAIN
         with trange(train_epochs + test_epochs, disable=not verbose) as t:
             for epoch in t:
@@ -104,52 +87,133 @@ class FSGNN_model(th.nn.Module):
                     loss.backward()
                     optim.step()
 
-        return list(output.div_(test_epochs).div_(x.shape[0]//batch_size).cpu().numpy())
+        return list(output.div_(test_epochs).div_(dataset.__len__()//batch_size).cpu().numpy())
 
 
 class FSGNN(FeatureSelectionModel):
-    """Feature Selection using MMD and Generative Neural Networks."""
+    """Feature Selection using MMD and Generative Neural Networks.
 
-    def __init__(self):
+    Args:
+        nh (int): number of hidden units
+        dropout (float): probability of dropout (between 0 and 1)
+        activation_function (torch.nn.Module): activation function of the NN
+        lr (float): learning rate of Adam
+        l1 (float): L1 penalization coefficient
+        batch_size (int): batch size, defaults to full-batch
+        train_epochs (int): number of train epochs
+        test_epochs (int): number of test epochs
+        verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
+        nruns (int): number of bootstrap runs
+        dataloader_workers (int): how many subprocesses to use for data
+           loading. 0 means that the data will be loaded in the main
+           process. (default: 0)
+
+    Example:
+        >>> from cdt.independence.graph import FSGNN
+        >>> from sklearn.datasets import load_boston
+        >>> boston = load_boston()
+        >>> df_features = pd.DataFrame(boston['data'])
+        >>> df_target = pd.DataFrame(boston['target'])
+        >>> obj = FSGNN()
+        >>> output = obj.predict_features(df_features, df_target)
+        >>> ugraph = obj.predict(df_features)  # Predict skeleton
+    """
+
+    def __init__(self, nh=20, dropout=0., activation_function=th.nn.ReLU,
+                 lr=0.01, l1=0.1,  batch_size=-1, train_epochs=1000,
+                 test_epochs=1000, verbose=None, nruns=3,
+                 dataloader_workers=0, njobs=None):
         """Init the model."""
         super(FSGNN, self).__init__()
+        self.nh = nh
+        self.dropout = dropout
+        self.activation_function = activation_function
+        self.lr = lr
+        self.l1 = l1
+        self.batch_size = batch_size
+        self.train_epochs = train_epochs
+        self.test_epochs = test_epochs
+        self.verbose = SETTINGS.get_default(verbose=verbose)
+        self.nruns = nruns
+        self.njobs = SETTINGS.get_default(njobs=njobs)
+        self.dataloader_workers = dataloader_workers
 
-    def predict_features(self, df_features, df_target, nh=20, idx=0, dropout=0.,
-                         activation_function=th.nn.ReLU, lr=0.01, l1=0.1,  batch_size=-1,
-                         train_epochs=1000, test_epochs=1000, device=None,
-                         verbose=None, nruns=3):
+    def predict_features(self, df_features, df_target, datasetclass=TensorDataset,
+                         device=None, idx=0):
         """For one variable, predict its neighbours.
 
         Args:
-            df_features (pandas.DataFrame):
-            df_target (pandas.Series):
-            nh (int): number of hidden units
+            df_features (pandas.DataFrame): Features to select
+            df_target (pandas.Series): Target variable to predict
+            datasetclass (torch.utils.data.Dataset): Class to override for
+               custom loading of data.
             idx (int): (optional) for printing purposes
-            dropout (float): probability of dropout (between 0 and 1)
-            activation_function (torch.nn.Module): activation function of the NN
-            lr (float): learning rate of Adam
-            l1 (float): L1 penalization coefficient
-            batch_size (int): batch size, defaults to full-batch
-            train_epochs (int): number of train epochs
-            test_epochs (int): number of test epochs
-            device (str): cuda or cpu device (defaults to ``cdt.SETTINGS.default_device``)
-            verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
-            nruns (int): number of bootstrap runs
+            device (str): cuda or cpu device (defaults to
+               ``cdt.SETTINGS.default_device``)
 
         Returns:
             list: scores of each feature relatively to the target
 
         """
-        device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
-        x = th.FloatTensor(scale(df_features.values)).to(device)
-        y = th.FloatTensor(scale(df_target.values)).to(device)
+        device = SETTINGS.get_default(device=device)
+        dataset = datasetclass(th.Tensor(scale(df_features.values)).to(device),
+                               th.Tensor(scale(df_target.values)).to(device))
         out = []
-        for i in range(nruns):
-            model = FSGNN_model([x.size()[1] + 1, nh, 1],
-                                dropout=dropout,
-                                activation_function=activation_function).to(device)
+        for i in range(self.nruns):
+            model = FSGNN_model([df_features.shape[1] + 1, self.nh, 1],
+                                activation_function=self.activation_function,
+                                dropout=self.dropout).to(device)
 
-            out.append(model.train(x, y, lr=0.01, l1=0.1, batch_size=-1,
-                                   train_epochs=train_epochs, test_epochs=test_epochs,
-                                   device=device, verbose=verbose))
+            out.append(model.train(dataset, lr=0.01, l1=0.1,
+                                   batch_size=self.batch_size,
+                                   train_epochs=self.train_epochs,
+                                   test_epochs=self.test_epochs,
+                                   device=device, verbose=self.verbose,
+                                   dataloader_workers=self.dataloader_workers))
         return list(np.mean(np.array(out), axis=0))
+
+    def predict(self, df_data, threshold=0.05, gpus=None, **kwargs):
+        """Predict the skeleton of the graph from raw data.
+
+        Returns iteratively the feature selection algorithm on each node.
+
+        Args:
+            df_data (pandas.DataFrame): data to construct a graph from
+            threshold (float): cutoff value for feature selection scores
+            kwargs (dict): additional arguments for algorithms
+
+        Returns:
+            networkx.Graph: predicted skeleton of the graph.
+        """
+        njobs = self.njobs
+        gpus = SETTINGS.get_default(gpu=gpus)
+        list_nodes = list(df_data.columns.values)
+        if gpus > 0:
+            result_feature_selection = parallel_run_generator(self.run_feature_selection,
+                                                              [([df_data, node], kwargs)
+                                                               for node in list_nodes],
+                                                              gpus=gpus, njobs=njobs)
+        else:
+            result_feature_selection = [self.run_feature_selection(df_data, node,
+                                                                   idx, **kwargs)
+                                        for idx, node in enumerate(list_nodes)]
+        for idx, i in enumerate(result_feature_selection):
+            try:
+                i.insert(idx, 0)
+            except AttributeError:  # if results are numpy arrays
+                result_feature_selection[idx] = np.insert(i, idx, 0)
+        matrix_results = np.array(result_feature_selection)
+        matrix_results *= matrix_results.transpose()
+        np.fill_diagonal(matrix_results, 0)
+        matrix_results /= 2
+
+        graph = nx.Graph()
+
+        for (i, j), x in np.ndenumerate(matrix_results):
+            if matrix_results[i, j] > threshold:
+                graph.add_edge(list_nodes[i], list_nodes[j],
+                               weight=matrix_results[i, j])
+        for node in list_nodes:
+            if node not in graph.nodes():
+                graph.add_node(node)
+        return graph
