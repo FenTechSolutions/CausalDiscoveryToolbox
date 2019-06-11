@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.ANM &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.causality.pairwise.ANM &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -283,22 +292,42 @@
 <span class="sd">       Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,</span>
 <span class="sd">       &quot;Nonlinear causal discovery with additive noise models&quot;, NIPS 2009</span>
 
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.pairwise import ANM</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, labels = load_dataset(&#39;tuebingen&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = ANM()</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # This example uses the predict() method</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # This example uses the orient_graph() method. The dataset used</span>
+<span class="sd">        &gt;&gt;&gt; # can be loaded using the cdt.data module</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&#39;sachs&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.orient_graph(data, nx.DiGraph(graph))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # To view the directed graph run the following command</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ANM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ANM.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.ANM.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ANM.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.ANM.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prediction method for pairwise causal inference using the ANM model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            a (numpy.ndarray): Variable 1</span>
-<span class="sd">            b (numpy.ndarray): Variable 2</span>
+<span class="sd">            dataset (tuple): Couple of np.ndarray variables to classify</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">data</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 

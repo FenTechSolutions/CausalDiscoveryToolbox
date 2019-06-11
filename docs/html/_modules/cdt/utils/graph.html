@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.graph &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.utils.graph &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../index.html">
           
 
+          
+            
+            <img src="../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -185,7 +194,6 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">scipy.stats.mstats</span> <span class="k">as</span> <span class="nn">stat</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">linalg</span> <span class="k">as</span> <span class="n">LA</span>
 
@@ -211,21 +219,21 @@
 <span class="sd">       Nature Biotechnology</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">     mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
-<span class="sd">         it is a relevance matrix where mat(i,j) represents the similarity content</span>
-<span class="sd">         between nodes i and j. Elements of matrix should be</span>
-<span class="sd">         non-negative.</span>
-<span class="sd">     beta (float): Scaling parameter, the program maps the largest absolute eigenvalue</span>
-<span class="sd">         of the direct dependency matrix to beta. It should be</span>
-<span class="sd">         between 0 and 1.</span>
-<span class="sd">     alpha (float): fraction of edges of the observed dependency matrix to be kept in</span>
-<span class="sd">         deconvolution process.</span>
-<span class="sd">     control (int): if 0, displaying direct weights for observed</span>
-<span class="sd">         interactions, if 1, displaying direct weights for both observed and</span>
-<span class="sd">         non-observed interactions.</span>
+<span class="sd">         mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
+<span class="sd">             it is a relevance matrix where mat(i,j) represents the similarity content</span>
+<span class="sd">             between nodes i and j. Elements of matrix should be</span>
+<span class="sd">             non-negative.</span>
+<span class="sd">         beta (float): Scaling parameter, the program maps the largest absolute eigenvalue</span>
+<span class="sd">             of the direct dependency matrix to beta. It should be</span>
+<span class="sd">             between 0 and 1.</span>
+<span class="sd">         alpha (float): fraction of edges of the observed dependency matrix to be kept in</span>
+<span class="sd">             deconvolution process.</span>
+<span class="sd">         control (int): if 0, displaying direct weights for observed</span>
+<span class="sd">             interactions, if 1, displaying direct weights for both observed and</span>
+<span class="sd">             non-observed interactions.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</span>
+<span class="sd">        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components</span>
 <span class="sd">        represent direct edge weights of observed interactions.</span>
 <span class="sd">        Choosing top direct interactions (a cut-off) depends on the application and</span>
 <span class="sd">        is not implemented in this code.</span>
@@ -298,13 +306,13 @@
     <span class="sd">&quot;&quot;&quot;Implementation of the Context Likelihood or Relatedness Network algorithm.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">     mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
-<span class="sd">         it is a relevance matrix where mat(i,j) represents the similarity content</span>
-<span class="sd">         between nodes i and j. Elements of matrix should be</span>
-<span class="sd">         non-negative.</span>
+<span class="sd">        mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
+<span class="sd">            it is a relevance matrix where mat(i,j) represents the similarity content</span>
+<span class="sd">            between nodes i and j. Elements of matrix should be</span>
+<span class="sd">            non-negative.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</span>
+<span class="sd">        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components</span>
 <span class="sd">        represent direct edge weights of observed interactions.</span>
 
 <span class="sd">    .. note::</span>
@@ -335,13 +343,13 @@
     <span class="sd">&quot;&quot;&quot;Implementation of the ARACNE algorithm.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">     mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
-<span class="sd">         it is a relevance matrix where mat(i,j) represents the similarity content</span>
-<span class="sd">         between nodes i and j. Elements of matrix should be</span>
-<span class="sd">         non-negative.</span>
+<span class="sd">        mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
+<span class="sd">            it is a relevance matrix where mat(i,j) represents the similarity content</span>
+<span class="sd">            between nodes i and j. Elements of matrix should be</span>
+<span class="sd">            non-negative.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</span>
+<span class="sd">        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components</span>
 <span class="sd">        represent direct edge weights of observed interactions.</span>
 
 <span class="sd">    .. note::</span>
@@ -385,9 +393,10 @@
     <span class="n">alg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;aracne&quot;</span><span class="p">:</span> <span class="n">aracne</span><span class="p">,</span>
            <span class="s2">&quot;nd&quot;</span><span class="p">:</span> <span class="n">network_deconvolution</span><span class="p">,</span>
            <span class="s2">&quot;clr&quot;</span><span class="p">:</span> <span class="n">clr</span><span class="p">}[</span><span class="n">alg</span><span class="p">]</span>
-    <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="n">order_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">order_list</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">alg</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)),</span>
-                            <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))})</span></div>
+                            <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">order_list</span><span class="p">)})</span></div>
 
 
 <div class="viewcode-block" id="dagify_min_edge"><a class="viewcode-back" href="../../../utils.html#cdt.utils.graph.dagify_min_edge">[docs]</a><span class="k">def</span> <span class="nf">dagify_min_edge</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
@@ -402,11 +411,12 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        networkx.DiGraph: DAG made out of the input graph.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ncycles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">g</span><span class="p">)))</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_directed_acyclic_graph</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
         <span class="n">cycle</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
-        <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cycle</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">cycle</span><span class="p">[:</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">cycle</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[(</span><span class="n">g</span><span class="p">[</span><span class="n">cycle</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="n">cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="s1">&#39;weight&#39;</span><span class="p">])]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cycle</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cycle</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
             <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
             <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
 
@@ -414,10 +424,11 @@
         <span class="n">gc</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
         <span class="n">gc</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
         <span class="n">gc</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">gc</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">g</span><span class="p">))):</span>
+        <span class="n">ngc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">gc</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">ngc</span> <span class="o">&lt;</span> <span class="n">ncycles</span><span class="p">:</span>
             <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
         <span class="n">g</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+        <span class="n">ncycles</span> <span class="o">=</span> <span class="n">ngc</span>
     <span class="k">return</span> <span class="n">g</span></div>
 </pre></div>
 

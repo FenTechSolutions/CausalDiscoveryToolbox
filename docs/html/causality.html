@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
   
   
   
@@ -35,10 +37,11 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cdt.independence" href="independence.html" />
-    <link rel="prev" title="Causal Discovery Toolbox Documentation" href="index.html" /> 
+    <link rel="prev" title="Advanced Tutorial" href="tutorial_2.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -52,9 +55,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="index.html">
           
 
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -62,7 +68,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -90,6 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Get started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.causality</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.causality.pairwise">cdt.causality.pairwise</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#anm"><span class="hidden-section">ANM</span></a></li>
@@ -124,9 +131,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -197,19 +206,19 @@
 <span id="cdt-causality-pairwise"></span><h2>cdt.causality.pairwise<a class="headerlink" href="#module-cdt.causality.pairwise" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cdt.causality.pairwise.model.PairwiseModel">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.model.</code><code class="descname">PairwiseModel</code><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.model.</code><code class="sig-name descname">PairwiseModel</code><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for all pairwise causal inference models</p>
 <p>Usage for undirected/directed graphs and CEPC df format.</p>
 <dl class="method">
 <dt id="cdt.causality.pairwise.model.PairwiseModel.orient_graph">
-<code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.orient_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_graph</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">graph</em>, <em class="sig-param">printout=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.orient_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient an undirected graph using the pairwise method defined by the subclass.</p>
 <p>The pairwise method is ran on every undirected edge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df_data</strong> (<em>pandas.DataFrame</em>) – Data</p></li>
-<li><p><strong>umg</strong> (<em>networkx.Graph</em>) – Graph to orient</p></li>
+<li><p><strong>graph</strong> (<em>networkx.Graph</em>) – Graph to orient</p></li>
 <li><p><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</p></li>
 </ul>
 </dd>
@@ -220,11 +229,16 @@
 <dd class="field-odd"><p>networkx.DiGraph</p>
 </dd>
 </dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Requirement : Name of the nodes in the graph correspond to name of
+the variables in df_data</p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.model.PairwiseModel.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>x</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic predict method, chooses which subfunction to use for a more
 suited.</p>
 <p>Depending on the type of <cite>x</cite> and of <cite>*args</cite>, this function process to execute
@@ -253,7 +267,7 @@ different functions in the priority order:</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.model.PairwiseModel.predict_dataset">
-<code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>x</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_dataset</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic dataset prediction function.</p>
 <p>Runs the score independently on all pairs.</p>
 <dl class="field-list simple">
@@ -274,14 +288,13 @@ different functions in the priority order:</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.model.PairwiseModel.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/model.html#PairwiseModel.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.PairwiseModel.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prediction method for pairwise causal inference.</p>
 <p>predict_proba is meant to be overridden in all subclasses</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
-<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p></li>
 <li><p><strong>idx</strong> (<em>int</em>) – (optional) index number for printing purposes</p></li>
 </ul>
 </dd>
@@ -300,7 +313,7 @@ different functions in the priority order:</p>
 <h3><span class="hidden-section">ANM</span><a class="headerlink" href="#anm" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.ANM">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">ANM</code><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">ANM</code><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Additive Noise model to infer causal relationships.</p>
 <p>Assuming that x-&gt;y then if the data follows an additive noise model, there is y=f(x)+E.
 E being a noise variable and f a deterministic function. The causal inference bases itself on the independence
@@ -313,9 +326,30 @@ Ref: <a class="reference external" href="https://papers.nips.cc/paper/3548-nonli
 <p>Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,
 “Nonlinear causal discovery with additive noise models”, NIPS 2009</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">ANM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">ANM</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;sachs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.ANM.anm_score">
-<code class="descname">anm_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM.anm_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.anm_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">anm_score</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM.anm_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.anm_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the fitness score of the ANM model in the x-&gt;y direction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -335,14 +369,11 @@ Ref: <a class="reference external" href="https://papers.nips.cc/paper/3548-nonli
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.ANM.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prediction method for pairwise causal inference using the ANM model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
-<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
-</ul>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
@@ -360,13 +391,34 @@ Ref: <a class="reference external" href="https://papers.nips.cc/paper/3548-nonli
 <h3><span class="hidden-section">Bivariate Fit</span><a class="headerlink" href="#bivariate-fit" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.BivariateFit">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">BivariateFit</code><span class="sig-paren">(</span><em>ffactor=2</em>, <em>maxdev=3</em>, <em>minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">BivariateFit</code><span class="sig-paren">(</span><em class="sig-param">ffactor=2</em>, <em class="sig-param">maxdev=3</em>, <em class="sig-param">minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bivariate Fit model.
 Based itself on a best-fit criterion based on a Gaussian Process regressor.
 Used as weak baseline.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">BivariateFit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">BivariateFit</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.BivariateFit.b_fit_score">
-<code class="descname">b_fit_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.b_fit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit.b_fit_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">b_fit_score</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.b_fit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit.b_fit_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the cds statistic from variable 1 to variable 2</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -386,14 +438,11 @@ Used as weak baseline.</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.BivariateFit.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal relationships between 2 variables using regression.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
-<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
-</ul>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
@@ -411,7 +460,7 @@ Used as weak baseline.</p>
 <h3><span class="hidden-section">CDS</span><a class="headerlink" href="#cds" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.CDS">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">CDS</code><span class="sig-paren">(</span><em>ffactor=2</em>, <em>maxdev=3</em>, <em>minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">CDS</code><span class="sig-paren">(</span><em class="sig-param">ffactor=2</em>, <em class="sig-param">maxdev=3</em>, <em class="sig-param">minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Conditional Distribution Similarity Statistic</p>
 <p>Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
 The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
@@ -419,9 +468,30 @@ The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
 <p class="admonition-title">Note</p>
 <p>Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">CDS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">CDS</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.CDS.cds_score">
-<code class="descname">cds_score</code><span class="sig-paren">(</span><em>x_te</em>, <em>y_te</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS.cds_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.cds_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cds_score</code><span class="sig-paren">(</span><em class="sig-param">x_te</em>, <em class="sig-param">y_te</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS.cds_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.cds_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the cds statistic from variable 1 to variable 2</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -441,14 +511,11 @@ The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.CDS.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal relationships between 2 variables using the CDS statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
-<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
-</ul>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
@@ -466,7 +533,7 @@ The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
 <h3><span class="hidden-section">GNN</span><a class="headerlink" href="#gnn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.GNN">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">GNN</code><span class="sig-paren">(</span><em>nh=20</em>, <em>lr=0.01</em>, <em>nruns=6</em>, <em>njobs=None</em>, <em>gpus=None</em>, <em>verbose=None</em>, <em>ttest_threshold=0.01</em>, <em>nb_max_runs=16</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">GNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ttest_threshold=0.01</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">nb_max_runs=16</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">dataloader_workers=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shallow Generative Neural networks.</p>
 <p>Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural
 network and a MMD loss. The causal direction is considered as the “best-fit”
@@ -486,9 +553,13 @@ between the two causal directions.</p>
 <li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
 <li><p><strong>ttest_threshold</strong> (<em>float</em>) – threshold to stop the boostraps before
 <code class="docutils literal notranslate"><span class="pre">nb_max_runs</span></code> if the difference is significant</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – batch size, defaults to full-batch</p></li>
 <li><p><strong>nb_max_runs</strong> (<em>int</em>) – Max number of bootstraps</p></li>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs used for training</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs used for evaluation</p></li>
+<li><p><strong>dataloader_workers</strong> (<em>int</em>) – how many subprocesses to use for data
+loading. 0 means that the data will be loaded in the main
+process. (default: 0)</p></li>
 </ul>
 </dd>
 </dl>
@@ -498,16 +569,67 @@ between the two causal directions.</p>
 Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 (<a class="reference external" href="https://arxiv.org/abs/1709.05321">https://arxiv.org/abs/1709.05321</a>)</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">GNN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">GNN</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
-<dt id="cdt.causality.pairwise.GNN.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.predict_proba" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run multiple times GNN to estimate the causal direction.</p>
+<dt id="cdt.causality.pairwise.GNN.orient_graph">
+<code class="sig-name descname">orient_graph</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">graph</em>, <em class="sig-param">printout=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.orient_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient an undirected graph using the pairwise method defined by the subclass.</p>
+<p>The pairwise method is ran on every undirected edge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>np.ndarray</em>) – Variable 1</p></li>
-<li><p><strong>b</strong> (<em>np.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>df_data</strong> (<em>pandas.DataFrame</em><em> or </em><em>MetaDataset</em>) – Data (check cdt.utils.io.MetaDataset)</p></li>
+<li><p><strong>graph</strong> (<em>networkx.Graph</em>) – Graph to orient</p></li>
+<li><p><strong>printout</strong> (<em>str</em>) – (optional) Path to file where to save temporary results</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a directed graph, which might contain cycles</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is an override of the base class, in order to be able
+to use the torch.utils.data.Dataset classes</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Requirement : Name of the nodes in the graph correspond to name of
+the variables in df_data</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.causality.pairwise.GNN.predict_proba">
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run multiple times GNN to estimate the causal direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>torch.utils.data.Dataset</em><em> or </em><em>tuple</em>) – pair (x, y) to
+classify. Either a tuple or a torch dataset.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Causal score of the pair (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
@@ -525,7 +647,7 @@ Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 <h3><span class="hidden-section">IGCI</span><a class="headerlink" href="#igci" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.IGCI">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">IGCI</code><a class="reference internal" href="_modules/cdt/causality/pairwise/IGCI.html#IGCI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">IGCI</code><a class="reference internal" href="_modules/cdt/causality/pairwise/IGCI.html#IGCI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Information Geometric Causal Inference (IGCI) model.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -534,21 +656,46 @@ K. Zhang, B. Schölkopf:  Inferring deterministic causal relations.
 Proceedings of the 26th Annual Conference on Uncertainty in Artificial  Intelligence (UAI-2010).
 <a class="reference external" href="http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf">http://event.cwi.nl/uai2010/papers/UAI2010_0121.pdf</a></p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">IGCI</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">IGCI</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.IGCI.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/IGCI.html#IGCI.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">ref_measure='gaussian'</em>, <em class="sig-param">estimator='entropy'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/IGCI.html#IGCI.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate a pair using the IGCI model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> – Input variable 1D</p></li>
-<li><p><strong>b</strong> – Input variable 1D</p></li>
-<li><p><strong>kwargs</strong> – {refMeasure: Scaling method (gaussian, integral or None),
-estimator: method used to evaluate the pairs (entropy or integral)}</p></li>
+<li><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p></li>
+<li><p><strong>refMeasure</strong> (<em>str</em>) – Scaling method (gaussian (default),
+integral or None)</p></li>
+<li><p><strong>estimator</strong> (<em>str</em>) – method used to evaluate the pairs (entropy (default)
+or integral)}</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Return value of the IGCI model &gt;0 if a-&gt;b otherwise if return &lt;0</p>
+<dd class="field-even"><p>value of the IGCI model &gt;0 if a-&gt;b otherwise if return &lt;0</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -560,7 +707,7 @@ estimator: method used to evaluate the pairs (entropy or integral)}</p></li>
 <h3><span class="hidden-section">Jarfo</span><a class="headerlink" href="#jarfo" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.Jarfo">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">Jarfo</code><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">Jarfo</code><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Jarfo model, 2nd of the Cause Effect Pairs challenge,
 1st of the Fast Causation Challenge.
 Builds lots of features on top of a gradient boosting classifier.</p>
@@ -568,9 +715,30 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <p class="admonition-title">Note</p>
 <p>Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">Jarfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">Jarfo</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.Jarfo.orient_graph">
-<code class="descname">orient_graph</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph</em>, <em>printout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.orient_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_graph</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">graph</em>, <em class="sig-param">printout=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.orient_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.orient_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient an undirected graph using Jarfo, function modified for optimization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -592,7 +760,7 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.Jarfo.predict_dataset">
-<code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.predict_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_dataset</code><span class="sig-paren">(</span><em class="sig-param">df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.predict_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs Jarfo independently on all pairs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -612,13 +780,12 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.Jarfo.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use Jarfo to predict the causal direction of a pair of vars.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
-<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p></li>
 <li><p><strong>idx</strong> (<em>int</em>) – (optional) index number for printing purposes</p></li>
 </ul>
 </dd>
@@ -638,12 +805,33 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <h3><span class="hidden-section">NCC</span><a class="headerlink" href="#ncc" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.NCC">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">NCC</code><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">NCC</code><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Neural Causation Coefficient.</p>
 <p>Infer causal relationships between pairs of variables using mean embbedings of neural networks</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">NCC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">NCC</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.NCC.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>x_tr</em>, <em>y_tr</em>, <em>epochs=50</em>, <em>batchsize=32</em>, <em>learning_rate=0.01</em>, <em>verbose=None</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">x_tr</em>, <em class="sig-param">y_tr</em>, <em class="sig-param">epochs=50</em>, <em class="sig-param">batch_size=32</em>, <em class="sig-param">learning_rate=0.01</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the NCC model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -661,12 +849,11 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.NCC.predict_dataset">
-<code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>df</em>, <em>device=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.predict_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_dataset</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">device=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.predict_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x_tr</strong> (<em>pd.DataFrame</em>) – CEPC format dataframe containing the pairs</p></li>
-<li><p><strong>y_tr</strong> (<em>pd.DataFrame</em><em> or </em><em>np.ndarray</em>) – labels associated to the pairs</p></li>
 <li><p><strong>epochs</strong> (<em>int</em>) – number of train epochs</p></li>
 <li><p><strong>rate</strong> (<em>learning</em>) – learning rate of Adam</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
@@ -684,13 +871,12 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.NCC.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>device=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">device=None</em>, <em class="sig-param">idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal directions using the trained NCC pairwise model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Variable 1</p></li>
-<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Variable 2</p></li>
+<li><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p></li>
 <li><p><strong>device</strong> (<em>str</em>) – Device to run the algorithm on (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</p></li>
 </ul>
 </dd>
@@ -710,7 +896,7 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <h3><span class="hidden-section">RCC</span><a class="headerlink" href="#rcc" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.RCC">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">RCC</code><span class="sig-paren">(</span><em>rand_coeff=333</em>, <em>nb_estimators=500</em>, <em>nb_min_leaves=20</em>, <em>max_depth=None</em>, <em>s=10</em>, <em>njobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">RCC</code><span class="sig-paren">(</span><em class="sig-param">rand_coeff=333</em>, <em class="sig-param">nb_estimators=500</em>, <em class="sig-param">nb_min_leaves=20</em>, <em class="sig-param">max_depth=None</em>, <em class="sig-param">s=10</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Randomized Causation Coefficient model.</p>
 <p>Projection of the empirical distributions into a RKHS using random cosine
 embeddings, then classfying the pairs using a random forest.</p>
@@ -732,9 +918,30 @@ embeddings, then classfying the pairs using a random forest.</p>
 <p>Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,
 “Towards a Learning Theory of Cause-Effect Inference”, ICML 2015.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">RCC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">RCC</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;sachs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.RCC.featurize_row">
-<code class="descname">featurize_row</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.featurize_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.featurize_row" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">featurize_row</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.featurize_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.featurize_row" title="Permalink to this definition">¶</a></dt>
 <dd><p>Projects the causal pair to the RKHS using the sampled kernel approximation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -754,7 +961,7 @@ embeddings, then classfying the pairs using a random forest.</p>
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.RCC.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -767,35 +974,12 @@ embeddings, then classfying the pairs using a random forest.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="cdt.causality.pairwise.RCC.predict_dataset">
-<code class="descname">predict_dataset</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.predict_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.predict_dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Override of <code class="docutils literal notranslate"><span class="pre">self.predict_dataset</span></code> for better computational efficency.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>pandas.DataFrame</em>) – a CEPC format Dataframe.</p></li>
-<li><p><strong>kwargs</strong> (<em>dict</em>) – additional arguments for the algorithms</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a Dataframe with the predictions.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="cdt.causality.pairwise.RCC.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>x</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the causal score using a trained RCC model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>numpy.array</em><em> or </em><em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – First variable or dataset.</p></li>
-<li><p><strong>args</strong> (<em>numpy.array</em>) – second variable (optional depending on the 1st argument).</p></li>
-</ul>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
@@ -813,7 +997,7 @@ embeddings, then classfying the pairs using a random forest.</p>
 <h3><span class="hidden-section">RECI</span><a class="headerlink" href="#reci" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.RECI">
-<em class="property">class </em><code class="descclassname">cdt.causality.pairwise.</code><code class="descname">RECI</code><span class="sig-paren">(</span><em>degree=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">RECI</code><span class="sig-paren">(</span><em class="sig-param">degree=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI" title="Permalink to this definition">¶</a></dt>
 <dd><p>RECI, Best-fit mse with monome regressor and [0,1] rescaling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -826,9 +1010,30 @@ embeddings, then classfying the pairs using a random forest.</p>
 (2018, March). Cause-Effect Inference by Comparing Regression Errors.
 In International Conference on Artificial Intelligence and Statistics (pp. 900-909).</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">RECI</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">RECI</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the directed graph run the following command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.pairwise.RECI.b_fit_score">
-<code class="descname">b_fit_score</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI.b_fit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI.b_fit_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">b_fit_score</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI.b_fit_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI.b_fit_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the RECI fit score</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -848,14 +1053,11 @@ In International Conference on Artificial Intelligence and Statistics (pp. 900-9
 
 <dl class="method">
 <dt id="cdt.causality.pairwise.RECI.predict_proba">
-<code class="descname">predict_proba</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI.predict_proba" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI.predict_proba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer causal relationships between 2 variables using the RECI statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> – Input variable 1</p></li>
-<li><p><strong>b</strong> – Input variable 2</p></li>
-</ul>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>tuple</em>) – Couple of np.ndarray variables to classify</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Causation coefficient (Value : 1 if a-&gt;b and -1 if b-&gt;a)</p>
@@ -875,7 +1077,7 @@ In International Conference on Artificial Intelligence and Statistics (pp. 900-9
 <p>Find causal relationships and output a directed graph.</p>
 <dl class="class">
 <dt id="cdt.causality.graph.model.GraphModel">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.model.</code><code class="descname">GraphModel</code><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">GraphModel</code><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for all graph causal inference models.</p>
 <p>Usage for undirected/directed graphs and raw data. All causal discovery
 models out of observational data base themselves on this class. Its main
@@ -883,7 +1085,7 @@ feature is the predict function that executes a function according to the
 given arguments.</p>
 <dl class="method">
 <dt id="cdt.causality.graph.model.GraphModel.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer a directed graph out of data.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -893,7 +1095,7 @@ given arguments.</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.model.GraphModel.orient_directed_graph">
-<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>dag</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_directed_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dag</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re/Orient an undirected graph.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -903,7 +1105,7 @@ given arguments.</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.model.GraphModel.orient_undirected_graph">
-<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>umg</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">umg</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient an undirected graph.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -913,7 +1115,7 @@ given arguments.</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.model.GraphModel.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>df_data</em>, <em>graph=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">graph=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/model.html#GraphModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.GraphModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient a graph using the method defined by the arguments.</p>
 <p>Depending on the type of <cite>graph</cite>, this function process to execute
 different functions:</p>
@@ -943,7 +1145,7 @@ name of the variables in df_data</p>
 <h3><span class="hidden-section">bnlearn-based models</span><a class="headerlink" href="#bnlearn-based-models" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">BNlearnAlgorithm</code><span class="sig-paren">(</span><em>score='NULL'</em>, <em>alpha=0.05</em>, <em>beta='NULL'</em>, <em>optim=False</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">BNlearnAlgorithm</code><span class="sig-paren">(</span><em class="sig-param">score='NULL'</em>, <em class="sig-param">alpha=0.05</em>, <em class="sig-param">beta='NULL'</em>, <em class="sig-param">optim=False</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm" title="Permalink to this definition">¶</a></dt>
 <dd><p>BNlearn algorithm. All these models imported from bnlearn revolve around
 this base class and have all the same attributes/interface.</p>
 <dl class="field-list simple">
@@ -1035,7 +1237,7 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</p>
 </dl>
 <dl class="method">
 <dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm on data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1052,7 +1254,7 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph">
-<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_directed_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm on a directed_graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1076,7 +1278,7 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph">
-<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#BNlearnAlgorithm.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the algorithm on an undirected graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1100,7 +1302,7 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</p>
 <h4><span class="hidden-section">GS</span><a class="headerlink" href="#gs" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="cdt.causality.graph.bnlearn.GS">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">GS</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#GS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.GS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">GS</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#GS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.GS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grow-Shrink algorithm.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1110,6 +1312,25 @@ Learning Bayesian Network Model Structure from Data
 of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report
 CMU-CS-03-153</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">GS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">GS</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -1117,13 +1338,32 @@ CMU-CS-03-153</p>
 <h4><span class="hidden-section">IAMB</span><a class="headerlink" href="#iamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="cdt.causality.graph.bnlearn.IAMB">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.IAMB" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.IAMB" title="Permalink to this definition">¶</a></dt>
 <dd><p>IAMB algorithm.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   “Algorithms  for  Large  Scale  Markov  Blanket
 Discovery”.  In “Proceedings of the Sixteenth International Florida Artificial Intelligence Research
 Society Conference”, pp. 376-381. AAAI Press.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">IAMB</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">IAMB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 </div>
 </dd></dl>
 
@@ -1132,13 +1372,32 @@ Society Conference”, pp. 376-381. AAAI Press.</p>
 <h4><span class="hidden-section">Fast_IAMB</span><a class="headerlink" href="#fast-iamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="cdt.causality.graph.bnlearn.Fast_IAMB">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">Fast_IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#Fast_IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Fast_IAMB" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">Fast_IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#Fast_IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Fast_IAMB" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fast IAMB algorithm.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Yaramakala S, Margaritis D (2005).  “Speculative Markov Blanket Discovery for Optimal Feature
 Selection”.  In “ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data
 Mining”, pp. 809-812. IEEE Computer Society.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">Fast_IAMB</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">Fast_IAMB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 </div>
 </dd></dl>
 
@@ -1147,7 +1406,7 @@ Mining”, pp. 809-812. IEEE Computer Society.</p>
 <h4><span class="hidden-section">MMPC</span><a class="headerlink" href="#mmpc" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="cdt.causality.graph.bnlearn.MMPC">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.bnlearn.</code><code class="descname">MMPC</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#MMPC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.MMPC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">MMPC</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#MMPC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.MMPC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Max-Min Parents-Children algorithm.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1158,6 +1417,25 @@ Tsamardinos I, Brown LE, Aliferis CF (2006).  “The Max-Min Hill-Climbing Bayes
 Structure Learning Algorithm”.
 Machine Learning,65(1), 31-78.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">MMPC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">MMPC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -1166,7 +1444,7 @@ Machine Learning,65(1), 31-78.</p>
 <h3><span class="hidden-section">CAM</span><a class="headerlink" href="#cam" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.CAM">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CAM</code><span class="sig-paren">(</span><em>score='nonlinear'</em>, <em>cutoff=0.001</em>, <em>variablesel=True</em>, <em>selmethod='gamboost'</em>, <em>pruning=False</em>, <em>prunmethod='gam'</em>, <em>njobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">CAM</code><span class="sig-paren">(</span><em class="sig-param">score='nonlinear'</em>, <em class="sig-param">cutoff=0.001</em>, <em class="sig-param">variablesel=True</em>, <em class="sig-param">selmethod='gamboost'</em>, <em class="sig-param">pruning=False</em>, <em class="sig-param">prunmethod='gam'</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>CAM algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1222,9 +1500,18 @@ JMLR 15:2009-2053, 2014.</p>
 <p>This implementation of CAM does not support starting with a graph.
 The adaptation will be made at a later date.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">CAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">CAM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.CAM.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply causal discovery on observational data using CAM.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1246,7 +1533,7 @@ The adaptation will be made at a later date.</p>
 <h3><span class="hidden-section">CCDr</span><a class="headerlink" href="#ccdr" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.CCDr">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CCDr</code><span class="sig-paren">(</span><em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">CCDr</code><span class="sig-paren">(</span><em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr" title="Permalink to this definition">¶</a></dt>
 <dd><p>CCDr algorithm.
 Concave penalized Coordinate Descent with reparametrization) structure
 learning algorithm as described in Aragam and Zhou (2015). This is a fast,
@@ -1257,9 +1544,24 @@ regularization and block-cyclic coordinate descent.</p>
 <p class="admonition-title">Warning</p>
 <p>This implementation of CCDr does not support starting with a graph.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ref: Aragam, B., &amp; Zhou, Q. (2015). Concave penalized estimation of
+sparse Gaussian Bayesian networks. Journal of Machine Learning Research,
+16, 2273-2328.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">CCDr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">CCCDr</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.CCDr.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply causal discovery on observational data using CCDr.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1281,7 +1583,7 @@ regularization and block-cyclic coordinate descent.</p>
 <h3><span class="hidden-section">CGNN</span><a class="headerlink" href="#cgnn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.CGNN">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">CGNN</code><span class="sig-paren">(</span><em>nh=20</em>, <em>nruns=16</em>, <em>njobs=None</em>, <em>gpus=None</em>, <em>lr=0.01</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">CGNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">nruns=16</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">dataloader_workers=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Causal Generative Neural Netwoks : Generate the whole causal graph in a
 topological manner using neural networks and predict causal directions in
 the graph.</p>
@@ -1295,12 +1597,16 @@ evaluation.</p></li>
 <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NJOBS</span></code>.</p></li>
 <li><p><strong>gpus</strong> (<em>bool</em>) – Number of available gpus
 (Initialized with <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – batch size, defaults to full-batch</p></li>
 <li><p><strong>lr</strong> (<em>float</em>) – Learning rate for the generative neural networks.</p></li>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs used to train the network.</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs during which the results are
 harvested. The network still trains at this stage.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the execution. Defaults to
 <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</p></li>
+<li><p><strong>dataloader_workers</strong> (<em>int</em>) – how many subprocesses to use for data
+loading. 0 means that the data will be loaded in the main
+process. (default: 0)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1310,16 +1616,41 @@ harvested. The network still trains at this stage.</p></li>
 Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.
 (<a class="reference external" href="https://arxiv.org/abs/1709.05321">https://arxiv.org/abs/1709.05321</a>)</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The input data can be of type torch.utils.data.Dataset, or it defaults to
+<cite>cdt.utils.io.MetaDataset</cite>. This class is overridable to write custom
+data loading functions, useful for very large datasets.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">CGNN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">CGNN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.CGNN.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use CGNN to create a graph from scratch. All the possible structures
 are tested, which leads to a super exponential complexity. It would be
 preferable to start from a graph skeleton for large graphs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
-discovery has to be performed.</p>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>torch.utils.data.Dataset</em>) – Observational
+data on which causal discovery has to be performed.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Solution given by CGNN.</p>
@@ -1332,17 +1663,17 @@ discovery has to be performed.</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.CGNN.orient_directed_graph">
-<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>dag</em>, <em>alg='HC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_directed_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dag</em>, <em class="sig-param">alg='HC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modify and improve a directed acyclic graph solution using CGNN.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data on which causal
-discovery has to be performed.</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>torch.utils.data.Dataset</em>) – Observational
+data on which causal discovery has to be performed.</p></li>
 <li><p><strong>dag</strong> (<em>nx.DiGraph</em>) – Graph that provides the initial solution,
 on which the CGNN algorithm will be applied.</p></li>
-<li><p><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, among [“HC”, “HCr”,
-“tabu”, “EHC”]</p></li>
+<li><p><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, only “HC” is supported for
+now.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1356,7 +1687,7 @@ on which the CGNN algorithm will be applied.</p></li>
 
 <dl class="method">
 <dt id="cdt.causality.graph.CGNN.orient_undirected_graph">
-<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>umg</em>, <em>alg='HC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">umg</em>, <em class="sig-param">alg='HC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient the undirected graph using GNN and apply CGNN to improve the graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1365,8 +1696,8 @@ on which the CGNN algorithm will be applied.</p></li>
 discovery has to be performed.</p></li>
 <li><p><strong>umg</strong> (<em>nx.Graph</em>) – Graph that provides the skeleton, on which the GNN
 then the CGNN algorithm will be applied.</p></li>
-<li><p><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, among [“HC”, “HCr”,
-“tabu”, “EHC”]</p></li>
+<li><p><strong>alg</strong> (<em>str</em>) – Exploration heuristic to use, only “HC” is supported for
+now.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1390,7 +1721,7 @@ undirected graph and output a DAG before applying CGNN.</p>
 <h3><span class="hidden-section">GES</span><a class="headerlink" href="#ges" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.GES">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">GES</code><span class="sig-paren">(</span><em>score='obs'</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">GES</code><span class="sig-paren">(</span><em class="sig-param">score='obs'</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES" title="Permalink to this definition">¶</a></dt>
 <dd><p>GES algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1421,9 +1752,28 @@ arXiv preprint 1507.02608</p>
 <p>P. Spirtes, C.N. Glymour, and R. Scheines (2000).
 Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">GES</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">GES</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or udirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.GES.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the GES algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1440,7 +1790,7 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GES.orient_directed_graph">
-<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_directed_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GES on a directed graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1460,7 +1810,7 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GES.orient_undirected_graph">
-<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GES on an undirected graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1485,7 +1835,7 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 <h3><span class="hidden-section">GIES</span><a class="headerlink" href="#gies" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.GIES">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">GIES</code><span class="sig-paren">(</span><em>score='obs'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">GIES</code><span class="sig-paren">(</span><em class="sig-param">score='obs'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES" title="Permalink to this definition">¶</a></dt>
 <dd><p>GIES algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1516,9 +1866,28 @@ arXiv preprint 1507.02608</p>
 <p>P. Spirtes, C.N. Glymour, and R. Scheines (2000).
 Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">GIES</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">GIES</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.GIES.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the GIES algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1535,7 +1904,7 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GIES.orient_directed_graph">
-<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_directed_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GIES on a directed_graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1555,7 +1924,7 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.GIES.orient_undirected_graph">
-<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run GIES on an undirected graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1580,7 +1949,7 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 <h3><span class="hidden-section">LiNGAM</span><a class="headerlink" href="#lingam" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.LiNGAM">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">LiNGAM</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/LiNGAM.html#LiNGAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">LiNGAM</code><span class="sig-paren">(</span><em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/LiNGAM.html#LiNGAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>LiNGAM algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1598,9 +1967,18 @@ Journal of Machine Learning Research 7, 2003–2030.</p>
 <p class="admonition-title">Warning</p>
 <p>This implementation of LiNGAM does not support starting with a graph.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">LiNGAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">LiNGAM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.LiNGAM.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/LiNGAM.html#LiNGAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/LiNGAM.html#LiNGAM.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the LiNGAM algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1622,7 +2000,7 @@ Journal of Machine Learning Research 7, 2003–2030.</p>
 <h3><span class="hidden-section">PC</span><a class="headerlink" href="#pc" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.PC">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">PC</code><span class="sig-paren">(</span><em>CItest='gaussian'</em>, <em>method_indep='corr'</em>, <em>alpha=0.01</em>, <em>njobs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">PC</code><span class="sig-paren">(</span><em class="sig-param">CItest='gaussian'</em>, <em class="sig-param">method_indep='corr'</em>, <em class="sig-param">alpha=0.01</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC" title="Permalink to this definition">¶</a></dt>
 <dd><p>PC algorithm by C.Glymour &amp; P.Sprites.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1705,9 +2083,28 @@ Kernel-based Conditional Independence Tests for Fast Non-Parametric
 Causal Discovery. arXiv preprint arXiv:1702.03877.</p>
 <p>Imported from the Pcalg package.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">PC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">PC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.PC.create_graph_from_data">
-<code class="descname">create_graph_from_data</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_graph_from_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.create_graph_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.create_graph_from_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the PC algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1724,7 +2121,7 @@ Causal Discovery. arXiv preprint arXiv:1702.03877.</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.PC.orient_directed_graph">
-<code class="descname">orient_directed_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_directed_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.orient_directed_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.orient_directed_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run PC on a directed_graph (Only takes account of the skeleton of
 the graph).</p>
 <dl class="field-list simple">
@@ -1749,7 +2146,7 @@ the graph).</p>
 
 <dl class="method">
 <dt id="cdt.causality.graph.PC.orient_undirected_graph">
-<code class="descname">orient_undirected_graph</code><span class="sig-paren">(</span><em>data</em>, <em>graph</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">orient_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC.orient_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC.orient_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run PC on an undirected graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1774,7 +2171,7 @@ the graph).</p>
 <h3><span class="hidden-section">SAM</span><a class="headerlink" href="#sam" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.SAM">
-<em class="property">class </em><code class="descclassname">cdt.causality.graph.</code><code class="descname">SAM</code><span class="sig-paren">(</span><em>lr=0.1</em>, <em>dlr=0.1</em>, <em>l1=0.1</em>, <em>nh=200</em>, <em>dnh=200</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>batchsize=-1</em>, <em>nruns=6</em>, <em>njobs=None</em>, <em>gpus=0</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">SAM</code><span class="sig-paren">(</span><em class="sig-param">lr=0.1</em>, <em class="sig-param">dlr=0.1</em>, <em class="sig-param">l1=0.1</em>, <em class="sig-param">nh=50</em>, <em class="sig-param">dnh=200</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Structural Agnostic Model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1786,7 +2183,7 @@ the graph).</p>
 <li><p><strong>dnh</strong> (<em>int</em>) – Number of hidden units in the discriminator’s hidden layer$</p></li>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – Number of training epochs</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – Number of test epochs (saving and averaging the causal filters)</p></li>
-<li><p><strong>batchsize</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model.</p></li>
 <li><p><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation.
 Recommended: &gt;=12 for optimal performance.</p></li>
 <li><p><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel.
@@ -1802,9 +2199,28 @@ Recommended: 1 if no GPU available, 2*number of GPUs else.</p></li>
 Lopez-Paz, David &amp; Sebag, Michèle. (2018). SAM: Structural Agnostic
 Model, Causal Discovery and Penalized Adversarial Learning.</p>
 </div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">SAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">SAM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.causality.graph.SAM.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em>, <em>graph=None</em>, <em>plot=False</em>, <em>plot_generated_pair=False</em>, <em>return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph=None</em>, <em class="sig-param">plot=False</em>, <em class="sig-param">plot_generated_pair=False</em>, <em class="sig-param">return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute SAM on a dataset given a skeleton or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1843,7 +2259,7 @@ of the ith variable for the jth generator.</p>
         <a href="independence.html" class="btn btn-neutral float-right" title="cdt.independence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Causal Discovery Toolbox Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tutorial_2.html" class="btn btn-neutral float-left" title="Advanced Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

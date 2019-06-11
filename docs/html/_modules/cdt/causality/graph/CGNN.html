@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.CGNN &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.causality.graph.CGNN &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -189,15 +198,18 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">trange</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
 <span class="kn">from</span> <span class="nn">..pairwise.GNN</span> <span class="k">import</span> <span class="n">GNN</span>
 <span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span>
 <span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">...utils.graph</span> <span class="k">import</span> <span class="n">dagify_min_edge</span>
 <span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
+<span class="kn">from</span> <span class="nn">...utils.io</span> <span class="k">import</span> <span class="n">MetaDataset</span>
 
 
 <span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -262,6 +274,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">corr_noise</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">corr_noises</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">MMDloss</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">confounding</span><span class="p">:</span>
@@ -286,23 +299,29 @@
                                                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[:,</span> <span class="p">[</span><span class="n">i</span><span class="p">]]]]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generated</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run the CGNN on a given graph.&quot;&quot;&quot;</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+        <span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">num_workers</span><span class="o">=</span><span class="n">dataloader_workers</span><span class="p">)</span>
+
         <span class="k">with</span> <span class="n">trange</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">t</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span>
-                <span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-                <span class="n">generated_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
-                <span class="n">mmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">generated_data</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">200</span><span class="p">:</span>
-                    <span class="n">t</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">mmd</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-                <span class="n">mmd</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-                <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;=</span> <span class="n">test_epochs</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">mmd</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+                    <span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                    <span class="n">generated_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
+
+                    <span class="n">mmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">generated_data</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">200</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">t</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">mmd</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+                    <span class="n">mmd</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                    <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;=</span> <span class="n">test_epochs</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">mmd</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">/</span> <span class="n">test_epochs</span>
 
@@ -311,10 +330,15 @@
             <span class="n">block</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate a graph taking account of the hardware.&quot;&quot;&quot;</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">cgnn</span> <span class="o">=</span> <span class="n">CGNN_model</span><span class="p">(</span><span class="n">adj_matrix</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+    <span class="n">cgnn</span> <span class="o">=</span> <span class="n">CGNN_model</span><span class="p">(</span><span class="n">adj_matrix</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     <span class="n">cgnn</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">cgnn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -324,7 +348,7 @@
     <span class="sd">&quot;&quot;&quot;Parallelize the various runs of CGNN to evaluate a graph.&quot;&quot;&quot;</span>
     <span class="n">njobs</span><span class="p">,</span> <span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">((</span><span class="s1">&#39;njobs&#39;</span><span class="p">,</span> <span class="n">njobs</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span> <span class="n">gpus</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="n">nruns</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">gpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="p">,</span>
                                 <span class="n">device</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">default_device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -336,10 +360,16 @@
 
 <span class="k">def</span> <span class="nf">hill_climbing</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Hill Climbing optimization: a greedy exploration algorithm.&quot;&quot;&quot;</span>
-    <span class="n">nodelist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+        <span class="n">nodelist</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_names</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">nodelist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Data type not understood&#39;</span><span class="p">)</span>
     <span class="n">tested_candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">nodelist</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)]</span>
-    <span class="n">best_score</span> <span class="o">=</span> <span class="n">parallel_graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tested_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span> <span class="o">**</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">best_score</span> <span class="o">=</span> <span class="n">parallel_graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                                           <span class="n">tested_candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span>
+                                           <span class="o">**</span> <span class="n">kwargs</span><span class="p">)</span>
     <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">graph</span>
     <span class="n">can_improve</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">while</span> <span class="n">can_improve</span><span class="p">:</span>
@@ -352,26 +382,14 @@
             <span class="k">if</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">is_directed_acyclic_graph</span><span class="p">(</span><span class="n">test_graph</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([(</span><span class="n">tadjmat</span> <span class="o">!=</span> <span class="n">cand</span><span class="p">)</span><span class="o">.</span><span class="n">nnz</span> <span class="o">==</span>
                                                                       <span class="mi">0</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">tested_candidates</span><span class="p">])):</span>
                 <span class="n">tested_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tadjmat</span><span class="p">)</span>
-                <span class="n">score</span> <span class="o">=</span> <span class="n">parallel_graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tadjmat</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="n">parallel_graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tadjmat</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span>
+                                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">score</span> <span class="o">&lt;</span> <span class="n">best_score</span><span class="p">:</span>
                     <span class="n">can_improve</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">test_graph</span>
                     <span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
                     <span class="k">break</span>
     <span class="k">return</span> <span class="n">best_candidate</span>
-
-
-<span class="k">def</span> <span class="nf">hill_climbing_with_removal</span><span class="p">():</span>
-    <span class="k">pass</span>
-
-
-<span class="k">def</span> <span class="nf">exploratory_hill_climbing</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">proba</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">decay</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">max_trials</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Hill climbing with a bit more exploration.&quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-
-<span class="k">def</span> <span class="nf">tabu_search</span><span class="p">():</span>
-    <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="CGNN"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.CGNN">[docs]</a><span class="k">class</span> <span class="nc">CGNN</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
@@ -387,21 +405,49 @@
 <span class="sd">           ``cdt.SETTINGS.NJOBS``.</span>
 <span class="sd">        gpus (bool): Number of available gpus</span>
 <span class="sd">           (Initialized with ``cdt.SETTINGS.GPU``)</span>
+<span class="sd">        batch_size (int): batch size, defaults to full-batch</span>
 <span class="sd">        lr (float): Learning rate for the generative neural networks.</span>
 <span class="sd">        train_epochs (int): Number of epochs used to train the network.</span>
 <span class="sd">        test_epochs (int): Number of epochs during which the results are</span>
 <span class="sd">           harvested. The network still trains at this stage.</span>
 <span class="sd">        verbose (bool): Sets the verbosity of the execution. Defaults to</span>
 <span class="sd">           ``cdt.SETTINGS.verbose``.</span>
+<span class="sd">        dataloader_workers (int): how many subprocesses to use for data</span>
+<span class="sd">           loading. 0 means that the data will be loaded in the main</span>
+<span class="sd">           process. (default: 0)</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref : Learning Functional Causal Models with Generative Neural Networks</span>
 <span class="sd">       Olivier Goudet &amp; Diviyan Kalainathan &amp; Al.</span>
 <span class="sd">       (https://arxiv.org/abs/1709.05321)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       The input data can be of type torch.utils.data.Dataset, or it defaults to</span>
+<span class="sd">       `cdt.utils.io.MetaDataset`. This class is overridable to write custom</span>
+<span class="sd">       data loading functions, useful for very large datasets.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import CGNN</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&quot;sachs&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = CGNN()</span>
+<span class="sd">        &gt;&gt;&gt; #The predict() method works without a graph, or with a</span>
+<span class="sd">        &gt;&gt;&gt; #directed or undirected graph provided as an input</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)    #No graph provided as an argument</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, nx.Graph(graph))  #With an undirected graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, graph)  #With a directed graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; #To view the graph created, run the below commands:</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize the CGNN Model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CGNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nh</span> <span class="o">=</span> <span class="n">nh</span>
@@ -412,6 +458,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span> <span class="o">=</span> <span class="n">train_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span> <span class="o">=</span> <span class="n">test_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span> <span class="o">=</span> <span class="n">dataloader_workers</span>
 
 <div class="viewcode-block" id="CGNN.create_graph_from_data"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.CGNN.create_graph_from_data">[docs]</a>    <span class="k">def</span> <span class="nf">create_graph_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Use CGNN to create a graph from scratch. All the possible structures</span>
@@ -419,25 +467,33 @@
 <span class="sd">        preferable to start from a graph skeleton for large graphs.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame): Observational data on which causal</span>
-<span class="sd">               discovery has to be performed.</span>
+<span class="sd">            data (pandas.DataFrame or torch.utils.data.Dataset): Observational</span>
+<span class="sd">               data on which causal discovery has to be performed.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            networkx.DiGraph: Solution given by CGNN.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;An exhaustive search of the causal structure of CGNN without&quot;</span>
                       <span class="s2">&quot; skeleton is super-exponential in the number of variables.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Building all possible candidates:</span>
-        <span class="n">nb_vars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
-        <span class="n">indata</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+            <span class="n">nb_vars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nb_vars</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">__featurelen__</span><span class="p">()</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_names</span><span class="p">()</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="p">(</span><span class="n">nb_vars</span><span class="p">,</span> <span class="n">nb_vars</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="n">nb_vars</span><span class="o">*</span><span class="n">nb_vars</span><span class="p">)</span>
                       <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="p">(</span><span class="n">nb_vars</span><span class="p">,</span> <span class="n">nb_vars</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">0</span>
                           <span class="ow">and</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_directed_acyclic_graph</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="p">(</span><span class="n">nb_vars</span><span class="p">,</span> <span class="n">nb_vars</span><span class="p">)))))]</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;A total of </span><span class="si">{}</span><span class="s2"> graphs will be evaluated.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)))</span>
-        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">parallel_graph_evaluation</span><span class="p">(</span><span class="n">indata</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">parallel_graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span>
+                                            <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span>
                                             <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
-                                            <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">]</span>
+                                            <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
+                                            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                            <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">)</span>
+                  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">]</span>
         <span class="n">final_candidate</span> <span class="o">=</span> <span class="n">candidates</span><span class="p">[</span><span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">scores</span><span class="p">))]</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">final_candidate</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
@@ -449,29 +505,33 @@
                 <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">-</span> <span class="n">scores</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">tgraph</span><span class="p">)</span>
                                                      <span class="k">for</span> <span class="n">tgraph</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="kc">True</span><span class="p">)]</span>
         <span class="n">prediction</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">final_candidate</span> <span class="o">*</span> <span class="n">output</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">)})</span></div>
 
 <div class="viewcode-block" id="CGNN.orient_directed_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.CGNN.orient_directed_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_directed_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="s1">&#39;HC&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Modify and improve a directed acyclic graph solution using CGNN.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (pandas.DataFrame): Observational data on which causal</span>
-<span class="sd">               discovery has to be performed.</span>
+<span class="sd">            data (pandas.DataFrame or torch.utils.data.Dataset): Observational</span>
+<span class="sd">               data on which causal discovery has to be performed.</span>
 <span class="sd">            dag (nx.DiGraph): Graph that provides the initial solution,</span>
 <span class="sd">               on which the CGNN algorithm will be applied.</span>
-<span class="sd">            alg (str): Exploration heuristic to use, among [&quot;HC&quot;, &quot;HCr&quot;,</span>
-<span class="sd">               &quot;tabu&quot;, &quot;EHC&quot;]</span>
+<span class="sd">            alg (str): Exploration heuristic to use, only &quot;HC&quot; is supported for</span>
+<span class="sd">               now.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            networkx.DiGraph: Solution given by CGNN.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">alg_dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;HC&#39;</span><span class="p">:</span> <span class="n">hill_climbing</span><span class="p">,</span> <span class="s1">&#39;HCr&#39;</span><span class="p">:</span> <span class="n">hill_climbing_with_removal</span><span class="p">,</span>
-                   <span class="s1">&#39;tabu&#39;</span><span class="p">:</span> <span class="n">tabu_search</span><span class="p">,</span> <span class="s1">&#39;EHC&#39;</span><span class="p">:</span> <span class="n">exploratory_hill_climbing</span><span class="p">}</span>
+        <span class="n">alg_dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;HC&#39;</span><span class="p">:</span> <span class="n">hill_climbing</span><span class="p">}</span>  <span class="c1"># , &#39;HCr&#39;: hill_climbing_with_removal,</span>
+        <span class="c1"># &#39;tabu&#39;: tabu_search, &#39;EHC&#39;: exploratory_hill_climbing}</span>
+        <span class="c1"># if not isinstance(data, th.utils.data.Dataset):</span>
+        <span class="c1">#     data = MetaDataset(data)</span>
 
         <span class="k">return</span> <span class="n">alg_dic</span><span class="p">[</span><span class="n">alg</span><span class="p">](</span><span class="n">data</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span>
                             <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span>
                             <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
-                            <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span></div>
+                            <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                            <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CGNN.orient_undirected_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.CGNN.orient_undirected_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">umg</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="s1">&#39;HC&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Orient the undirected graph using GNN and apply CGNN to improve the graph.</span>
@@ -481,8 +541,8 @@
 <span class="sd">               discovery has to be performed.</span>
 <span class="sd">            umg (nx.Graph): Graph that provides the skeleton, on which the GNN</span>
 <span class="sd">               then the CGNN algorithm will be applied.</span>
-<span class="sd">            alg (str): Exploration heuristic to use, among [&quot;HC&quot;, &quot;HCr&quot;,</span>
-<span class="sd">               &quot;tabu&quot;, &quot;EHC&quot;]</span>
+<span class="sd">            alg (str): Exploration heuristic to use, only &quot;HC&quot; is supported for</span>
+<span class="sd">               now.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            networkx.DiGraph: Solution given by CGNN.</span>
 
@@ -495,13 +555,11 @@
         <span class="n">gnn</span> <span class="o">=</span> <span class="n">GNN</span><span class="p">(</span><span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span>
                   <span class="n">nb_max_runs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span>
                   <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
-                  <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">)</span>
+                  <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                  <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">)</span>
 
         <span class="n">og</span> <span class="o">=</span> <span class="n">gnn</span><span class="o">.</span><span class="n">orient_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">umg</span><span class="p">)</span>  <span class="c1"># Pairwise method</span>
-        <span class="c1"># print(nx.adj_matrix(og).todense().shape)</span>
-        <span class="c1"># print(list(og.edges()))</span>
         <span class="n">dag</span> <span class="o">=</span> <span class="n">dagify_min_edge</span><span class="p">(</span><span class="n">og</span><span class="p">)</span>
-        <span class="c1"># print(nx.adj_matrix(dag).todense().shape)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orient_directed_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="n">alg</span><span class="p">)</span></div></div>
 </pre></div>

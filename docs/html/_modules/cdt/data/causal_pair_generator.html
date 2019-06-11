@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data.causal_pair_generator &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.data.causal_pair_generator &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../index.html">
           
 
+          
+            
+            <img src="../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -199,17 +208,21 @@
 
 
 <div class="viewcode-block" id="CausalPairGenerator"><a class="viewcode-back" href="../../../data.html#cdt.data.CausalPairGenerator">[docs]</a><span class="k">class</span> <span class="nc">CausalPairGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generates Bivariate Causal Distributions.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Generates Bivariate Causal Distributions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        causal_mechanism (str): currently implemented mechanisms:</span>
+<span class="sd">            [&#39;linear&#39;, &#39;polynomial&#39;, &#39;sigmoid_add&#39;,</span>
+<span class="sd">            &#39;sigmoid_mix&#39;, &#39;gp_add&#39;, &#39;gp_mix&#39;, &#39;nn&#39;].</span>
+<span class="sd">        noise (str or function): type of noise to use in the generative process</span>
+<span class="sd">            (&#39;normal&#39;, &#39;uniform&#39; or a custom noise function).</span>
+<span class="sd">        noise_coeff (float): Proportion of noise in the mechanisms.</span>
+<span class="sd">        initial_variable_generator (function): Function used to init variables</span>
+<span class="sd">            of the graph, defaults to a Gaussian Mixture model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">causal_mechanism</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">normal_noise</span><span class="p">,</span>
                  <span class="n">noise_coeff</span><span class="o">=.</span><span class="mi">4</span><span class="p">,</span> <span class="n">initial_variable_generator</span><span class="o">=</span><span class="n">gmm_cause</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate an acyclic graph, given a causal mechanism.</span>
-
-<span class="sd">        :param initial_variable_generator: init variables of the graph</span>
-<span class="sd">        :param causal_mechanism: generating causes in the graph to</span>
-<span class="sd">            choose between: [&#39;linear&#39;, &#39;polynomial&#39;, &#39;sigmoid_add&#39;,</span>
-<span class="sd">            &#39;sigmoid_mix&#39;, &#39;gp_add&#39;, &#39;gp_mix&#39;]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CausalPairGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mechanism</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linear&#39;</span><span class="p">:</span> <span class="n">LinearMechanism</span><span class="p">,</span>
                           <span class="s1">&#39;polynomial&#39;</span><span class="p">:</span> <span class="n">Polynomial_Mechanism</span><span class="p">,</span>
@@ -217,15 +230,27 @@
                           <span class="s1">&#39;sigmoid_mix&#39;</span><span class="p">:</span> <span class="n">SigmoidMix_Mechanism</span><span class="p">,</span>
                           <span class="s1">&#39;gp_add&#39;</span><span class="p">:</span> <span class="n">GaussianProcessAdd_Mechanism</span><span class="p">,</span>
                           <span class="s1">&#39;gp_mix&#39;</span><span class="p">:</span> <span class="n">GaussianProcessMix_Mechanism</span><span class="p">,</span>
-                          <span class="s1">&#39;NN&#39;</span><span class="p">:</span> <span class="n">NN_Mechanism</span><span class="p">}[</span><span class="n">causal_mechanism</span><span class="p">]</span>
+                          <span class="s1">&#39;nn&#39;</span><span class="p">:</span> <span class="n">NN_Mechanism</span><span class="p">}[</span><span class="n">causal_mechanism</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">noise_coeff</span> <span class="o">=</span> <span class="n">noise_coeff</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_generator</span> <span class="o">=</span> <span class="n">initial_variable_generator</span>
 
 <div class="viewcode-block" id="CausalPairGenerator.generate"><a class="viewcode-back" href="../../../data.html#cdt.data.CausalPairGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">npairs</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate data &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Generate Causal pairs, such that one variable causes the other.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            npairs (int): Number of pairs of variables to generate.</span>
+<span class="sd">            npoints (int): Number of data points to generate.</span>
+<span class="sd">            rescale (bool): Rescale the output with zero mean and unit variance.</span>
+<span class="sd">            njobs (int): Number of parallel jobs to execute. Defaults to</span>
+<span class="sd">                cdt.SETTINGS.NJOBS</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (pandas.DataFrame, pandas.DataFrame) data and corresponding</span>
+<span class="sd">            labels. The data is at the ``SampleID, a (numpy.ndarray) , b (numpy.ndarray))``</span>
+<span class="sd">            format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">generate_pair</span><span class="p">(</span><span class="n">npoints</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">rescale</span><span class="p">):</span>
             <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_generator</span><span class="p">(</span><span class="n">npoints</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
             <span class="n">cause</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mechanism</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">npoints</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span>

@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Basic Tutorial &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Advanced Tutorial" href="tutorial_2.html" />
+    <link rel="prev" title="Get started" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Get started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Basic Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#load-data">1. Load data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graph-skeleton">2. Graph skeleton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#causal-discovery">3. Causal discovery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#evaluation-and-scoring-metrics">4. Evaluation and scoring metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_2.html">Advanced Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#package-description">Package Description</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="tutorial.html">Get started</a> &raquo;</li>
+        
+      <li>Basic Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tutorial_1.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="basic-tutorial">
+<h1>Basic Tutorial<a class="headerlink" href="#basic-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>In this first tutorial, we will got through all the main features of the <cite>cdt</cite>
+package:</p>
+<ol class="arabic simple">
+<li><p>Loading a dataset</p></li>
+<li><p>Recovering a graph skeleton with independence tests</p></li>
+<li><p>Apply a causal Discovery algorithm</p></li>
+<li><p>Evaluate our approach using 3 different scoring metrics</p></li>
+</ol>
+<div class="section" id="load-data">
+<h2>1. Load data<a class="headerlink" href="#load-data" title="Permalink to this headline">¶</a></h2>
+<p>Loading a standard dataset using the <cite>cdt</cite> package is straightforward using the
+<code class="docutils literal notranslate"><span class="pre">cdt.data</span></code> module. In this
+tutorial, we are going to load the <cite>Sachs</cite> dataset.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>Sachs, K., Perez, O.,
+Pe’er, D., Lauffenburger, D. A., &amp; Nolan, G. P. (2005).
+Causal protein-signaling networks derived from multiparameter single-cell data.
+Science, 308(5721), 523-529</cite>.</p>
+</div>
+<p>This dataset is quite useful as it is quite a small dataset with a relatively
+known ground truth and real data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cdt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;sachs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="go">praf  pmek   plcg   PIP2   PIP3  p44/42  pakts473    PKA    PKC   P38  pjnk</span>
+<span class="go">0  26.4  13.2   8.82  18.30  58.80    6.61      17.0  414.0  17.00  44.9  40.0</span>
+<span class="go">1  35.9  16.5  12.30  16.80   8.13   18.60      32.5  352.0   3.37  16.5  61.5</span>
+<span class="go">2  59.4  44.1  14.60  10.20  13.00   14.90      32.5  403.0  11.40  31.9  19.5</span>
+<span class="go">3  73.0  82.8  23.10  13.50   1.29    5.83      11.8  528.0  13.70  28.6  23.1</span>
+<span class="go">4  33.7  19.8   5.19   9.73  24.80   21.10      46.1  305.0   4.66  25.7  81.3</span>
+</pre></div>
+</div>
+<p>And graph is loaded: the <code class="docutils literal notranslate"><span class="pre">data</span></code> object is a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> containing all
+the data, and <code class="docutils literal notranslate"><span class="pre">graph</span></code> contains the ground truth of the dataset:</p>
+</div>
+<div class="section" id="graph-skeleton">
+<h2>2. Graph skeleton<a class="headerlink" href="#graph-skeleton" title="Permalink to this headline">¶</a></h2>
+<p>Having a graph skeleton on given data might be quite useful for having
+information on the structure of the data. In order to do so, let’s
+apply the Graph Lasso.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>Friedman, J., Hastie, T., &amp; Tibshirani, R. (2008).
+Sparse inverse covariance estimation with the graphical lasso. Biostatistics,
+9(3), 432-441</cite>:</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">glasso</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">independence</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">Glasso</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">skeleton</span> <span class="o">=</span> <span class="n">glasso</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
+<span class="go">&lt;networkx.classes.digraph.DiGraph at 0x7fe3ccfb1438&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">skeleton</span></code> object is a <code class="docutils literal notranslate"><span class="pre">networkx.Graph</span></code> instance, which might be quite
+obscure at first but quite handy on the long run. (Check
+<a class="reference internal" href="tutorial.html#the-graph-class"><span class="std std-ref">here</span></a>  for a quick introduction on <code class="docutils literal notranslate"><span class="pre">networkx</span></code> graphs).
+We can check the structure of the skeleton by looking at its adjacency matrix:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<span class="go">matrix([[ 9.26744031e-04, -6.13751618e-04,  1.66612981e-05,</span>
+<span class="go">         -1.10912131e-06, -3.04172363e-05, -9.71526466e-05,</span>
+<span class="go">          7.00340545e-05, -1.93863471e-06, -7.31774543e-06,</span>
+<span class="go">          2.29788237e-06,  8.31264711e-06],</span>
+<span class="go">        [-6.13751618e-04,  4.14978956e-04, -1.37962487e-05,</span>
+<span class="go">          1.42164753e-06,  2.04443539e-05,  8.24208108e-05,</span>
+<span class="go">         -5.63238668e-05,  1.62688021e-06,  8.63444133e-06,</span>
+<span class="go">         -2.88779755e-06, -4.69605195e-06],</span>
+<span class="go">        [ 1.66612981e-05, -1.37962487e-05,  2.60824802e-04,</span>
+<span class="go">         -1.35895911e-04,  8.78979413e-05,  2.17234579e-05,</span>
+<span class="go">         -2.07856535e-05,  1.23313600e-06,  2.12954874e-05,</span>
+<span class="go">         -3.22869246e-06, -7.47522248e-06],</span>
+<span class="go">        [-1.10912131e-06,  1.42164753e-06, -1.35895911e-04,</span>
+<span class="go">          8.68622146e-05, -7.05405720e-05,  3.08709259e-06,</span>
+<span class="go">         -2.60810094e-06,  9.09261370e-09, -6.25320515e-06,</span>
+<span class="go">          2.56399675e-07,  2.85201875e-07],</span>
+<span class="go">        [-3.04172363e-05,  2.04443539e-05,  8.78979413e-05,</span>
+<span class="go">         -7.05405720e-05,  6.09681818e-04, -9.91703900e-06,</span>
+<span class="go">          1.78188074e-05, -5.97491176e-07,  6.11896719e-06,</span>
+<span class="go">         -4.30918870e-07,  5.79322379e-06],</span>
+<span class="go">        [-9.71526466e-05,  8.24208108e-05,  2.17234579e-05,</span>
+<span class="go">          3.08709259e-06, -9.91703900e-06,  1.10860610e-03,</span>
+<span class="go">         -3.08483289e-04, -1.30867663e-05, -3.31258890e-05,</span>
+<span class="go">          7.76132824e-06,  2.10416319e-05],</span>
+<span class="go">        [ 7.00340545e-05, -5.63238668e-05, -2.07856535e-05,</span>
+<span class="go">         -2.60810094e-06,  1.78188074e-05, -3.08483289e-04,</span>
+<span class="go">          1.66144775e-04,  1.26667898e-06,  3.11407736e-05,</span>
+<span class="go">         -7.29116898e-06, -1.86454298e-05],</span>
+<span class="go">        [-1.93863471e-06,  1.62688021e-06,  1.23313600e-06,</span>
+<span class="go">          9.09261370e-09, -5.97491176e-07, -1.30867663e-05,</span>
+<span class="go">          1.26667898e-06,  2.80073467e-06, -3.78879972e-06,</span>
+<span class="go">          8.67580852e-07,  6.92379671e-07],</span>
+<span class="go">        [-7.31774543e-06,  8.63444133e-06,  2.12954874e-05,</span>
+<span class="go">         -6.25320515e-06,  6.11896719e-06, -3.31258890e-05,</span>
+<span class="go">          3.11407736e-05, -3.78879972e-06,  1.59642510e-03,</span>
+<span class="go">         -2.58155157e-04, -1.01767664e-04],</span>
+<span class="go">        [ 2.29788237e-06, -2.88779755e-06, -3.22869246e-06,</span>
+<span class="go">          2.56399675e-07, -4.30918870e-07,  7.76132824e-06,</span>
+<span class="go">         -7.29116898e-06,  8.67580852e-07, -2.58155157e-04,</span>
+<span class="go">          5.32997159e-05, -3.35285721e-06],</span>
+<span class="go">        [ 8.31264711e-06, -4.69605195e-06, -7.47522248e-06,</span>
+<span class="go">          2.85201875e-07,  5.79322379e-06,  2.10416319e-05,</span>
+<span class="go">         -1.86454298e-05,  6.92379671e-07, -1.01767664e-04,</span>
+<span class="go">         -3.35285721e-06,  7.05796078e-05]])</span>
+</pre></div>
+</div>
+<p>As you have noticed already, the graph is quite dense. Let’s remove indirect
+links in the graph using the Aracne algorithm</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>An Algorithm for the
+Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context
+Adam A Margolin, Ilya Nemenman, Katia Basso, Chris Wiggins, Gustavo Stolovitzky,
+Riccardo Dalla Favera and Andrea Califano
+DOI: https://doi.org/10.1186/1471-2105-7-S1-S7</cite></p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_skeleton</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_indirect_links</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="s1">&#39;aracne&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">new_skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<span class="go">matrix([[9.26576364e-04, 0.00000000e+00, 1.66279016e-05, 0.00000000e+00,</span>
+<span class="go">0.00000000e+00, 0.00000000e+00, 6.99676073e-05, 0.00000000e+00,</span>
+<span class="go">0.00000000e+00, 2.26182196e-06, 8.29822467e-06],</span>
+<span class="go">[0.00000000e+00, 4.14897907e-04, 0.00000000e+00, 0.00000000e+00,</span>
+<span class="go">2.04095344e-05, 8.22844158e-05, 0.00000000e+00, 1.62835373e-06,</span>
+<span class="go">8.48527014e-06, 0.00000000e+00, 0.00000000e+00],</span>
+<span class="go">[1.66279016e-05, 0.00000000e+00, 2.60808178e-04, 0.00000000e+00,</span>
+<span class="go">8.78753504e-05, 2.17299267e-05, 0.00000000e+00, 1.23340219e-06,</span>
+<span class="go">2.12217433e-05, 0.00000000e+00, 0.00000000e+00],</span>
+<span class="go">[0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 8.68568259e-05,</span>
+<span class="go">0.00000000e+00, 3.07901285e-06, 0.00000000e+00, 8.94955462e-09,</span>
+<span class="go">0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</span>
+<span class="go">[0.00000000e+00, 2.04095344e-05, 8.78753504e-05, 0.00000000e+00,</span>
+<span class="go">6.09654932e-04, 0.00000000e+00, 1.77984674e-05, 0.00000000e+00,</span>
+<span class="go">0.00000000e+00, 0.00000000e+00, 5.80118715e-06],</span>
+<span class="go">[0.00000000e+00, 8.22844158e-05, 2.17299267e-05, 3.07901285e-06,</span>
+<span class="go">0.00000000e+00, 1.10847276e-03, 0.00000000e+00, 0.00000000e+00,</span>
+<span class="go">0.00000000e+00, 7.72649753e-06, 2.10224309e-05],</span>
+<span class="go">[6.99676073e-05, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,</span>
+<span class="go">1.77984674e-05, 0.00000000e+00, 1.66117739e-04, 1.26646124e-06,</span>
+<span class="go">3.10736844e-05, 0.00000000e+00, 0.00000000e+00],</span>
+<span class="go">[0.00000000e+00, 1.62835373e-06, 1.23340219e-06, 8.94955462e-09,</span>
+<span class="go">0.00000000e+00, 0.00000000e+00, 1.26646124e-06, 2.80075082e-06,</span>
+<span class="go">0.00000000e+00, 8.67949681e-07, 6.92548597e-07],</span>
+<span class="go">[0.00000000e+00, 8.48527014e-06, 2.12217433e-05, 0.00000000e+00,</span>
+<span class="go">0.00000000e+00, 0.00000000e+00, 3.10736844e-05, 0.00000000e+00,</span>
+<span class="go">1.59628546e-03, 0.00000000e+00, 0.00000000e+00],</span>
+<span class="go">[2.26182196e-06, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,</span>
+<span class="go">0.00000000e+00, 7.72649753e-06, 0.00000000e+00, 8.67949681e-07,</span>
+<span class="go">0.00000000e+00, 5.32959890e-05, 0.00000000e+00],</span>
+<span class="go">[8.29822467e-06, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,</span>
+<span class="go">5.80118715e-06, 2.10224309e-05, 0.00000000e+00, 6.92548597e-07,</span>
+<span class="go">0.00000000e+00, 0.00000000e+00, 7.05766621e-05]])</span>
+</pre></div>
+</div>
+<p>and the resulting skeleton is much more sparse. Let’s build on this new
+skeleton to perform our causal discovery.</p>
+</div>
+<div class="section" id="causal-discovery">
+<h2>3. Causal discovery<a class="headerlink" href="#causal-discovery" title="Permalink to this headline">¶</a></h2>
+<p>Having a graph skeleton, we are going to perform causal discovery with
+constraints, by using the <cite>GES</cite> algorithm..</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>D.M. Chickering (2002). Optimal
+structure identification with greedy search. Journal of Machine Learning
+Research 3 , 507–554</cite></p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">causality</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">GES</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_graph</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">new_skeleton</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">output_graph</span><span class="p">))</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+<span class="go">matrix([[0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1],</span>
+<span class="go">        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],</span>
+<span class="go">        [0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1],</span>
+<span class="go">        [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1],</span>
+<span class="go">        [1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],</span>
+<span class="go">        [0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=int64)</span>
+</pre></div>
+</div>
+<p>And we obtain GES’s prediction on this graph using the skeleton as constraint.
+Next we are going to evaluate our solution compared to using CAM without
+skeleton.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>J. Peters, J.
+Mooij, D. Janzing, B. Schölkopf: Causal Discovery with Continuous Additive Noise
+Models, JMLR 15:2009-2053, 2014.</cite></p>
+</div>
+</div>
+<div class="section" id="evaluation-and-scoring-metrics">
+<h2>4. Evaluation and scoring metrics<a class="headerlink" href="#evaluation-and-scoring-metrics" title="Permalink to this headline">¶</a></h2>
+<p>In order to evaluate various predictions with the ground truth, the <cite>cdt</cite>
+package includes 3 different metrics in the <code class="docutils literal notranslate"><span class="pre">cdt.metrics</span></code> module:</p>
+<ul class="simple">
+<li><p>Area under the precision recall curve</p></li>
+<li><p>Structural Hamming Distance (SHD)</p></li>
+<li><p>Structural Intervention Distance (SID)</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.metrics</span> <span class="kn">import</span> <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SID</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">metric</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">output_graph</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SID</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<span class="go">[(0.3212943387361992, [(0.1487603305785124, 1.0), (0.16279069767441862, 0.3888888888888889), (1.0, 0.0)]),</span>
+<span class="go">array(76.),</span>
+<span class="go">47]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># now we compute the CAM graph without constraints and the associated scores</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model2</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">causality</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">CAM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_graph_nc</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scores_nc</span> <span class="o">=</span> <span class="p">[</span><span class="n">metric</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">output_graph_nc</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SID</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">scores_nc</span><span class="p">)</span>
+<span class="go">[(0.4423624964377315, [(0.1487603305785124, 1.0), (0.3103448275862069, 0.5), (1.0, 0.0)]),</span>
+<span class="go">array(68.),</span>
+<span class="go">29]</span>
+</pre></div>
+</div>
+<p>We can observe that CAM has better performance than our previous pipeline, as:</p>
+<ul class="simple">
+<li><p>The average precision score is higher</p></li>
+<li><p>The SID score is lower</p></li>
+<li><p>The SHD score is lower as well</p></li>
+</ul>
+<p>This concludes our first tutorial on the <cite>cdt</cite> package.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorial_2.html" class="btn btn-neutral float-right" title="Advanced Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Get started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolbox Settings &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>Toolbox Settings &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
   
   
   
@@ -35,8 +37,10 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Documentation" href="developer.html" />
     <link rel="prev" title="cdt.metrics" href="metrics.html" /> 
 </head>
 
@@ -51,9 +55,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="index.html">
           
 
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -61,7 +68,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -89,11 +96,14 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -179,7 +189,7 @@ of CPUs. Another test performed at startup is to check if an R framework
 is available, unlocking additional features of the toolbox.</p>
 <dl class="class">
 <dt id="cdt.utils.Settings.ConfigSettings">
-<em class="property">class </em><code class="descclassname">cdt.utils.Settings.</code><code class="descname">ConfigSettings</code><a class="reference internal" href="_modules/cdt/utils/Settings.html#ConfigSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.Settings.</code><code class="sig-name descname">ConfigSettings</code><a class="reference internal" href="_modules/cdt/utils/Settings.html#ConfigSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defining the class for the hardware/high level settings of the CDT.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables</dt>
@@ -194,7 +204,7 @@ hardware.</p></li>
 </dl>
 <dl class="method">
 <dt id="cdt.utils.Settings.ConfigSettings.get_default">
-<code class="descname">get_default</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/Settings.html#ConfigSettings.get_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.get_default" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_default</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/Settings.html#ConfigSettings.get_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings.get_default" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the default parameters as defined in the Settings instance.</p>
 <p>This function proceeds to seamlessly retrieve the argument to pass
 through, depending on either it was overidden or not: If no argument
@@ -203,8 +213,8 @@ be set to <code class="docutils literal notranslate"><span class="pre">None</spa
 parameters as defined by the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> ‘s attributes.</p>
 <p>It has two modes of processing:</p>
 <ol class="arabic simple">
-<li><p><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs for retrieving a single argument: <code class="docutils literal notranslate"><span class="pre">get_default(argument_name=value)</span></code>.</p></li>
-<li><p><a href="#id3"><span class="problematic" id="id4">*</span></a>args through a list of tuples of the shape <code class="docutils literal notranslate"><span class="pre">('argument_name',</span> <span class="pre">value)</span></code> to retrieve multiple values at once.</p></li>
+<li><p>**kwargs for retrieving a single argument: <code class="docutils literal notranslate"><span class="pre">get_default(argument_name=value)</span></code>.</p></li>
+<li><p>*args through a list of tuples of the shape <code class="docutils literal notranslate"><span class="pre">('argument_name',</span> <span class="pre">value)</span></code> to retrieve multiple values at once.</p></li>
 </ol>
 </dd></dl>
 
@@ -212,7 +222,7 @@ parameters as defined by the <code class="docutils literal notranslate"><span cl
 
 <dl class="function">
 <dt id="cdt.utils.Settings.autoset_settings">
-<code class="descclassname">cdt.utils.Settings.</code><code class="descname">autoset_settings</code><span class="sig-paren">(</span><em>set_var</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/Settings.html#autoset_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.autoset_settings" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.Settings.</code><code class="sig-name descname">autoset_settings</code><span class="sig-paren">(</span><em class="sig-param">set_var</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/Settings.html#autoset_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.autoset_settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Autoset GPU parameters using CUDA_VISIBLE_DEVICES variables.</p>
 <p>Return default config if variable not set.
 :param set_var: Variable to set. Must be of type ConfigSettings</p>
@@ -227,6 +237,8 @@ parameters as defined by the <code class="docutils literal notranslate"><span cl
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer.html" class="btn btn-neutral float-right" title="Developer Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="metrics.html" class="btn btn-neutral float-left" title="cdt.metrics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.data.loader &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Get started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.data.loader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.data.loader</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Dataset loading utilities.</span>
+
+<span class="sd">.. MIT License</span>
+<span class="sd">..</span>
+<span class="sd">.. Copyright (c) 2018 Diviyan Kalainathan</span>
+<span class="sd">..</span>
+<span class="sd">.. Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">.. of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">.. in the Software without restriction, including without limitation the rights</span>
+<span class="sd">.. to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">.. copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">.. furnished to do so, subject to the following conditions:</span>
+<span class="sd">..</span>
+<span class="sd">.. The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">.. copies or substantial portions of the Software.</span>
+<span class="sd">..</span>
+<span class="sd">.. THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">.. IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">.. FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">.. AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">.. LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">.. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">.. SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">random</span>
+<span class="kn">from</span> <span class="nn">..utils.io</span> <span class="k">import</span> <span class="n">read_causal_pairs</span><span class="p">,</span> <span class="n">read_list_edges</span>
+
+
+<div class="viewcode-block" id="load_dataset"><a class="viewcode-back" href="../../../data.html#cdt.data.load_dataset">[docs]</a><span class="k">def</span> <span class="nf">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main function of this module, allows to easily import well-known causal</span>
+<span class="sd">    datasets into python.</span>
+
+<span class="sd">    Details on the supported datasets:</span>
+<span class="sd">        + **Tuebingen**, dataset of 100 real cause-effect pairs</span>
+<span class="sd">           J. M. Mooij,</span>
+<span class="sd">           J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf: &quot;Distinguishing</span>
+<span class="sd">           cause from effect using observational data: methods and benchmarks&quot;,</span>
+<span class="sd">           Journal of Machine Learning Research 17(32):1-102, 2016.</span>
+
+<span class="sd">        + **Sachs**, Dataset of flow cytometry, real data,</span>
+<span class="sd">           11 variables x 7466</span>
+<span class="sd">           samples; Sachs, K., Perez, O., Pe&#39;er, D., Lauffenburger, D. A., &amp; Nolan,</span>
+<span class="sd">           G. P. (2005). Causal protein-signaling networks derived from</span>
+<span class="sd">           multiparameter single-cell data. Science, 308(5721), 523-529.</span>
+
+<span class="sd">        + **DREAM4**, multifactorial artificial data of the challenge.</span>
+<span class="sd">           Data generated with GeneNetWeaver 2.0, 5 graphs of 100 variables x 100</span>
+<span class="sd">           samples. Marbach D, Prill RJ, Schaffter T, Mattiussi C, Floreano D,</span>
+<span class="sd">           and Stolovitzky G. Revealing strengths and weaknesses of methods for</span>
+<span class="sd">           gene network inference. PNAS, 107(14):6286-6291, 2010.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Name of the dataset. currenly supported datasets:</span>
+<span class="sd">           [`tuebingen`, `sachs`, `dream4-1`, `dream4-2`, `dream4-3`,</span>
+<span class="sd">           `dream4-4`, `dream4-5`]</span>
+<span class="sd">        \**kwargs: Optional additional arguments for dataset loaders.</span>
+<span class="sd">           ``tuebingen`` dataset accepts the ``shuffle (bool)`` option to</span>
+<span class="sd">           shuffle the causal pairs and their according labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (pandas.DataFrame, pandas.DataFrame or networkx.DiGraph) Standard</span>
+<span class="sd">        dataframe containing the data, and the target.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dream</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dream4-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)]]</span>
+    <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">:</span> <span class="n">load_tuebingen</span><span class="p">,</span> <span class="s1">&#39;sachs&#39;</span><span class="p">:</span> <span class="n">load_sachs</span><span class="p">}</span>
+    <span class="n">loaders</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">i</span><span class="p">:</span> <span class="n">load_dream_multifactorial</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dream</span><span class="p">})</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">loaders</span><span class="p">[</span><span class="n">name</span><span class="p">]()</span>
+
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown dataset name.&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">load_sachs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/resources/cyto_full_data.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirname</span><span class="p">)),</span>
+            <span class="n">read_list_edges</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/resources/cyto_full_target.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirname</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">load_tuebingen</span><span class="p">(</span><span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">read_causal_pairs</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/resources/Tuebingen_pairs.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirname</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/resources/Tuebingen_targets.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirname</span><span class="p">))</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;SampleID&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]):</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">buffer</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">buffer</span>
+
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span>
+
+
+<span class="k">def</span> <span class="nf">load_dream_multifactorial</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">num</span>
+
+    <span class="k">def</span> <span class="nf">load_d</span><span class="p">():</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">read_list_edges</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/resources/goldstandard_insilico100_multifactorial_</span><span class="si">{}</span><span class="s1">.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://www.synapse.org/Portal/filehandle?ownerId=syn3049712&amp;ownerType=ENTITY&amp;fileName=DREAM4_InSilico_Size100_Multifactorial.zip&amp;preview=false&amp;wikiId=74630&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">content</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;insilico_size100_</span><span class="si">{}</span><span class="s1">_multifactorial.tsv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">),</span> <span class="n">target</span>
+    <span class="k">return</span> <span class="n">load_d</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

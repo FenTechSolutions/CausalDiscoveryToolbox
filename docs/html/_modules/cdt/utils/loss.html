@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.loss &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.utils.loss &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../index.html">
           
 
+          
+            
+            <img src="../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -200,7 +209,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">runs_per_iter</span> <span class="o">=</span> <span class="n">runs_per_iter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
 <div class="viewcode-block" id="TTestCriterion.loop"><a class="viewcode-back" href="../../../utils.html#cdt.utils.loss.TTestCriterion.loop">[docs]</a>    <span class="k">def</span> <span class="nf">loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Tests the loop condition based on the new results and the</span>
@@ -213,12 +222,12 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            bool: True if the loop has to continue, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_per_iter</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_per_iter</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="n">t_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">=</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs_per_iter</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div></div>
@@ -290,8 +299,7 @@
         <span class="c1"># exponent entries of the RBF kernel (without the sigma) for each</span>
         <span class="c1"># combination of the rows in &#39;X&#39;</span>
         <span class="n">exponent</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">XX</span> <span class="o">+</span> <span class="n">X2</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">XX</span><span class="p">)</span> <span class="o">+</span> <span class="n">X2</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">XX</span><span class="p">)</span>
-
-        <span class="n">lossMMD</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">*</span><span class="p">(</span><span class="n">exponent</span> <span class="o">*</span> <span class="o">-</span><span class="n">bandwidth</span><span class="p">)</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span> 
+        <span class="n">lossMMD</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">*</span><span class="p">(</span><span class="n">exponent</span> <span class="o">*</span> <span class="o">-</span><span class="n">bandwidth</span><span class="p">)</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span>
                               <span class="k">for</span> <span class="n">bandwidth</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandwidths</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">lossMMD</span></div>
 

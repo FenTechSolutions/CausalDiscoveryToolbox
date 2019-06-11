@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence.graph.FSGNN &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.independence.graph.FSGNN &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -185,32 +194,14 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">torch.utils</span> <span class="k">import</span> <span class="n">data</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">trange</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">FeatureSelectionModel</span>
 <span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span>
-
-
-<span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
-  <span class="s1">&#39;Characterizes a dataset for PyTorch&#39;</span>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-        <span class="s1">&#39;Initialization&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
-
-  <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s1">&#39;Denotes the total number of samples&#39;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="s1">&#39;Generates one sample of data&#39;</span>
-        <span class="c1"># Select sample</span>
-
-        <span class="c1"># Load data and get label</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run_generator</span>
 
 
 <span class="k">class</span> <span class="nc">FSGNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -226,25 +217,26 @@
 
         <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sizes</span> <span class="o">=</span> <span class="n">sizes</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
               <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-              <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+              <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">device</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">((</span><span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="n">device</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">))</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
-        <span class="n">criterion</span> <span class="o">=</span> <span class="n">MMDloss</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">MMDloss</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="c1"># Printout value</span>
         <span class="n">noise</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">data_iterator</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">Dataset</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-                                                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_iterator</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                                                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                 <span class="n">num_workers</span><span class="o">=</span><span class="n">dataloader_workers</span><span class="p">)</span>
         <span class="c1"># TRAIN</span>
         <span class="k">with</span> <span class="n">trange</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">t</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span>
@@ -262,55 +254,136 @@
                     <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
                     <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">test_epochs</span><span class="p">)</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">test_epochs</span><span class="p">)</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span><span class="o">//</span><span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 
 
 <div class="viewcode-block" id="FSGNN"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.FSGNN">[docs]</a><span class="k">class</span> <span class="nc">FSGNN</span><span class="p">(</span><span class="n">FeatureSelectionModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Feature Selection using MMD and Generative Neural Networks.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Feature Selection using MMD and Generative Neural Networks.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="sd">    Args:</span>
+<span class="sd">        nh (int): number of hidden units</span>
+<span class="sd">        dropout (float): probability of dropout (between 0 and 1)</span>
+<span class="sd">        activation_function (torch.nn.Module): activation function of the NN</span>
+<span class="sd">        lr (float): learning rate of Adam</span>
+<span class="sd">        l1 (float): L1 penalization coefficient</span>
+<span class="sd">        batch_size (int): batch size, defaults to full-batch</span>
+<span class="sd">        train_epochs (int): number of train epochs</span>
+<span class="sd">        test_epochs (int): number of test epochs</span>
+<span class="sd">        verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)</span>
+<span class="sd">        nruns (int): number of bootstrap runs</span>
+<span class="sd">        dataloader_workers (int): how many subprocesses to use for data</span>
+<span class="sd">           loading. 0 means that the data will be loaded in the main</span>
+<span class="sd">           process. (default: 0)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.independence.graph import FSGNN</span>
+<span class="sd">        &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
+<span class="sd">        &gt;&gt;&gt; boston = load_boston()</span>
+<span class="sd">        &gt;&gt;&gt; df_features = pd.DataFrame(boston[&#39;data&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; df_target = pd.DataFrame(boston[&#39;target&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; obj = FSGNN()</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict_features(df_features, df_target)</span>
+<span class="sd">        &gt;&gt;&gt; ugraph = obj.predict(df_features)  # Predict skeleton</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">activation_function</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">,</span>
+                 <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                 <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                 <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FSGNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nh</span> <span class="o">=</span> <span class="n">nh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">dropout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation_function</span> <span class="o">=</span> <span class="n">activation_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">l1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span> <span class="o">=</span> <span class="n">train_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span> <span class="o">=</span> <span class="n">test_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span> <span class="o">=</span> <span class="n">nruns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span> <span class="o">=</span> <span class="n">dataloader_workers</span>
 
-<div class="viewcode-block" id="FSGNN.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.FSGNN.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
-                         <span class="n">activation_function</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                         <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                         <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="FSGNN.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.FSGNN.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">datasetclass</span><span class="o">=</span><span class="n">TensorDataset</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;For one variable, predict its neighbours.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df_features (pandas.DataFrame):</span>
-<span class="sd">            df_target (pandas.Series):</span>
-<span class="sd">            nh (int): number of hidden units</span>
+<span class="sd">            df_features (pandas.DataFrame): Features to select</span>
+<span class="sd">            df_target (pandas.Series): Target variable to predict</span>
+<span class="sd">            datasetclass (torch.utils.data.Dataset): Class to override for</span>
+<span class="sd">               custom loading of data.</span>
 <span class="sd">            idx (int): (optional) for printing purposes</span>
-<span class="sd">            dropout (float): probability of dropout (between 0 and 1)</span>
-<span class="sd">            activation_function (torch.nn.Module): activation function of the NN</span>
-<span class="sd">            lr (float): learning rate of Adam</span>
-<span class="sd">            l1 (float): L1 penalization coefficient</span>
-<span class="sd">            batch_size (int): batch size, defaults to full-batch</span>
-<span class="sd">            train_epochs (int): number of train epochs</span>
-<span class="sd">            test_epochs (int): number of test epochs</span>
-<span class="sd">            device (str): cuda or cpu device (defaults to ``cdt.SETTINGS.default_device``)</span>
-<span class="sd">            verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)</span>
-<span class="sd">            nruns (int): number of bootstrap runs</span>
+<span class="sd">            device (str): cuda or cpu device (defaults to</span>
+<span class="sd">               ``cdt.SETTINGS.default_device``)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list: scores of each feature relatively to the target</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">device</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">((</span><span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="n">device</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">df_features</span><span class="o">.</span><span class="n">values</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">df_target</span><span class="o">.</span><span class="n">values</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">datasetclass</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">df_features</span><span class="o">.</span><span class="n">values</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
+                               <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">df_target</span><span class="o">.</span><span class="n">values</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nruns</span><span class="p">):</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">FSGNN_model</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                                <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
-                                <span class="n">activation_function</span><span class="o">=</span><span class="n">activation_function</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">):</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">FSGNN_model</span><span class="p">([</span><span class="n">df_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                                <span class="n">activation_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">activation_function</span><span class="p">,</span>
+                                <span class="n">dropout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
-            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                                   <span class="n">train_epochs</span><span class="o">=</span><span class="n">train_epochs</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="n">test_epochs</span><span class="p">,</span>
-                                   <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">))</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span></div></div>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                                   <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                   <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
+                                   <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                   <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FSGNN.predict"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.FSGNN.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_data</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict the skeleton of the graph from raw data.</span>
+
+<span class="sd">        Returns iteratively the feature selection algorithm on each node.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df_data (pandas.DataFrame): data to construct a graph from</span>
+<span class="sd">            threshold (float): cutoff value for feature selection scores</span>
+<span class="sd">            kwargs (dict): additional arguments for algorithms</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            networkx.Graph: predicted skeleton of the graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">njobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span>
+        <span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpus</span><span class="p">)</span>
+        <span class="n">list_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gpus</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result_feature_selection</span> <span class="o">=</span> <span class="n">parallel_run_generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_feature_selection</span><span class="p">,</span>
+                                                              <span class="p">[([</span><span class="n">df_data</span><span class="p">,</span> <span class="n">node</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">)</span>
+                                                               <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">list_nodes</span><span class="p">],</span>
+                                                              <span class="n">gpus</span><span class="o">=</span><span class="n">gpus</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result_feature_selection</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">run_feature_selection</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span>
+                                                                   <span class="n">idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                                        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_nodes</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result_feature_selection</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">i</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># if results are numpy arrays</span>
+                <span class="n">result_feature_selection</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">matrix_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result_feature_selection</span><span class="p">)</span>
+        <span class="n">matrix_results</span> <span class="o">*=</span> <span class="n">matrix_results</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">matrix_results</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">matrix_results</span> <span class="o">/=</span> <span class="mi">2</span>
+
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">matrix_results</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">matrix_results</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">list_nodes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">list_nodes</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+                               <span class="n">weight</span><span class="o">=</span><span class="n">matrix_results</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">list_nodes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">graph</span></div></div>
 </pre></div>
 
            </div>

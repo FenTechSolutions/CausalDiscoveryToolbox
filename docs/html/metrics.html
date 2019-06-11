@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Toolbox Settings" href="settings.html" />
@@ -52,9 +55,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="index.html">
           
 
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -62,7 +68,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -90,11 +96,14 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -159,21 +168,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-cdt.utils.metrics">
-<span id="cdt-metrics"></span><h1>cdt.metrics<a class="headerlink" href="#module-cdt.utils.metrics" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-cdt.metrics">
+<span id="cdt-metrics"></span><h1>cdt.metrics<a class="headerlink" href="#module-cdt.metrics" title="Permalink to this headline">¶</a></h1>
 <p>The CDT package implements some metrics to evaluate the output of a
 algorithm given a ground truth. All these metrics are in the form
 <cite>metric(target, prediction)</cite>, where any of those arguments are either numpy
 matrixes that represent the adjacency matrix or <cite>networkx.DiGraph</cite> instances.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>in the case of heterogeneous types of arguments, special care has
-to be given to the order of the nodes, as the type <cite>networkx.DiGraph</cite> does
-not retain node order.</p>
+<p>in the case of heterogeneous types of arguments <code class="docutils literal notranslate"><span class="pre">target</span></code> and
+<code class="docutils literal notranslate"><span class="pre">prediction</span></code>, special care has to be given to the order of the nodes,
+as the type <cite>networkx.DiGraph</cite> does not retain node order.</p>
 </div>
 <dl class="function">
-<dt id="cdt.utils.metrics.precision_recall">
-<code class="descclassname">cdt.utils.metrics.</code><code class="descname">precision_recall</code><span class="sig-paren">(</span><em>target</em>, <em>prediction</em>, <em>low_confidence_undirected=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/metrics.html#precision_recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.precision_recall" title="Permalink to this definition">¶</a></dt>
+<dt id="cdt.metrics.precision_recall">
+<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">precision_recall</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">prediction</em>, <em class="sig-param">low_confidence_undirected=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#precision_recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.precision_recall" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute precision-recall statistics for directed graphs.</p>
 <p>Precision recall statistics are useful to compare algorithms that make
 predictions with a confidence score. Using these statistics, performance
@@ -214,7 +223,8 @@ Default: False</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.metrics</span> <span class="k">import</span> <span class="n">precision_recall</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># adjacency matrixes of size 10x10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">aupr</span><span class="p">,</span> <span class="n">curve</span> <span class="o">=</span> <span class="n">precision_recall</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
@@ -224,8 +234,8 @@ Default: False</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="cdt.utils.metrics.SHD">
-<code class="descclassname">cdt.utils.metrics.</code><code class="descname">SHD</code><span class="sig-paren">(</span><em>target</em>, <em>pred</em>, <em>double_for_anticausal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/metrics.html#SHD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.SHD" title="Permalink to this definition">¶</a></dt>
+<dt id="cdt.metrics.SHD">
+<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">SHD</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">pred</em>, <em class="sig-param">double_for_anticausal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#SHD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.SHD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Structural Hamming Distance.</p>
 <p>The Structural Hamming Distance (SHD) is a standard distance to compare
 graphs by their adjacency matrix. It consists in computing the difference
@@ -258,7 +268,8 @@ mistakes. Default: True</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.metrics</span> <span class="k">import</span> <span class="n">SHD</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span> <span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">SHD</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">double_for_anticausal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
@@ -266,8 +277,8 @@ mistakes. Default: True</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="cdt.utils.metrics.SID">
-<code class="descclassname">cdt.utils.metrics.</code><code class="descname">SID</code><span class="sig-paren">(</span><em>target</em>, <em>pred</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/metrics.html#SID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.metrics.SID" title="Permalink to this definition">¶</a></dt>
+<dt id="cdt.metrics.SID">
+<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">SID</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">pred</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#SID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.SID" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Strutural Intervention Distance.</p>
 <p>[R wrapper] The Structural Intervention Distance (SID) is a new distance
 for graphs introduced by Peters and Bühlmann (2013). This distance was
@@ -303,7 +314,8 @@ algorithm to evaluate. Must be a DAG.</p></li>
 Jonas Peters, Peter Bühlmann: <a class="reference external" href="https://arxiv.org/abs/1306.1043">https://arxiv.org/abs/1306.1043</a></p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.metrics</span> <span class="k">import</span> <span class="n">SID</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">SID</span><span class="p">(</span><span class="n">tar</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>

@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Developer Documentation &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Toolbox Settings" href="settings.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Get started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bug-reporting">Bug reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuous-integration">Continuous Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#r-integration">R integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parallelization">Parallelization</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Developer Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/developer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="developer-documentation">
+<h1>Developer Documentation<a class="headerlink" href="#developer-documentation" title="Permalink to this headline">¶</a></h1>
+<p>This project is an open-source community project,
+hosted on GitHub at the following address:
+<a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox">https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox</a></p>
+<p>We abide by the principles of openness, respect, and consideration of others of
+the Python Software Foundation: <a class="reference external" href="https://www.python.org/psf/codeofconduct/">https://www.python.org/psf/codeofconduct/</a></p>
+<div class="section" id="bug-reporting">
+<h2>Bug reporting<a class="headerlink" href="#bug-reporting" title="Permalink to this headline">¶</a></h2>
+<p>Encountering a bug while using this package may occur. In order to fix the said
+bug and improve all users’ experience, it is highly recommended to submit a bug
+report on the GitHub issue tracker: <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/issues">https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/issues</a></p>
+<p>When reporting a bug, please mention:</p>
+<ul class="simple">
+<li><p>Your <code class="docutils literal notranslate"><span class="pre">cdt</span></code> package version or docker image tag.</p></li>
+<li><p>Your python version.</p></li>
+<li><p>Your <code class="docutils literal notranslate"><span class="pre">PyTorch</span></code> package version.</p></li>
+<li><p>Your hardware configuration, if there are GPUs available.</p></li>
+<li><p>The full traceback of the raised error if one is raised.</p></li>
+<li><p>A small code snippet to reproduce the bug if the description is not explicit.</p></li>
+</ul>
+</div>
+<div class="section" id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<p>The recommended way to contribute to the Causal Discovery Toolbox is to submit a
+pull request on the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch of <a class="reference external" href="https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox">https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox</a></p>
+<p>To submit a pull request, the following are required:</p>
+<ol class="arabic">
+<li><p>Having an up-to-date forked repository of the package and a python 3 installation</p></li>
+<li><p>Clone your forked version of the code locally and install it
+in developer mode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone git@github.com:YourLogin/CausalDiscoveryToolbox.git
+$ cd CausalDiscoveryToolbox
+$ git checkout dev
+$ python setup.py install develop --user
+</pre></div>
+</div>
+<p>Where <code class="docutils literal notranslate"><span class="pre">python</span></code> refers to your <cite>python 3</cite> installation.</p>
+</li>
+<li><p>Make your changes to the source code of the package</p></li>
+<li><p>Test your changes using <code class="docutils literal notranslate"><span class="pre">pytest</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd CausalDiscoveryToolbox
+$ pip install pytest
+$ pytest
+</pre></div>
+</div>
+</li>
+<li><p>If the tests pass, commit and push your changes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git add .
+$ git commit -m &quot;[DEV] Your commit message&quot;
+$ git push -u origin dev
+</pre></div>
+</div>
+<p>The commits must begin with a tag, defining the main purpose of the commit.
+Examples of tags are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[DEV]</span></code> for development</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[TRAVIS]</span></code> for changes on the continuous integration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[DOC]</span></code> for documentation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[TEST]</span></code> for testing and coverage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[FIX]</span></code> for bugfixes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[REL]</span></code> and <code class="docutils literal notranslate"><span class="pre">[MREL]</span></code> are reserved names for releases and major releases.
+They trigger package version updates on the continuous integration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[DEPLOY]</span></code> is a reserved tag for the continuous integration to upload
+its changes.</p></li>
+</ul>
+</li>
+<li><p>Please check that your pull request complies with all the rules of the checklist:</p>
+<ul class="simple">
+<li><p>Respected the pattern design of the package, using the <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code>
+classes and the <code class="docutils literal notranslate"><span class="pre">cdt.Settings</span></code> modules and heritage from the model classes,
+and verified the correct import of the new functionalities.</p></li>
+<li><p>Added documentation to your added functionalities (check the following section)</p></li>
+<li><p>Added corresponding tests to the added functions/classes in <code class="docutils literal notranslate"><span class="pre">/tests/scripts</span></code></p></li>
+</ul>
+</li>
+<li><p>Finally, submit your pull request using the GitHub website.</p></li>
+</ol>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The package is to be as much independent of other packages as possible, as it
+already depends on many libraries. Therefore, all contributions requiring
+the addition of a new dependency will be severly examined.</p>
+<p>Two types of dependencies are possible for now:</p>
+<ul class="simple">
+<li><p>Python dependencies, defined in <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></p></li>
+<li><p>R dependencies, defined in <code class="docutils literal notranslate"><span class="pre">r_requirements.txt</span></code></p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For R dependencies, the Docker base images have to be rebuilt, thus notifying
+the core maintainers of the package is necessary for the Docker image to be
+updated.</p>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The documentation of the package is automatically generated using <cite>Sphinx</cite>, by
+parsing docstrings of functions and classes, as defined in <code class="docutils literal notranslate"><span class="pre">/docs/index.md</span></code>
+and the <code class="docutils literal notranslate"><span class="pre">/docs/*.rst</span></code> files. To add a new function in the documentation, add
+the respective mention in the <code class="docutils literal notranslate"><span class="pre">.rst</span></code> file. The documentation is automatically
+built and updated online by the Continuous Integration Tool at each push on the
+<cite>master</cite> branch.</p>
+<p>When writing your docstrings, please use the Google Style format:
+<a class="reference external" href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html">https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html</a></p>
+<p>Your docstrings must include:</p>
+<ul class="simple">
+<li><p>A presentation of the functionality</p></li>
+<li><p>A detailed description or the arguments and returns</p></li>
+<li><p>A scientific source in <code class="docutils literal notranslate"><span class="pre">..note::</span></code> if applicable</p></li>
+<li><p>A short example</p></li>
+</ul>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>The package is thouroughly tested using <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and <code class="docutils literal notranslate"><span class="pre">codecov</span></code> for code
+coverage. Tests are run using a Continuous Integration Tool, for
+each push on master/dev or pull requests, allowing to provide users with
+immediate feedback.</p>
+<p>The test scripts are included in the GitHub repository at <code class="docutils literal notranslate"><span class="pre">/tests/scripts</span></code>,
+and some sample data for the function to be applied on can be found in
+<code class="docutils literal notranslate"><span class="pre">/tests/datasets</span></code>.</p>
+<p>In order to write new tests functions, add either a new python file or complete
+an already existing file, and add a function whose name must begin with <code class="docutils literal notranslate"><span class="pre">test_</span></code>.
+This allows pytest to automatically detect the new test function.</p>
+<p>New test functions must provide optimal code coverage of tested functionalities,
+as well as test of imports and result coherence.</p>
+</div>
+<div class="section" id="continuous-integration">
+<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this headline">¶</a></h2>
+<p>Continuous integration (travis-ci) is enabled on this project, it allows for:</p>
+<ol class="arabic simple">
+<li><p>Testing new code with <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and upload the code coverage results to <a class="reference external" href="https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox">https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox</a></p></li>
+<li><p>Bumping a new version of the package and push it to GitHub.</p></li>
+<li><p>Building new docker images and push them to <a class="reference external" href="https://hub.docker.com/u/divkal">https://hub.docker.com/u/divkal</a></p></li>
+<li><p>Push the new package version to PyPi</p></li>
+<li><p>Compile the new documentation and upload its website.</p></li>
+</ol>
+<p>All the tasks described above are defined in the <code class="docutils literal notranslate"><span class="pre">.travis.yml</span></code> file.</p>
+</div>
+<div class="section" id="r-integration">
+<h2>R integration<a class="headerlink" href="#r-integration" title="Permalink to this headline">¶</a></h2>
+<p>One of this project’s main features is wrapping around R-libraries. In order to
+do it in the most efficient way, the <cite>R</cite> tasks are executed in a different process
+than the main <cite>python</cite> process thus freeing the computation from the GIL.</p>
+<p>A <cite>/tmp/</cite> folder is used as buffer, and everything is executed with the
+subprocess library. Check out <a class="reference internal" href="utils.html#module-cdt.utils.R"><span class="std std-ref">cdt.utils.R</span></a> for more
+detailed information.</p>
+</div>
+<div class="section" id="parallelization">
+<h2>Parallelization<a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h2>
+<p>Many algorithms are computationally heavy, but parallelizable, as they include
+bootsrapped functions, mutltiple runs of a same computation.</p>
+<p>Therefore, using mutiprocessing allows to alleviate the required computation
+time. For CPU jobs, we use the <code class="docutils literal notranslate"><span class="pre">joblib</span></code> library, for its efficiency and ease
+of use. However, for GPU jobs, the multiprocessing interface was recoded,
+in order to account for available resources and a memory leak issue between
+<cite>joblib</cite> and <cite>PyTorch</cite>.</p>
+<p>Check out <a class="reference internal" href="utils.html#module-cdt.utils.parallel"><span class="std std-ref">cdt.utils.parallel</span></a> for more detailed information.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="settings.html" class="btn btn-neutral float-left" title="Toolbox Settings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

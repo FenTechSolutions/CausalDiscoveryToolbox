@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.independence &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
   
   
   
@@ -35,9 +37,10 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="cdt.utils" href="utils.html" />
+    <link rel="next" title="cdt.data" href="data.html" />
     <link rel="prev" title="cdt.causality" href="causality.html" /> 
 </head>
 
@@ -52,9 +55,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="index.html">
           
 
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -62,7 +68,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -90,6 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.independence</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.independence.stats">cdt.independence.stats</a><ul>
@@ -115,9 +122,11 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -188,7 +197,7 @@
 <span id="cdt-independence-stats"></span><h2>cdt.independence.stats<a class="headerlink" href="#module-cdt.independence.stats" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cdt.independence.stats.model.IndependenceModel">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.model.</code><code class="descname">IndependenceModel</code><span class="sig-paren">(</span><em>predictor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.model.</code><code class="sig-name descname">IndependenceModel</code><span class="sig-paren">(</span><em class="sig-param">predictor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for independence and utilities to recover the
 undirected graph out of data.</p>
 <dl class="field-list simple">
@@ -198,7 +207,7 @@ undirected graph out of data.</p>
 </dl>
 <dl class="method">
 <dt id="cdt.independence.stats.model.IndependenceModel.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a dependence test statistic between variables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -218,7 +227,7 @@ undirected graph out of data.</p>
 
 <dl class="method">
 <dt id="cdt.independence.stats.model.IndependenceModel.predict_undirected_graph">
-<code class="descname">predict_undirected_graph</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a skeleton using a pairwise independence criterion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -239,9 +248,10 @@ undirected graph out of data.</p>
 <h3><span class="hidden-section">AdjMI</span><a class="headerlink" href="#adjmi" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.stats.AdjMI">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">AdjMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">AdjMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dependency criterion made of binning and mutual information.</p>
-<p>The dependency metric relies on using the clustering metric adjusted mutual information applied
+<blockquote>
+<div><p>The dependency metric relies on using the clustering metric adjusted mutual information applied
 to binned variables using the Freedman Diaconis Estimator.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -252,9 +262,18 @@ Ref: Freedman, David and Diaconis, Persi, “On the histogram as a density estim
 “Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete”, 1981, issn=1432-2064,
 doi=10.1007/BF01025868.</p>
 </div>
+</div></blockquote>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.stats</span> <span class="k">import</span> <span class="n">AdjMI</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">AdjMI</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.stats.AdjMI.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the independence test.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -279,11 +298,19 @@ doi=10.1007/BF01025868.</p>
 <h3><span class="hidden-section">KendallTau</span><a class="headerlink" href="#kendalltau" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.stats.KendallTau">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">KendallTau</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">KendallTau</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute Kendall’s Tau.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.stats</span> <span class="k">import</span> <span class="n">KendallTau</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">KendallTau</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.stats.KendallTau.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -308,11 +335,19 @@ doi=10.1007/BF01025868.</p>
 <h3><span class="hidden-section">MIRegression</span><a class="headerlink" href="#miregression" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.stats.MIRegression">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">MIRegression</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">MIRegression</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test statistic based on a mutual information regression.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.stats</span> <span class="k">import</span> <span class="n">MIRegression</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">MIRegression</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.stats.MIRegression.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -337,11 +372,19 @@ doi=10.1007/BF01025868.</p>
 <h3><span class="hidden-section">NormalizedHSIC</span><a class="headerlink" href="#normalizedhsic" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.stats.NormalizedHSIC">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">NormalizedHSIC</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">NormalizedHSIC</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kernel-based independence test statistic. Uses RBF kernel.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.stats</span> <span class="k">import</span> <span class="n">NormalizedHSIC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">NormalizedHSIC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.stats.NormalizedHSIC.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a, b, sig=[-1, -1], maxpnt=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a, b, sig=[-1, -1], maxpnt=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -368,36 +411,36 @@ doi=10.1007/BF01025868.</p>
 <h3><span class="hidden-section">NormMI</span><a class="headerlink" href="#normmi" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.stats.NormMI">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">NormMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">NormMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dependency criterion made of binning and mutual information.</p>
 <p>The dependency metric relies on using the clustering metric adjusted mutual information applied
 to binned variables using the Freedman Diaconis Estimator.
-.. note:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ref</span><span class="p">:</span> <span class="n">Vinh</span><span class="p">,</span> <span class="n">Nguyen</span> <span class="n">Xuan</span> <span class="ow">and</span> <span class="n">Epps</span><span class="p">,</span> <span class="n">Julien</span> <span class="ow">and</span> <span class="n">Bailey</span><span class="p">,</span> <span class="n">James</span><span class="p">,</span> <span class="s2">&quot;Information theoretic measures for clusterings</span>
-<span class="n">comparison</span><span class="p">:</span> <span class="n">Variants</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">normalization</span> <span class="ow">and</span> <span class="n">correction</span> <span class="k">for</span> <span class="n">chance</span><span class="s2">&quot;, Journal of Machine Learning</span>
-<span class="n">Research</span><span class="p">,</span> <span class="n">Volume</span> <span class="mi">11</span><span class="p">,</span> <span class="n">Oct</span> <span class="mf">2010.</span>
-<span class="n">Ref</span><span class="p">:</span> <span class="n">Freedman</span><span class="p">,</span> <span class="n">David</span> <span class="ow">and</span> <span class="n">Diaconis</span><span class="p">,</span> <span class="n">Persi</span><span class="p">,</span> <span class="s2">&quot;On the histogram as a density estimator:L2 theory&quot;</span><span class="p">,</span>
-<span class="s2">&quot;Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete&quot;</span><span class="p">,</span> <span class="mi">1981</span><span class="p">,</span> <span class="n">issn</span><span class="o">=</span><span class="mi">1432</span><span class="o">-</span><span class="mi">2064</span><span class="p">,</span>
-<span class="n">doi</span><span class="o">=</span><span class="mf">10.1007</span><span class="o">/</span><span class="n">BF01025868</span><span class="o">.</span>
+:param a: input data
+:param b: input data
+:type a: array-like, numerical data
+:type b: array-like, numerical data
+:return: dependency statistic (1=Highly dependent, 0=Not dependent)
+:rtype: float</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, “Information theoretic measures for clusterings
+comparison: Variants, properties, normalization and correction for chance”, Journal of Machine Learning
+Research, Volume 11, Oct 2010.
+Ref: Freedman, David and Diaconis, Persi, “On the histogram as a density estimator:L2 theory”,
+“Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete”, 1981, issn=1432-2064,
+doi=10.1007/BF01025868.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.stats</span> <span class="k">import</span> <span class="n">NormMI</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">NormMI</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</p></li>
-<li><p><strong>b</strong> (<em>array-like</em><em>, </em><em>numerical data</em>) – input data</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dependency statistic (1=Highly dependent, 0=Not dependent)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
 <dl class="method">
 <dt id="cdt.independence.stats.NormMI.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the independence test.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -422,14 +465,22 @@ to binned variables using the Freedman Diaconis Estimator.
 <h3><span class="hidden-section">PearsonCorrelation</span><a class="headerlink" href="#pearsoncorrelation" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.stats.PearsonCorrelation">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">PearsonCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">PearsonCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pearson’s correlation coefficient.</p>
 <div class="math notranslate nohighlight">
 \[r(a, b) = \frac{\sum_{i=1}^n (a_i - \bar{a})(b_i - \bar{b})}
 {\sqrt{\sum_{i=1}^n(a_i - \bar{a})^2 \sqrt{\sum_{i=1}^n(b_i - \bar{b})^2}}}\]</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.stats</span> <span class="k">import</span> <span class="n">PearsonCorrelation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">PearsonCorrelation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.stats.PearsonCorrelation.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -454,12 +505,20 @@ to binned variables using the Freedman Diaconis Estimator.
 <h3><span class="hidden-section">SpearmanCorrelation</span><a class="headerlink" href="#spearmancorrelation" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.stats.SpearmanCorrelation">
-<em class="property">class </em><code class="descclassname">cdt.independence.stats.</code><code class="descname">SpearmanCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">SpearmanCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spearman correlation.</p>
 <p>Applies Pearson’s correlation on the rank of the values.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.stats</span> <span class="k">import</span> <span class="n">SpearmanCorrelation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">SpearmanCorrelation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.stats.SpearmanCorrelation.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -485,11 +544,11 @@ to binned variables using the Freedman Diaconis Estimator.
 <span id="cdt-independence-graph"></span><h2>cdt.independence.graph<a class="headerlink" href="#module-cdt.independence.graph" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cdt.independence.graph.model.GraphSkeletonModel">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.model.</code><code class="descname">GraphSkeletonModel</code><a class="reference internal" href="_modules/cdt/independence/graph/model.html#GraphSkeletonModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.GraphSkeletonModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.model.</code><code class="sig-name descname">GraphSkeletonModel</code><a class="reference internal" href="_modules/cdt/independence/graph/model.html#GraphSkeletonModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.GraphSkeletonModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for undirected graph recovery directly out of data.</p>
 <dl class="method">
 <dt id="cdt.independence.graph.model.GraphSkeletonModel.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#GraphSkeletonModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.GraphSkeletonModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#GraphSkeletonModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.GraphSkeletonModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer a undirected graph out of data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -512,12 +571,12 @@ to binned variables using the Freedman Diaconis Estimator.
 
 <dl class="class">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.model.</code><code class="descname">FeatureSelectionModel</code><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.model.</code><code class="sig-name descname">FeatureSelectionModel</code><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for methods using feature selection
 on each variable independently.</p>
 <dl class="method">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>df_data</em>, <em>threshold=0.05</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">threshold=0.05</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the skeleton of the graph from raw data.</p>
 <p>Returns iteratively the feature selection algorithm on each node.</p>
 <dl class="field-list simple">
@@ -539,7 +598,7 @@ on each variable independently.</p>
 
 <dl class="method">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -565,7 +624,7 @@ on each variable independently.</p>
 
 <dl class="method">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel.run_feature_selection">
-<code class="descname">run_feature_selection</code><span class="sig-paren">(</span><em>df_data</em>, <em>target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.run_feature_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.run_feature_selection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run_feature_selection</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.run_feature_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.run_feature_selection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run feature selection for one node: wrapper around
 <code class="docutils literal notranslate"><span class="pre">self.predict_features</span></code>.</p>
 <dl class="field-list simple">
@@ -591,11 +650,22 @@ on each variable independently.</p>
 <h3><span class="hidden-section">ARD</span><a class="headerlink" href="#ard" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.ARD">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">ARD</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">ARD</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature selection with Bayesian ARD regression.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">ARD</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_boston</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">ARD</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.graph.ARD.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -622,11 +692,22 @@ on each variable independently.</p>
 <h3><span class="hidden-section">DecisionTreeRegression</span><a class="headerlink" href="#decisiontreeregression" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.DecisionTreeRegression">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">DecisionTreeRegression</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">DecisionTreeRegression</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature selection with decision tree regression.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">DecisionTreeRegression</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_boston</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">DecisionTreeRegression</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.graph.DecisionTreeRegression.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -653,19 +734,12 @@ on each variable independently.</p>
 <h3><span class="hidden-section">FSGNN</span><a class="headerlink" href="#fsgnn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.FSGNN">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">FSGNN</code><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">FSGNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">dropout=0.0</em>, <em class="sig-param">activation_function=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">l1=0.1</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">nruns=3</em>, <em class="sig-param">dataloader_workers=0</em>, <em class="sig-param">njobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature Selection using MMD and Generative Neural Networks.</p>
-<dl class="method">
-<dt id="cdt.independence.graph.FSGNN.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>nh=20</em>, <em>idx=0</em>, <em>dropout=0.0</em>, <em>activation_function=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>lr=0.01</em>, <em>l1=0.1</em>, <em>batch_size=-1</em>, <em>train_epochs=1000</em>, <em>test_epochs=1000</em>, <em>device=None</em>, <em>verbose=None</em>, <em>nruns=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>For one variable, predict its neighbours.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </p></li>
-<li><p><strong>df_target</strong> (<em>pandas.Series</em>) – </p></li>
 <li><p><strong>nh</strong> (<em>int</em>) – number of hidden units</p></li>
-<li><p><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</p></li>
 <li><p><strong>dropout</strong> (<em>float</em>) – probability of dropout (between 0 and 1)</p></li>
 <li><p><strong>activation_function</strong> (<em>torch.nn.Module</em>) – activation function of the NN</p></li>
 <li><p><strong>lr</strong> (<em>float</em>) – learning rate of Adam</p></li>
@@ -673,9 +747,61 @@ on each variable independently.</p>
 <li><p><strong>batch_size</strong> (<em>int</em>) – batch size, defaults to full-batch</p></li>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – number of train epochs</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – number of test epochs</p></li>
-<li><p><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
 <li><p><strong>nruns</strong> (<em>int</em>) – number of bootstrap runs</p></li>
+<li><p><strong>dataloader_workers</strong> (<em>int</em>) – how many subprocesses to use for data
+loading. 0 means that the data will be loaded in the main
+process. (default: 0)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">FSGNN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_boston</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">FSGNN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="cdt.independence.graph.FSGNN.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">threshold=0.05</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the skeleton of the graph from raw data.</p>
+<p>Returns iteratively the feature selection algorithm on each node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_data</strong> (<em>pandas.DataFrame</em>) – data to construct a graph from</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – cutoff value for feature selection scores</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – additional arguments for algorithms</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>predicted skeleton of the graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.independence.graph.FSGNN.predict_features">
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">datasetclass=&lt;class 'torch.utils.data.dataset.TensorDataset'&gt;</em>, <em class="sig-param">device=None</em>, <em class="sig-param">idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>For one variable, predict its neighbours.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_features</strong> (<em>pandas.DataFrame</em>) – Features to select</p></li>
+<li><p><strong>df_target</strong> (<em>pandas.Series</em>) – Target variable to predict</p></li>
+<li><p><strong>datasetclass</strong> (<em>torch.utils.data.Dataset</em>) – Class to override for
+custom loading of data.</p></li>
+<li><p><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – cuda or cpu device (defaults to
+<code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -694,17 +820,26 @@ on each variable independently.</p>
 <h3><span class="hidden-section">Glasso</span><a class="headerlink" href="#glasso" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.Glasso">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">Glasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">Glasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso" title="Permalink to this definition">¶</a></dt>
 <dd><p>Graphical Lasso to find an adjacency matrix</p>
-<div class="admonition note">
+<blockquote>
+<div><div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref : Friedman, J., Hastie, T., &amp; Tibshirani, R. (2008). Sparse inverse
 covariance estimation with the graphical lasso. Biostatistics, 9(3),
 432-441.</p>
 </div>
+</div></blockquote>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">Glasso</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s1">&#39;ABCD&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">Glasso</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.graph.Glasso.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em>, <em>alpha=0.01</em>, <em>max_iter=2000</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">alpha=0.01</em>, <em class="sig-param">max_iter=2000</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the graph skeleton.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -730,11 +865,22 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 <h3><span class="hidden-section">HSICLasso</span><a class="headerlink" href="#hsiclasso" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.HSICLasso">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">HSICLasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">HSICLasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso" title="Permalink to this definition">¶</a></dt>
 <dd><p>Graphical Lasso with a kernel-based independence test.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">HSICLasso</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_boston</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">HSICLasso</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.graph.HSICLasso.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -752,10 +898,6 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Not implemented. Implemented by the algorithms.</p>
-</div>
 </dd></dl>
 
 </dd></dl>
@@ -765,11 +907,22 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 <h3><span class="hidden-section">LinearSVRL2</span><a class="headerlink" href="#linearsvrl2" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.LinearSVRL2">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">LinearSVRL2</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">LinearSVRL2</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature selection with Linear Support Vector Regression.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">LinearSVRL2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_boston</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">LinearSVRL2</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.graph.LinearSVRL2.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>C=0.1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">C=0.1</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -797,18 +950,31 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 <h3><span class="hidden-section">RFECVLinearSVR</span><a class="headerlink" href="#rfecvlinearsvr" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.RFECVLinearSVR">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">RFECVLinearSVR</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursive Feature elimination with cross validation,
-with support vector regressors</p>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">RFECVLinearSVR</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Recursive Feature elimination with cross validation,</dt><dd><p>with support vector regressors</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref: Guyon, I., Weston, J., Barnhill, S., &amp; Vapnik, V.,
 “Gene selection for cancer classification using support vector machines”,
 Mach. Learn., 46(1-3), 389–422, 2002.</p>
 </div>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">RFECVLinearSVR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_boston</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">RFECVLinearSVR</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.graph.RFECVLinearSVR.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -835,11 +1001,22 @@ Mach. Learn., 46(1-3), 389–422, 2002.</p>
 <h3><span class="hidden-section">RRelief</span><a class="headerlink" href="#rrelief" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.independence.graph.RRelief">
-<em class="property">class </em><code class="descclassname">cdt.independence.graph.</code><code class="descname">RRelief</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">RRelief</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature selection with RRelief.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="k">import</span> <span class="n">RRelief</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_boston</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">RRelief</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.independence.graph.RRelief.predict_features">
-<code class="descname">predict_features</code><span class="sig-paren">(</span><em>df_features</em>, <em>df_target</em>, <em>idx=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -873,7 +1050,7 @@ Mach. Learn., 46(1-3), 389–422, 2002.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="utils.html" class="btn btn-neutral float-right" title="cdt.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="data.html" class="btn btn-neutral float-right" title="cdt.data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="causality.html" class="btn btn-neutral float-left" title="cdt.causality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

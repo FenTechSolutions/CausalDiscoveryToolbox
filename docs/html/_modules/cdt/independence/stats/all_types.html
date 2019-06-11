@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence.stats.all_types &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.independence.stats.all_types &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -211,6 +220,13 @@
 <span class="sd">       Ref: Freedman, David and Diaconis, Persi, &quot;On the histogram as a density estimator:L2 theory&quot;,</span>
 <span class="sd">       &quot;Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete&quot;, 1981, issn=1432-2064,</span>
 <span class="sd">       doi=10.1007/BF01025868.</span>
+<span class="sd">       </span>
+<span class="sd">   Example:</span>
+<span class="sd">       &gt;&gt;&gt; from cdt.independence.stats import AdjMI</span>
+<span class="sd">       &gt;&gt;&gt; obj = AdjMI()</span>
+<span class="sd">       &gt;&gt;&gt; a = np.array([1, 2, 1, 5])</span>
+<span class="sd">       &gt;&gt;&gt; b = np.array([1, 3, 0, 6])</span>
+<span class="sd">       &gt;&gt;&gt; obj.predict(a, b)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -237,6 +253,13 @@
 
 <span class="sd">    The dependency metric relies on using the clustering metric adjusted mutual information applied</span>
 <span class="sd">    to binned variables using the Freedman Diaconis Estimator.</span>
+<span class="sd">    :param a: input data</span>
+<span class="sd">    :param b: input data</span>
+<span class="sd">    :type a: array-like, numerical data</span>
+<span class="sd">    :type b: array-like, numerical data</span>
+<span class="sd">    :return: dependency statistic (1=Highly dependent, 0=Not dependent)</span>
+<span class="sd">    :rtype: float</span>
+
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref: Vinh, Nguyen Xuan and Epps, Julien and Bailey, James, &quot;Information theoretic measures for clusterings</span>
 <span class="sd">       comparison: Variants, properties, normalization and correction for chance&quot;, Journal of Machine Learning</span>
@@ -244,13 +267,14 @@
 <span class="sd">       Ref: Freedman, David and Diaconis, Persi, &quot;On the histogram as a density estimator:L2 theory&quot;,</span>
 <span class="sd">       &quot;Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete&quot;, 1981, issn=1432-2064,</span>
 <span class="sd">       doi=10.1007/BF01025868.</span>
+<span class="sd">       </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.independence.stats import NormMI</span>
+<span class="sd">        &gt;&gt;&gt; obj = NormMI()</span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([1, 2, 1, 5])</span>
+<span class="sd">        &gt;&gt;&gt; b = np.array([1, 3, 0, 6])</span>
+<span class="sd">        &gt;&gt;&gt; obj.predict(a, b)</span>
 
-<span class="sd">    :param a: input data</span>
-<span class="sd">    :param b: input data</span>
-<span class="sd">    :type a: array-like, numerical data</span>
-<span class="sd">    :type b: array-like, numerical data</span>
-<span class="sd">    :return: dependency statistic (1=Highly dependent, 0=Not dependent)</span>
-<span class="sd">    :rtype: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

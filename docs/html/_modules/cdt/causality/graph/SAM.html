@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.SAM &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.causality.graph.SAM &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -305,7 +314,8 @@
 <span class="k">class</span> <span class="nc">SAM_generators</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Ensemble of all the generators.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SAM_generators</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
@@ -316,7 +326,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">):</span>
             <span class="n">pname</span> <span class="o">=</span> <span class="s1">&#39;noise_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="n">pname</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="n">pname</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pname</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
 
@@ -433,7 +443,8 @@
             <span class="n">zero_components</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">zero_components</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">)]</span>
-    <span class="n">sam</span> <span class="o">=</span> <span class="n">SAM_generators</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">sam</span> <span class="o">=</span> <span class="n">SAM_generators</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="n">activation_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_function&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -540,7 +551,7 @@
 <span class="sd">        dnh (int): Number of hidden units in the discriminator&#39;s hidden layer$</span>
 <span class="sd">        train_epochs (int): Number of training epochs</span>
 <span class="sd">        test_epochs (int): Number of test epochs (saving and averaging the causal filters)</span>
-<span class="sd">        batchsize (int): Size of the batches to be fed to the SAM model.</span>
+<span class="sd">        batch_size (int): Size of the batches to be fed to the SAM model.</span>
 <span class="sd">        nruns (int): Number of runs to be made for causal estimation.</span>
 <span class="sd">               Recommended: &gt;=12 for optimal performance.</span>
 <span class="sd">        njobs (int): Numbers of jobs to be run in Parallel.</span>
@@ -552,11 +563,29 @@
 <span class="sd">       Ref: Kalainathan, Diviyan &amp; Goudet, Olivier &amp; Guyon, Isabelle &amp;</span>
 <span class="sd">       Lopez-Paz, David &amp; Sebag, Michèle. (2018). SAM: Structural Agnostic</span>
 <span class="sd">       Model, Causal Discovery and Penalized Adversarial Learning.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import SAM</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&quot;sachs&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = SAM()</span>
+<span class="sd">        &gt;&gt;&gt; #The predict() method works without a graph, or with a</span>
+<span class="sd">        &gt;&gt;&gt; #directed or undirected graph provided as an input</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)    #No graph provided as an argument</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, nx.Graph(graph))  #With an undirected graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, graph)  #With a directed graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; #To view the graph created, run the below commands:</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dlr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-                 <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">batchsize</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                 <span class="n">nruns</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dlr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                 <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">nruns</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init and parametrize the SAM model.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -568,7 +597,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dnh</span> <span class="o">=</span> <span class="n">dnh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">train_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">test_epochs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span> <span class="o">=</span> <span class="n">batchsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span> <span class="o">=</span> <span class="n">nruns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpus</span><span class="p">)</span>
@@ -588,7 +617,7 @@
 <span class="sd">            networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term</span>
 <span class="sd">            of the ith variable for the jth generator.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">list_out</span> <span class="o">=</span> <span class="n">parallel_run</span><span class="p">(</span><span class="n">run_SAM</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span>
                                     <span class="n">skeleton</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
                                     <span class="n">lr_gen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">lr_disc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dlr</span><span class="p">,</span>
@@ -596,7 +625,7 @@
                                     <span class="n">dnh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dnh</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span>
                                     <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span>
                                     <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span>
-                                    <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">plot</span><span class="p">,</span>
+                                    <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">plot</span><span class="p">,</span>
                                     <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">list_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_SAM</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
@@ -604,7 +633,7 @@
                                 <span class="n">regul_param</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dnh</span><span class="p">,</span>
                                 <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                 <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span>
-                                <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span><span class="p">,</span>
+                                <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
                                 <span class="n">plot</span><span class="o">=</span><span class="n">plot</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">return_list_results</span><span class="p">:</span>

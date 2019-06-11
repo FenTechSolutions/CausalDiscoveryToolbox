@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.data &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
   
   
   
@@ -35,8 +37,11 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cdt.utils" href="utils.html" />
+    <link rel="prev" title="cdt.independence" href="independence.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,9 +55,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="index.html">
           
 
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +68,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -87,12 +95,20 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
-<ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#causalpairgenerator">CausalPairGenerator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acyclicgraphgenerator">AcyclicGraphGenerator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#load-dataset">load_dataset</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -169,28 +185,61 @@ mechanisms are (<span class="math notranslate nohighlight">\(+\times\)</span> de
 noise variable accounting for all unobserved variables):</p>
 <ul class="simple">
 <li><p>Linear: <span class="math notranslate nohighlight">\(y = \mathbf{X}W +\times E\)</span></p></li>
-<li><p>Polynomial: <span class="math notranslate nohighlight">\(y = W_0 + \mathbf{X}W_1 + ...+ \mathbf{X}^d W_d +\times E\)</span></p></li>
+<li><p>Polynomial: <span class="math notranslate nohighlight">\(y = \left( W_0 + \mathbf{X}W_1 + ...+ \mathbf{X}^d W_d \right) +\times E\)</span></p></li>
 <li><p>Gaussian Process: <span class="math notranslate nohighlight">\(y = GP(\mathbf{X}) +\times E\)</span></p></li>
 <li><p>Sigmoid: <span class="math notranslate nohighlight">\(y = \sum_i^d W_i * sigmoid(\mathbf{X_i}) +\times E\)</span></p></li>
-<li><p>Randomly init. Neural network: <span class="math notranslate nohighlight">\(y = \sigma((\mathbf{X},E) W_in)W_out\)</span></p></li>
+<li><p>Randomly init. Neural network: <span class="math notranslate nohighlight">\(y = \sigma((\mathbf{X},E) W_{in})W_{out}\)</span></p></li>
 </ul>
 <p>Causal pairs can be generated using the <code class="docutils literal notranslate"><span class="pre">cdt.data.CausalPairGenerator</span></code> class,
 and acyclic graphs can be generated using the <code class="docutils literal notranslate"><span class="pre">cdt.data.AcyclicGraphGenerator</span></code> class.</p>
 <div class="section" id="causalpairgenerator">
-<h2><span class="hidden-section">CausalPairGenerator</span><a class="headerlink" href="#causalpairgenerator" title="Permalink to this headline">¶</a></h2>
+<h2>CausalPairGenerator<a class="headerlink" href="#causalpairgenerator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cdt.data.CausalPairGenerator">
-<em class="property">class </em><code class="descclassname">cdt.data.</code><code class="descname">CausalPairGenerator</code><span class="sig-paren">(</span><em>causal_mechanism</em>, <em>noise=&lt;function normal_noise&gt;</em>, <em>noise_coeff=0.4</em>, <em>initial_variable_generator=&lt;function gmm_cause&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">CausalPairGenerator</code><span class="sig-paren">(</span><em class="sig-param">causal_mechanism</em>, <em class="sig-param">noise=&lt;function normal_noise&gt;</em>, <em class="sig-param">noise_coeff=0.4</em>, <em class="sig-param">initial_variable_generator=&lt;function gmm_cause&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates Bivariate Causal Distributions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>causal_mechanism</strong> (<em>str</em>) – currently implemented mechanisms:
+[‘linear’, ‘polynomial’, ‘sigmoid_add’,
+‘sigmoid_mix’, ‘gp_add’, ‘gp_mix’, ‘nn’].</p></li>
+<li><p><strong>noise</strong> (<em>str</em><em> or </em><em>function</em>) – type of noise to use in the generative process
+(‘normal’, ‘uniform’ or a custom noise function).</p></li>
+<li><p><strong>noise_coeff</strong> (<em>float</em>) – Proportion of noise in the mechanisms.</p></li>
+<li><p><strong>initial_variable_generator</strong> (<em>function</em>) – Function used to init variables
+of the graph, defaults to a Gaussian Mixture model.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="cdt.data.CausalPairGenerator.generate">
-<code class="descname">generate</code><span class="sig-paren">(</span><em>npairs</em>, <em>npoints=500</em>, <em>rescale=True</em>, <em>njobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.generate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate data</p>
+<code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param">npairs</em>, <em class="sig-param">npoints=500</em>, <em class="sig-param">rescale=True</em>, <em class="sig-param">njobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Causal pairs, such that one variable causes the other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>npairs</strong> (<em>int</em>) – Number of pairs of variables to generate.</p></li>
+<li><p><strong>npoints</strong> (<em>int</em>) – Number of data points to generate.</p></li>
+<li><p><strong>rescale</strong> (<em>bool</em>) – Rescale the output with zero mean and unit variance.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Number of parallel jobs to execute. Defaults to
+cdt.SETTINGS.NJOBS</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(pandas.DataFrame, pandas.DataFrame) data and corresponding
+labels. The data is at the <code class="docutils literal notranslate"><span class="pre">SampleID,</span> <span class="pre">a</span> <span class="pre">(numpy.ndarray)</span> <span class="pre">,</span> <span class="pre">b</span> <span class="pre">(numpy.ndarray))</span></code>
+format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.data.CausalPairGenerator.to_csv">
-<code class="descname">to_csv</code><span class="sig-paren">(</span><em>fname_radical</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param">fname_radical</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save data to the csv format by default, in two separate files.</p>
 <p>Optional keyword arguments can be passed to pandas.</p>
 </dd></dl>
@@ -199,30 +248,134 @@ and acyclic graphs can be generated using the <code class="docutils literal notr
 
 </div>
 <div class="section" id="acyclicgraphgenerator">
-<h2><span class="hidden-section">AcyclicGraphGenerator</span><a class="headerlink" href="#acyclicgraphgenerator" title="Permalink to this headline">¶</a></h2>
+<h2>AcyclicGraphGenerator<a class="headerlink" href="#acyclicgraphgenerator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cdt.data.AcyclicGraphGenerator">
-<em class="property">class </em><code class="descclassname">cdt.data.</code><code class="descname">AcyclicGraphGenerator</code><span class="sig-paren">(</span><em>causal_mechanism</em>, <em>noise=&lt;function normal_noise&gt;</em>, <em>noise_coeff=0.4</em>, <em>initial_variable_generator=&lt;function gmm_cause&gt;</em>, <em>npoints=500</em>, <em>nodes=20</em>, <em>parents_max=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a cross-sectional dataset out of a cyclic FCM.</p>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">AcyclicGraphGenerator</code><span class="sig-paren">(</span><em class="sig-param">causal_mechanism</em>, <em class="sig-param">noise='gaussian'</em>, <em class="sig-param">noise_coeff=0.4</em>, <em class="sig-param">initial_variable_generator=&lt;function gmm_cause&gt;</em>, <em class="sig-param">npoints=500</em>, <em class="sig-param">nodes=20</em>, <em class="sig-param">parents_max=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an acyclic graph and data given a causal mechanism.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>causal_mechanism</strong> (<em>str</em>) – currently implemented mechanisms:
+[‘linear’, ‘polynomial’, ‘sigmoid_add’,
+‘sigmoid_mix’, ‘gp_add’, ‘gp_mix’, ‘nn’].</p></li>
+<li><p><strong>noise</strong> (<em>str</em><em> or </em><em>function</em>) – type of noise to use in the generative process
+(‘gaussian’, ‘uniform’ or a custom noise function).</p></li>
+<li><p><strong>noise_coeff</strong> (<em>float</em>) – Proportion of noise in the mechanisms.</p></li>
+<li><p><strong>initial_variable_generator</strong> (<em>function</em>) – Function used to init variables
+of the graph, defaults to a Gaussian Mixture model.</p></li>
+<li><p><strong>npoints</strong> (<em>int</em>) – Number of data points to generate.</p></li>
+<li><p><strong>nodes</strong> (<em>int</em>) – Number of nodes in the graph to generate.</p></li>
+<li><p><strong>parents_max</strong> (<em>int</em>) – Maximum number of parents of a node.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="cdt.data.AcyclicGraphGenerator.generate">
-<code class="descname">generate</code><span class="sig-paren">(</span><em>rescale=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate data from an FCM containing cycles.</p>
+<code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param">rescale=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate data from an FCM defined in <code class="docutils literal notranslate"><span class="pre">self.init_variables()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rescale</strong> (<em>bool</em>) – rescale the generated data (recommended)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(pandas.DataFrame, networkx.DiGraph), respectively the
+generated data and graph.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.data.AcyclicGraphGenerator.init_variables">
-<code class="descname">init_variables</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_variables" title="Permalink to this definition">¶</a></dt>
-<dd><p>Redefine the causes of the graph.</p>
+<code class="sig-name descname">init_variables</code><span class="sig-paren">(</span><em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redefine the causes, mechanisms and the structure of the graph,
+called by <code class="docutils literal notranslate"><span class="pre">self.generate()</span></code> if never called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<em>bool</em>) – Verbosity</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="cdt.data.AcyclicGraphGenerator.to_csv">
-<code class="descname">to_csv</code><span class="sig-paren">(</span><em>fname_radical</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save data to the csv format by default, in two separate files.</p>
-<p>Optional keyword arguments can be passed to pandas.</p>
+<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param">fname_radical</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the generated data to the csv format by default,
+in two separate files: data, and the adjacency matrix of the
+corresponding graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname_radical</strong> (<em>str</em>) – radical of the file names. Completed by
+<code class="docutils literal notranslate"><span class="pre">_data.csv</span></code> for the data file and <code class="docutils literal notranslate"><span class="pre">_target.csv</span></code> for the
+adjacency matrix of the generated graph.</p></li>
+<li><p><strong>**kwargs</strong> – Optional keyword arguments can be passed to pandas.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="load-dataset">
+<h2>load_dataset<a class="headerlink" href="#load-dataset" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cdt.data.load_dataset">
+<code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">load_dataset</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/loader.html#load_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.load_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function of this module, allows to easily import well-known causal
+datasets into python.</p>
+<dl class="simple">
+<dt>Details on the supported datasets:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><strong>Tuebingen</strong>, dataset of 100 real cause-effect pairs</dt><dd><p>J. M. Mooij,
+J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf: “Distinguishing
+cause from effect using observational data: methods and benchmarks”,
+Journal of Machine Learning Research 17(32):1-102, 2016.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Sachs</strong>, Dataset of flow cytometry, real data,</dt><dd><p>11 variables x 7466
+samples; Sachs, K., Perez, O., Pe’er, D., Lauffenburger, D. A., &amp; Nolan,
+G. P. (2005). Causal protein-signaling networks derived from
+multiparameter single-cell data. Science, 308(5721), 523-529.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>DREAM4</strong>, multifactorial artificial data of the challenge.</dt><dd><p>Data generated with GeneNetWeaver 2.0, 5 graphs of 100 variables x 100
+samples. Marbach D, Prill RJ, Schaffter T, Mattiussi C, Floreano D,
+and Stolovitzky G. Revealing strengths and weaknesses of methods for
+gene network inference. PNAS, 107(14):6286-6291, 2010.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the dataset. currenly supported datasets:
+[<cite>tuebingen</cite>, <cite>sachs</cite>, <cite>dream4-1</cite>, <cite>dream4-2</cite>, <cite>dream4-3</cite>,
+<cite>dream4-4</cite>, <cite>dream4-5</cite>]</p></li>
+<li><p><strong>**kwargs</strong> – Optional additional arguments for dataset loaders.
+<code class="docutils literal notranslate"><span class="pre">tuebingen</span></code> dataset accepts the <code class="docutils literal notranslate"><span class="pre">shuffle</span> <span class="pre">(bool)</span></code> option to
+shuffle the causal pairs and their according labels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(pandas.DataFrame, pandas.DataFrame or networkx.DiGraph) Standard
+dataframe containing the data, and the target.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -233,6 +386,15 @@ and acyclic graphs can be generated using the <code class="docutils literal notr
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.html" class="btn btn-neutral float-right" title="cdt.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="independence.html" class="btn btn-neutral float-left" title="cdt.independence" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

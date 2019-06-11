@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence.stats.numerical &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.independence.stats.numerical &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -268,6 +277,12 @@
 <span class="sd">        r(a, b) = \\frac{\\sum_{i=1}^n (a_i - \\bar{a})(b_i - \\bar{b})}</span>
 <span class="sd">        {\\sqrt{\\sum_{i=1}^n(a_i - \\bar{a})^2 \\sqrt{\\sum_{i=1}^n(b_i - \\bar{b})^2}}}</span>
 
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.independence.stats import PearsonCorrelation</span>
+<span class="sd">        &gt;&gt;&gt; obj = PearsonCorrelation()</span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([1, 2, 1, 5])</span>
+<span class="sd">        &gt;&gt;&gt; b = np.array([1, 3, 0, 6])</span>
+<span class="sd">        &gt;&gt;&gt; obj.predict(a, b)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PearsonCorrelation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -289,6 +304,13 @@
     <span class="sd">&quot;&quot;&quot;Spearman correlation.</span>
 
 <span class="sd">    Applies Pearson&#39;s correlation on the rank of the values.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.independence.stats import SpearmanCorrelation</span>
+<span class="sd">        &gt;&gt;&gt; obj = SpearmanCorrelation()</span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([1, 2, 1, 5])</span>
+<span class="sd">        &gt;&gt;&gt; b = np.array([1, 3, 0, 6])</span>
+<span class="sd">        &gt;&gt;&gt; obj.predict(a, b)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SpearmanCorrelation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -307,7 +329,16 @@
 
 
 <div class="viewcode-block" id="MIRegression"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.stats.MIRegression">[docs]</a><span class="k">class</span> <span class="nc">MIRegression</span><span class="p">(</span><span class="n">IndependenceModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Test statistic based on a mutual information regression.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Test statistic based on a mutual information regression.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; from cdt.independence.stats import MIRegression</span>
+<span class="sd">            &gt;&gt;&gt; obj = MIRegression()</span>
+<span class="sd">            &gt;&gt;&gt; a = np.array([1, 2, 1, 5])</span>
+<span class="sd">            &gt;&gt;&gt; b = np.array([1, 3, 0, 6])</span>
+<span class="sd">            &gt;&gt;&gt; obj.predict(a, b)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MIRegression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -327,7 +358,15 @@
 
 
 <div class="viewcode-block" id="KendallTau"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.stats.KendallTau">[docs]</a><span class="k">class</span> <span class="nc">KendallTau</span><span class="p">(</span><span class="n">IndependenceModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute Kendall&#39;s Tau.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Compute Kendall&#39;s Tau.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; from cdt.independence.stats import KendallTau</span>
+<span class="sd">            &gt;&gt;&gt; obj = KendallTau()</span>
+<span class="sd">            &gt;&gt;&gt; a = np.array([1, 2, 1, 5])</span>
+<span class="sd">            &gt;&gt;&gt; b = np.array([1, 3, 0, 6])</span>
+<span class="sd">            &gt;&gt;&gt; obj.predict(a, b)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">KendallTau</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -347,7 +386,15 @@
 
 
 <div class="viewcode-block" id="NormalizedHSIC"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.stats.NormalizedHSIC">[docs]</a><span class="k">class</span> <span class="nc">NormalizedHSIC</span><span class="p">(</span><span class="n">IndependenceModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Kernel-based independence test statistic. Uses RBF kernel.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Kernel-based independence test statistic. Uses RBF kernel.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.independence.stats import NormalizedHSIC</span>
+<span class="sd">        &gt;&gt;&gt; obj = NormalizedHSIC()</span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([1, 2, 1, 5])</span>
+<span class="sd">        &gt;&gt;&gt; b = np.array([1, 3, 0, 6])</span>
+<span class="sd">        &gt;&gt;&gt; obj.predict(a, b)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">NormalizedHSIC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 

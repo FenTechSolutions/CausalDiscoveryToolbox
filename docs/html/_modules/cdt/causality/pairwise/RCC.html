@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.RCC &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.causality.pairwise.RCC &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -211,6 +220,26 @@
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref : Lopez-Paz, David and Muandet, Krikamol and Schölkopf, Bernhard and Tolstikhin, Ilya O,</span>
 <span class="sd">       &quot;Towards a Learning Theory of Cause-Effect Inference&quot;, ICML 2015.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.pairwise import RCC</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, labels = load_dataset(&#39;tuebingen&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = RCC()</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # This example uses the predict() method</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # This example uses the orient_graph() method. The dataset used</span>
+<span class="sd">        &gt;&gt;&gt; # can be loaded using the cdt.data module</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&#39;sachs&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.orient_graph(data, nx.DiGraph(graph))</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # To view the directed graph run the following command</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rand_coeff</span><span class="o">=</span><span class="mi">333</span><span class="p">,</span> <span class="n">nb_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">nb_min_leaves</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
@@ -271,39 +300,21 @@
                        <span class="n">max_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">,</span>
                        <span class="n">n_jobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RCC.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.RCC.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="RCC.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.RCC.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Predict the causal score using a trained RCC model</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (numpy.array or pandas.DataFrame or pandas.Series): First variable or dataset.</span>
-<span class="sd">            args (numpy.array): second variable (optional depending on the 1st argument).</span>
+<span class="sd">            dataset (tuple): Couple of np.ndarray variables to classify</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Causation score (Value : 1 if a-&gt;b and -1 if b-&gt;a)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model has to be trained before making predictions.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-            <span class="n">input_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurize_row</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">x</span> <span class="ow">is</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-            <span class="n">input_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">featurize_row</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">input_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurize_row</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;DataType not understood.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RCC.predict_dataset"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.RCC.predict_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">predict_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Override of ``self.predict_dataset`` for better computational efficency.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x (pandas.DataFrame): a CEPC format Dataframe.</span>
-<span class="sd">            kwargs (dict): additional arguments for the algorithms</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame: a Dataframe with the predictions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="n">input_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurize_row</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

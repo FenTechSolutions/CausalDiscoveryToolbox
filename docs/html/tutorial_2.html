@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Advanced Tutorial &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cdt.causality" href="causality.html" />
+    <link rel="prev" title="Basic Tutorial" href="tutorial_1.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Get started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorial_1.html">Basic Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Advanced Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#launch-the-docker-containers">1. Launch the Docker containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adapt-the-cdt-package-configuration">2. Adapt the <cite>cdt</cite> package configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#artifical-graph-generation">3. Artifical graph generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-sam-on-gpus">4. Run SAM on GPUs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scoring-the-results">5. Scoring the results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#package-description">Package Description</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="tutorial.html">Get started</a> &raquo;</li>
+        
+      <li>Advanced Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tutorial_2.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="advanced-tutorial">
+<h1>Advanced Tutorial<a class="headerlink" href="#advanced-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This second tutorial targets more experienced users. We will focus on :</p>
+<ol class="arabic simple">
+<li><p>Launching <cite>cdt</cite> Docker containers</p></li>
+<li><p>Tweaking the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> to adapt the package to the hardware
+configuration</p></li>
+<li><p>Generate a artificial dataset from scratch</p></li>
+<li><p>Perform causal discovery on GPU</p></li>
+<li><p>Evaluate the results</p></li>
+</ol>
+<div class="section" id="launch-the-docker-containers">
+<h2>1. Launch the Docker containers<a class="headerlink" href="#launch-the-docker-containers" title="Permalink to this headline">¶</a></h2>
+<p>Docker images are really useful to have a portable environment with minimal
+impact on performance. In our case, it becomes really handy as all the R
+libraries are quite time-consuming to install and have lots of
+incompatibilities depending on the user environment. Check
+<a class="reference external" href="https://docs.docker.com/install/">https://docs.docker.com/install/</a> to install Docker and have a quick tutorial
+on its usage.</p>
+<p><cite>cdt</cite> Docker containers are available at <a class="reference external" href="https://hub.docker.com/u/divkal">https://hub.docker.com/u/divkal</a> .
+Check <a class="reference internal" href="index.html#docker-images"><span class="std std-ref">here</span></a> to select the image adapted to your
+configuration.
+In this tutorial we will consider having GPUs available, but the methods are
+really similar if you don’t have GPUs (selecting the CPU docker image instead
+of the GPU one).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ docker pull divkal/nv-cdt-py3.6:XX  <span class="c1"># XX corresponds to the latest version</span>
+$ nvidia-docker run -it --init --ipc<span class="o">=</span>host --rm -u<span class="o">=</span><span class="k">$(</span>id -u<span class="k">)</span>:<span class="k">$(</span>id -g<span class="k">)</span> divkal/nv-cdt-py3.6:XX /bin/bash
+<span class="o">=============</span>
+<span class="o">==</span> <span class="nv">PyTorch</span> <span class="o">==</span>
+<span class="o">=============</span>
+
+NVIDIA Release <span class="m">18</span>.09 <span class="o">(</span>build <span class="m">687447</span><span class="o">)</span>
+
+Container image Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2018</span>, NVIDIA CORPORATION.  All rights reserved.
+
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2016</span>-     Facebook, Inc            <span class="o">(</span>Adam Paszke<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2014</span>-     Facebook, Inc            <span class="o">(</span>Soumith Chintala<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2011</span>-2014 Idiap Research Institute <span class="o">(</span>Ronan Collobert<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2012</span>-2014 Deepmind Technologies    <span class="o">(</span>Koray Kavukcuoglu<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2011</span>-2012 NEC Laboratories America <span class="o">(</span>Koray Kavukcuoglu<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2011</span>-2013 NYU                      <span class="o">(</span>Clement Farabet<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2006</span>-2010 NEC Laboratories America <span class="o">(</span>Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2006</span>      Idiap Research Institute <span class="o">(</span>Samy Bengio<span class="o">)</span>
+Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2001</span>-2004 Idiap Research Institute <span class="o">(</span>Ronan Collobert, Samy Bengio, Johnny Mariethoz<span class="o">)</span>
+All rights reserved.
+
+Various files include modifications <span class="o">(</span>c<span class="o">)</span> NVIDIA CORPORATION.  All rights reserved.
+NVIDIA modifications are covered by the license terms that apply to the underlying project or file.
+Failed to detect NVIDIA driver version.
+
+I have no name!@5308f95cd331:/workspace$
+I have no name!@5308f95cd331:/workspace$ ipython
+Python <span class="m">3</span>.6.5 <span class="p">|</span>Anaconda, Inc.<span class="p">|</span> <span class="o">(</span>default, Apr <span class="m">29</span> <span class="m">2018</span>, <span class="m">16</span>:14:56<span class="o">)</span>
+Type <span class="s1">&#39;copyright&#39;</span>, <span class="s1">&#39;credits&#39;</span> or <span class="s1">&#39;license&#39;</span> <span class="k">for</span> more information
+IPython <span class="m">6</span>.5.0 -- An enhanced Interactive Python. Type <span class="s1">&#39;?&#39;</span> <span class="k">for</span> help.
+
+In <span class="o">[</span><span class="m">1</span><span class="o">]</span>:
+</pre></div>
+</div>
+<p>The docker image is built upon the Nvidia NGC docker image for PyTorch. Details
+of the options of the docker command:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nvidia-docker</span></code> is a variant of <code class="docutils literal notranslate"><span class="pre">docker</span></code> developed by NVIDIA for GPU
+passthrough. It is available at : <a class="reference external" href="https://github.com/NVIDIA/nvidia-docker">https://github.com/NVIDIA/nvidia-docker</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-it</span></code> is an option to launch the container in interactive mode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--init</span></code> is to passthrough the signals such as SIGINT or SIGKILL in the
+container.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rm</span></code> is an option to save space by deleting the container at the end
+of the execution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u</span></code> is an option to launch the container as a specific user. Otherwise it
+will be executed as <code class="docutils literal notranslate"><span class="pre">root</span></code>. This is quite useful for accessing files
+created in the container from the outside environment.</p></li>
+</ul>
+</div>
+<div class="section" id="adapt-the-cdt-package-configuration">
+<h2>2. Adapt the <cite>cdt</cite> package configuration<a class="headerlink" href="#adapt-the-cdt-package-configuration" title="Permalink to this headline">¶</a></h2>
+<p>In this section, we will tweak the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> to fit our usage.
+We will first check the current configuration, then increase the number of jobs
+as the graph generated in the next section will be quite small. More details
+on the package settings are <a class="reference internal" href="settings.html#module-cdt.utils.Settings"><span class="std std-ref">provided here</span></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">cdt</span>
+<span class="n">Detecting</span> <span class="mi">1</span> <span class="n">CUDA</span> <span class="n">device</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">cdt</span><span class="o">.</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">GPU</span>  <span class="c1"># Is set to the number of devices</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">cdt</span><span class="o">.</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">NJOBS</span>  <span class="c1"># Set to the num of devices</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">cdt</span><span class="o">.</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">NJOBS</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># 3 jobs per GPU</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">cdt</span><span class="o">.</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="artifical-graph-generation">
+<h2>3. Artifical graph generation<a class="headerlink" href="#artifical-graph-generation" title="Permalink to this headline">¶</a></h2>
+<p>Generating artificial graph with the <cite>cdt</cite> package is quite straightforward when
+using the <code class="docutils literal notranslate"><span class="pre">cdt.data.AcyclicGraphGenerator</span></code> class. <a class="reference internal" href="data.html#acyclicgraphgenerator"><span class="std std-ref">Check here</span></a> to have more details on how to customize the graph
+generator.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">generator</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">AcyclicGraphGenerator</span><span class="p">(</span><span class="s1">&#39;gp_add&#39;</span><span class="p">,</span> <span class="n">noise_coeff</span><span class="o">=.</span><span class="mi">2</span><span class="p">,</span>
+                                                   <span class="n">nodes</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">parents_max</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span>
+         <span class="n">V0</span>        <span class="n">V1</span>        <span class="n">V2</span>        <span class="n">V3</span>    <span class="o">...</span>          <span class="n">V16</span>       <span class="n">V17</span>       <span class="n">V18</span>       <span class="n">V19</span>
+<span class="mi">0</span> <span class="o">-</span><span class="mf">0.948506</span>  <span class="mf">0.366023</span> <span class="o">-</span><span class="mf">0.659409</span> <span class="o">-</span><span class="mf">1.012921</span>    <span class="o">...</span>    <span class="o">-</span><span class="mf">0.086537</span>  <span class="mf">0.504257</span>  <span class="mf">1.163381</span> <span class="o">-</span><span class="mf">0.815508</span>
+<span class="mi">1</span> <span class="o">-</span><span class="mf">1.175473</span>  <span class="mf">1.612285</span>  <span class="mf">1.087017</span> <span class="o">-</span><span class="mf">1.505346</span>    <span class="o">...</span>    <span class="o">-</span><span class="mf">0.119292</span> <span class="o">-</span><span class="mf">1.251204</span>  <span class="mf">0.303203</span> <span class="o">-</span><span class="mf">0.730214</span>
+<span class="mi">2</span> <span class="o">-</span><span class="mf">0.899956</span>  <span class="mf">0.757223</span> <span class="o">-</span><span class="mf">0.394799</span> <span class="o">-</span><span class="mf">1.345747</span>    <span class="o">...</span>    <span class="o">-</span><span class="mf">0.620322</span> <span class="o">-</span><span class="mf">0.919279</span> <span class="o">-</span><span class="mf">1.948743</span>  <span class="mf">0.027883</span>
+<span class="mi">3</span> <span class="o">-</span><span class="mf">1.143217</span>  <span class="mf">1.419192</span>  <span class="mf">0.608848</span> <span class="o">-</span><span class="mf">1.144207</span>    <span class="o">...</span>     <span class="mf">1.992465</span> <span class="o">-</span><span class="mf">1.277411</span> <span class="o">-</span><span class="mf">0.109563</span> <span class="o">-</span><span class="mf">0.907268</span>
+<span class="mi">4</span> <span class="o">-</span><span class="mf">0.653106</span> <span class="o">-</span><span class="mf">0.582684</span> <span class="o">-</span><span class="mf">0.947306</span> <span class="o">-</span><span class="mf">0.701014</span>    <span class="o">...</span>    <span class="o">-</span><span class="mf">0.217655</span>  <span class="mf">1.429272</span> <span class="o">-</span><span class="mf">1.156742</span>  <span class="mf">1.305437</span>
+
+<span class="p">[</span><span class="mi">5</span> <span class="n">rows</span> <span class="n">x</span> <span class="mi">20</span> <span class="n">columns</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>And the data and graph are generated.</p>
+</div>
+<div class="section" id="run-sam-on-gpus">
+<h2>4. Run SAM on GPUs<a class="headerlink" href="#run-sam-on-gpus" title="Permalink to this headline">¶</a></h2>
+<p>Running multiple bootstrapped runs of SAM proved itself to yield much better
+results than a single run. The parameter <code class="docutils literal notranslate"><span class="pre">nruns</span></code> allows to control the total
+number of runs. As soon as the setting <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, the execution
+of GPU compatible algorithms will be automatically performed on those devices,
+making the prediction step similar to a traditional algorithm:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">sam</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">causality</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">SAM</span><span class="p">(</span><span class="n">nruns</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">prediction</span> <span class="o">=</span> <span class="n">sam</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Kalainathan, Diviyan &amp; Goudet, Olivier &amp; Guyon, Isabelle &amp; Lopez-Paz, David
+&amp; Sebag, Michèle. (2018). SAM: Structural Agnostic Model, Causal Discovery
+and Penalized Adversarial Learning.</p>
+</div>
+</div>
+<div class="section" id="scoring-the-results">
+<h2>5. Scoring the results<a class="headerlink" href="#scoring-the-results" title="Permalink to this headline">¶</a></h2>
+<p>In a similar fashion to the other tutorial, we can quickly score the results
+using the methods in <code class="docutils literal notranslate"><span class="pre">cdt.metrics</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">cdt.metrics</span> <span class="kn">import</span> <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="p">[</span><span class="n">metric</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span>
+         <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="p">[(</span><span class="mf">0.53</span><span class="p">,</span> <span class="p">[(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]),</span> <span class="mf">24.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This concludes our second tutorial on the <cite>cdt</cite> package.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="causality.html" class="btn btn-neutral float-right" title="cdt.causality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorial_1.html" class="btn btn-neutral float-left" title="Basic Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

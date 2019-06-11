@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data.acyclic_graph_generator &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.data.acyclic_graph_generator &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../index.html">
           
 
+          
+            
+            <img src="../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -195,23 +204,30 @@
                                 <span class="n">GaussianProcessAdd_Mechanism</span><span class="p">,</span>
                                 <span class="n">GaussianProcessMix_Mechanism</span><span class="p">,</span>
                                 <span class="n">NN_Mechanism</span><span class="p">,</span>
-                                <span class="n">gmm_cause</span><span class="p">,</span> <span class="n">normal_noise</span><span class="p">)</span>
+                                <span class="n">gmm_cause</span><span class="p">,</span> <span class="n">normal_noise</span><span class="p">,</span> <span class="n">uniform_noise</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="AcyclicGraphGenerator"><a class="viewcode-back" href="../../../data.html#cdt.data.AcyclicGraphGenerator">[docs]</a><span class="k">class</span> <span class="nc">AcyclicGraphGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generates a cross-sectional dataset out of a cyclic FCM.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Generate an acyclic graph and data given a causal mechanism.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">causal_mechanism</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">normal_noise</span><span class="p">,</span>
+<span class="sd">    Args:</span>
+<span class="sd">        causal_mechanism (str): currently implemented mechanisms:</span>
+<span class="sd">            [&#39;linear&#39;, &#39;polynomial&#39;, &#39;sigmoid_add&#39;,</span>
+<span class="sd">            &#39;sigmoid_mix&#39;, &#39;gp_add&#39;, &#39;gp_mix&#39;, &#39;nn&#39;].</span>
+<span class="sd">        noise (str or function): type of noise to use in the generative process</span>
+<span class="sd">            (&#39;gaussian&#39;, &#39;uniform&#39; or a custom noise function).</span>
+<span class="sd">        noise_coeff (float): Proportion of noise in the mechanisms.</span>
+<span class="sd">        initial_variable_generator (function): Function used to init variables</span>
+<span class="sd">            of the graph, defaults to a Gaussian Mixture model.</span>
+<span class="sd">        npoints (int): Number of data points to generate.</span>
+<span class="sd">        nodes (int): Number of nodes in the graph to generate.</span>
+<span class="sd">        parents_max (int): Maximum number of parents of a node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">causal_mechanism</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span>
                  <span class="n">noise_coeff</span><span class="o">=.</span><span class="mi">4</span><span class="p">,</span>
                  <span class="n">initial_variable_generator</span><span class="o">=</span><span class="n">gmm_cause</span><span class="p">,</span>
                  <span class="n">npoints</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">parents_max</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate an acyclic graph, given a causal mechanism.</span>
-
-<span class="sd">        :param initial_variable_generator: init variables of the graph</span>
-<span class="sd">        :param causal_mechanism: generating causes in the graph to</span>
-<span class="sd">            choose between: [&#39;linear&#39;, &#39;polynomial&#39;, &#39;sigmoid_add&#39;,</span>
-<span class="sd">            &#39;sigmoid_mix&#39;, &#39;gp_add&#39;, &#39;gp_mix&#39;]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AcyclicGraphGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mechanism</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linear&#39;</span><span class="p">:</span> <span class="n">LinearMechanism</span><span class="p">,</span>
                           <span class="s1">&#39;polynomial&#39;</span><span class="p">:</span> <span class="n">Polynomial_Mechanism</span><span class="p">,</span>
@@ -219,12 +235,16 @@
                           <span class="s1">&#39;sigmoid_mix&#39;</span><span class="p">:</span> <span class="n">SigmoidMix_Mechanism</span><span class="p">,</span>
                           <span class="s1">&#39;gp_add&#39;</span><span class="p">:</span> <span class="n">GaussianProcessAdd_Mechanism</span><span class="p">,</span>
                           <span class="s1">&#39;gp_mix&#39;</span><span class="p">:</span> <span class="n">GaussianProcessMix_Mechanism</span><span class="p">,</span>
-                          <span class="s1">&#39;NN&#39;</span><span class="p">:</span> <span class="n">NN_Mechanism</span><span class="p">}[</span><span class="n">causal_mechanism</span><span class="p">]</span>
+                          <span class="s1">&#39;nn&#39;</span><span class="p">:</span> <span class="n">NN_Mechanism</span><span class="p">}[</span><span class="n">causal_mechanism</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;V</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="p">)])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span> <span class="o">=</span> <span class="n">npoints</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">normal_noise</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gaussian&#39;</span><span class="p">:</span> <span class="n">normal_noise</span><span class="p">,</span>
+                          <span class="s1">&#39;uniform&#39;</span><span class="p">:</span> <span class="n">uniform_noise</span><span class="p">}[</span><span class="n">noise</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">noise</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">noise_coeff</span> <span class="o">=</span> <span class="n">noise_coeff</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parents_max</span> <span class="o">=</span> <span class="n">parents_max</span>
@@ -233,7 +253,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="AcyclicGraphGenerator.init_variables"><a class="viewcode-back" href="../../../data.html#cdt.data.AcyclicGraphGenerator.init_variables">[docs]</a>    <span class="k">def</span> <span class="nf">init_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Redefine the causes of the graph.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Redefine the causes, mechanisms and the structure of the graph,</span>
+<span class="sd">        called by ``self.generate()`` if never called.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            verbose (bool): Verbosity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
             <span class="n">nb_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">parents_max</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">nb_parents</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -246,7 +271,7 @@
         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Regenerating, graph non valid...&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">init_variables</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_variables</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="c1"># Mechanisms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfunctions</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mechanism</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])),</span>
@@ -255,7 +280,15 @@
                            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_generator</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="AcyclicGraphGenerator.generate"><a class="viewcode-back" href="../../../data.html#cdt.data.AcyclicGraphGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate data from an FCM containing cycles.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Generate data from an FCM defined in ``self.init_variables()``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rescale (bool): rescale the generated data (recommended)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (pandas.DataFrame, networkx.DiGraph), respectively the</span>
+<span class="sd">            generated data and graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfunctions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_variables</span><span class="p">()</span>
 
@@ -270,13 +303,19 @@
             <span class="k">if</span> <span class="n">rescale</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;V</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;V</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span></div>
 
 <div class="viewcode-block" id="AcyclicGraphGenerator.to_csv"><a class="viewcode-back" href="../../../data.html#cdt.data.AcyclicGraphGenerator.to_csv">[docs]</a>    <span class="k">def</span> <span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname_radical</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save data to the csv format by default, in two separate files.</span>
+<span class="sd">        Save the generated data to the csv format by default,</span>
+<span class="sd">        in two separate files: data, and the adjacency matrix of the</span>
+<span class="sd">        corresponding graph.</span>
 
-<span class="sd">        Optional keyword arguments can be passed to pandas.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            fname_radical (str): radical of the file names. Completed by</span>
+<span class="sd">               ``_data.csv`` for the data file and ``_target.csv`` for the</span>
+<span class="sd">               adjacency matrix of the generated graph.</span>
+<span class="sd">            \**kwargs: Optional keyword arguments can be passed to pandas.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fname_radical</span><span class="o">+</span><span class="s1">&#39;_data.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

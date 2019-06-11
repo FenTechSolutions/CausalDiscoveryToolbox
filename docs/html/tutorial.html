@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Get started &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Basic Tutorial" href="tutorial_1.html" />
+    <link rel="prev" title="Causal Discovery Toolbox Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_1.html">Basic Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_2.html">Advanced Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-description">Package Description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#general-package-architecture">General package architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-and-algorithm-settings">Hardware and algorithm settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-graph-class">The graph class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Get started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="get-started">
+<h1>Get started<a class="headerlink" href="#get-started" title="Permalink to this headline">¶</a></h1>
+<p>This section focuses on explaining the general functionalities of the package,
+and how its components interact with each other. Then two tutorials are
+provided:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="tutorial_1.html#basic-tutorial"><span class="std std-ref">The first one going through the main features of the package</span></a></p></li>
+<li><p><a class="reference internal" href="tutorial_2.html#advanced-tutorial"><span class="std std-ref">The second for GPU users, highlighting advanced features.</span></a></p></li>
+</ul>
+<p>For an installation guide, please check <a class="reference internal" href="index.html#installation"><span class="std std-ref">here</span></a></p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="package-description">
+<h2>Package Description<a class="headerlink" href="#package-description" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="general-package-architecture">
+<h3>General package architecture<a class="headerlink" href="#general-package-architecture" title="Permalink to this headline">¶</a></h3>
+<p>The Causal Discovery Toolbox is a package for causal discovery in the
+observational setting. Therefore support for data with interventions is not
+available at the moment, but is considered for later versions.</p>
+<p>The package is structured in 5 modules:</p>
+<ol class="arabic simple">
+<li><p>Causality: <code class="docutils literal notranslate"><span class="pre">cdt.causality</span></code> implements algorithms for causal discovery, either
+in the pairwise setting, either in the graph setting.</p></li>
+<li><p>Independence: <code class="docutils literal notranslate"><span class="pre">cdt.independence</span></code> includes methods to recovery the dependence
+graph of the data.</p></li>
+<li><p>Data: <code class="docutils literal notranslate"><span class="pre">cdt.data</span></code> provides the user with tools to generate data, and load
+benchmark data.</p></li>
+<li><p>Utils: <code class="docutils literal notranslate"><span class="pre">cdt.utils</span></code> provides tools to the users for model
+construction, graph utilities and settings.</p></li>
+<li><p>Metrics: <code class="docutils literal notranslate"><span class="pre">cdt.metrics</span></code> includes scoring metrics for graphs, taking as input
+<code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code></p></li>
+</ol>
+<p>All methods for computation adopt a ‘scikit-learn’ like interface, where <code class="docutils literal notranslate"><span class="pre">.predict()</span></code>
+manages to launch the algorithm on the given data to the toolbox, <code class="docutils literal notranslate"><span class="pre">.fit()</span></code> allows
+to train learning algorithms  Most of the algorithms are classes, and their
+parameters can be customized in the <code class="docutils literal notranslate"><span class="pre">.__init__()</span></code> function of the class.</p>
+</div>
+<div class="section" id="hardware-and-algorithm-settings">
+<h3>Hardware and algorithm settings<a class="headerlink" href="#hardware-and-algorithm-settings" title="Permalink to this headline">¶</a></h3>
+<p>The toolbox has a SETTINGS class that defines the hardware settings . Those
+settings are unique and their default parameters are defined in
+<code class="docutils literal notranslate"><span class="pre">cdt/utils/Settings</span></code>.</p>
+<p>These parameters are accessible and overridable via accessing the class :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cdt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cdt</span><span class="o">.</span><span class="n">SETTINGS</span>
+</pre></div>
+</div>
+<p>Moreover, the hardware parameters are detected and defined automatically
+(including number of GPUs, CPUs, available optional packages) at the <code class="docutils literal notranslate"><span class="pre">import</span></code>
+of the package using the <code class="docutils literal notranslate"><span class="pre">cdt.utils.Settings.autoset_settings</span></code> method, ran at
+startup.</p>
+<p>These settings are overriddable in two ways:</p>
+<ol class="arabic simple">
+<li><p>By changing <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> attributes, thus changing the SETTINGS for the
+whole python session.</p></li>
+<li><p>By changing the parameters of the functions/classes used. When their default
+value in the class definition is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS</span></code> value is taken, by
+using the <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.get_default</span></code> function. This allows for quick and
+temporary parameter change.</p></li>
+</ol>
+</div>
+<div class="section" id="the-graph-class">
+<h3>The graph class<a class="headerlink" href="#the-graph-class" title="Permalink to this headline">¶</a></h3>
+<p>The whole package revolves around using the graph classes of the <code class="docutils literal notranslate"><span class="pre">networkx</span></code>
+package.
+Most of the methods have the option of predicting a directed graph
+(<cite>networkx.DiGraph</cite>) or an undirected graph (<cite>networkx.Graph</cite>).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">networkx</span></code> library might not be intuitive to use at first, but it comes
+with many useful tools for graphs. Here is a list of handy function, to
+understand the output of the toolbox’s outputs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>  <span class="c1"># initialize a directed graph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>  <span class="c1"># list of nodes in the graph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>  <span class="c1"># Output the adjacency matrix of the graph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>  <span class="c1"># list of edges in the graph</span>
+</pre></div>
+</div>
+<p>Please refer to <cite>networkx</cite> ‘s documentation for more detailed information:
+<a class="reference external" href="https://https://networkx.github.io/documentation/stable/">https://https://networkx.github.io/documentation/stable/</a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorial_1.html" class="btn btn-neutral float-right" title="Basic Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Causal Discovery Toolbox Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

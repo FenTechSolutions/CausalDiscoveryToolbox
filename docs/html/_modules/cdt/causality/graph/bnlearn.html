@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.bnlearn &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.causality.graph.bnlearn &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
   
   
@@ -35,6 +37,7 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -50,9 +53,12 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="../../../../index.html">
           
 
+          
+            
+            <img src="../../../../_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -60,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -88,11 +94,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data.html">cdt.data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -204,7 +213,7 @@
 
 <div class="viewcode-block" id="BNlearnAlgorithm"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm">[docs]</a><span class="k">class</span> <span class="nc">BNlearnAlgorithm</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;BNlearn algorithm. All these models imported from bnlearn revolve around</span>
-<span class="sd">    this base class and have all the same attributes/interface.  </span>
+<span class="sd">    this base class and have all the same attributes/interface.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        score (str):the label of the conditional independence test to be used in the</span>
@@ -216,8 +225,8 @@
 <span class="sd">           test. It will be ignored with a warning if the conditional independence test specified by the</span>
 <span class="sd">           score argument is not a permutation test.</span>
 <span class="sd">        optim (bool): See bnlearn-package for details.</span>
-<span class="sd">        verbose (bool): Sets the verbosity. Defaults to SETTINGS.verbose </span>
-<span class="sd">    </span>
+<span class="sd">        verbose (bool): Sets the verbosity. Defaults to SETTINGS.verbose</span>
+
 <span class="sd">    Available tests:</span>
 <span class="sd">        • discrete case (categorical variables)</span>
 <span class="sd">           – mutual information: an information-theoretic distance measure.</span>
@@ -234,7 +243,7 @@
 <span class="sd">               The asymptotic χ2 test (x2 and x2-adf, with adjusted degrees of freedom),</span>
 <span class="sd">               the Monte Carlo permutation test (mc-x2), the sequential Monte Carlo</span>
 <span class="sd">               permutation test (smc-x2) and semiparametric test (sp-x2) are implemented  .</span>
-<span class="sd"> </span>
+
 <span class="sd">        • discrete case (ordered factors)</span>
 <span class="sd">           – Jonckheere-Terpstra : a trend test for ordinal variables.</span>
 <span class="sd">              The</span>
@@ -242,7 +251,7 @@
 <span class="sd">              and the sequential Monte Carlo permutation test (smc-jt) are implemented.</span>
 
 <span class="sd">        • continuous case (normal variables)</span>
-<span class="sd">           – linear  correlation:  Pearson’s  linear  correlation. </span>
+<span class="sd">           – linear  correlation:  Pearson’s  linear  correlation.</span>
 <span class="sd">               The exact</span>
 <span class="sd">               Student’s  t  test  (cor),  the Monte Carlo permutation test (mc-cor)</span>
 <span class="sd">               and the sequential Monte Carlo permutation test (smc-cor) are implemented.</span>
@@ -252,14 +261,14 @@
 <span class="sd">               package on CRAN). The asymptotic normal test (zf), the Monte Carlo</span>
 <span class="sd">               permutation test (mc-zf) and the sequential Monte Carlo permutation</span>
 <span class="sd">               test (smc-zf) are implemented.</span>
-<span class="sd">           – mutual information: an information-theoretic distance measure.  </span>
+<span class="sd">           – mutual information: an information-theoretic distance measure.</span>
 <span class="sd">               Again</span>
 <span class="sd">               it is proportional to the log-likelihood ratio (they differ by a 2n</span>
 <span class="sd">               factor). The asymptotic χ2 test (mi-g), the Monte Carlo permutation</span>
 <span class="sd">               test (mc-mi-g) and the sequential Monte Carlo permutation test</span>
 <span class="sd">               (smc-mi-g) are implemented.</span>
 
-<span class="sd">           – shrinkage estimator for the mutual information(mi-g-sh): </span>
+<span class="sd">           – shrinkage estimator for the mutual information(mi-g-sh):</span>
 <span class="sd">               an improved</span>
 <span class="sd">               asymptotic χ2 test based on the James-Stein estimator for the mutual</span>
 <span class="sd">               information.</span>
@@ -293,8 +302,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">optim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span> 
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
 <div class="viewcode-block" id="BNlearnAlgorithm.orient_undirected_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_undirected_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_undirected_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run the algorithm on an undirected graph.</span>
 
@@ -314,14 +323,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
 
         <span class="n">whitelist</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">graph</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">])</span>
-        <span class="n">blacklist</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">-</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">blacklist</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">-</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                                                                  <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()),</span>
                                                                  <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))))),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">])</span>
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_bnlearn</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">whitelist</span><span class="o">=</span><span class="n">whitelist</span><span class="p">,</span>
                                    <span class="n">blacklist</span><span class="o">=</span><span class="n">blacklist</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+                                    <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span>
 
-        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
-                                <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>
+        <span class="k">except</span> <span class="n">nx</span><span class="o">.</span><span class="n">exception</span><span class="o">.</span><span class="n">NetworkXError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">output</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span></div>
 
 <div class="viewcode-block" id="BNlearnAlgorithm.orient_directed_graph"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.BNlearnAlgorithm.orient_directed_graph">[docs]</a>    <span class="k">def</span> <span class="nf">orient_directed_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run the algorithm on a directed_graph.</span>
@@ -403,6 +420,24 @@
 <span class="sd">       . Ph.D. thesis, School</span>
 <span class="sd">       of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as Technical Report</span>
 <span class="sd">       CMU-CS-03-153</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import GS</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&quot;sachs&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = GS()</span>
+<span class="sd">        &gt;&gt;&gt; #The predict() method works without a graph, or with a</span>
+<span class="sd">        &gt;&gt;&gt; #directed or undirected graph provided as an input</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)    #No graph provided as an argument</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, nx.Graph(graph))  #With an undirected graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, graph)  #With a directed graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; #To view the graph created, run the below commands:</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -413,11 +448,29 @@
 
 <div class="viewcode-block" id="IAMB"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.IAMB">[docs]</a><span class="k">class</span> <span class="nc">IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;IAMB algorithm.</span>
-<span class="sd"> </span>
+
 <span class="sd">    .. note::</span>
 <span class="sd">       Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   &quot;Algorithms  for  Large  Scale  Markov  Blanket</span>
 <span class="sd">       Discovery&quot;.  In &quot;Proceedings of the Sixteenth International Florida Artificial Intelligence Research</span>
 <span class="sd">       Society Conference&quot;, pp. 376-381. AAAI Press.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import IAMB</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&quot;sachs&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = IAMB()</span>
+<span class="sd">        &gt;&gt;&gt; #The predict() method works without a graph, or with a</span>
+<span class="sd">        &gt;&gt;&gt; #directed or undirected graph provided as an input</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)    #No graph provided as an argument</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, nx.Graph(graph))  #With an undirected graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, graph)  #With a directed graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; #To view the graph created, run the below commands:</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -431,8 +484,26 @@
 
 <span class="sd">    .. note::</span>
 <span class="sd">        Yaramakala S, Margaritis D (2005).  &quot;Speculative Markov Blanket Discovery for Optimal Feature</span>
-<span class="sd">        Selection&quot;.  In &quot;ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data </span>
+<span class="sd">        Selection&quot;.  In &quot;ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data</span>
 <span class="sd">        Mining&quot;, pp. 809-812. IEEE Computer Society.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import Fast_IAMB</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&quot;sachs&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = Fast_IAMB()</span>
+<span class="sd">        &gt;&gt;&gt; #The predict() method works without a graph, or with a</span>
+<span class="sd">        &gt;&gt;&gt; #directed or undirected graph provided as an input</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)    #No graph provided as an argument</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, nx.Graph(graph))  #With an undirected graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, graph)  #With a directed graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; #To view the graph created, run the below commands:</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -444,7 +515,7 @@
 <span class="k">class</span> <span class="nc">Inter_IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Inter IAMB algorithm.</span>
 
-<span class="sd">    .. note:: </span>
+<span class="sd">    .. note::</span>
 <span class="sd">       Yaramakala S, Margaritis D (2005).  &quot;Speculative Markov Blanket Discovery for Optimal Feature</span>
 <span class="sd">       Selection&quot;.  In &quot;ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-</span>
 <span class="sd">       ing&quot;, pp. 809-812. IEEE Computer Society.</span>
@@ -466,6 +537,24 @@
 <span class="sd">       Tsamardinos I, Brown LE, Aliferis CF (2006).  &quot;The Max-Min Hill-Climbing Bayesian Network</span>
 <span class="sd">       Structure Learning Algorithm&quot;.</span>
 <span class="sd">       Machine Learning,65(1), 31-78.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import MMPC</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&quot;sachs&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = MMPC()</span>
+<span class="sd">        &gt;&gt;&gt; #The predict() method works without a graph, or with a</span>
+<span class="sd">        &gt;&gt;&gt; #directed or undirected graph provided as an input</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)    #No graph provided as an argument</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, nx.Graph(graph))  #With an undirected graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, graph)  #With a directed graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; #To view the graph created, run the below commands:</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

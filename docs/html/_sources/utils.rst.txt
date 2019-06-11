@@ -39,3 +39,9 @@ cdt.utils.loss
 
 .. autoclass:: TTestCriterion
    :members:
+
+cdt.utils.parallel
+------------------
+.. automodule:: cdt.utils.parallel
+
+.. autofunction:: parallel_run

@@ -1,0 +1,28 @@
+.wy-side-nav-search, .wy-nav-top {
+    background: #ffffff;
+    color: auto;
+}
+
+.wy-menu-vertical {
+    background: #415867;
+  
+}
+.wy-side-scroll {
+    background: #415867;
+}
+
+.wy-nav-side {
+    background: #415867;
+}
+.version {
+    color: #1cb39a;
+}
+.wy-side-nav-search>div.version {
+ margin-top:-.4045em;
+ margin-bottom:.809em;
+ font-weight:normal;
+ color: #1cb39a;
+}
+.rst-content dl:not(.docutils) dt {
+    color: #189b85;
+}

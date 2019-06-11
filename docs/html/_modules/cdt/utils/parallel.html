@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.utils.parallel &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Get started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.utils.parallel</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.utils.parallel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; This module introduces tools for execution of jobs in parallel.</span>
+
+<span class="sd">Per default, joblib is used for easy and efficient execution of parallel tasks.</span>
+<span class="sd">However, joblib does not support GPU management, and does not kill processes</span>
+<span class="sd">at the end of each task, thus keeping in GPU memory the pytorch execution</span>
+<span class="sd">context.</span>
+
+<span class="sd">This module introduces equivalent tools for multiprocessing while</span>
+<span class="sd">avoiding GPU memory leak. This tool provides functions that make use</span>
+<span class="sd">GPUs: otherwise, joblib is called.</span>
+
+
+<span class="sd">.. MIT License</span>
+<span class="sd">..</span>
+<span class="sd">.. Copyright (c) 2018 Diviyan Kalainathan</span>
+<span class="sd">..</span>
+<span class="sd">.. Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">.. of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">.. in the Software without restriction, including without limitation the rights</span>
+<span class="sd">.. to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">.. copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">.. furnished to do so, subject to the following conditions:</span>
+<span class="sd">..</span>
+<span class="sd">.. The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">.. copies or substantial portions of the Software.</span>
+<span class="sd">..</span>
+<span class="sd">.. THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">.. IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">.. FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">.. AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">.. LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">.. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">.. SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Manager</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+
+
+<span class="k">def</span> <span class="nf">worker_subprocess</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">devices</span><span class="p">,</span> <span class="n">lockd</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">lockr</span><span class="p">,</span>
+                      <span class="n">pids</span><span class="p">,</span> <span class="n">lockp</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">):</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">lockd</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">devices</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">lockd</span><span class="p">:</span>
+            <span class="n">devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">lockr</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">lockp</span><span class="p">:</span>
+            <span class="n">pids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">worker_subprocess_idx</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">devices</span><span class="p">,</span> <span class="n">lockd</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">lockr</span><span class="p">,</span>
+                          <span class="n">pids</span><span class="p">,</span> <span class="n">lockp</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">):</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">lockd</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">devices</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">lockd</span><span class="p">:</span>
+            <span class="n">devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">lockr</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">output</span><span class="p">))</span>
+        <span class="k">with</span> <span class="n">lockp</span><span class="p">:</span>
+            <span class="n">pids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="parallel_run"><a class="viewcode-back" href="../../../utils.html#cdt.utils.parallel.parallel_run">[docs]</a><span class="k">def</span> <span class="nf">parallel_run</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Mutiprocessed execution of a function with parameters, with GPU management.</span>
+
+<span class="sd">    This function is useful when the used wants to execute a bootstrap on a</span>
+<span class="sd">    function on GPU devices, as joblib does not include such feature.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        function (function): Function to execute.</span>
+<span class="sd">        \*args: arguments going to be fed to the function.</span>
+<span class="sd">        nruns (int): Total number of executions of the function.</span>
+<span class="sd">        njobs (int): Number of parallel executions (defaults to ``cdt.SETTINGS.NJOBS``).</span>
+<span class="sd">        gpus (int): Number of GPU devices allocated to the job (defaults to ``cdt.SETTINGS.GPU``)</span>
+<span class="sd">        \**kwargs: Keyword arguments going to be fed to the function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: concatenated list of outputs of executions. The order of elements</span>
+<span class="sd">        does not correspond to the initial order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
+    <span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpus</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gpus</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">function</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nruns</span><span class="p">))</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;cuda:{i</span><span class="si">%g</span><span class="s1">pus}&#39;</span> <span class="k">if</span> <span class="n">gpus</span> <span class="o">!=</span><span class="mi">0</span>
+                            <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">njobs</span><span class="p">)])</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+    <span class="n">pids</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+    <span class="n">lockd</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">lockr</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">lockp</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">poll</span> <span class="o">=</span> <span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker_subprocess</span><span class="p">,</span>
+                       <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">devices</span><span class="p">,</span>
+                             <span class="n">lockd</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">lockr</span><span class="p">,</span>
+                             <span class="n">pids</span><span class="p">,</span> <span class="n">lockp</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span>
+                             <span class="n">kwargs</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nruns</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poll</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poll</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">parallel_run_generator</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">generator</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Mutiprocessed execution of a function with parameters, with GPU management.</span>
+
+<span class="sd">    This function is useful when the used wants to execute a bootstrap on a</span>
+<span class="sd">    function on GPU devices, as joblib does not include such feature.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        function (function): Function to execute.</span>
+<span class="sd">        \*args: arguments going to be fed to the function.</span>
+<span class="sd">        generator (list or types.GeneratorType): generator with the arguments</span>
+<span class="sd">           for each run, each element much be a tuple of ([args], {kwargs}).</span>
+<span class="sd">        njobs (int): Number of parallel executions (defaults to ``cdt.SETTINGS.NJOBS``).</span>
+<span class="sd">        gpus (int): Number of GPU devices allocated to the job (defaults to ``cdt.SETTINGS.GPU``)</span>
+<span class="sd">        \**kwargs: Keyword arguments going to be fed to the function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: concatenated list of outputs of executions. The order of elements</span>
+<span class="sd">        does not correspond to the initial order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
+    <span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpus</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gpus</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">function</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">args</span><span class="p">,</span><span class="n">kwargs</span> <span class="ow">in</span> <span class="n">generator</span><span class="p">)</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;cuda:{i</span><span class="si">%g</span><span class="s1">pus}&#39;</span> <span class="k">if</span> <span class="n">gpus</span> <span class="o">!=</span><span class="mi">0</span>
+                            <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">njobs</span><span class="p">)])</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+    <span class="n">pids</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+    <span class="n">lockd</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">lockr</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">lockp</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">poll</span> <span class="o">=</span> <span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker_subprocess_idx</span><span class="p">,</span>
+                       <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">devices</span><span class="p">,</span>
+                             <span class="n">lockd</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">lockr</span><span class="p">,</span>
+                             <span class="n">pids</span><span class="p">,</span> <span class="n">lockp</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span>
+                             <span class="n">kwargs</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">generator</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poll</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poll</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

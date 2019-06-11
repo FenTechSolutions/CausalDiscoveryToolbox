@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils &mdash; Causal Discovery Toolbox 0.2.5 documentation</title>
+  <title>cdt.utils &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
   
   
   
@@ -35,10 +37,11 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cdt.metrics" href="metrics.html" />
-    <link rel="prev" title="cdt.independence" href="independence.html" /> 
+    <link rel="prev" title="cdt.data" href="data.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -52,9 +55,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Causal Discovery Toolbox
+            <a href="index.html">
           
 
+          
+            
+            <img src="_static/banner.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -62,7 +68,7 @@
             
             
               <div class="version">
-                0.2
+                0.5.0
               </div>
             
           
@@ -90,17 +96,21 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Get started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="causality.html">cdt.causality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">cdt.data</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">cdt.utils</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.R">cdt.utils.R</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.io">cdt.utils.io</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.graph">cdt.utils.graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.loss">cdt.utils.loss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.parallel">cdt.utils.parallel</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
 </ul>
 
             
@@ -189,7 +199,7 @@ temporary files.</p></li>
 </ol>
 <dl class="class">
 <dt id="cdt.utils.R.DefaultRPackages">
-<em class="property">class </em><code class="descclassname">cdt.utils.R.</code><code class="descname">DefaultRPackages</code><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.R.</code><code class="sig-name descname">DefaultRPackages</code><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the R packages that can be imported and checks their availability.</p>
 <p>The attributes define all the R packages that can be imported. Their value
 is initialized to <code class="docutils literal notranslate"><span class="pre">None</span></code> ; and as their are called, their availability
@@ -217,7 +227,7 @@ but an adaptation made to fit in the PC algorithm, available at:
 </div>
 <dl class="method">
 <dt id="cdt.utils.R.DefaultRPackages.check_R_package">
-<code class="descname">check_R_package</code><span class="sig-paren">(</span><em>package</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages.check_R_package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.check_R_package" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">check_R_package</code><span class="sig-paren">(</span><em class="sig-param">package</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#DefaultRPackages.check_R_package"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.DefaultRPackages.check_R_package" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute a subprocess to check the package’s availability.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -236,7 +246,7 @@ but an adaptation made to fit in the PC algorithm, available at:
 
 <dl class="function">
 <dt id="cdt.utils.R.launch_R_script">
-<code class="descclassname">cdt.utils.R.</code><code class="descname">launch_R_script</code><span class="sig-paren">(</span><em>template</em>, <em>arguments</em>, <em>output_function=None</em>, <em>verbose=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#launch_R_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.launch_R_script" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.R.</code><code class="sig-name descname">launch_R_script</code><span class="sig-paren">(</span><em class="sig-param">template</em>, <em class="sig-param">arguments</em>, <em class="sig-param">output_function=None</em>, <em class="sig-param">verbose=True</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/R.html#launch_R_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.R.launch_R_script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Launch an R script, starting from a template and replacing text in file
 before execution.</p>
 <dl class="field-list simple">
@@ -269,7 +279,7 @@ successful.</p>
 Date : 2/06/17</p>
 <dl class="function">
 <dt id="cdt.utils.io.read_causal_pairs">
-<code class="descclassname">cdt.utils.io.</code><code class="descname">read_causal_pairs</code><span class="sig-paren">(</span><em>filename</em>, <em>scale=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_causal_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_causal_pairs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.io.</code><code class="sig-name descname">read_causal_pairs</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">scale=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_causal_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_causal_pairs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -290,7 +300,7 @@ Date : 2/06/17</p>
 
 <dl class="function">
 <dt id="cdt.utils.io.read_adjacency_matrix">
-<code class="descclassname">cdt.utils.io.</code><code class="descname">read_adjacency_matrix</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_adjacency_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.io.</code><code class="sig-name descname">read_adjacency_matrix</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">directed=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_adjacency_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a file (containing an adjacency matrix) and convert it into a
 directed or undirected networkx graph.</p>
 <dl class="field-list simple">
@@ -313,7 +323,7 @@ directed or undirected networkx graph.</p>
 
 <dl class="function">
 <dt id="cdt.utils.io.read_list_edges">
-<code class="descclassname">cdt.utils.io.</code><code class="descname">read_list_edges</code><span class="sig-paren">(</span><em>filename</em>, <em>directed=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_list_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_list_edges" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.io.</code><code class="sig-name descname">read_list_edges</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">directed=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/io.html#read_list_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.io.read_list_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a file (containing list of edges) and convert it into a directed
 or undirected networkx graph.</p>
 <dl class="field-list simple">
@@ -340,7 +350,7 @@ or undirected networkx graph.</p>
 <p>Utilities for graph not included in Networkx.</p>
 <dl class="function">
 <dt id="cdt.utils.graph.network_deconvolution">
-<code class="descclassname">cdt.utils.graph.</code><code class="descname">network_deconvolution</code><span class="sig-paren">(</span><em>mat</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#network_deconvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.network_deconvolution" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.graph.</code><code class="sig-name descname">network_deconvolution</code><span class="sig-paren">(</span><em class="sig-param">mat</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#network_deconvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.network_deconvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Python implementation/translation of network deconvolution by MIT-KELLIS LAB.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -373,27 +383,28 @@ interactions, if 1, displaying direct weights for both observed and
 non-observed interactions.</p></li>
 </ul>
 </dd>
-</dl>
-<p>Returns:
-mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</p>
-<blockquote>
-<div><blockquote>
-<div><p>represent direct edge weights of observed interactions.
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Output deconvolved matrix (direct dependency matrix). Its components
+represent direct edge weights of observed interactions.
 Choosing top direct interactions (a cut-off) depends on the application and
 is not implemented in this code.</p>
-</div></blockquote>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><p>numpy.ndarray</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To apply ND on regulatory networks, follow steps explained in Supplementary notes
 1.4.1 and 2.1 and 2.3 of the paper.
 In this implementation, input matrices are made symmetric.</p>
 </div>
-</div></blockquote>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="cdt.utils.graph.aracne">
-<code class="descclassname">cdt.utils.graph.</code><code class="descname">aracne</code><span class="sig-paren">(</span><em>m</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#aracne"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.aracne" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.graph.</code><code class="sig-name descname">aracne</code><span class="sig-paren">(</span><em class="sig-param">m</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#aracne"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.aracne" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of the ARACNE algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -402,12 +413,14 @@ it is a relevance matrix where mat(i,j) represents the similarity content
 between nodes i and j. Elements of matrix should be
 non-negative.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Output deconvolved matrix (direct dependency matrix). Its components
+represent direct edge weights of observed interactions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
 </dl>
-<p>Returns:
-mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</p>
-<blockquote>
-<div><p>represent direct edge weights of observed interactions.</p>
-</div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context
@@ -418,7 +431,7 @@ DOI: <a class="reference external" href="https://doi.org/10.1186/1471-2105-7-S1-
 
 <dl class="function">
 <dt id="cdt.utils.graph.clr">
-<code class="descclassname">cdt.utils.graph.</code><code class="descname">clr</code><span class="sig-paren">(</span><em>M</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#clr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.clr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.graph.</code><code class="sig-name descname">clr</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#clr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.clr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of the Context Likelihood or Relatedness Network algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -427,12 +440,14 @@ it is a relevance matrix where mat(i,j) represents the similarity content
 between nodes i and j. Elements of matrix should be
 non-negative.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Output deconvolved matrix (direct dependency matrix). Its components
+represent direct edge weights of observed interactions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
 </dl>
-<p>Returns:
-mat_nd (numpy.ndarray): Output deconvolved matrix (direct dependency matrix). Its components</p>
-<blockquote>
-<div><p>represent direct edge weights of observed interactions.</p>
-</div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey
@@ -445,7 +460,7 @@ PLoS Biology, 2007</p>
 
 <dl class="function">
 <dt id="cdt.utils.graph.remove_indirect_links">
-<code class="descclassname">cdt.utils.graph.</code><code class="descname">remove_indirect_links</code><span class="sig-paren">(</span><em>g</em>, <em>alg='aracne'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#remove_indirect_links"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.remove_indirect_links" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.graph.</code><code class="sig-name descname">remove_indirect_links</code><span class="sig-paren">(</span><em class="sig-param">g</em>, <em class="sig-param">alg='aracne'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#remove_indirect_links"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.remove_indirect_links" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply deconvolution to a networkx graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -466,7 +481,7 @@ PLoS Biology, 2007</p>
 
 <dl class="function">
 <dt id="cdt.utils.graph.dagify_min_edge">
-<code class="descclassname">cdt.utils.graph.</code><code class="descname">dagify_min_edge</code><span class="sig-paren">(</span><em>g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#dagify_min_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.dagify_min_edge" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.utils.graph.</code><code class="sig-name descname">dagify_min_edge</code><span class="sig-paren">(</span><em class="sig-param">g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/graph.html#dagify_min_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.graph.dagify_min_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Input a graph and output a DAG.</p>
 <p>The heuristic is to reverse the edge with the lowest score of the cycle
 if possible, else remove it.</p>
@@ -489,7 +504,7 @@ if possible, else remove it.</p>
 <p>Pytorch implementation of Losses and tools.</p>
 <dl class="class">
 <dt id="cdt.utils.loss.MMDloss">
-<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">MMDloss</code><span class="sig-paren">(</span><em>input_size</em>, <em>bandwidths=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#MMDloss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MMDloss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.loss.</code><code class="sig-name descname">MMDloss</code><span class="sig-paren">(</span><em class="sig-param">input_size</em>, <em class="sig-param">bandwidths=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#MMDloss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MMDloss" title="Permalink to this definition">¶</a></dt>
 <dd><p>“<strong>[torch.nn.Module]</strong> Maximum Mean Discrepancy Metric to compare
 empirical distributions.</p>
 <p>The MMD score is defined by:</p>
@@ -537,7 +552,7 @@ Journal of Machine Learning Research, 13(Mar), 723-773.</p>
 
 <dl class="class">
 <dt id="cdt.utils.loss.MomentMatchingLoss">
-<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">MomentMatchingLoss</code><span class="sig-paren">(</span><em>n_moments=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#MomentMatchingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MomentMatchingLoss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.loss.</code><code class="sig-name descname">MomentMatchingLoss</code><span class="sig-paren">(</span><em class="sig-param">n_moments=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#MomentMatchingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.MomentMatchingLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[torch.nn.Module]</strong> L2 Loss between k-moments between two
 distributions, k being a parameter.</p>
 <p>These moments are raw moments and not normalized.
@@ -569,7 +584,7 @@ torch.Tensor of shape <cite>(1)</cite></p></li>
 
 <dl class="class">
 <dt id="cdt.utils.loss.TTestCriterion">
-<em class="property">class </em><code class="descclassname">cdt.utils.loss.</code><code class="descname">TTestCriterion</code><span class="sig-paren">(</span><em>max_iter</em>, <em>runs_per_iter</em>, <em>threshold=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.loss.</code><code class="sig-name descname">TTestCriterion</code><span class="sig-paren">(</span><em class="sig-param">max_iter</em>, <em class="sig-param">runs_per_iter</em>, <em class="sig-param">threshold=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion" title="Permalink to this definition">¶</a></dt>
 <dd><p>A loop criterion based on t-test to check significance of results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -582,7 +597,7 @@ torch.Tensor of shape <cite>(1)</cite></p></li>
 </dl>
 <dl class="method">
 <dt id="cdt.utils.loss.TTestCriterion.loop">
-<code class="descname">loop</code><span class="sig-paren">(</span><em>xy</em>, <em>yx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion.loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion.loop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">loop</code><span class="sig-paren">(</span><em class="sig-param">xy</em>, <em class="sig-param">yx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#TTestCriterion.loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.TTestCriterion.loop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests the loop condition based on the new results and the
 parameters.</p>
 <dl class="field-list simple">
@@ -604,6 +619,44 @@ parameters.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-cdt.utils.parallel">
+<span id="cdt-utils-parallel"></span><h2>cdt.utils.parallel<a class="headerlink" href="#module-cdt.utils.parallel" title="Permalink to this headline">¶</a></h2>
+<p>This module introduces tools for execution of jobs in parallel.</p>
+<p>Per default, joblib is used for easy and efficient execution of parallel tasks.
+However, joblib does not support GPU management, and does not kill processes
+at the end of each task, thus keeping in GPU memory the pytorch execution
+context.</p>
+<p>This module introduces equivalent tools for multiprocessing while
+avoiding GPU memory leak. This tool provides functions that make use
+GPUs: otherwise, joblib is called.</p>
+<dl class="function">
+<dt id="cdt.utils.parallel.parallel_run">
+<code class="sig-prename descclassname">cdt.utils.parallel.</code><code class="sig-name descname">parallel_run</code><span class="sig-paren">(</span><em class="sig-param">function</em>, <em class="sig-param">*args</em>, <em class="sig-param">nruns=None</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/parallel.html#parallel_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.parallel.parallel_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mutiprocessed execution of a function with parameters, with GPU management.</p>
+<p>This function is useful when the used wants to execute a bootstrap on a
+function on GPU devices, as joblib does not include such feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> (<em>function</em>) – Function to execute.</p></li>
+<li><p><strong>*args</strong> – arguments going to be fed to the function.</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – Total number of executions of the function.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Number of parallel executions (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.NJOBS</span></code>).</p></li>
+<li><p><strong>gpus</strong> (<em>int</em>) – Number of GPU devices allocated to the job (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments going to be fed to the function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>concatenated list of outputs of executions. The order of elements
+does not correspond to the initial order.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -617,7 +670,7 @@ parameters.</p>
         <a href="metrics.html" class="btn btn-neutral float-right" title="cdt.metrics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="independence.html" class="btn btn-neutral float-left" title="cdt.independence" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="data.html" class="btn btn-neutral float-left" title="cdt.data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

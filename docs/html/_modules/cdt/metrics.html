@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Get started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer.html">Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.metrics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.metrics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The CDT package implements some metrics to evaluate the output of a </span>
+<span class="sd">algorithm given a ground truth. All these metrics are in the form </span>
+<span class="sd">`metric(target, prediction)`, where any of those arguments are either numpy </span>
+<span class="sd">matrixes that represent the adjacency matrix or `networkx.DiGraph` instances.</span>
+
+<span class="sd">.. warning:: in the case of heterogeneous types of arguments ``target`` and</span>
+<span class="sd">    ``prediction``, special care has to be given to the order of the nodes,</span>
+<span class="sd">    as the type `networkx.DiGraph` does not retain node order.</span>
+
+<span class="sd">.. MIT License</span>
+<span class="sd">..</span>
+<span class="sd">.. Copyright (c) 2018 Diviyan Kalainathan</span>
+<span class="sd">..</span>
+<span class="sd">.. Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">.. of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">.. in the Software without restriction, including without limitation the rights</span>
+<span class="sd">.. to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">.. copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">.. furnished to do so, subject to the following conditions:</span>
+<span class="sd">..</span>
+<span class="sd">.. The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">.. copies or substantial portions of the Software.</span>
+<span class="sd">..</span>
+<span class="sd">.. THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">.. IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">.. FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">.. AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">.. LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">.. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">.. SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">auc</span><span class="p">,</span> <span class="n">precision_recall_curve</span>
+<span class="kn">from</span> <span class="nn">.utils.R</span> <span class="k">import</span> <span class="n">launch_R_script</span><span class="p">,</span> <span class="n">RPackages</span>
+
+
+<span class="k">def</span> <span class="nf">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">order_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve the adjacency matrix from the nx.DiGraph or numpy array.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">graph</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">order_nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">order_nodes</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">weight</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">order_nodes</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">order_nodes</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Only networkx.DiGraph and np.ndarray (adjacency matrixes) are supported.&quot;</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="precision_recall"><a class="viewcode-back" href="../../metrics.html#cdt.metrics.precision_recall">[docs]</a><span class="k">def</span> <span class="nf">precision_recall</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">low_confidence_undirected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute precision-recall statistics for directed graphs.</span>
+<span class="sd">    </span>
+<span class="sd">    Precision recall statistics are useful to compare algorithms that make </span>
+<span class="sd">    predictions with a confidence score. Using these statistics, performance </span>
+<span class="sd">    of an algorithms given a set threshold (confidence score) can be</span>
+<span class="sd">    approximated.</span>
+<span class="sd">    Area under the precision-recall curve, as well as the coordinates of the </span>
+<span class="sd">    precision recall curve are computed, using the scikit-learn library tools.</span>
+<span class="sd">    Note that unlike the AUROC metric, this metric does not account for class</span>
+<span class="sd">    imbalance.</span>
+
+<span class="sd">    Precision is defined by: :math:`Pr=tp/(tp+fp)` and directly denotes the</span>
+<span class="sd">    total classification accuracy given a confidence threshold. On the other</span>
+<span class="sd">    hand, Recall is defined by: :math:`Re=tp/(tp+fn)` and denotes  </span>
+<span class="sd">    misclassification given a threshold.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of </span>
+<span class="sd">            ones and zeros.</span>
+<span class="sd">        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the </span>
+<span class="sd">            algorithm to evaluate.</span>
+<span class="sd">        low_confidence_undirected: Put the lowest confidence possible to </span>
+<span class="sd">            undirected edges (edges that are symmetric in the confidence score).</span>
+<span class="sd">            Default: False</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: tuple containing:</span>
+
+<span class="sd">            + Area under the precision recall curve (float)</span>
+<span class="sd">            + Tuple of data points of the precision-recall curve used in the computation of the score (tuple). </span>
+
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.metrics import precision_recall</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; tar, pred = np.random.randint(2, size=(10, 10)), np.random.randn(10, 10)</span>
+<span class="sd">        &gt;&gt;&gt; # adjacency matrixes of size 10x10</span>
+<span class="sd">        &gt;&gt;&gt; aupr, curve = precision_recall(target, input) </span>
+<span class="sd">        &gt;&gt;&gt; # leave low_confidence_undirected to False as the predictions are continuous</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+                                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                                            <span class="n">weight</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">low_confidence_undirected</span><span class="p">:</span>
+        <span class="c1"># Take account of undirected edges by putting them with low confidence</span>
+        <span class="n">pred</span><span class="p">[</span><span class="n">pred</span> <span class="o">==</span> <span class="n">pred</span><span class="o">.</span><span class="n">transpose</span><span class="p">()]</span> <span class="o">*=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">pred</span><span class="p">)])</span><span class="o">*.</span><span class="mi">5</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_curve</span><span class="p">(</span>
+        <span class="n">true_labels</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">pred</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+    <span class="n">aupr</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">recall</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">reorder</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aupr</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SHD"><a class="viewcode-back" href="../../metrics.html#cdt.metrics.SHD">[docs]</a><span class="k">def</span> <span class="nf">SHD</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">double_for_anticausal</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the Structural Hamming Distance.</span>
+
+<span class="sd">    The Structural Hamming Distance (SHD) is a standard distance to compare</span>
+<span class="sd">    graphs by their adjacency matrix. It consists in computing the difference</span>
+<span class="sd">    between the two (binary) adjacency matrixes: every edge that is either </span>
+<span class="sd">    missing or not in the target graph is counted as a mistake. Note that </span>
+<span class="sd">    for directed graph, two mistakes can be counted as the edge in the wrong</span>
+<span class="sd">    direction is false and the edge in the good direction is missing ; the </span>
+<span class="sd">    `double_for_anticausal` argument accounts for this remark. Setting it to </span>
+<span class="sd">    `False` will count this as a single mistake.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of </span>
+<span class="sd">            ones and zeros.</span>
+<span class="sd">        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the</span>
+<span class="sd">            algorithm to evaluate.</span>
+<span class="sd">        double_for_anticausal (bool): Count the badly oriented edges as two </span>
+<span class="sd">            mistakes. Default: True</span>
+<span class="sd"> </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Structural Hamming Distance (int).</span>
+
+<span class="sd">            The value tends to zero as the graphs tend to be identical.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.metrics import SHD</span>
+<span class="sd">        &gt;&gt;&gt; from numpy.random import randint</span>
+<span class="sd">        &gt;&gt;&gt; tar, pred = randint(2, size=(10, 10)), randint(2, size=(10, 10))</span>
+<span class="sd">        &gt;&gt;&gt; SHD(tar, pred, double_for_anticausal=False) </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span> 
+                                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">true_labels</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">double_for_anticausal</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">+</span> <span class="n">diff</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">diff</span><span class="p">[</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Ignoring the double edges.</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="SID"><a class="viewcode-back" href="../../metrics.html#cdt.metrics.SID">[docs]</a><span class="k">def</span> <span class="nf">SID</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the Strutural Intervention Distance.</span>
+
+<span class="sd">    [R wrapper] The Structural Intervention Distance (SID) is a new distance</span>
+<span class="sd">    for graphs introduced by Peters and Bühlmann (2013). This distance was</span>
+<span class="sd">    created to account for the shortcomings of the SHD metric for a causal</span>
+<span class="sd">    sense.</span>
+<span class="sd">    It consists in computing the path between all the pairs of variables, and</span>
+<span class="sd">    checks if the causal relationship between the variables is respected.</span>
+<span class="sd">    The given graphs have to be DAGs for the SID metric to make sense.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of</span>
+<span class="sd">            ones and zeros, and instance of either numpy.ndarray or</span>
+<span class="sd">            networkx.DiGraph. Must be a DAG.</span>
+
+<span class="sd">        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the</span>
+<span class="sd">            algorithm to evaluate. Must be a DAG.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Structural Intervention Distance.</span>
+
+<span class="sd">            The value tends to zero as the graphs tends to be identical.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,</span>
+<span class="sd">        Jonas Peters, Peter Bühlmann: https://arxiv.org/abs/1306.1043</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.metrics import SID</span>
+<span class="sd">        &gt;&gt;&gt; from numpy.random import randint</span>
+<span class="sd">        &gt;&gt;&gt; tar = np.triu(randint(2, size=(10, 10)))</span>
+<span class="sd">        &gt;&gt;&gt; pred = np.triu(randint(2, size=(10, 10)))</span>
+<span class="sd">        &gt;&gt;&gt; SID(tar, pred)</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;SID R package is not available. Please check your installation.&quot;</span><span class="p">)</span>
+
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+                                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/result.csv&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span> <span class="n">true_labels</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">sid_score</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/utils/R_templates/sid.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
+                                    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{target}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{prediction}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{result}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/result.csv&#39;</span><span class="p">},</span>
+                                    <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">)</span>
+    <span class="c1"># Cleanup</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
+
+    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sid_score</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
