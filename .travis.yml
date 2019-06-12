@@ -45,7 +45,7 @@ jobs:
       script:
       - git pull
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-py3.7:$VERSION_NEW
+      - docker pull divkal/cdt-py3.7:$VERSION
       - git config --global user.email "travis-docs@example.com"
       - git config --global user.name "Travis CI Docs"
       - chmod 600 rel_travis
