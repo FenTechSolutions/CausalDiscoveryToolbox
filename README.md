@@ -24,9 +24,9 @@ Docker images are available, including all the dependencies, and enabled functio
 
 |       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
 |:----------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------:|
-| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/docker-dev-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
 | Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/docker-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
-| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.0-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--docker-dev-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
+| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.0-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--docker-latest-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
 
 ## Installation
 

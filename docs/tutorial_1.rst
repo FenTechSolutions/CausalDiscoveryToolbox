@@ -71,7 +71,7 @@ We can check the structure of the skeleton by looking at its adjacency matrix:
 
 .. code-block:: python
 
-   >>> print(nx.adj_matrix(skeleton).todense())
+   >>> print(nx.adjacency_matrix(skeleton).todense())
    matrix([[ 9.26744031e-04, -6.13751618e-04,  1.66612981e-05,
             -1.10912131e-06, -3.04172363e-05, -9.71526466e-05,
              7.00340545e-05, -1.93863471e-06, -7.31774543e-06,
@@ -129,7 +129,7 @@ links in the graph using the Aracne algorithm
 .. code-block:: python
 
    >>> new_skeleton = cdt.utils.graph.remove_indirect_links(skeleton, alg='aracne')
-   >>> print(nx.adj_matrix(new_skeleton).todense())
+   >>> print(nx.adjacency_matrix(new_skeleton).todense())
    matrix([[9.26576364e-04, 0.00000000e+00, 1.66279016e-05, 0.00000000e+00,
    0.00000000e+00, 0.00000000e+00, 6.99676073e-05, 0.00000000e+00,
    0.00000000e+00, 2.26182196e-06, 8.29822467e-06],
@@ -182,7 +182,7 @@ constraints, by using the `GES` algorithm..
 
    >>> model = cdt.causality.graph.GES()
    >>> output_graph = model.predict(data, new_skeleton)
-   >>> print(nx.adj_matrix(output_graph)).todense()
+   >>> print(nx.adjacency_matrix(output_graph).todense())
    matrix([[0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1],
            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
