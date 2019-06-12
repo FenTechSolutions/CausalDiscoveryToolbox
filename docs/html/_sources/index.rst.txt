@@ -53,12 +53,12 @@ Docker images are available, including all the dependencies, and enabled functio
 .. |36gpu| image:: https://img.shields.io/badge/nvidia--docker-0.5.0-76b900.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/nv-cdt-py3.6/
 
-.. |36cpudev| image:: https://img.shields.io/badge/docker-dev-0db7ed.svg?maxAge=259200
+.. |36cpudev| image:: https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/cdt-dev/
 
 .. |37cpudev| image:: https://img.shields.io/badge/docker-unavailable-lightgrey.svg?maxAge=259200
 
-.. |36gpudev| image:: https://img.shields.io/badge/nvidia--docker-dev-76b900.svg?maxAge=259200
+.. |36gpudev| image:: https://img.shields.io/badge/nvidia--docker-latest-76b900.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/nv-cdt-dev/
 
 ..  |       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |

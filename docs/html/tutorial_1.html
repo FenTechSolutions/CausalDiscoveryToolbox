@@ -240,7 +240,7 @@ Sparse inverse covariance estimation with the graphical lasso. Biostatistics,
 obscure at first but quite handy on the long run. (Check
 <a class="reference internal" href="tutorial.html#the-graph-class"><span class="std std-ref">here</span></a>  for a quick introduction on <code class="docutils literal notranslate"><span class="pre">networkx</span></code> graphs).
 We can check the structure of the skeleton by looking at its adjacency matrix:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 <span class="go">matrix([[ 9.26744031e-04, -6.13751618e-04,  1.66612981e-05,</span>
 <span class="go">         -1.10912131e-06, -3.04172363e-05, -9.71526466e-05,</span>
 <span class="go">          7.00340545e-05, -1.93863471e-06, -7.31774543e-06,</span>
@@ -298,7 +298,7 @@ Riccardo Dalla Favera and Andrea Califano
 DOI: https://doi.org/10.1186/1471-2105-7-S1-S7</cite></p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_skeleton</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_indirect_links</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="s1">&#39;aracne&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">new_skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">new_skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 <span class="go">matrix([[9.26576364e-04, 0.00000000e+00, 1.66279016e-05, 0.00000000e+00,</span>
 <span class="go">0.00000000e+00, 0.00000000e+00, 6.99676073e-05, 0.00000000e+00,</span>
 <span class="go">0.00000000e+00, 2.26182196e-06, 8.29822467e-06],</span>
@@ -349,7 +349,7 @@ Research 3 , 507–554</cite></p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">causality</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">GES</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">output_graph</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">new_skeleton</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">output_graph</span><span class="p">))</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">output_graph</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 <span class="go">matrix([[0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1],</span>
 <span class="go">        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],</span>
 <span class="go">        [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],</span>
