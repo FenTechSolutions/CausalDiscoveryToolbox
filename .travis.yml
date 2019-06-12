@@ -39,8 +39,26 @@ jobs:
             docker push divkal/nv-cdt-dev;
             else docker run --rm divkal/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
         fi
+    - stage: build docs only
+      if: (branch = master) AND (fork = false) AND (commit_message =~ \[DOC\])
+      name: Build docs only
+      script:
+      - git pull
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker pull divkal/cdt-py3.7:$VERSION_NEW
+      - git config --global user.email "travis-docs@example.com"
+      - git config --global user.name "Travis CI Docs"
+      - chmod 600 rel_travis
+      - eval `ssh-agent -s`
+      - ssh-add rel_travis
+      - git config --global push.default simple
+      - docker run -v $(pwd):/cdtlib --rm divkal/cdt-py3.7:$VERSION /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
+      - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
+      - git add ./docs
+      - git commit -m "[DEPLOY] Docs $VERSION_NEW [skip travis-ci]"
+      - git push deploy HEAD:master
     - stage: build docker image
-      if: (branch = master) AND (fork = false)
+      if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push 3.6 image for testing"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -48,7 +66,7 @@ jobs:
       - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-test .
       - docker push divkal/cdt-test
     - stage: test
-      if: (branch = master) AND (fork = false)
+      if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Test and bumpversion"
       script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN'
       after_success:
@@ -71,7 +89,7 @@ jobs:
         - git commit -m "[DEPLOY] $VERSION_NEW [skip travis-ci]"
         - git push deploy HEAD:master
     - stage: deploy 1st stage
-      if: (branch = master) AND (fork = false)
+      if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push 3.6"
       script:
       - git pull
@@ -80,7 +98,7 @@ jobs:
       - docker pull divkal/cdt-env-base:19.05
       - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-py3.6:$VERSION_NEW .
       - docker push divkal/cdt-py3.6:$VERSION_NEW
-    - if: (branch = master) AND (fork = false)
+    - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push 3.7"
       script:
       - git pull
@@ -89,7 +107,7 @@ jobs:
       - docker pull divkal/cdt-env-base:19.05
       - docker build --build-arg python=3.7 --build-arg spy=37 -t divkal/cdt-py3.7:$VERSION_NEW .
       - docker push divkal/cdt-py3.7:$VERSION_NEW
-    - if: (branch = master) AND (fork = false)
+    - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push nv-3.6"
       script:
       - git pull
@@ -99,7 +117,7 @@ jobs:
       - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
       - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
     - stage: deploy 2nd stage
-      if: (branch = master) AND (fork = false)
+      if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Push on Pypi"
       script:
       - git pull
@@ -107,7 +125,7 @@ jobs:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
       - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
-    - if: (branch = master) AND (fork = false)
+    - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Compile docs and push"
       script:
       - git pull
