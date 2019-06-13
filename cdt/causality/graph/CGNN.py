@@ -42,7 +42,6 @@ from ...utils.loss import MMDloss
 from ...utils.Settings import SETTINGS
 from ...utils.graph import dagify_min_edge
 from ...utils.parallel import parallel_run
-from ...utils.io import MetaDataset
 
 
 def message_warning(msg, *a, **kwargs):
@@ -226,9 +225,18 @@ def hill_climbing(data, graph, **kwargs):
 
 
 class CGNN(GraphModel):
-    """Causal Generative Neural Netwoks : Generate the whole causal graph in a
+    """Causal Generative Neural Netwoks
+
+    **Description:** Generate the whole causal graph in a
     topological manner using neural networks and predict causal directions in
     the graph.
+
+    **Data Type:** Continuous
+
+    **Assumptions:** The class of generative models is not restricted with a
+    hard contraint, but with the hyperparameter ``nh``. This algorithms greatly
+    benefits from bootstrapped runs (nruns >=12 recommended), and is very
+    computationnally heavy. GPUs are recommended.
 
     Args:
         nh (int): Number of hidden units in each generative neural network.

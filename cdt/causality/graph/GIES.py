@@ -42,10 +42,21 @@ warnings.formatwarning = message_warning
 
 
 class GIES(GraphModel):
-    """GIES algorithm.
+    """GIES algorithm **[R model]**.
+
+    **Description:** Greedy Interventional Equivalence Search algorithm.
+    A score-based Bayesian algorithm that searches heuristically the graph which minimizes
+    a likelihood score on the data. The main difference with GES is that it
+    accepts interventional data for its inference.
+
+    **Data Type:** Continuous (``score='obs'``) or Categorical (``score='int'``)
+
+    **Assumptions:** The output is a Partially Directed Acyclic Graph (PDAG)
+    (A markov equivalence class). The available scores assume linearity of
+    mechanisms and gaussianity of the data.
 
     Args:
-        score (str): Sets the score used by GES.
+        score (str): Sets the score used by GIES.
         verbose (bool): Defaults to ``cdt.SETTINGS.verbose``.
 
     Available scores:

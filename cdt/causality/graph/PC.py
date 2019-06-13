@@ -45,7 +45,7 @@ warnings.formatwarning = message_warning
 
 
 class PC(GraphModel):
-    """PC algorithm by C.Glymour & P.Sprites.
+    """PC algorithm **[R model]**.
 
     Args:
         CItest (str): Test for conditional independence.

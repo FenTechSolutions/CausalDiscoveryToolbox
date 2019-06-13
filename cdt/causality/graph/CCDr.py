@@ -45,7 +45,8 @@ warnings.formatwarning = message_warning
 
 
 class CCDr(GraphModel):
-    r"""CCDr algorithm.
+    r"""CCDr algorithm **[R model]**.
+
     Concave penalized Coordinate Descent with reparametrization) structure
     learning algorithm as described in Aragam and Zhou (2015). This is a fast,
     score based method for learning Bayesian networks that uses sparse

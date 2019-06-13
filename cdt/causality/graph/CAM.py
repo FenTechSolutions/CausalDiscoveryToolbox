@@ -45,7 +45,19 @@ warnings.formatwarning = message_warning
 
 
 class CAM(GraphModel):
-    r"""CAM algorithm.
+    r"""CAM algorithm **[R model]**.
+
+    **Description:** Causal Additive models, a causal discovery algorithm
+    relying on fitting Gaussian Processes on data, while considering all noises
+    additives and additive contributions of variables.
+
+    **Data Type:** Continuous
+
+    **Assumptions:** The data follows a generalized additive noise model:
+    each variable :math:`X_i`  in the graph :math:`\mathcal{G}` is generated
+    following the model :math:`X_i = \sum_{X_j \in \mathcal{G}} f(X_j) + \epsilon_i`,
+    :math:`\epsilon_i` representing mutually independent noises variables
+    accounting for unobserved variables.
 
     Args:
         score (str): Score used to fit the gaussian processes.
@@ -82,9 +94,9 @@ class CAM(GraphModel):
 
     .. note::
        Ref:
-       J. Peters, J. Mooij, D. Janzing, B. Schölkopf:
-       Causal Discovery with Continuous Additive Noise Models,
-       JMLR 15:2009-2053, 2014.
+       Bühlmann, P., Peters, J., & Ernest, J. (2014). CAM: Causal additive
+       models, high-dimensional order search and penalized regression. The
+       Annals of Statistics, 42(6), 2526-2556.
 
     .. warning::
        This implementation of CAM does not support starting with a graph.

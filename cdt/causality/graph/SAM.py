@@ -374,7 +374,17 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
 
 
 class SAM(GraphModel):
-    """Structural Agnostic Model.
+    """SAM Algorithm.
+
+    **Description:** Structural Agnostic Model is an causal discovery algorithm
+    leveraging
+
+    **Data Type:** Continuous
+
+    **Assumptions:** The class of generative models is not restricted with a
+    hard contraint, but with the hyperparameter ``nh``. This algorithms greatly
+    benefits from bootstrapped runs (nruns >=8 recommended).
+    GPUs are recommended but not compulsory.
 
     Args:
         lr (float): Learning rate of the generators

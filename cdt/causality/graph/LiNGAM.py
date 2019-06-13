@@ -45,7 +45,21 @@ warnings.formatwarning = message_warning
 
 
 class LiNGAM(GraphModel):
-    r"""LiNGAM algorithm.
+    r"""LiNGAM algorithm **[R model]**.
+
+
+    **Description:** Linear Non-Gaussian Acyclic model. LiNGAM handles linear
+    structural equation models, where each variable is modeled as
+    :math:`X_j = \sum_k \alpha_k P_a^{k}(X_j) + E_j,  j \in [1,d]`,
+    with  :math:`P_a^{k}(X_j)` the :math:`k`-th parent of
+    :math:`X_j` and :math:`\alpha_k` a real scalar.
+
+    **Data Type:** Continuous
+
+    **Assumptions:** The underlying causal model is supposed to be composed of
+    linear mechanisms and non-gaussian data. Under those assumptions, it is
+    shown that causal structure is fully identifiable (even inside the Markov
+    equivalence class).
 
     Args:
         verbose (bool): Sets the verbosity of the algorithm. Defaults to
