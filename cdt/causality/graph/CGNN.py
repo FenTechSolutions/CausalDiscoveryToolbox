@@ -227,9 +227,9 @@ def hill_climbing(data, graph, **kwargs):
 class CGNN(GraphModel):
     """Causal Generative Neural Netwoks
 
-    **Description:** Generate the whole causal graph in a
-    topological manner using neural networks and predict causal directions in
-    the graph.
+    **Description:** Causal Generative Neural Networks. Score-method that
+    evaluates candidate graph by generating data following the topological
+    order of the graph using neural networks, and using MMD for evaluation.
 
     **Data Type:** Continuous
 

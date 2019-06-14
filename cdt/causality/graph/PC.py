@@ -47,6 +47,18 @@ warnings.formatwarning = message_warning
 class PC(GraphModel):
     """PC algorithm **[R model]**.
 
+    **Description:** PC (Peter - Clark) One of the most famous score based
+    approaches for causal discovery. Based on conditional tests on variables
+    and sets of variables, it proved itself to be really efficient.
+
+    **Data Type:** Continuous and discrete
+
+    **Assumptions:** This approach's complexity grows rapidly with the number
+    of variables, even for quick tests. Consider graphs < 200 variables.
+    The model assumptions made by this approch mainly depend on the type of
+    test used. Kernel-based tests are also available. The prediction of PC
+    is a CPDAG (identifiability up to the Markov equivalence class).
+
     Args:
         CItest (str): Test for conditional independence.
         method (str): Heuristic for testing CI.

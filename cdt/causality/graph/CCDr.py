@@ -47,10 +47,19 @@ warnings.formatwarning = message_warning
 class CCDr(GraphModel):
     r"""CCDr algorithm **[R model]**.
 
-    Concave penalized Coordinate Descent with reparametrization) structure
+    **Description:** Concave penalized Coordinate Descent with reparametrization) structure
     learning algorithm as described in Aragam and Zhou (2015). This is a fast,
     score based method for learning Bayesian networks that uses sparse
     regularization and block-cyclic coordinate descent.
+
+    **Data Type:** Continuous
+
+    **Assumptions:** This model does not restrict or prune the search space in
+    any way, does not assume faithfulness, does not require a known variable
+    ordering, works on observational data (i.e. without experimental
+    interventions), works effectively in high dimensions, and is capable of
+    handling graphs with several thousand variables. The output of this model
+    is a DAG.
 
     Imported from the 'sparsebn' package.
 
