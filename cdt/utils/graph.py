@@ -35,6 +35,7 @@ def network_deconvolution(mat, **kwargs):
     """Python implementation/translation of network deconvolution by MIT-KELLIS LAB.
 
     .. note::
+       For networkx graphs, use the cdt.utils.graph.remove_indirect_links function
        code author:gidonro [Github username](https://github.com/gidonro/Network-Deconvolution)
 
        LICENSE: MIT-KELLIS LAB
@@ -70,6 +71,15 @@ def network_deconvolution(mat, **kwargs):
         represent direct edge weights of observed interactions.
         Choosing top direct interactions (a cut-off) depends on the application and
         is not implemented in this code.
+
+    Example:
+        >>> from cdt.utils.graph import network_deconvolution
+        >>> import networkx as nx
+        >>> # Generate sample data
+        >>> from cdt.data import AcyclicGraphGenerator
+        >>> graph = AcyclicGraphGenerator(linear).generate()[1]
+        >>> adj_mat = nx.adjacency_matrix(graph).todense()
+        >>> output = network_deconvolution(adj_mat)
 
      .. note::
         To apply ND on regulatory networks, follow steps explained in Supplementary notes
@@ -138,6 +148,9 @@ def network_deconvolution(mat, **kwargs):
 def clr(M, **kwargs):
     """Implementation of the Context Likelihood or Relatedness Network algorithm.
 
+    .. note::
+       For networkx graphs, use the cdt.utils.graph.remove_indirect_links function
+
     Args:
         mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
             it is a relevance matrix where mat(i,j) represents the similarity content
@@ -147,6 +160,15 @@ def clr(M, **kwargs):
     Returns:
         numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
         represent direct edge weights of observed interactions.
+
+    Example:
+        >>> from cdt.utils.graph import clr
+        >>> import networkx as nx
+        >>> # Generate sample data
+        >>> from cdt.data import AcyclicGraphGenerator
+        >>> graph = AcyclicGraphGenerator(linear).generate()[1]
+        >>> adj_mat = nx.adjacency_matrix(graph).todense()
+        >>> output = clr(adj_mat)
 
     .. note::
        Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey
@@ -175,6 +197,9 @@ def clr(M, **kwargs):
 def aracne(m, **kwargs):
     """Implementation of the ARACNE algorithm.
 
+    .. note::
+       For networkx graphs, use the cdt.utils.graph.remove_indirect_links function
+
     Args:
         mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes
             it is a relevance matrix where mat(i,j) represents the similarity content
@@ -184,6 +209,15 @@ def aracne(m, **kwargs):
     Returns:
         numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components
         represent direct edge weights of observed interactions.
+
+    Example:
+        >>> from cdt.utils.graph import aracne
+        >>> import networkx as nx
+        >>> # Generate sample data
+        >>> from cdt.data import AcyclicGraphGenerator
+        >>> graph = AcyclicGraphGenerator(linear).generate()[1]
+        >>> adj_mat = nx.adjacency_matrix(graph).todense()
+        >>> output = aracne(adj_mat)
 
     .. note::
        Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context
@@ -222,6 +256,14 @@ def remove_indirect_links(g, alg="aracne", **kwargs):
 
     Returns:
        networkx.Graph: graph with undirected links removed.
+
+    Example:
+        >>> from cdt.utils.graph import remove_indirect_links
+        >>> import networkx as nx
+        >>> # Generate sample data
+        >>> from cdt.data import AcyclicGraphGenerator
+        >>> graph = AcyclicGraphGenerator(linear).generate()[1]
+        >>> output = remove_indirect_links(graph, alg='aracne')
     """
     alg = {"aracne": aracne,
            "nd": network_deconvolution,
@@ -243,6 +285,15 @@ def dagify_min_edge(g):
 
     Returns:
         networkx.DiGraph: DAG made out of the input graph.
+
+    Example:
+        >>> from cdt.utils.graph import dagify_min_edge
+        >>> import networkx as nx
+        >>> import numpy as np
+        >>> # Generate sample data
+        >>> graph = nx.DiGraph((np.ones(4) - np.eye(4)) *
+                               np.random.uniform(size=(4,4)))
+        >>> output = dagify_min_edge(graph)
     """
     ncycles = len(list(nx.simple_cycles(g)))
     while not nx.is_directed_acyclic_graph(g):

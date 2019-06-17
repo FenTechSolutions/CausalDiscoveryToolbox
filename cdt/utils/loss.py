@@ -35,6 +35,14 @@ class TTestCriterion(object):
         max_iter (int): Maximum number of iterations authorized
         runs_per_iter (int): Number of runs performed per iteration
         threshold (float): p-value threshold, under which the loop is stopped.
+
+    Example:
+        >>> from cdt.utils.loss import TTestCriterion
+        >>> l = TTestCriterion(50,5)
+        >>> x, y = [], []
+        >>> while l.loop(x, y):
+            ...     # compute loop and update results in x, y
+        >>> x, y  # Two lists with significant difference in score
     """
     def __init__(self, max_iter, runs_per_iter, threshold=0.01):
         super(TTestCriterion, self).__init__()
@@ -67,7 +75,7 @@ class TTestCriterion(object):
 
 
 class MMDloss(th.nn.Module):
-    """"**[torch.nn.Module]** Maximum Mean Discrepancy Metric to compare
+    """**[torch.nn.Module]** Maximum Mean Discrepancy Metric to compare
     empirical distributions.
 
     The MMD score is defined by:
@@ -105,6 +113,14 @@ class MMDloss(th.nn.Module):
         Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, 
         B., & Smola, A. (2012). A kernel two-sample test.
         Journal of Machine Learning Research, 13(Mar), 723-773.
+
+    Example:
+        >>> from cdt.utils.loss import MMDloss
+        >>> import torch as th
+        >>> x, y = th.randn(100,10), th.randn(100, 10)
+        >>> mmd = MMDloss(100)  # 100 is the batch size
+        >>> mmd(x, y)
+        0.0766
     """
 
     def __init__(self, input_size, bandwidths=None):
@@ -162,6 +178,13 @@ class MomentMatchingLoss(th.nn.Module):
     Output: mml
         + **mml** is the output of the forward pass and is differenciable. 
           torch.Tensor of shape `(1)`
+
+    Example:
+        >>> from cdt.utils.loss import MomentMatchingLoss
+        >>> import torch as th
+        >>> x, y = th.randn(100,10), th.randn(100, 10)
+        >>> mml = MomentMatchingLoss(4)
+        >>> mml(x, y)
     """
 
     def __init__(self, n_moments=1):

@@ -52,6 +52,12 @@ class CausalPairGenerator(object):
         noise_coeff (float): Proportion of noise in the mechanisms.
         initial_variable_generator (function): Function used to init variables
             of the graph, defaults to a Gaussian Mixture model.
+
+    Example:
+        >>> from cdt.data import CausalPairGenerator
+        >>> generator = ('linear')
+        >>> data, labels = generator.generate(100, npoints=500)
+        >>> generator.to_csv('generated_pairs')
     """
 
     def __init__(self, causal_mechanism, noise=normal_noise,

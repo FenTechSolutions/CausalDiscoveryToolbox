@@ -35,16 +35,20 @@ from collections import OrderedDict
 from copy import deepcopy
 
 
-def read_causal_pairs(filename, scale=True, **kwargs):
+def read_causal_pairs(filename, scale=False, **kwargs):
     """Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.
 
-    :param filename: path of the file to read or DataFrame containing the data
-    :type filename: str or pandas.DataFrame
-    :param scale: Scale the data
-    :type scale: bool
-    :param kwargs: parameters to be passed to pandas.read_csv
-    :return: Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))
-    :rtype: pandas.DataFrame
+    Args:
+        filename (str or pandas.DataFrame): path of the file to read or DataFrame containing the data
+        scale (bool): Scale the data
+        \**kwargs: parameters to be passed to pandas.read_csv
+
+    Returns:
+        pandas.DataFrame: Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))
+
+    Examples:
+        >>> from cdt.utils import read_causal_pairs
+        >>> data = read_causal_pairs('file.tsv', scale=True, sep='\\t')
     """
     def convert_row(row, scale):
         """Convert a CCEPC row into numpy.ndarrays.
@@ -97,6 +101,10 @@ def read_adjacency_matrix(filename, directed=True, **kwargs):
     :return: networkx graph containing the graph.
     :rtype: **networkx.DiGraph** or **networkx.Graph** depending on the
       ``directed`` parameter.
+
+    Examples:
+        >>> from cdt.utils import read_adjacency_matrix
+        >>> data = read_causal_pairs('graph_file.csv', directed=False)
     """
     if isinstance(filename, str):
         data = read_csv(filename, **kwargs)
@@ -125,6 +133,9 @@ def read_list_edges(filename, directed=True, **kwargs):
     :rtype: **networkx.DiGraph** or **networkx.Graph** depending on the
       ``directed`` parameter.
 
+    Examples:
+        >>> from cdt.utils import read_adjacency_matrix
+        >>> data = read_causal_pairs('graph_file.csv', directed=False)
     """
     if isinstance(filename, str):
         data = read_csv(filename, **kwargs)

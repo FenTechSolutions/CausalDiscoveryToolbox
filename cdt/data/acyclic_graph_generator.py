@@ -55,6 +55,12 @@ class AcyclicGraphGenerator(object):
         npoints (int): Number of data points to generate.
         nodes (int): Number of nodes in the graph to generate.
         parents_max (int): Maximum number of parents of a node.
+
+    Example:
+        >>> from cdt.data import AcyclicGraphGenerator
+        >>> generator = AcyclicGraphGenerator('linear', npoints=1000)
+        >>> data, graph = generator.generate()
+        >>> generator.to_csv('generated_graph')
     """
 
     def __init__(self, causal_mechanism, noise='gaussian',

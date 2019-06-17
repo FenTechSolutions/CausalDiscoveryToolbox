@@ -66,6 +66,10 @@ def load_dataset(name, **kwargs):
         tuple: (pandas.DataFrame, pandas.DataFrame or networkx.DiGraph) Standard
         dataframe containing the data, and the target.
 
+    Examples:
+        >>> from cdt.data import load_dataset
+        >>> s_data, s_graph = load_dataset('sachs')
+        >>> t_data, t_labels = load_dataset('tuebingen')
     """
     dream = [i for i in ['dream4-{}'.format(v) for v in range(1, 6)]]
     loaders = {'tuebingen': load_tuebingen, 'sachs': load_sachs}

@@ -126,8 +126,8 @@ def parallel_run(function, *args, nruns=None, njobs=None, gpus=None, **kwargs):
 def parallel_run_generator(function, generator, njobs=None, gpus=None):
     """ Mutiprocessed execution of a function with parameters, with GPU management.
 
-    This function is useful when the used wants to execute a bootstrap on a
-    function on GPU devices, as joblib does not include such feature.
+    Variant of the ```cdt.utils.parallel.parallel_run``` function, with the
+    exception that this function takes an iterable as args, kwargs and nruns.
 
     Args:
         function (function): Function to execute.
