@@ -112,18 +112,27 @@ def normalized_hsic(x, y):
 
 
 class ANM(PairwiseModel):
-    """Additive Noise model to infer causal relationships.
+    """ANM algorithm.
 
-    Assuming that x->y then if the data follows an additive noise model, there is y=f(x)+E.
-    E being a noise variable and f a deterministic function. The causal inference bases itself on the independence
+    **Description**: The Additive noise model is one of the most popular
+    approaches for pairwise causality. It bases on the fitness of the data to
+    the additive noise model on one direction and the rejection of the model
+    on the other direction.
+
+    **Data Type**: Continuous
+
+    **Assumptions**: Assuming that :math:`x\\rightarrow y` then we suppose that
+    the data follows an additive noise model, i.e. :math:`y=f(x)+E`.
+    E being a noise variable and f a deterministic function.
+    The causal inference bases itself on the independence
     between x and e.
     It is proven that in such case if the data is generated using an additive noise model, the model would only be able
     to fit in the true causal direction.
-    Ref: https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf
 
     .. note::
        Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,
        "Nonlinear causal discovery with additive noise models", NIPS 2009
+       https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf
 
     Example:
         >>> from cdt.causality.pairwise import ANM

@@ -29,5 +29,5 @@ from .GES import GES
 from .GIES import GIES
 from .CAM import CAM
 from .LiNGAM import LiNGAM
-from .bnlearn import MMPC, GS, IAMB, Fast_IAMB
+from .bnlearn import MMPC, GS, IAMB, Fast_IAMB, Inter_IAMB
 from .CCDr import CCDr

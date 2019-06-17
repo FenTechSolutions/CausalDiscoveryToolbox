@@ -234,7 +234,7 @@ class CGNN(GraphModel):
     **Data Type:** Continuous
 
     **Assumptions:** The class of generative models is not restricted with a
-    hard contraint, but with the hyperparameter ``nh``. This algorithms greatly
+    hard contraint, but with the hyperparameter ``nh``. This algorithm greatly
     benefits from bootstrapped runs (nruns >=12 recommended), and is very
     computationnally heavy. GPUs are recommended.
 

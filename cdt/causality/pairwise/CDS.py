@@ -86,11 +86,18 @@ def discretized_sequences(x, y, ffactor=3, maxdev=3):
 
 
 class CDS(PairwiseModel):
-    """
-    Conditional Distribution Similarity Statistic
+    """Conditional Distribution Similarity Statistic
 
-    Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
-    The lower the std. the more likely the pair to be x->y (resp. y->x).
+    **Description:** The Conditional Distribution Similarity Statistic measures the
+    std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
+    The lower the std. the more likely the pair to be x->y (resp. y->x). It is
+    a single feature of the Jarfo model.
+
+    **Data Type**: Continuous and Discrete
+
+    **Assumptions**: This approach is a statistical feature of the
+    joint distribution of the data mesuring the variance of the marginals, after
+    conditioning on bins.
 
     .. note::
        Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.

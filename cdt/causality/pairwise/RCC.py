@@ -36,10 +36,19 @@ from .model import PairwiseModel
 
 
 class RCC(PairwiseModel):
-    """Randomized Causation Coefficient model.
+    """Randomized Causation Coefficient model. 2nd approach in the Fast
+    Causation challenge.
 
-    Projection of the empirical distributions into a RKHS using random cosine
-    embeddings, then classfying the pairs using a random forest.
+    **Description:** The Randomized causation coefficient (RCC) relies on the
+    projection of the empirical distributions into a RKHS using random cosine
+    embeddings, then classfies the pairs using a random forest based on those
+    features.
+
+    **Data Type:** Continuous, Categorical, Mixed
+
+    **Assumptions:** This method needs a substantial amount of labelled causal
+    pairs to train itself. Its final performance depends on the training set
+    used.
 
     Args:
         rand_coeff (int): number of randomized coefficients
@@ -59,11 +68,14 @@ class RCC(PairwiseModel):
         >>> import networkx as nx
         >>> import matplotlib.pyplot as plt
         >>> from cdt.data import load_dataset
+        >>> from sklearn.model_selection import train_test_split
         >>> data, labels = load_dataset('tuebingen')
-        >>> obj = RCC()
+        >>> X_tr, X_te, y_tr, y_te = train_test_split(data, labels, train_size=.5)
         >>>
+        >>> obj = Jarfo()
+        >>> obj.fit(X_tr, y_tr)
         >>> # This example uses the predict() method
-        >>> output = obj.predict(data)
+        >>> output = obj.predict(X_te)
         >>>
         >>> # This example uses the orient_graph() method. The dataset used
         >>> # can be loaded using the cdt.data module

@@ -60,6 +60,8 @@ class BNlearnAlgorithm(GraphModel):
         optim (bool): See bnlearn-package for details.
         verbose (bool): Sets the verbosity. Defaults to SETTINGS.verbose
 
+    .. _bnlearntests:
+
     Available tests:
         • discrete case (categorical variables)
            – mutual information: an information-theoretic distance measure.
@@ -247,6 +249,18 @@ class BNlearnAlgorithm(GraphModel):
 class GS(BNlearnAlgorithm):
     """Grow-Shrink algorithm.
 
+    **Description:** The Grow Shrink algorithm is a constraint based algorithm
+    to recover bayesian networks. It consists in two phases, one growing phase
+    in which nodes are added to the markov blanket based on conditional
+    independence and a shrinking phase in which most irrelevant nodes are
+    removed.
+
+    **Data Type:** Depends on the test used. Check
+    :ref:`here <bnlearntests>` for the list of available tests.
+
+    **Assumptions:** GS outputs a CPDAG, with additional assumptions depending
+    on the conditional test used.
+
     .. note::
        Margaritis D (2003).
        Learning Bayesian Network Model Structure from Data
@@ -282,6 +296,16 @@ class GS(BNlearnAlgorithm):
 class IAMB(BNlearnAlgorithm):
     """IAMB algorithm.
 
+    **Description:** The is a bayesian constraint based algorithm
+    to recover Markov blankets in a forward selection and a modified backward
+    selection process.
+
+    **Data Type:** Depends on the test used. Check
+    :ref:`here <bnlearntests>` for the list of available tests.
+
+    **Assumptions:** IAMB outputs Markov blankets of nodes,
+    with additional assumptions depending on the conditional test used.
+
     .. note::
        Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   "Algorithms  for  Large  Scale  Markov  Blanket
        Discovery".  In "Proceedings of the Sixteenth International Florida Artificial Intelligence Research
@@ -315,6 +339,16 @@ class IAMB(BNlearnAlgorithm):
 class Fast_IAMB(BNlearnAlgorithm):
     """Fast IAMB algorithm.
 
+    **Description:** Similar to IAMB, Fast-IAMB adds speculation to provide more
+    computational performance without affecting the accuracy of markov blanket
+    recovery.
+
+    **Data Type:** Depends on the test used. Check
+    :ref:`here <bnlearntests>` for the list of available tests.
+
+    **Assumptions:** Fast-IAMB outputs markov blankets of nodes, with additional
+    assumptions depending on the conditional test used.
+
     .. note::
         Yaramakala S, Margaritis D (2005).  "Speculative Markov Blanket Discovery for Optimal Feature
         Selection".  In "ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data
@@ -346,12 +380,39 @@ class Fast_IAMB(BNlearnAlgorithm):
 
 
 class Inter_IAMB(BNlearnAlgorithm):
-    """Inter IAMB algorithm.
+    """Interleaved IAMB algorithm.
+
+    **Description:** Similar to IAMB, Interleaved-IAMB has a progressive
+    forward selection minimizing false positives.
+
+    **Data Type:** Depends on the test used. Check
+    :ref:`here <bnlearntests>` for the list of available tests.
+
+    **Assumptions:** Inter-IAMB outputs markov blankets of nodes, with additional
+    assumptions depending on the conditional test used.
 
     .. note::
        Yaramakala S, Margaritis D (2005).  "Speculative Markov Blanket Discovery for Optimal Feature
        Selection".  In "ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-
        ing", pp. 809-812. IEEE Computer Society.
+
+    Example:
+        >>> import networkx as nx
+        >>> from cdt.causality.graph import Inter_IAMB
+        >>> from cdt.data import load_dataset
+        >>> data, graph = load_dataset("sachs")
+        >>> obj = Inter_IAMB()
+        >>> #The predict() method works without a graph, or with a
+        >>> #directed or undirected graph provided as an input
+        >>> output = obj.predict(data)    #No graph provided as an argument
+        >>>
+        >>> output = obj.predict(data, nx.Graph(graph))  #With an undirected graph
+        >>>
+        >>> output = obj.predict(data, graph)  #With a directed graph
+        >>>
+        >>> #To view the graph created, run the below commands:
+        >>> nx.draw_networkx(output, font_size=8)
+        >>> plt.show()
     """
 
     def __init__(self):
@@ -362,6 +423,19 @@ class Inter_IAMB(BNlearnAlgorithm):
 
 class MMPC(BNlearnAlgorithm):
     """Max-Min Parents-Children algorithm.
+
+    **Description:** The Max-Min Parents-Children (MMPC) is a 2-phase algorithm
+    with a forward pass and a backward pass. The forward phase adds recursively
+    the variables that possess the highest association with the target
+    conditionally to the already selected variables. The backward pass tests
+    d-separability of variables conditionally to the set and subsets of the
+    selected variables.
+
+    **Data Type:** Depends on the test used. Check
+    :ref:`here <bnlearntests>` for the list of available tests.
+
+    **Assumptions:** MMPC outputs markov blankets of nodes, with additional
+    assumptions depending on the conditional test used.
 
     .. note::
        Tsamardinos I, Aliferis CF, Statnikov A (2003). "Time and Sample Efficient Discovery of Markov

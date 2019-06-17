@@ -35,8 +35,16 @@ from sklearn.linear_model import LinearRegression
 
 
 class RECI(PairwiseModel):
-    """
-    RECI, Best-fit mse with monome regressor and [0,1] rescaling
+    """RECI model.
+
+    **Description:** Regression Error based Causal Inference (RECI)
+    relies on a best-fit mse with monome regressor and [0,1] rescaling to
+    infer causal direction.
+
+    **Data Type:** Continuous (depends on the regressor used)
+
+    **Assumptions:** No independence tests are used, but the assumptions on
+    the model depend on the regessor used for RECI.
 
     Args:
         degree (int): Degree of the polynomial regression.

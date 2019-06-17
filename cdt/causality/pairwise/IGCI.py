@@ -80,7 +80,17 @@ def integral_approx_estimator(x, y):
 
 
 class IGCI(PairwiseModel):
-    """Information Geometric Causal Inference (IGCI) model.
+    """IGCI model.
+
+    **Description:** Information Geometric Causal Inference is a pairwise causal
+    discovery model model considering the case of minimal noise :math:`Y=f(X)`,
+    with :math:`f` invertible and leverages assymetries to predict causal
+    directions.
+
+    **Data Type:** Continuous
+
+    **Assumptions:** Only the case of invertible functions only is considered, as the
+    prediction would be trivial otherwise if the noise is minimal.
 
     .. note::
        P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,

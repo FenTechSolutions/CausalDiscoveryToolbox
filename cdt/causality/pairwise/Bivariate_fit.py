@@ -36,10 +36,16 @@ from sklearn.linear_model import LinearRegression
 
 
 class BivariateFit(PairwiseModel):
-    """
-    Bivariate Fit model.
-    Based itself on a best-fit criterion based on a Gaussian Process regressor.
-    Used as weak baseline.
+    """Bivariate Fit model.
+
+    **Description:** The bivariate fit model is  based onon a best-fit criterion
+    relying on a Gaussian Process regressor. Used as weak baseline.
+
+    **Data Type**: Continuous
+
+    **Assumptions**: This is often a model used to show that correlation
+    :math:`\\neq` causation. It holds very weak performance, as it states that
+    the best predictive model is the causal model.
 
     Example:
         >>> from cdt.causality.pairwise import BivariateFit

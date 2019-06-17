@@ -140,9 +140,17 @@ def GNN_instance(data, batch_size=-1, idx=0, device=None, nh=20, **kwargs):
 class GNN(PairwiseModel):
     """Shallow Generative Neural networks.
 
+    **Description:** Pairwise variant of the CGNN approach,
     Models the causal directions x->y and y->x with a 1-hidden layer neural
-    network and a MMD loss. The causal direction is considered as the "best-fit"
+    network and a MMD loss. The causal direction is considered as the best-fit
     between the two causal directions.
+
+    **Data Type:** Continuous
+
+    **Assumptions:** The class of generative models is not restricted with a
+    hard contraint, but with the hyperparameter ``nh``. This algorithm greatly
+    benefits from bootstrapped runs (nruns >=12 recommended), and is very
+    computationnally heavy. GPUs are recommended.
 
     Args:
         nh (int): number of hidden units in the neural network

@@ -36,7 +36,16 @@ from copy import deepcopy
 class Jarfo(PairwiseModel):
     """Jarfo model, 2nd of the Cause Effect Pairs challenge,
     1st of the Fast Causation Challenge.
-    Builds lots of features on top of a gradient boosting classifier.
+
+    **Description:** The Jarfo model is an ensemble method for causal discovery:
+    it builds lots of causally relevant features (such as ANM) with a
+    gradient boosting classifier on top.
+
+    **Data Type:** Continuous, Categorical, Mixed
+
+    **Assumptions:** This method needs a substantial amount of labelled causal
+    pairs to train itself. Its final performance depends on the training set
+    used.
 
     .. note::
        Ref : Fonollosa, José AR, "Conditional distribution variability measures for causality detection", 2016.
@@ -46,11 +55,14 @@ class Jarfo(PairwiseModel):
         >>> import networkx as nx
         >>> import matplotlib.pyplot as plt
         >>> from cdt.data import load_dataset
+        >>> from sklearn.model_selection import train_test_split
         >>> data, labels = load_dataset('tuebingen')
-        >>> obj = Jarfo()
+        >>> X_tr, X_te, y_tr, y_te = train_test_split(data, labels, train_size=.5)
         >>>
+        >>> obj = Jarfo()
+        >>> obj.fit(X_tr, y_tr)
         >>> # This example uses the predict() method
-        >>> output = obj.predict(data)
+        >>> output = obj.predict(X_te)
         >>>
         >>> # This example uses the orient_graph() method. The dataset used
         >>> # can be loaded using the cdt.data module

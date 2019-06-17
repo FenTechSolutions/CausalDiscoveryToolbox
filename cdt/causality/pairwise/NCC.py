@@ -92,7 +92,16 @@ class NCC_model(th.nn.Module):
 class NCC(PairwiseModel):
     u"""Neural Causation Coefficient.
 
-    Infer causal relationships between pairs of variables using mean embbedings of neural networks
+    **Description:** The Neural Causation Coefficient (NCC) is an approach
+    neural network relying only on Neural networks to build causally relevant
+    embeddings of distributions during training, and classyfing the pairs using
+    the last layers of the neural network.
+
+    **Data Type:** Continuous, Categorical, Mixed
+
+    **Assumptions:** This method needs a substantial amount of labelled causal
+    pairs to train itself. Its final performance depends on the training set
+    used.
 
     .. note:
         Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,
@@ -103,11 +112,14 @@ class NCC(PairwiseModel):
         >>> import networkx as nx
         >>> import matplotlib.pyplot as plt
         >>> from cdt.data import load_dataset
+        >>> from sklearn.model_selection import train_test_split
         >>> data, labels = load_dataset('tuebingen')
-        >>> obj = NCC()
+        >>> X_tr, X_te, y_tr, y_te = train_test_split(data, labels, train_size=.5)
         >>>
+        >>> obj = NCC()
+        >>> obj.fit(X_tr, y_tr)
         >>> # This example uses the predict() method
-        >>> output = obj.predict(data)
+        >>> output = obj.predict(X_te)
         >>>
         >>> # This example uses the orient_graph() method. The dataset used
         >>> # can be loaded using the cdt.data module
