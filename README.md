@@ -6,7 +6,7 @@ The Causal Discovery Toolbox is a package for causal inference in graphs and in 
 [![Dev Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=dev)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
 [![Hex.pm](https://img.shields.io/aur/license/pac.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
-[![version](https://img.shields.io/badge/version-0.5.0-yellow.svg?maxAge=259200)](#)
+[![version](https://img.shields.io/badge/version-0.5.1-yellow.svg?maxAge=259200)](#)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 
@@ -24,9 +24,9 @@ Docker images are available, including all the dependencies, and enabled functio
 
 |       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
 |:----------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------:|
-| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
-| Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.0-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/docker-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
-| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.0-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--docker-latest-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
+| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.1-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+| Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.1-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/docker-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
+| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.1-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--docker-latest-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
 
 ## Installation
 
