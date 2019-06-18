@@ -132,7 +132,7 @@ def parallel_run_generator(function, generator, njobs=None, gpus=None):
     Args:
         function (function): Function to execute.
         \*args: arguments going to be fed to the function.
-        generator (list or types.GeneratorType): generator with the arguments
+        generator (iterable): generator or list with the arguments
            for each run, each element much be a tuple of ([args], {kwargs}).
         njobs (int): Number of parallel executions (defaults to ``cdt.SETTINGS.NJOBS``).
         gpus (int): Number of GPU devices allocated to the job (defaults to ``cdt.SETTINGS.GPU``)
@@ -140,7 +140,7 @@ def parallel_run_generator(function, generator, njobs=None, gpus=None):
 
     Returns:
         list: concatenated list of outputs of executions. The order of elements
-        does not correspond to the initial order.
+        does correspond to the initial order.
     """
     njobs = SETTINGS.get_default(njobs=njobs)
     gpus = SETTINGS.get_default(gpu=gpus)
