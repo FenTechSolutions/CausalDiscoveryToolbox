@@ -37,7 +37,7 @@ from .model import PairwiseModel
 from ...utils.loss import MMDloss, TTestCriterion
 from ...utils.Settings import SETTINGS
 from ...utils.parallel import parallel_run
-from ...utils.io import MetaDataset, PairwiseDataset
+from ...utils.io import MetaDataset
 
 
 class GNN_model(th.nn.Module):

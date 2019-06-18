@@ -178,66 +178,6 @@ class SAM_generators(th.nn.Module):
         return self.generated_variables
 
 
-def plot_curves(i_batch, adv_loss, gen_loss, l1_reg, cols):
-    """Plot SAM's various losses."""
-    from matplotlib import pyplot as plt
-    if i_batch == 0:
-        try:
-            ax.clear()
-            ax.plot(range(len(adv_plt)), adv_plt, "r-",
-                    linewidth=1.5, markersize=4,
-                    label="Discriminator")
-            ax.plot(range(len(adv_plt)), gen_plt, "g-", linewidth=1.5,
-                    markersize=4, label="Generators")
-            ax.plot(range(len(adv_plt)), l1_plt, "b-",
-                    linewidth=1.5, markersize=4,
-                    label="L1-Regularization")
-            plt.legend()
-
-            adv_plt.append(adv_loss.cpu().data[0])
-            gen_plt.append(gen_loss.cpu().data[0] / cols)
-            l1_plt.append(l1_reg.cpu().data[0])
-
-            plt.pause(0.0001)
-
-        except NameError:
-            plt.ion()
-            fig, ax = plt.figure()
-            plt.xlabel("Epoch")
-            plt.ylabel("Losses")
-
-            plt.pause(0.0001)
-
-            adv_plt = [adv_loss.cpu().data[0]]
-            gen_plt = [gen_loss.cpu().data[0] / cols]
-            l1_plt = [l1_reg.cpu().data[0]]
-
-    else:
-        adv_plt.append(adv_loss.cpu().data[0])
-        gen_plt.append(gen_loss.cpu().data[0] / cols)
-        l1_plt.append(l1_reg.cpu().data[0])
-
-
-def plot_gen(epoch, batch, generated_variables, pairs_to_plot=[[0, 1]]):
-    """Plot generated pairs of variables."""
-    from matplotlib import pyplot as plt
-    if epoch == 0:
-        plt.ion()
-    plt.clf()
-    for (i, j) in pairs_to_plot:
-
-        plt.scatter(generated_variables[i].data.cpu().numpy(
-        ), batch.data.cpu().numpy()[:, j], label="Y -> X")
-        plt.scatter(batch.data.cpu().numpy()[
-            :, i], generated_variables[j].data.cpu().numpy(), label="X -> Y")
-
-        plt.scatter(batch.data.cpu().numpy()[:, i], batch.data.cpu().numpy()[
-            :, j], label="original data")
-        plt.legend()
-
-    plt.pause(0.01)
-
-
 def run_SAM(df_data, skeleton=None, device=None, **kwargs):
     """Execute the SAM model.
 
@@ -253,8 +193,6 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
     verbose = kwargs.get('verbose', True)
     regul_param = kwargs.get('regul_param', 0.1)
     dnh = kwargs.get('dnh', None)
-    plot = kwargs.get("plot", False)
-    plot_generated_pair = kwargs.get("plot_generated_pair", False)
 
     d_str = "Epoch: {} -- Disc: {} -- Gen: {} -- L1: {}"
     try:
@@ -364,12 +302,6 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
                 causal_filters.add_(filters.data)
             g_optimizer.step()
 
-            if plot:
-                plot_curves(i_batch, adv_loss, gen_loss, l1_reg, cols)
-
-            if plot_generated_pair and epoch % 200 == 0:
-                plot_gen(epoch, batch, generated_variables)
-
     return causal_filters.div_(test_epochs).cpu().numpy()
 
 
@@ -447,15 +379,13 @@ class SAM(GraphModel):
         self.verbose = SETTINGS.get_default(verbose=verbose)
 
     def predict(self, data, graph=None,
-                plot=False, plot_generated_pair=False, return_list_results=False):
+                return_list_results=False):
         """Execute SAM on a dataset given a skeleton or not.
 
         Args:
             data (pandas.DataFrame): Observational data for estimation of causal relationships by SAM
             skeleton (numpy.ndarray): A priori knowledge about the causal relationships as an adjacency matrix.
                       Can be fed either directed or undirected links.
-            plot (bool): Plot losses interactively. Not recommended if nruns>1
-            plot_generated_pair (bool): plots a generated pair interactively.  Not recommended if nruns>1
         Returns:
             networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term
             of the ith variable for the jth generator.
@@ -468,7 +398,7 @@ class SAM(GraphModel):
                                     dnh=self.dnh, gpus=self.gpus,
                                     train_epochs=self.train,
                                     test_epochs=self.test,
-                                    batch_size=self.batch_size, plot=plot,
+                                    batch_size=self.batch_size,
                                     verbose=self.verbose, nruns=self.nruns)
         else:
             list_out = [run_SAM(data, skeleton=graph,
@@ -477,7 +407,7 @@ class SAM(GraphModel):
                                 device=None,
                                 train_epochs=self.train,
                                 test_epochs=self.test, batch_size=self.batch_size,
-                                plot=plot, verbose=self.verbose)
+                                verbose=self.verbose)
                         for idx in range(self.nruns)]
         if return_list_results:
             return list_out

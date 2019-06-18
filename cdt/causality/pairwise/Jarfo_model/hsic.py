@@ -10,25 +10,25 @@ HSIC independence test
 import numpy as np
 
 
-def rbf_dot2(p1, p2, deg):
-    if p1.ndim == 1:
-        p1 = p1[:, np.newaxis]
-        p2 = p2[:, np.newaxis]
-
-    size1 = p1.shape
-    size2 = p2.shape
-
-    G = np.sum(p1 * p1, axis=1)[:, np.newaxis]
-    H = np.sum(p2 * p2, axis=1)[:, np.newaxis]
-
-    Q = np.tile(G, (1, size2[0]))
-    R = np.tile(H.T, (size1[0], 1))
-
-    H = Q + R - 2.0 * np.dot(p1, p2.T)
-
-    H = np.exp(-H / 2.0 / (deg ** 2))
-
-    return H
+# def rbf_dot2(p1, p2, deg):
+#     if p1.ndim == 1:
+#         p1 = p1[:, np.newaxis]
+#         p2 = p2[:, np.newaxis]
+#
+#     size1 = p1.shape
+#     size2 = p2.shape
+#
+#     G = np.sum(p1 * p1, axis=1)[:, np.newaxis]
+#     H = np.sum(p2 * p2, axis=1)[:, np.newaxis]
+#
+#     Q = np.tile(G, (1, size2[0]))
+#     R = np.tile(H.T, (size1[0], 1))
+#
+#     H = Q + R - 2.0 * np.dot(p1, p2.T)
+#
+#     H = np.exp(-H / 2.0 / (deg ** 2))
+#
+#     return H
 
 
 def rbf_dot(X, deg):

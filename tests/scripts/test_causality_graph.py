@@ -5,7 +5,7 @@ import pandas as pd
 import networkx as nx
 from cdt import SETTINGS
 from cdt.causality.graph import (CAM, GS, GIES, IAMB, CCDr, GES,
-                                 Fast_IAMB, PC, LiNGAM, SAM)
+                                 Fast_IAMB, PC, LiNGAM, SAM, MMPC, Inter_IAMB)
 from cdt.independence.stats import AdjMI
 
 
@@ -16,7 +16,7 @@ SETTINGS.verbose = False
 
 def test_graph():
     for method in [CAM, GS, GIES,  IAMB, Fast_IAMB,
-                   PC, LiNGAM, CCDr, GES]:
+                   PC, LiNGAM, CCDr, GES, MMPC, Inter_IAMB]:
         print(method)
         m = method()
         output1 = m.predict(data_graph)
@@ -26,7 +26,7 @@ def test_graph():
 
 def test_directed():
     for method in [GS, GIES,  IAMB, Fast_IAMB,
-                   PC, GES]:
+                   PC, GES, MMPC, Inter_IAMB]:
         print(method)
         m = method()
         output1 = m.predict(data_graph)
@@ -38,7 +38,7 @@ def test_directed():
 
 def test_undirected():
     for method in [GS, GIES,  IAMB, Fast_IAMB,
-                   PC, GES]:
+                   PC, GES, MMPC, Inter_IAMB]:
         print(method)
         s = AdjMI()
         un = s.predict_undirected_graph(data_graph)
