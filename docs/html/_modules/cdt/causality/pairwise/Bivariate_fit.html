@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.Bivariate_fit &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.Bivariate_fit &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -203,10 +203,16 @@
 
 
 <div class="viewcode-block" id="BivariateFit"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.BivariateFit">[docs]</a><span class="k">class</span> <span class="nc">BivariateFit</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Bivariate Fit model.</span>
-<span class="sd">    Based itself on a best-fit criterion based on a Gaussian Process regressor.</span>
-<span class="sd">    Used as weak baseline.</span>
+    <span class="sd">&quot;&quot;&quot;Bivariate Fit model.</span>
+
+<span class="sd">    **Description:** The bivariate fit model is  based onon a best-fit criterion</span>
+<span class="sd">    relying on a Gaussian Process regressor. Used as weak baseline.</span>
+
+<span class="sd">    **Data Type**: Continuous</span>
+
+<span class="sd">    **Assumptions**: This is often a model used to show that correlation</span>
+<span class="sd">    :math:`\\neq` causation. It holds very weak performance, as it states that</span>
+<span class="sd">    the best predictive model is the causal model.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from cdt.causality.pairwise import BivariateFit</span>

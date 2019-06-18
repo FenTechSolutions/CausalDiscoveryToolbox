@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.LiNGAM &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.graph.LiNGAM &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -212,7 +212,21 @@
 
 
 <div class="viewcode-block" id="LiNGAM"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.LiNGAM">[docs]</a><span class="k">class</span> <span class="nc">LiNGAM</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;LiNGAM algorithm.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;LiNGAM algorithm **[R model]**.</span>
+
+
+<span class="sd">    **Description:** Linear Non-Gaussian Acyclic model. LiNGAM handles linear</span>
+<span class="sd">    structural equation models, where each variable is modeled as</span>
+<span class="sd">    :math:`X_j = \sum_k \alpha_k P_a^{k}(X_j) + E_j,  j \in [1,d]`,</span>
+<span class="sd">    with  :math:`P_a^{k}(X_j)` the :math:`k`-th parent of</span>
+<span class="sd">    :math:`X_j` and :math:`\alpha_k` a real scalar.</span>
+
+<span class="sd">    **Data Type:** Continuous</span>
+
+<span class="sd">    **Assumptions:** The underlying causal model is supposed to be composed of</span>
+<span class="sd">    linear mechanisms and non-gaussian data. Under those assumptions, it is</span>
+<span class="sd">    shown that causal structure is fully identifiable (even inside the Markov</span>
+<span class="sd">    equivalence class).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        verbose (bool): Sets the verbosity of the algorithm. Defaults to</span>

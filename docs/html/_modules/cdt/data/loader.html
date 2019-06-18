@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data.loader &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.data.loader &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -233,6 +233,10 @@
 <span class="sd">        tuple: (pandas.DataFrame, pandas.DataFrame or networkx.DiGraph) Standard</span>
 <span class="sd">        dataframe containing the data, and the target.</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; s_data, s_graph = load_dataset(&#39;sachs&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; t_data, t_labels = load_dataset(&#39;tuebingen&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dream</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dream4-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)]]</span>
     <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">:</span> <span class="n">load_tuebingen</span><span class="p">,</span> <span class="s1">&#39;sachs&#39;</span><span class="p">:</span> <span class="n">load_sachs</span><span class="p">}</span>

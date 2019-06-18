@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.CDS &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.CDS &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -253,11 +253,18 @@
 
 
 <div class="viewcode-block" id="CDS"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.CDS">[docs]</a><span class="k">class</span> <span class="nc">CDS</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Conditional Distribution Similarity Statistic</span>
+    <span class="sd">&quot;&quot;&quot;Conditional Distribution Similarity Statistic</span>
 
-<span class="sd">    Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.</span>
-<span class="sd">    The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</span>
+<span class="sd">    **Description:** The Conditional Distribution Similarity Statistic measures the</span>
+<span class="sd">    std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.</span>
+<span class="sd">    The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x). It is</span>
+<span class="sd">    a single feature of the Jarfo model.</span>
+
+<span class="sd">    **Data Type**: Continuous and Discrete</span>
+
+<span class="sd">    **Assumptions**: This approach is a statistical feature of the</span>
+<span class="sd">    joint distribution of the data mesuring the variance of the marginals, after</span>
+<span class="sd">    conditioning on bins.</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref : Fonollosa, José AR, &quot;Conditional distribution variability measures for causality detection&quot;, 2016.</span>

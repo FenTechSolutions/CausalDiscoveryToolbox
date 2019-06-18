@@ -100,6 +100,11 @@ cdt.causality.graph
 .. autoclass:: Fast_IAMB
    :members:
 
+:hidden:`Inter_IAMB`
+^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: Inter_IAMB
+   :members:
 
 :hidden:`MMPC`
 ^^^^^^^^^^^^^^^

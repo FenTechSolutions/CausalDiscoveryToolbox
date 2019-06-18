@@ -54,6 +54,16 @@ manages to launch the algorithm on the given data to the toolbox, ``.fit()`` all
 to train learning algorithms  Most of the algorithms are classes, and their
 parameters can be customized in the ``.__init__()`` function of the class.
 
+.. note::
+   The ``.predict()`` function is often implemented in the base class
+   (``cdt.causality.graph.GraphModel`` for causal graph algorithms).
+   ``.predict()`` is often a wrapper calling sub-functions depending on the
+   arguments fed to the functions. The sub-functions, such as
+   ``.orient_directed_graph()`` for ``cdt.causality.graph`` models (which is
+   called when a directed graph is fed as a second argument ), are
+   implemented and documented in the various algorithms.
+
+
 Hardware and algorithm settings
 -------------------------------
 The toolbox has a SETTINGS class that defines the hardware settings . Those

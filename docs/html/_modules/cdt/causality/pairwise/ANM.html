@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.ANM &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.ANM &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -279,18 +279,27 @@
 
 
 <div class="viewcode-block" id="ANM"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.ANM">[docs]</a><span class="k">class</span> <span class="nc">ANM</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Additive Noise model to infer causal relationships.</span>
+    <span class="sd">&quot;&quot;&quot;ANM algorithm.</span>
 
-<span class="sd">    Assuming that x-&gt;y then if the data follows an additive noise model, there is y=f(x)+E.</span>
-<span class="sd">    E being a noise variable and f a deterministic function. The causal inference bases itself on the independence</span>
+<span class="sd">    **Description**: The Additive noise model is one of the most popular</span>
+<span class="sd">    approaches for pairwise causality. It bases on the fitness of the data to</span>
+<span class="sd">    the additive noise model on one direction and the rejection of the model</span>
+<span class="sd">    on the other direction.</span>
+
+<span class="sd">    **Data Type**: Continuous</span>
+
+<span class="sd">    **Assumptions**: Assuming that :math:`x\\rightarrow y` then we suppose that</span>
+<span class="sd">    the data follows an additive noise model, i.e. :math:`y=f(x)+E`.</span>
+<span class="sd">    E being a noise variable and f a deterministic function.</span>
+<span class="sd">    The causal inference bases itself on the independence</span>
 <span class="sd">    between x and e.</span>
 <span class="sd">    It is proven that in such case if the data is generated using an additive noise model, the model would only be able</span>
 <span class="sd">    to fit in the true causal direction.</span>
-<span class="sd">    Ref: https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,</span>
 <span class="sd">       &quot;Nonlinear causal discovery with additive noise models&quot;, NIPS 2009</span>
+<span class="sd">       https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from cdt.causality.pairwise import ANM</span>

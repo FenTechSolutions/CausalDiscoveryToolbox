@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.CGNN &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.graph.CGNN &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -209,7 +209,6 @@
 <span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">...utils.graph</span> <span class="k">import</span> <span class="n">dagify_min_edge</span>
 <span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
-<span class="kn">from</span> <span class="nn">...utils.io</span> <span class="k">import</span> <span class="n">MetaDataset</span>
 
 
 <span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -393,9 +392,18 @@
 
 
 <div class="viewcode-block" id="CGNN"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.CGNN">[docs]</a><span class="k">class</span> <span class="nc">CGNN</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Causal Generative Neural Netwoks : Generate the whole causal graph in a</span>
-<span class="sd">    topological manner using neural networks and predict causal directions in</span>
-<span class="sd">    the graph.</span>
+    <span class="sd">&quot;&quot;&quot;Causal Generative Neural Netwoks</span>
+
+<span class="sd">    **Description:** Causal Generative Neural Networks. Score-method that</span>
+<span class="sd">    evaluates candidate graph by generating data following the topological</span>
+<span class="sd">    order of the graph using neural networks, and using MMD for evaluation.</span>
+
+<span class="sd">    **Data Type:** Continuous</span>
+
+<span class="sd">    **Assumptions:** The class of generative models is not restricted with a</span>
+<span class="sd">    hard contraint, but with the hyperparameter ``nh``. This algorithm greatly</span>
+<span class="sd">    benefits from bootstrapped runs (nruns &gt;=12 recommended), and is very</span>
+<span class="sd">    computationnally heavy. GPUs are recommended.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nh (int): Number of hidden units in each generative neural network.</span>

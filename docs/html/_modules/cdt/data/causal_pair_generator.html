@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data.causal_pair_generator &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.data.causal_pair_generator &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -219,6 +219,12 @@
 <span class="sd">        noise_coeff (float): Proportion of noise in the mechanisms.</span>
 <span class="sd">        initial_variable_generator (function): Function used to init variables</span>
 <span class="sd">            of the graph, defaults to a Gaussian Mixture model.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import CausalPairGenerator</span>
+<span class="sd">        &gt;&gt;&gt; generator = (&#39;linear&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; data, labels = generator.generate(100, npoints=500)</span>
+<span class="sd">        &gt;&gt;&gt; generator.to_csv(&#39;generated_pairs&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">causal_mechanism</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">normal_noise</span><span class="p">,</span>

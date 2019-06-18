@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.io &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.utils.io &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -202,16 +202,20 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 
 
-<div class="viewcode-block" id="read_causal_pairs"><a class="viewcode-back" href="../../../utils.html#cdt.utils.io.read_causal_pairs">[docs]</a><span class="k">def</span> <span class="nf">read_causal_pairs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="read_causal_pairs"><a class="viewcode-back" href="../../../utils.html#cdt.utils.io.read_causal_pairs">[docs]</a><span class="k">def</span> <span class="nf">read_causal_pairs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a ChaLearn Cause effect pairs challenge format into numpy.ndarray.</span>
 
-<span class="sd">    :param filename: path of the file to read or DataFrame containing the data</span>
-<span class="sd">    :type filename: str or pandas.DataFrame</span>
-<span class="sd">    :param scale: Scale the data</span>
-<span class="sd">    :type scale: bool</span>
-<span class="sd">    :param kwargs: parameters to be passed to pandas.read_csv</span>
-<span class="sd">    :return: Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))</span>
-<span class="sd">    :rtype: pandas.DataFrame</span>
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str or pandas.DataFrame): path of the file to read or DataFrame containing the data</span>
+<span class="sd">        scale (bool): Scale the data</span>
+<span class="sd">        \**kwargs: parameters to be passed to pandas.read_csv</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pandas.DataFrame: Dataframe composed of (SampleID, a (numpy.ndarray) , b (numpy.ndarray))</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils import read_causal_pairs</span>
+<span class="sd">        &gt;&gt;&gt; data = read_causal_pairs(&#39;file.tsv&#39;, scale=True, sep=&#39;\\t&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">convert_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a CCEPC row into numpy.ndarrays.</span>
@@ -264,6 +268,10 @@
 <span class="sd">    :return: networkx graph containing the graph.</span>
 <span class="sd">    :rtype: **networkx.DiGraph** or **networkx.Graph** depending on the</span>
 <span class="sd">      ``directed`` parameter.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils import read_adjacency_matrix</span>
+<span class="sd">        &gt;&gt;&gt; data = read_causal_pairs(&#39;graph_file.csv&#39;, directed=False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -292,6 +300,9 @@
 <span class="sd">    :rtype: **networkx.DiGraph** or **networkx.Graph** depending on the</span>
 <span class="sd">      ``directed`` parameter.</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils import read_adjacency_matrix</span>
+<span class="sd">        &gt;&gt;&gt; data = read_causal_pairs(&#39;graph_file.csv&#39;, directed=False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

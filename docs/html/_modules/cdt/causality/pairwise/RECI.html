@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.RECI &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.RECI &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -202,8 +202,16 @@
 
 
 <div class="viewcode-block" id="RECI"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.RECI">[docs]</a><span class="k">class</span> <span class="nc">RECI</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    RECI, Best-fit mse with monome regressor and [0,1] rescaling</span>
+    <span class="sd">&quot;&quot;&quot;RECI model.</span>
+
+<span class="sd">    **Description:** Regression Error based Causal Inference (RECI)</span>
+<span class="sd">    relies on a best-fit mse with monome regressor and [0,1] rescaling to</span>
+<span class="sd">    infer causal direction.</span>
+
+<span class="sd">    **Data Type:** Continuous (depends on the regressor used)</span>
+
+<span class="sd">    **Assumptions:** No independence tests are used, but the assumptions on</span>
+<span class="sd">    the model depend on the regessor used for RECI.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        degree (int): Degree of the polynomial regression.</span>

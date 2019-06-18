@@ -45,3 +45,5 @@ cdt.utils.parallel
 .. automodule:: cdt.utils.parallel
 
 .. autofunction:: parallel_run
+
+.. autofunction:: parallel_run_generator

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.bnlearn &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.graph.bnlearn &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -226,6 +226,8 @@
 <span class="sd">           score argument is not a permutation test.</span>
 <span class="sd">        optim (bool): See bnlearn-package for details.</span>
 <span class="sd">        verbose (bool): Sets the verbosity. Defaults to SETTINGS.verbose</span>
+
+<span class="sd">    .. _bnlearntests:</span>
 
 <span class="sd">    Available tests:</span>
 <span class="sd">        • discrete case (categorical variables)</span>
@@ -414,6 +416,18 @@
 <div class="viewcode-block" id="GS"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.GS">[docs]</a><span class="k">class</span> <span class="nc">GS</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Grow-Shrink algorithm.</span>
 
+<span class="sd">    **Description:** The Grow Shrink algorithm is a constraint based algorithm</span>
+<span class="sd">    to recover bayesian networks. It consists in two phases, one growing phase</span>
+<span class="sd">    in which nodes are added to the markov blanket based on conditional</span>
+<span class="sd">    independence and a shrinking phase in which most irrelevant nodes are</span>
+<span class="sd">    removed.</span>
+
+<span class="sd">    **Data Type:** Depends on the test used. Check</span>
+<span class="sd">    :ref:`here &lt;bnlearntests&gt;` for the list of available tests.</span>
+
+<span class="sd">    **Assumptions:** GS outputs a CPDAG, with additional assumptions depending</span>
+<span class="sd">    on the conditional test used.</span>
+
 <span class="sd">    .. note::</span>
 <span class="sd">       Margaritis D (2003).</span>
 <span class="sd">       Learning Bayesian Network Model Structure from Data</span>
@@ -449,6 +463,16 @@
 <div class="viewcode-block" id="IAMB"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.IAMB">[docs]</a><span class="k">class</span> <span class="nc">IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;IAMB algorithm.</span>
 
+<span class="sd">    **Description:** The is a bayesian constraint based algorithm</span>
+<span class="sd">    to recover Markov blankets in a forward selection and a modified backward</span>
+<span class="sd">    selection process.</span>
+
+<span class="sd">    **Data Type:** Depends on the test used. Check</span>
+<span class="sd">    :ref:`here &lt;bnlearntests&gt;` for the list of available tests.</span>
+
+<span class="sd">    **Assumptions:** IAMB outputs Markov blankets of nodes,</span>
+<span class="sd">    with additional assumptions depending on the conditional test used.</span>
+
 <span class="sd">    .. note::</span>
 <span class="sd">       Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   &quot;Algorithms  for  Large  Scale  Markov  Blanket</span>
 <span class="sd">       Discovery&quot;.  In &quot;Proceedings of the Sixteenth International Florida Artificial Intelligence Research</span>
@@ -482,6 +506,16 @@
 <div class="viewcode-block" id="Fast_IAMB"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.Fast_IAMB">[docs]</a><span class="k">class</span> <span class="nc">Fast_IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Fast IAMB algorithm.</span>
 
+<span class="sd">    **Description:** Similar to IAMB, Fast-IAMB adds speculation to provide more</span>
+<span class="sd">    computational performance without affecting the accuracy of markov blanket</span>
+<span class="sd">    recovery.</span>
+
+<span class="sd">    **Data Type:** Depends on the test used. Check</span>
+<span class="sd">    :ref:`here &lt;bnlearntests&gt;` for the list of available tests.</span>
+
+<span class="sd">    **Assumptions:** Fast-IAMB outputs markov blankets of nodes, with additional</span>
+<span class="sd">    assumptions depending on the conditional test used.</span>
+
 <span class="sd">    .. note::</span>
 <span class="sd">        Yaramakala S, Margaritis D (2005).  &quot;Speculative Markov Blanket Discovery for Optimal Feature</span>
 <span class="sd">        Selection&quot;.  In &quot;ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data</span>
@@ -512,23 +546,63 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fast.iamb&#39;</span></div>
 
 
-<span class="k">class</span> <span class="nc">Inter_IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Inter IAMB algorithm.</span>
+<div class="viewcode-block" id="Inter_IAMB"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.Inter_IAMB">[docs]</a><span class="k">class</span> <span class="nc">Inter_IAMB</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interleaved IAMB algorithm.</span>
+
+<span class="sd">    **Description:** Similar to IAMB, Interleaved-IAMB has a progressive</span>
+<span class="sd">    forward selection minimizing false positives.</span>
+
+<span class="sd">    **Data Type:** Depends on the test used. Check</span>
+<span class="sd">    :ref:`here &lt;bnlearntests&gt;` for the list of available tests.</span>
+
+<span class="sd">    **Assumptions:** Inter-IAMB outputs markov blankets of nodes, with additional</span>
+<span class="sd">    assumptions depending on the conditional test used.</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Yaramakala S, Margaritis D (2005).  &quot;Speculative Markov Blanket Discovery for Optimal Feature</span>
 <span class="sd">       Selection&quot;.  In &quot;ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-</span>
 <span class="sd">       ing&quot;, pp. 809-812. IEEE Computer Society.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import Inter_IAMB</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; data, graph = load_dataset(&quot;sachs&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; obj = Inter_IAMB()</span>
+<span class="sd">        &gt;&gt;&gt; #The predict() method works without a graph, or with a</span>
+<span class="sd">        &gt;&gt;&gt; #directed or undirected graph provided as an input</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)    #No graph provided as an argument</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, nx.Graph(graph))  #With an undirected graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(data, graph)  #With a directed graph</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; #To view the graph created, run the below commands:</span>
+<span class="sd">        &gt;&gt;&gt; nx.draw_networkx(output, font_size=8)</span>
+<span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Inter_IAMB</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;inter.iamb&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALGORITHM}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;inter.iamb&#39;</span></div>
 
 
 <div class="viewcode-block" id="MMPC"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.bnlearn.MMPC">[docs]</a><span class="k">class</span> <span class="nc">MMPC</span><span class="p">(</span><span class="n">BNlearnAlgorithm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Max-Min Parents-Children algorithm.</span>
+
+<span class="sd">    **Description:** The Max-Min Parents-Children (MMPC) is a 2-phase algorithm</span>
+<span class="sd">    with a forward pass and a backward pass. The forward phase adds recursively</span>
+<span class="sd">    the variables that possess the highest association with the target</span>
+<span class="sd">    conditionally to the already selected variables. The backward pass tests</span>
+<span class="sd">    d-separability of variables conditionally to the set and subsets of the</span>
+<span class="sd">    selected variables.</span>
+
+<span class="sd">    **Data Type:** Depends on the test used. Check</span>
+<span class="sd">    :ref:`here &lt;bnlearntests&gt;` for the list of available tests.</span>
+
+<span class="sd">    **Assumptions:** MMPC outputs markov blankets of nodes, with additional</span>
+<span class="sd">    assumptions depending on the conditional test used.</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Tsamardinos I, Aliferis CF, Statnikov A (2003). &quot;Time and Sample Efficient Discovery of Markov</span>

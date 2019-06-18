@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.GES &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.graph.GES &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -212,7 +212,17 @@
 
 
 <div class="viewcode-block" id="GES"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.GES">[docs]</a><span class="k">class</span> <span class="nc">GES</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;GES algorithm.</span>
+    <span class="sd">&quot;&quot;&quot;GES algorithm **[R model]**.</span>
+
+<span class="sd">    **Description:** Greedy Equivalence Search algorithm. A score-based</span>
+<span class="sd">    Bayesian algorithm that searches heuristically the graph which minimizes</span>
+<span class="sd">    a likelihood score on the data.</span>
+
+<span class="sd">    **Data Type:** Continuous (``score=&#39;obs&#39;``) or Categorical (``score=&#39;int&#39;``)</span>
+
+<span class="sd">    **Assumptions:** The output is a Partially Directed Acyclic Graph (PDAG)</span>
+<span class="sd">    (A markov equivalence class). The available scores assume linearity of</span>
+<span class="sd">    mechanisms and gaussianity of the data.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        score (str): Sets the score used by GES.</span>
