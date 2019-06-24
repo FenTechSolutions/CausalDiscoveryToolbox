@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.IGCI &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.IGCI &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -247,7 +247,17 @@
 
 
 <div class="viewcode-block" id="IGCI"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.IGCI">[docs]</a><span class="k">class</span> <span class="nc">IGCI</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Information Geometric Causal Inference (IGCI) model.</span>
+    <span class="sd">&quot;&quot;&quot;IGCI model.</span>
+
+<span class="sd">    **Description:** Information Geometric Causal Inference is a pairwise causal</span>
+<span class="sd">    discovery model model considering the case of minimal noise :math:`Y=f(X)`,</span>
+<span class="sd">    with :math:`f` invertible and leverages assymetries to predict causal</span>
+<span class="sd">    directions.</span>
+
+<span class="sd">    **Data Type:** Continuous</span>
+
+<span class="sd">    **Assumptions:** Only the case of invertible functions only is considered, as the</span>
+<span class="sd">    prediction would be trivial otherwise if the noise is minimal.</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,</span>

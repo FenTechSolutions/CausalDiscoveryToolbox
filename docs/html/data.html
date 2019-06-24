@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.data &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -212,6 +212,13 @@ of the graph, defaults to a Gaussian Mixture model.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">CausalPairGenerator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;generated_pairs&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.data.CausalPairGenerator.generate">
 <code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param">npairs</em>, <em class="sig-param">npoints=500</em>, <em class="sig-param">rescale=True</em>, <em class="sig-param">njobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.generate" title="Permalink to this definition">¶</a></dt>
@@ -270,6 +277,13 @@ of the graph, defaults to a Gaussian Mixture model.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">AcyclicGraphGenerator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span> <span class="o">=</span> <span class="n">AcyclicGraphGenerator</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;generated_graph&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="cdt.data.AcyclicGraphGenerator.generate">
 <code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param">rescale=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
@@ -376,6 +390,12 @@ dataframe containing the data, and the target.</p>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_data</span><span class="p">,</span> <span class="n">s_graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;sachs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t_data</span><span class="p">,</span> <span class="n">t_labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

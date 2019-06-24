@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.CAM &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.graph.CAM &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -212,7 +212,19 @@
 
 
 <div class="viewcode-block" id="CAM"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.CAM">[docs]</a><span class="k">class</span> <span class="nc">CAM</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;CAM algorithm.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;CAM algorithm **[R model]**.</span>
+
+<span class="sd">    **Description:** Causal Additive models, a causal discovery algorithm</span>
+<span class="sd">    relying on fitting Gaussian Processes on data, while considering all noises</span>
+<span class="sd">    additives and additive contributions of variables.</span>
+
+<span class="sd">    **Data Type:** Continuous</span>
+
+<span class="sd">    **Assumptions:** The data follows a generalized additive noise model:</span>
+<span class="sd">    each variable :math:`X_i`  in the graph :math:`\mathcal{G}` is generated</span>
+<span class="sd">    following the model :math:`X_i = \sum_{X_j \in \mathcal{G}} f(X_j) + \epsilon_i`,</span>
+<span class="sd">    :math:`\epsilon_i` representing mutually independent noises variables</span>
+<span class="sd">    accounting for unobserved variables.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        score (str): Score used to fit the gaussian processes.</span>
@@ -249,9 +261,9 @@
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref:</span>
-<span class="sd">       J. Peters, J. Mooij, D. Janzing, B. Schölkopf:</span>
-<span class="sd">       Causal Discovery with Continuous Additive Noise Models,</span>
-<span class="sd">       JMLR 15:2009-2053, 2014.</span>
+<span class="sd">       Bühlmann, P., Peters, J., &amp; Ernest, J. (2014). CAM: Causal additive</span>
+<span class="sd">       models, high-dimensional order search and penalized regression. The</span>
+<span class="sd">       Annals of Statistics, 42(6), 2526-2556.</span>
 
 <span class="sd">    .. warning::</span>
 <span class="sd">       This implementation of CAM does not support starting with a graph.</span>

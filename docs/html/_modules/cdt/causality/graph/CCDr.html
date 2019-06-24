@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.CCDr &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.graph.CCDr &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -212,11 +212,21 @@
 
 
 <div class="viewcode-block" id="CCDr"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.CCDr">[docs]</a><span class="k">class</span> <span class="nc">CCDr</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;CCDr algorithm.</span>
-<span class="sd">    Concave penalized Coordinate Descent with reparametrization) structure</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;CCDr algorithm **[R model]**.</span>
+
+<span class="sd">    **Description:** Concave penalized Coordinate Descent with reparametrization) structure</span>
 <span class="sd">    learning algorithm as described in Aragam and Zhou (2015). This is a fast,</span>
 <span class="sd">    score based method for learning Bayesian networks that uses sparse</span>
 <span class="sd">    regularization and block-cyclic coordinate descent.</span>
+
+<span class="sd">    **Data Type:** Continuous</span>
+
+<span class="sd">    **Assumptions:** This model does not restrict or prune the search space in</span>
+<span class="sd">    any way, does not assume faithfulness, does not require a known variable</span>
+<span class="sd">    ordering, works on observational data (i.e. without experimental</span>
+<span class="sd">    interventions), works effectively in high dimensions, and is capable of</span>
+<span class="sd">    handling graphs with several thousand variables. The output of this model</span>
+<span class="sd">    is a DAG.</span>
 
 <span class="sd">    Imported from the &#39;sparsebn&#39; package.</span>
 

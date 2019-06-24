@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.loss &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.utils.loss &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -202,6 +202,14 @@
 <span class="sd">        max_iter (int): Maximum number of iterations authorized</span>
 <span class="sd">        runs_per_iter (int): Number of runs performed per iteration</span>
 <span class="sd">        threshold (float): p-value threshold, under which the loop is stopped.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.loss import TTestCriterion</span>
+<span class="sd">        &gt;&gt;&gt; l = TTestCriterion(50,5)</span>
+<span class="sd">        &gt;&gt;&gt; x, y = [], []</span>
+<span class="sd">        &gt;&gt;&gt; while l.loop(x, y):</span>
+<span class="sd">            ...     # compute loop and update results in x, y</span>
+<span class="sd">        &gt;&gt;&gt; x, y  # Two lists with significant difference in score</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">runs_per_iter</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TTestCriterion</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -234,7 +242,7 @@
 
 
 <div class="viewcode-block" id="MMDloss"><a class="viewcode-back" href="../../../utils.html#cdt.utils.loss.MMDloss">[docs]</a><span class="k">class</span> <span class="nc">MMDloss</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;&quot;**[torch.nn.Module]** Maximum Mean Discrepancy Metric to compare</span>
+    <span class="sd">&quot;&quot;&quot;**[torch.nn.Module]** Maximum Mean Discrepancy Metric to compare</span>
 <span class="sd">    empirical distributions.</span>
 
 <span class="sd">    The MMD score is defined by:</span>
@@ -272,6 +280,14 @@
 <span class="sd">        Ref: Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, </span>
 <span class="sd">        B., &amp; Smola, A. (2012). A kernel two-sample test.</span>
 <span class="sd">        Journal of Machine Learning Research, 13(Mar), 723-773.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.loss import MMDloss</span>
+<span class="sd">        &gt;&gt;&gt; import torch as th</span>
+<span class="sd">        &gt;&gt;&gt; x, y = th.randn(100,10), th.randn(100, 10)</span>
+<span class="sd">        &gt;&gt;&gt; mmd = MMDloss(100)  # 100 is the batch size</span>
+<span class="sd">        &gt;&gt;&gt; mmd(x, y)</span>
+<span class="sd">        0.0766</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">bandwidths</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -329,6 +345,13 @@
 <span class="sd">    Output: mml</span>
 <span class="sd">        + **mml** is the output of the forward pass and is differenciable. </span>
 <span class="sd">          torch.Tensor of shape `(1)`</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.loss import MomentMatchingLoss</span>
+<span class="sd">        &gt;&gt;&gt; import torch as th</span>
+<span class="sd">        &gt;&gt;&gt; x, y = th.randn(100,10), th.randn(100, 10)</span>
+<span class="sd">        &gt;&gt;&gt; mml = MomentMatchingLoss(4)</span>
+<span class="sd">        &gt;&gt;&gt; mml(x, y)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_moments</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>

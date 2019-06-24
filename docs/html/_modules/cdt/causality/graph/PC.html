@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.PC &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.graph.PC &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -212,7 +212,19 @@
 
 
 <div class="viewcode-block" id="PC"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.PC">[docs]</a><span class="k">class</span> <span class="nc">PC</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;PC algorithm by C.Glymour &amp; P.Sprites.</span>
+    <span class="sd">&quot;&quot;&quot;PC algorithm **[R model]**.</span>
+
+<span class="sd">    **Description:** PC (Peter - Clark) One of the most famous score based</span>
+<span class="sd">    approaches for causal discovery. Based on conditional tests on variables</span>
+<span class="sd">    and sets of variables, it proved itself to be really efficient.</span>
+
+<span class="sd">    **Data Type:** Continuous and discrete</span>
+
+<span class="sd">    **Assumptions:** This approach&#39;s complexity grows rapidly with the number</span>
+<span class="sd">    of variables, even for quick tests. Consider graphs &lt; 200 variables.</span>
+<span class="sd">    The model assumptions made by this approch mainly depend on the type of</span>
+<span class="sd">    test used. Kernel-based tests are also available. The prediction of PC</span>
+<span class="sd">    is a CPDAG (identifiability up to the Markov equivalence class).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        CItest (str): Test for conditional independence.</span>

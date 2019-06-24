@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.NCC &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.NCC &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -259,7 +259,16 @@
 <div class="viewcode-block" id="NCC"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.NCC">[docs]</a><span class="k">class</span> <span class="nc">NCC</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
     <span class="sa">u</span><span class="sd">&quot;&quot;&quot;Neural Causation Coefficient.</span>
 
-<span class="sd">    Infer causal relationships between pairs of variables using mean embbedings of neural networks</span>
+<span class="sd">    **Description:** The Neural Causation Coefficient (NCC) is an approach</span>
+<span class="sd">    neural network relying only on Neural networks to build causally relevant</span>
+<span class="sd">    embeddings of distributions during training, and classyfing the pairs using</span>
+<span class="sd">    the last layers of the neural network.</span>
+
+<span class="sd">    **Data Type:** Continuous, Categorical, Mixed</span>
+
+<span class="sd">    **Assumptions:** This method needs a substantial amount of labelled causal</span>
+<span class="sd">    pairs to train itself. Its final performance depends on the training set</span>
+<span class="sd">    used.</span>
 
 <span class="sd">    .. note:</span>
 <span class="sd">        Ref :  Lopez-Paz, D. and Nishihara, R. and Chintala, S. and Schölkopf, B. and Bottou, L.,</span>
@@ -270,11 +279,14 @@
 <span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
 <span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
 <span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; from sklearn.model_selection import train_test_split</span>
 <span class="sd">        &gt;&gt;&gt; data, labels = load_dataset(&#39;tuebingen&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; obj = NCC()</span>
+<span class="sd">        &gt;&gt;&gt; X_tr, X_te, y_tr, y_te = train_test_split(data, labels, train_size=.5)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; obj = NCC()</span>
+<span class="sd">        &gt;&gt;&gt; obj.fit(X_tr, y_tr)</span>
 <span class="sd">        &gt;&gt;&gt; # This example uses the predict() method</span>
-<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(X_te)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; # This example uses the orient_graph() method. The dataset used</span>
 <span class="sd">        &gt;&gt;&gt; # can be loaded using the cdt.data module</span>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.RCC &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.RCC &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -203,10 +203,19 @@
 
 
 <div class="viewcode-block" id="RCC"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.RCC">[docs]</a><span class="k">class</span> <span class="nc">RCC</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Randomized Causation Coefficient model.</span>
+    <span class="sd">&quot;&quot;&quot;Randomized Causation Coefficient model. 2nd approach in the Fast</span>
+<span class="sd">    Causation challenge.</span>
 
-<span class="sd">    Projection of the empirical distributions into a RKHS using random cosine</span>
-<span class="sd">    embeddings, then classfying the pairs using a random forest.</span>
+<span class="sd">    **Description:** The Randomized causation coefficient (RCC) relies on the</span>
+<span class="sd">    projection of the empirical distributions into a RKHS using random cosine</span>
+<span class="sd">    embeddings, then classfies the pairs using a random forest based on those</span>
+<span class="sd">    features.</span>
+
+<span class="sd">    **Data Type:** Continuous, Categorical, Mixed</span>
+
+<span class="sd">    **Assumptions:** This method needs a substantial amount of labelled causal</span>
+<span class="sd">    pairs to train itself. Its final performance depends on the training set</span>
+<span class="sd">    used.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rand_coeff (int): number of randomized coefficients</span>
@@ -226,11 +235,14 @@
 <span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
 <span class="sd">        &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
 <span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
+<span class="sd">        &gt;&gt;&gt; from sklearn.model_selection import train_test_split</span>
 <span class="sd">        &gt;&gt;&gt; data, labels = load_dataset(&#39;tuebingen&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; obj = RCC()</span>
+<span class="sd">        &gt;&gt;&gt; X_tr, X_te, y_tr, y_te = train_test_split(data, labels, train_size=.5)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; obj = Jarfo()</span>
+<span class="sd">        &gt;&gt;&gt; obj.fit(X_tr, y_tr)</span>
 <span class="sd">        &gt;&gt;&gt; # This example uses the predict() method</span>
-<span class="sd">        &gt;&gt;&gt; output = obj.predict(data)</span>
+<span class="sd">        &gt;&gt;&gt; output = obj.predict(X_te)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; # This example uses the orient_graph() method. The dataset used</span>
 <span class="sd">        &gt;&gt;&gt; # can be loaded using the cdt.data module</span>

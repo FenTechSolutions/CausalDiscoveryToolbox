@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.GNN &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality.pairwise.GNN &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -204,7 +204,7 @@
 <span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span><span class="p">,</span> <span class="n">TTestCriterion</span>
 <span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
-<span class="kn">from</span> <span class="nn">...utils.io</span> <span class="k">import</span> <span class="n">MetaDataset</span><span class="p">,</span> <span class="n">PairwiseDataset</span>
+<span class="kn">from</span> <span class="nn">...utils.io</span> <span class="k">import</span> <span class="n">MetaDataset</span>
 
 
 <span class="k">class</span> <span class="nc">GNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -307,9 +307,17 @@
 <div class="viewcode-block" id="GNN"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.GNN">[docs]</a><span class="k">class</span> <span class="nc">GNN</span><span class="p">(</span><span class="n">PairwiseModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Shallow Generative Neural networks.</span>
 
+<span class="sd">    **Description:** Pairwise variant of the CGNN approach,</span>
 <span class="sd">    Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural</span>
-<span class="sd">    network and a MMD loss. The causal direction is considered as the &quot;best-fit&quot;</span>
+<span class="sd">    network and a MMD loss. The causal direction is considered as the best-fit</span>
 <span class="sd">    between the two causal directions.</span>
+
+<span class="sd">    **Data Type:** Continuous</span>
+
+<span class="sd">    **Assumptions:** The class of generative models is not restricted with a</span>
+<span class="sd">    hard contraint, but with the hyperparameter ``nh``. This algorithm greatly</span>
+<span class="sd">    benefits from bootstrapped runs (nruns &gt;=12 recommended), and is very</span>
+<span class="sd">    computationnally heavy. GPUs are recommended.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nh (int): number of hidden units in the neural network</span>

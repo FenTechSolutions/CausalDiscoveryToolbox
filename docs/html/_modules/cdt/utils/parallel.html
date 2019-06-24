@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.parallel &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.utils.parallel &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -290,16 +290,16 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">parallel_run_generator</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">generator</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="parallel_run_generator"><a class="viewcode-back" href="../../../utils.html#cdt.utils.parallel.parallel_run_generator">[docs]</a><span class="k">def</span> <span class="nf">parallel_run_generator</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">generator</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Mutiprocessed execution of a function with parameters, with GPU management.</span>
 
-<span class="sd">    This function is useful when the used wants to execute a bootstrap on a</span>
-<span class="sd">    function on GPU devices, as joblib does not include such feature.</span>
+<span class="sd">    Variant of the ```cdt.utils.parallel.parallel_run``` function, with the</span>
+<span class="sd">    exception that this function takes an iterable as args, kwargs and nruns.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        function (function): Function to execute.</span>
 <span class="sd">        \*args: arguments going to be fed to the function.</span>
-<span class="sd">        generator (list or types.GeneratorType): generator with the arguments</span>
+<span class="sd">        generator (iterable): generator or list with the arguments</span>
 <span class="sd">           for each run, each element much be a tuple of ([args], {kwargs}).</span>
 <span class="sd">        njobs (int): Number of parallel executions (defaults to ``cdt.SETTINGS.NJOBS``).</span>
 <span class="sd">        gpus (int): Number of GPU devices allocated to the job (defaults to ``cdt.SETTINGS.GPU``)</span>
@@ -307,7 +307,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: concatenated list of outputs of executions. The order of elements</span>
-<span class="sd">        does not correspond to the initial order.</span>
+<span class="sd">        does correspond to the initial order.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
     <span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpus</span><span class="p">)</span>
@@ -333,7 +333,7 @@
         <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
     <span class="n">res</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span></div>
 </pre></div>
 
            </div>

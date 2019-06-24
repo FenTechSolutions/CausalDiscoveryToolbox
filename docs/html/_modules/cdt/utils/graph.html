@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.graph &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.utils.graph &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -202,6 +202,7 @@
     <span class="sd">&quot;&quot;&quot;Python implementation/translation of network deconvolution by MIT-KELLIS LAB.</span>
 
 <span class="sd">    .. note::</span>
+<span class="sd">       For networkx graphs, use the cdt.utils.graph.remove_indirect_links function</span>
 <span class="sd">       code author:gidonro [Github username](https://github.com/gidonro/Network-Deconvolution)</span>
 
 <span class="sd">       LICENSE: MIT-KELLIS LAB</span>
@@ -237,6 +238,15 @@
 <span class="sd">        represent direct edge weights of observed interactions.</span>
 <span class="sd">        Choosing top direct interactions (a cut-off) depends on the application and</span>
 <span class="sd">        is not implemented in this code.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.graph import network_deconvolution</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; # Generate sample data</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import AcyclicGraphGenerator</span>
+<span class="sd">        &gt;&gt;&gt; graph = AcyclicGraphGenerator(linear).generate()[1]</span>
+<span class="sd">        &gt;&gt;&gt; adj_mat = nx.adjacency_matrix(graph).todense()</span>
+<span class="sd">        &gt;&gt;&gt; output = network_deconvolution(adj_mat)</span>
 
 <span class="sd">     .. note::</span>
 <span class="sd">        To apply ND on regulatory networks, follow steps explained in Supplementary notes</span>
@@ -305,6 +315,9 @@
 <div class="viewcode-block" id="clr"><a class="viewcode-back" href="../../../utils.html#cdt.utils.graph.clr">[docs]</a><span class="k">def</span> <span class="nf">clr</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Implementation of the Context Likelihood or Relatedness Network algorithm.</span>
 
+<span class="sd">    .. note::</span>
+<span class="sd">       For networkx graphs, use the cdt.utils.graph.remove_indirect_links function</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
 <span class="sd">            it is a relevance matrix where mat(i,j) represents the similarity content</span>
@@ -314,6 +327,15 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components</span>
 <span class="sd">        represent direct edge weights of observed interactions.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.graph import clr</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; # Generate sample data</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import AcyclicGraphGenerator</span>
+<span class="sd">        &gt;&gt;&gt; graph = AcyclicGraphGenerator(linear).generate()[1]</span>
+<span class="sd">        &gt;&gt;&gt; adj_mat = nx.adjacency_matrix(graph).todense()</span>
+<span class="sd">        &gt;&gt;&gt; output = clr(adj_mat)</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref:Jeremiah J. Faith, Boris Hayete, Joshua T. Thaden, Ilaria Mogno, Jamey</span>
@@ -342,6 +364,9 @@
 <div class="viewcode-block" id="aracne"><a class="viewcode-back" href="../../../utils.html#cdt.utils.graph.aracne">[docs]</a><span class="k">def</span> <span class="nf">aracne</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Implementation of the ARACNE algorithm.</span>
 
+<span class="sd">    .. note::</span>
+<span class="sd">       For networkx graphs, use the cdt.utils.graph.remove_indirect_links function</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        mat (numpy.ndarray): matrix, if it is a square matrix, the program assumes</span>
 <span class="sd">            it is a relevance matrix where mat(i,j) represents the similarity content</span>
@@ -351,6 +376,15 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        numpy.ndarray: Output deconvolved matrix (direct dependency matrix). Its components</span>
 <span class="sd">        represent direct edge weights of observed interactions.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.graph import aracne</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; # Generate sample data</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import AcyclicGraphGenerator</span>
+<span class="sd">        &gt;&gt;&gt; graph = AcyclicGraphGenerator(linear).generate()[1]</span>
+<span class="sd">        &gt;&gt;&gt; adj_mat = nx.adjacency_matrix(graph).todense()</span>
+<span class="sd">        &gt;&gt;&gt; output = aracne(adj_mat)</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref: ARACNE: An Algorithm for the Reconstruction of Gene Regulatory Networks in a Mammalian Cellular Context</span>
@@ -389,6 +423,14 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">       networkx.Graph: graph with undirected links removed.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.graph import remove_indirect_links</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; # Generate sample data</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.data import AcyclicGraphGenerator</span>
+<span class="sd">        &gt;&gt;&gt; graph = AcyclicGraphGenerator(linear).generate()[1]</span>
+<span class="sd">        &gt;&gt;&gt; output = remove_indirect_links(graph, alg=&#39;aracne&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">alg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;aracne&quot;</span><span class="p">:</span> <span class="n">aracne</span><span class="p">,</span>
            <span class="s2">&quot;nd&quot;</span><span class="p">:</span> <span class="n">network_deconvolution</span><span class="p">,</span>
@@ -410,6 +452,15 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        networkx.DiGraph: DAG made out of the input graph.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from cdt.utils.graph import dagify_min_edge</span>
+<span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; # Generate sample data</span>
+<span class="sd">        &gt;&gt;&gt; graph = nx.DiGraph((np.ones(4) - np.eye(4)) *</span>
+<span class="sd">                               np.random.uniform(size=(4,4)))</span>
+<span class="sd">        &gt;&gt;&gt; output = dagify_min_edge(graph)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ncycles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">g</span><span class="p">)))</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_directed_acyclic_graph</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>

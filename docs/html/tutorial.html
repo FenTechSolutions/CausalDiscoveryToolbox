@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Get started &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>Get started &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -214,6 +214,16 @@ construction, graph utilities and settings.</p></li>
 manages to launch the algorithm on the given data to the toolbox, <code class="docutils literal notranslate"><span class="pre">.fit()</span></code> allows
 to train learning algorithms  Most of the algorithms are classes, and their
 parameters can be customized in the <code class="docutils literal notranslate"><span class="pre">.__init__()</span></code> function of the class.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">.predict()</span></code> function is often implemented in the base class
+(<code class="docutils literal notranslate"><span class="pre">cdt.causality.graph.GraphModel</span></code> for causal graph algorithms).
+<code class="docutils literal notranslate"><span class="pre">.predict()</span></code> is often a wrapper calling sub-functions depending on the
+arguments fed to the functions. The sub-functions, such as
+<code class="docutils literal notranslate"><span class="pre">.orient_directed_graph()</span></code> for <code class="docutils literal notranslate"><span class="pre">cdt.causality.graph</span></code> models (which is
+called when a directed graph is fed as a second argument ), are
+implemented and documented in the various algorithms.</p>
+</div>
 </div>
 <div class="section" id="hardware-and-algorithm-settings">
 <h3>Hardware and algorithm settings<a class="headerlink" href="#hardware-and-algorithm-settings" title="Permalink to this headline">¶</a></h3>

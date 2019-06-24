@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.0 documentation</title>
+  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -115,6 +115,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#gs"><span class="hidden-section">GS</span></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#iamb"><span class="hidden-section">IAMB</span></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#fast-iamb"><span class="hidden-section">Fast_IAMB</span></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inter-iamb"><span class="hidden-section">Inter_IAMB</span></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mmpc"><span class="hidden-section">MMPC</span></a></li>
 </ul>
 </li>
@@ -314,17 +315,24 @@ different functions in the priority order:</p>
 <dl class="class">
 <dt id="cdt.causality.pairwise.ANM">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">ANM</code><a class="reference internal" href="_modules/cdt/causality/pairwise/ANM.html#ANM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.ANM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Additive Noise model to infer causal relationships.</p>
-<p>Assuming that x-&gt;y then if the data follows an additive noise model, there is y=f(x)+E.
-E being a noise variable and f a deterministic function. The causal inference bases itself on the independence
+<dd><p>ANM algorithm.</p>
+<p><strong>Description</strong>: The Additive noise model is one of the most popular
+approaches for pairwise causality. It bases on the fitness of the data to
+the additive noise model on one direction and the rejection of the model
+on the other direction.</p>
+<p><strong>Data Type</strong>: Continuous</p>
+<p><strong>Assumptions</strong>: Assuming that <span class="math notranslate nohighlight">\(x\rightarrow y\)</span> then we suppose that
+the data follows an additive noise model, i.e. <span class="math notranslate nohighlight">\(y=f(x)+E\)</span>.
+E being a noise variable and f a deterministic function.
+The causal inference bases itself on the independence
 between x and e.
 It is proven that in such case if the data is generated using an additive noise model, the model would only be able
-to fit in the true causal direction.
-Ref: <a class="reference external" href="https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf">https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf</a></p>
+to fit in the true causal direction.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref : Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters, Jonas and Schölkopf, Bernhard,
-“Nonlinear causal discovery with additive noise models”, NIPS 2009</p>
+“Nonlinear causal discovery with additive noise models”, NIPS 2009
+<a class="reference external" href="https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf">https://papers.nips.cc/paper/3548-nonlinear-causal-discovery-with-additive-noise-models.pdf</a></p>
 </div>
 <p class="rubric">Example</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">ANM</span>
@@ -392,9 +400,13 @@ Ref: <a class="reference external" href="https://papers.nips.cc/paper/3548-nonli
 <dl class="class">
 <dt id="cdt.causality.pairwise.BivariateFit">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">BivariateFit</code><span class="sig-paren">(</span><em class="sig-param">ffactor=2</em>, <em class="sig-param">maxdev=3</em>, <em class="sig-param">minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/Bivariate_fit.html#BivariateFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.BivariateFit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bivariate Fit model.
-Based itself on a best-fit criterion based on a Gaussian Process regressor.
-Used as weak baseline.</p>
+<dd><p>Bivariate Fit model.</p>
+<p><strong>Description:</strong> The bivariate fit model is  based onon a best-fit criterion
+relying on a Gaussian Process regressor. Used as weak baseline.</p>
+<p><strong>Data Type</strong>: Continuous</p>
+<p><strong>Assumptions</strong>: This is often a model used to show that correlation
+<span class="math notranslate nohighlight">\(\neq\)</span> causation. It holds very weak performance, as it states that
+the best predictive model is the causal model.</p>
 <p class="rubric">Example</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">BivariateFit</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
@@ -462,8 +474,14 @@ Used as weak baseline.</p>
 <dt id="cdt.causality.pairwise.CDS">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">CDS</code><span class="sig-paren">(</span><em class="sig-param">ffactor=2</em>, <em class="sig-param">maxdev=3</em>, <em class="sig-param">minc=12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/CDS.html#CDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.CDS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Conditional Distribution Similarity Statistic</p>
-<p>Measuring the std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
-The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
+<p><strong>Description:</strong> The Conditional Distribution Similarity Statistic measures the
+std. of the rescaled values of y (resp. x) after binning in the x (resp. y) direction.
+The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x). It is
+a single feature of the Jarfo model.</p>
+<p><strong>Data Type</strong>: Continuous and Discrete</p>
+<p><strong>Assumptions</strong>: This approach is a statistical feature of the
+joint distribution of the data mesuring the variance of the marginals, after
+conditioning on bins.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
@@ -535,9 +553,15 @@ The lower the std. the more likely the pair to be x-&gt;y (resp. y-&gt;x).</p>
 <dt id="cdt.causality.pairwise.GNN">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">GNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ttest_threshold=0.01</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">nb_max_runs=16</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">dataloader_workers=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shallow Generative Neural networks.</p>
-<p>Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural
-network and a MMD loss. The causal direction is considered as the “best-fit”
+<p><strong>Description:</strong> Pairwise variant of the CGNN approach,
+Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural
+network and a MMD loss. The causal direction is considered as the best-fit
 between the two causal directions.</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> The class of generative models is not restricted with a
+hard contraint, but with the hyperparameter <code class="docutils literal notranslate"><span class="pre">nh</span></code>. This algorithm greatly
+benefits from bootstrapped runs (nruns &gt;=12 recommended), and is very
+computationnally heavy. GPUs are recommended.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -648,7 +672,14 @@ classify. Either a tuple or a torch dataset.</p>
 <dl class="class">
 <dt id="cdt.causality.pairwise.IGCI">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">IGCI</code><a class="reference internal" href="_modules/cdt/causality/pairwise/IGCI.html#IGCI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.IGCI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Information Geometric Causal Inference (IGCI) model.</p>
+<dd><p>IGCI model.</p>
+<p><strong>Description:</strong> Information Geometric Causal Inference is a pairwise causal
+discovery model model considering the case of minimal noise <span class="math notranslate nohighlight">\(Y=f(X)\)</span>,
+with <span class="math notranslate nohighlight">\(f\)</span> invertible and leverages assymetries to predict causal
+directions.</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> Only the case of invertible functions only is considered, as the
+prediction would be trivial otherwise if the noise is minimal.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>P. Daniušis, D. Janzing, J. Mooij, J. Zscheischler, B. Steudel,
@@ -709,8 +740,14 @@ or integral)}</p></li>
 <dt id="cdt.causality.pairwise.Jarfo">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">Jarfo</code><a class="reference internal" href="_modules/cdt/causality/pairwise/Jarfo.html#Jarfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.Jarfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Jarfo model, 2nd of the Cause Effect Pairs challenge,
-1st of the Fast Causation Challenge.
-Builds lots of features on top of a gradient boosting classifier.</p>
+1st of the Fast Causation Challenge.</p>
+<p><strong>Description:</strong> The Jarfo model is an ensemble method for causal discovery:
+it builds lots of causally relevant features (such as ANM) with a
+gradient boosting classifier on top.</p>
+<p><strong>Data Type:</strong> Continuous, Categorical, Mixed</p>
+<p><strong>Assumptions:</strong> This method needs a substantial amount of labelled causal
+pairs to train itself. Its final performance depends on the training set
+used.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref : Fonollosa, José AR, “Conditional distribution variability measures for causality detection”, 2016.</p>
@@ -720,11 +757,14 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">Jarfo</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_te</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">Jarfo</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_te</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
@@ -807,17 +847,27 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <dt id="cdt.causality.pairwise.NCC">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">NCC</code><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.NCC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Neural Causation Coefficient.</p>
-<p>Infer causal relationships between pairs of variables using mean embbedings of neural networks</p>
+<p><strong>Description:</strong> The Neural Causation Coefficient (NCC) is an approach
+neural network relying only on Neural networks to build causally relevant
+embeddings of distributions during training, and classyfing the pairs using
+the last layers of the neural network.</p>
+<p><strong>Data Type:</strong> Continuous, Categorical, Mixed</p>
+<p><strong>Assumptions:</strong> This method needs a substantial amount of labelled causal
+pairs to train itself. Its final performance depends on the training set
+used.</p>
 <p class="rubric">Example</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.pairwise</span> <span class="k">import</span> <span class="n">NCC</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">NCC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_te</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">NCC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_te</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
@@ -897,9 +947,16 @@ Builds lots of features on top of a gradient boosting classifier.</p>
 <dl class="class">
 <dt id="cdt.causality.pairwise.RCC">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">RCC</code><span class="sig-paren">(</span><em class="sig-param">rand_coeff=333</em>, <em class="sig-param">nb_estimators=500</em>, <em class="sig-param">nb_min_leaves=20</em>, <em class="sig-param">max_depth=None</em>, <em class="sig-param">s=10</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RCC.html#RCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RCC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Randomized Causation Coefficient model.</p>
-<p>Projection of the empirical distributions into a RKHS using random cosine
-embeddings, then classfying the pairs using a random forest.</p>
+<dd><p>Randomized Causation Coefficient model. 2nd approach in the Fast
+Causation challenge.</p>
+<p><strong>Description:</strong> The Randomized causation coefficient (RCC) relies on the
+projection of the empirical distributions into a RKHS using random cosine
+embeddings, then classfies the pairs using a random forest based on those
+features.</p>
+<p><strong>Data Type:</strong> Continuous, Categorical, Mixed</p>
+<p><strong>Assumptions:</strong> This method needs a substantial amount of labelled causal
+pairs to train itself. Its final performance depends on the training set
+used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -923,11 +980,14 @@ embeddings, then classfying the pairs using a random forest.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">RCC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_te</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">Jarfo</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the predict() method</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_te</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># This example uses the orient_graph() method. The dataset used</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># can be loaded using the cdt.data module</span>
@@ -998,7 +1058,13 @@ embeddings, then classfying the pairs using a random forest.</p>
 <dl class="class">
 <dt id="cdt.causality.pairwise.RECI">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">RECI</code><span class="sig-paren">(</span><em class="sig-param">degree=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/RECI.html#RECI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.RECI" title="Permalink to this definition">¶</a></dt>
-<dd><p>RECI, Best-fit mse with monome regressor and [0,1] rescaling</p>
+<dd><p>RECI model.</p>
+<p><strong>Description:</strong> Regression Error based Causal Inference (RECI)
+relies on a best-fit mse with monome regressor and [0,1] rescaling to
+infer causal direction.</p>
+<p><strong>Data Type:</strong> Continuous (depends on the regressor used)</p>
+<p><strong>Assumptions:</strong> No independence tests are used, but the assumptions on
+the model depend on the regessor used for RECI.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>degree</strong> (<em>int</em>) – Degree of the polynomial regression.</p>
@@ -1164,7 +1230,7 @@ score argument is not a permutation test.</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="simple">
+<dl class="simple" id="bnlearntests">
 <dt>Available tests:</dt><dd><ul class="simple">
 <li><dl class="simple">
 <dt>discrete case (categorical variables)</dt><dd><dl class="simple">
@@ -1304,6 +1370,15 @@ factor). Only the asymptotic χ2 test (mi-cg) is implemented.</p>
 <dt id="cdt.causality.graph.bnlearn.GS">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">GS</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#GS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.GS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grow-Shrink algorithm.</p>
+<p><strong>Description:</strong> The Grow Shrink algorithm is a constraint based algorithm
+to recover bayesian networks. It consists in two phases, one growing phase
+in which nodes are added to the markov blanket based on conditional
+independence and a shrinking phase in which most irrelevant nodes are
+removed.</p>
+<p><strong>Data Type:</strong> Depends on the test used. Check
+<a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
+<p><strong>Assumptions:</strong> GS outputs a CPDAG, with additional assumptions depending
+on the conditional test used.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Margaritis D (2003).
@@ -1340,6 +1415,13 @@ CMU-CS-03-153</p>
 <dt id="cdt.causality.graph.bnlearn.IAMB">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.IAMB" title="Permalink to this definition">¶</a></dt>
 <dd><p>IAMB algorithm.</p>
+<p><strong>Description:</strong> The is a bayesian constraint based algorithm
+to recover Markov blankets in a forward selection and a modified backward
+selection process.</p>
+<p><strong>Data Type:</strong> Depends on the test used. Check
+<a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
+<p><strong>Assumptions:</strong> IAMB outputs Markov blankets of nodes,
+with additional assumptions depending on the conditional test used.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   “Algorithms  for  Large  Scale  Markov  Blanket
@@ -1374,6 +1456,13 @@ Society Conference”, pp. 376-381. AAAI Press.</p>
 <dt id="cdt.causality.graph.bnlearn.Fast_IAMB">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">Fast_IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#Fast_IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Fast_IAMB" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fast IAMB algorithm.</p>
+<p><strong>Description:</strong> Similar to IAMB, Fast-IAMB adds speculation to provide more
+computational performance without affecting the accuracy of markov blanket
+recovery.</p>
+<p><strong>Data Type:</strong> Depends on the test used. Check
+<a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
+<p><strong>Assumptions:</strong> Fast-IAMB outputs markov blankets of nodes, with additional
+assumptions depending on the conditional test used.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Yaramakala S, Margaritis D (2005).  “Speculative Markov Blanket Discovery for Optimal Feature
@@ -1402,12 +1491,62 @@ Mining”, pp. 809-812. IEEE Computer Society.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="inter-iamb">
+<h4><span class="hidden-section">Inter_IAMB</span><a class="headerlink" href="#inter-iamb" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="cdt.causality.graph.bnlearn.Inter_IAMB">
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">Inter_IAMB</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#Inter_IAMB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.Inter_IAMB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interleaved IAMB algorithm.</p>
+<p><strong>Description:</strong> Similar to IAMB, Interleaved-IAMB has a progressive
+forward selection minimizing false positives.</p>
+<p><strong>Data Type:</strong> Depends on the test used. Check
+<a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
+<p><strong>Assumptions:</strong> Inter-IAMB outputs markov blankets of nodes, with additional
+assumptions depending on the conditional test used.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Yaramakala S, Margaritis D (2005).  “Speculative Markov Blanket Discovery for Optimal Feature
+Selection”.  In “ICDM ’05:  Proceedings of the Fifth IEEE International Conference on Data Min-
+ing”, pp. 809-812. IEEE Computer Society.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">Inter_IAMB</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">Inter_IAMB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
 <div class="section" id="mmpc">
 <h4><span class="hidden-section">MMPC</span><a class="headerlink" href="#mmpc" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="cdt.causality.graph.bnlearn.MMPC">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.bnlearn.</code><code class="sig-name descname">MMPC</code><a class="reference internal" href="_modules/cdt/causality/graph/bnlearn.html#MMPC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.bnlearn.MMPC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Max-Min Parents-Children algorithm.</p>
+<p><strong>Description:</strong> The Max-Min Parents-Children (MMPC) is a 2-phase algorithm
+with a forward pass and a backward pass. The forward phase adds recursively
+the variables that possess the highest association with the target
+conditionally to the already selected variables. The backward pass tests
+d-separability of variables conditionally to the set and subsets of the
+selected variables.</p>
+<p><strong>Data Type:</strong> Depends on the test used. Check
+<a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
+<p><strong>Assumptions:</strong> MMPC outputs markov blankets of nodes, with additional
+assumptions depending on the conditional test used.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Tsamardinos I, Aliferis CF, Statnikov A (2003). “Time and Sample Efficient Discovery of Markov
@@ -1445,7 +1584,16 @@ Machine Learning,65(1), 31-78.</p>
 <dl class="class">
 <dt id="cdt.causality.graph.CAM">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">CAM</code><span class="sig-paren">(</span><em class="sig-param">score='nonlinear'</em>, <em class="sig-param">cutoff=0.001</em>, <em class="sig-param">variablesel=True</em>, <em class="sig-param">selmethod='gamboost'</em>, <em class="sig-param">pruning=False</em>, <em class="sig-param">prunmethod='gam'</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CAM.html#CAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CAM" title="Permalink to this definition">¶</a></dt>
-<dd><p>CAM algorithm.</p>
+<dd><p>CAM algorithm <strong>[R model]</strong>.</p>
+<p><strong>Description:</strong> Causal Additive models, a causal discovery algorithm
+relying on fitting Gaussian Processes on data, while considering all noises
+additives and additive contributions of variables.</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> The data follows a generalized additive noise model:
+each variable <span class="math notranslate nohighlight">\(X_i\)</span>  in the graph <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> is generated
+following the model <span class="math notranslate nohighlight">\(X_i = \sum_{X_j \in \mathcal{G}} f(X_j) + \epsilon_i\)</span>,
+<span class="math notranslate nohighlight">\(\epsilon_i\)</span> representing mutually independent noises variables
+accounting for unobserved variables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1491,9 +1639,9 @@ Machine Learning,65(1), 31-78.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ref:
-J. Peters, J. Mooij, D. Janzing, B. Schölkopf:
-Causal Discovery with Continuous Additive Noise Models,
-JMLR 15:2009-2053, 2014.</p>
+Bühlmann, P., Peters, J., &amp; Ernest, J. (2014). CAM: Causal additive
+models, high-dimensional order search and penalized regression. The
+Annals of Statistics, 42(6), 2526-2556.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -1534,11 +1682,18 @@ The adaptation will be made at a later date.</p>
 <dl class="class">
 <dt id="cdt.causality.graph.CCDr">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">CCDr</code><span class="sig-paren">(</span><em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CCDr.html#CCDr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CCDr" title="Permalink to this definition">¶</a></dt>
-<dd><p>CCDr algorithm.
-Concave penalized Coordinate Descent with reparametrization) structure
+<dd><p>CCDr algorithm <strong>[R model]</strong>.</p>
+<p><strong>Description:</strong> Concave penalized Coordinate Descent with reparametrization) structure
 learning algorithm as described in Aragam and Zhou (2015). This is a fast,
 score based method for learning Bayesian networks that uses sparse
 regularization and block-cyclic coordinate descent.</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> This model does not restrict or prune the search space in
+any way, does not assume faithfulness, does not require a known variable
+ordering, works on observational data (i.e. without experimental
+interventions), works effectively in high dimensions, and is capable of
+handling graphs with several thousand variables. The output of this model
+is a DAG.</p>
 <p>Imported from the ‘sparsebn’ package.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -1584,9 +1739,15 @@ sparse Gaussian Bayesian networks. Journal of Machine Learning Research,
 <dl class="class">
 <dt id="cdt.causality.graph.CGNN">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">CGNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">nruns=16</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">dataloader_workers=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.CGNN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Causal Generative Neural Netwoks : Generate the whole causal graph in a
-topological manner using neural networks and predict causal directions in
-the graph.</p>
+<dd><p>Causal Generative Neural Netwoks</p>
+<p><strong>Description:</strong> Causal Generative Neural Networks. Score-method that
+evaluates candidate graph by generating data following the topological
+order of the graph using neural networks, and using MMD for evaluation.</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> The class of generative models is not restricted with a
+hard contraint, but with the hyperparameter <code class="docutils literal notranslate"><span class="pre">nh</span></code>. This algorithm greatly
+benefits from bootstrapped runs (nruns &gt;=12 recommended), and is very
+computationnally heavy. GPUs are recommended.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1722,7 +1883,14 @@ undirected graph and output a DAG before applying CGNN.</p>
 <dl class="class">
 <dt id="cdt.causality.graph.GES">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">GES</code><span class="sig-paren">(</span><em class="sig-param">score='obs'</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GES.html#GES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GES" title="Permalink to this definition">¶</a></dt>
-<dd><p>GES algorithm.</p>
+<dd><p>GES algorithm <strong>[R model]</strong>.</p>
+<p><strong>Description:</strong> Greedy Equivalence Search algorithm. A score-based
+Bayesian algorithm that searches heuristically the graph which minimizes
+a likelihood score on the data.</p>
+<p><strong>Data Type:</strong> Continuous (<code class="docutils literal notranslate"><span class="pre">score='obs'</span></code>) or Categorical (<code class="docutils literal notranslate"><span class="pre">score='int'</span></code>)</p>
+<p><strong>Assumptions:</strong> The output is a Partially Directed Acyclic Graph (PDAG)
+(A markov equivalence class). The available scores assume linearity of
+mechanisms and gaussianity of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1836,11 +2004,19 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 <dl class="class">
 <dt id="cdt.causality.graph.GIES">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">GIES</code><span class="sig-paren">(</span><em class="sig-param">score='obs'</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/GIES.html#GIES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.GIES" title="Permalink to this definition">¶</a></dt>
-<dd><p>GIES algorithm.</p>
+<dd><p>GIES algorithm <strong>[R model]</strong>.</p>
+<p><strong>Description:</strong> Greedy Interventional Equivalence Search algorithm.
+A score-based Bayesian algorithm that searches heuristically the graph which minimizes
+a likelihood score on the data. The main difference with GES is that it
+accepts interventional data for its inference.</p>
+<p><strong>Data Type:</strong> Continuous (<code class="docutils literal notranslate"><span class="pre">score='obs'</span></code>) or Categorical (<code class="docutils literal notranslate"><span class="pre">score='int'</span></code>)</p>
+<p><strong>Assumptions:</strong> The output is a Partially Directed Acyclic Graph (PDAG)
+(A markov equivalence class). The available scores assume linearity of
+mechanisms and gaussianity of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>score</strong> (<em>str</em>) – Sets the score used by GES.</p></li>
+<li><p><strong>score</strong> (<em>str</em>) – Sets the score used by GIES.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – Defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>.</p></li>
 </ul>
 </dd>
@@ -1950,7 +2126,17 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 <dl class="class">
 <dt id="cdt.causality.graph.LiNGAM">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">LiNGAM</code><span class="sig-paren">(</span><em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/LiNGAM.html#LiNGAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.LiNGAM" title="Permalink to this definition">¶</a></dt>
-<dd><p>LiNGAM algorithm.</p>
+<dd><p>LiNGAM algorithm <strong>[R model]</strong>.</p>
+<p><strong>Description:</strong> Linear Non-Gaussian Acyclic model. LiNGAM handles linear
+structural equation models, where each variable is modeled as
+<span class="math notranslate nohighlight">\(X_j = \sum_k \alpha_k P_a^{k}(X_j) + E_j,  j \in [1,d]\)</span>,
+with  <span class="math notranslate nohighlight">\(P_a^{k}(X_j)\)</span> the <span class="math notranslate nohighlight">\(k\)</span>-th parent of
+<span class="math notranslate nohighlight">\(X_j\)</span> and <span class="math notranslate nohighlight">\(\alpha_k\)</span> a real scalar.</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> The underlying causal model is supposed to be composed of
+linear mechanisms and non-gaussian data. Under those assumptions, it is
+shown that causal structure is fully identifiable (even inside the Markov
+equivalence class).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the algorithm. Defaults to
@@ -2001,7 +2187,16 @@ Journal of Machine Learning Research 7, 2003–2030.</p>
 <dl class="class">
 <dt id="cdt.causality.graph.PC">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">PC</code><span class="sig-paren">(</span><em class="sig-param">CItest='gaussian'</em>, <em class="sig-param">method_indep='corr'</em>, <em class="sig-param">alpha=0.01</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/PC.html#PC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.PC" title="Permalink to this definition">¶</a></dt>
-<dd><p>PC algorithm by C.Glymour &amp; P.Sprites.</p>
+<dd><p>PC algorithm <strong>[R model]</strong>.</p>
+<p><strong>Description:</strong> PC (Peter - Clark) One of the most famous score based
+approaches for causal discovery. Based on conditional tests on variables
+and sets of variables, it proved itself to be really efficient.</p>
+<p><strong>Data Type:</strong> Continuous and discrete</p>
+<p><strong>Assumptions:</strong> This approach’s complexity grows rapidly with the number
+of variables, even for quick tests. Consider graphs &lt; 200 variables.
+The model assumptions made by this approch mainly depend on the type of
+test used. Kernel-based tests are also available. The prediction of PC
+is a CPDAG (identifiability up to the Markov equivalence class).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2172,7 +2367,14 @@ the graph).</p>
 <dl class="class">
 <dt id="cdt.causality.graph.SAM">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">SAM</code><span class="sig-paren">(</span><em class="sig-param">lr=0.1</em>, <em class="sig-param">dlr=0.1</em>, <em class="sig-param">l1=0.1</em>, <em class="sig-param">nh=50</em>, <em class="sig-param">dnh=200</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Structural Agnostic Model.</p>
+<dd><p>SAM Algorithm.</p>
+<p><strong>Description:</strong> Structural Agnostic Model is an causal discovery algorithm
+leveraging</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> The class of generative models is not restricted with a
+hard contraint, but with the hyperparameter <code class="docutils literal notranslate"><span class="pre">nh</span></code>. This algorithms greatly
+benefits from bootstrapped runs (nruns &gt;=8 recommended).
+GPUs are recommended but not compulsory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2220,7 +2422,7 @@ Model, Causal Discovery and Penalized Adversarial Learning.</p>
 </div>
 <dl class="method">
 <dt id="cdt.causality.graph.SAM.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph=None</em>, <em class="sig-param">plot=False</em>, <em class="sig-param">plot_generated_pair=False</em>, <em class="sig-param">return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph=None</em>, <em class="sig-param">return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute SAM on a dataset given a skeleton or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2228,8 +2430,6 @@ Model, Causal Discovery and Penalized Adversarial Learning.</p>
 <li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data for estimation of causal relationships by SAM</p></li>
 <li><p><strong>skeleton</strong> (<em>numpy.ndarray</em>) – A priori knowledge about the causal relationships as an adjacency matrix.
 Can be fed either directed or undirected links.</p></li>
-<li><p><strong>plot</strong> (<em>bool</em>) – Plot losses interactively. Not recommended if nruns&gt;1</p></li>
-<li><p><strong>plot_generated_pair</strong> (<em>bool</em>) – plots a generated pair interactively.  Not recommended if nruns&gt;1</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
