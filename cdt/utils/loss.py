@@ -210,3 +210,33 @@ class MomentMatchingLoss(th.nn.Module):
             loss.add_(th.mean((mk_pred - mk_tar) ** 2))  # L2
 
         return loss
+
+
+def notears_constr(adj_m, max_pow=None):
+    """No Tears constraint for binary adjacency matrixes. Represents a
+    differenciable constraint to converge towards a DAG.
+
+    .. warning::
+       If adj_m is non binary: Feed adj_m * adj_m as input (Hadamard product).
+
+    Args:
+        adj_m (array-like): Adjacency matrix of the graph
+        max_pow (int): maximum value to which the infinite sum is to be computed.
+           defaults to the shape of the adjacency_matrix
+
+    Returns:
+        np.ndarray or torch.Tensor: Scalar value of the loss with the type
+            depending on the input.
+
+    .. note::
+       Zheng, X., Aragam, B., Ravikumar, P. K., & Xing, E. P. (2018). DAGs with
+       NO TEARS: Continuous Optimization for Structure Learning. In Advances in
+       Neural Information Processing Systems (pp. 9472-9483).
+    """
+    m_exp = [adj_m]
+    if max_pow is None:
+        max_pow = adj_m.shape[1]
+    while(m_exp[-1].sum() > 0 and len(m_exp) < max_pow):
+        m_exp.append(m_exp[-1] @ adj_m/len(m_exp))
+
+    return sum([i.diag().sum() for idx, i in enumerate(m_exp)])

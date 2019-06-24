@@ -30,3 +30,7 @@ from .graph import (remove_indirect_links,
                     clr,
                     aracne,
                     network_deconvolution)
+
+from .loss import (TTestCriterion,
+                   notears_constr,
+                   MMDloss, MomentMatchingLoss)

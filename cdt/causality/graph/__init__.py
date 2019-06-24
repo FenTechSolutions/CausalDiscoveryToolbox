@@ -23,6 +23,7 @@
 .. SOFTWARE.
 """
 from .CGNN import CGNN
+from .SAMv1 import SAMv1
 from .SAM import SAM
 from .PC import PC
 from .GES import GES
