@@ -162,3 +162,9 @@ cdt.causality.graph
 
 .. autoclass:: SAM
    :members: predict
+
+:hidden:`SAMv1`
+~~~~~~~~~~~~~~~
+
+.. autoclass:: SAMv1
+   :members: predict

@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdt.utils.torch &mdash; Causal Discovery Toolbox 0.5.2 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/banner.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Causal Discovery Toolbox Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Get started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../causality.html">cdt.causality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../independence.html">cdt.independence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">cdt.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Causal Discovery Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cdt.utils.torch</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdt.utils.torch</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;PyTorch utilities for models.</span>
+
+<span class="sd">Author: Diviyan Kalainathan, Olivier Goudet</span>
+<span class="sd">Date: 09/3/2018</span>
+
+<span class="sd">.. MIT License</span>
+<span class="sd">..</span>
+<span class="sd">.. Copyright (c) 2018 Diviyan Kalainathan</span>
+<span class="sd">..</span>
+<span class="sd">.. Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">.. of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">.. in the Software without restriction, including without limitation the rights</span>
+<span class="sd">.. to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">.. copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">.. furnished to do so, subject to the following conditions:</span>
+<span class="sd">..</span>
+<span class="sd">.. The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">.. copies or substantial portions of the Software.</span>
+<span class="sd">..</span>
+<span class="sd">.. THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">.. IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">.. FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">.. AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">.. LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">.. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">.. SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">torch.nn.modules.batchnorm</span> <span class="k">import</span> <span class="n">_BatchNorm</span>
+
+
+<span class="k">def</span> <span class="nf">_sample_gumbel</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of pytorch.</span>
+<span class="sd">    (https://github.com/pytorch/pytorch/blob/e4eee7c2cf43f4edba7a14687ad59d3ed61d9833/torch/nn/functional.py)</span>
+<span class="sd">    Sample from Gumbel(0, 1)</span>
+<span class="sd">    based on</span>
+<span class="sd">    https://github.com/ericjang/gumbel-softmax/blob/3c8584924603869e90ca74ac20a6a03d99a91ef9/Categorical%20VAE.ipynb ,</span>
+<span class="sd">    (MIT license)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">resize_</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">uniform_</span><span class="p">()</span> <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">th</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span> <span class="n">th</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">eps</span> <span class="o">-</span> <span class="n">th</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">U</span> <span class="o">+</span> <span class="n">eps</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_gumbel_softmax_sample</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of pytorch.</span>
+<span class="sd">    (https://github.com/pytorch/pytorch/blob/e4eee7c2cf43f4edba7a14687ad59d3ed61d9833/torch/nn/functional.py)</span>
+<span class="sd">    Draw a sample from the Gumbel-Softmax distribution</span>
+<span class="sd">    based on</span>
+<span class="sd">    https://github.com/ericjang/gumbel-softmax/blob/3c8584924603869e90ca74ac20a6a03d99a91ef9/Categorical%20VAE.ipynb</span>
+<span class="sd">    (MIT license)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span>
+    <span class="n">gumbel_noise</span> <span class="o">=</span> <span class="n">_sample_gumbel</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">logits</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">new</span><span class="p">())</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">+</span> <span class="n">gumbel_noise</span>
+    <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">y</span> <span class="o">/</span> <span class="n">tau</span><span class="p">,</span> <span class="n">dims</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="gumbel_softmax"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.gumbel_softmax">[docs]</a><span class="k">def</span> <span class="nf">gumbel_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of pytorch.</span>
+<span class="sd">    (https://github.com/pytorch/pytorch/blob/e4eee7c2cf43f4edba7a14687ad59d3ed61d9833/torch/nn/functional.py)</span>
+<span class="sd">    Sample from the Gumbel-Softmax distribution and optionally discretize.</span>
+<span class="sd">    Args:</span>
+<span class="sd">      logits: `[batch_size, n_class]` unnormalized log-probs</span>
+<span class="sd">      tau: non-negative scalar temperature</span>
+<span class="sd">      hard: if ``True``, take `argmax`, but differentiate w.r.t. soft sample y</span>
+<span class="sd">    Returns:</span>
+<span class="sd">      [batch_size, n_class] sample from the Gumbel-Softmax distribution.</span>
+<span class="sd">      If hard=True, then the returned sample will be one-hot, otherwise it will</span>
+<span class="sd">      be a probability distribution that sums to 1 across classes</span>
+<span class="sd">    Constraints:</span>
+<span class="sd">    - this implementation only works on batch_size x num_features tensor for now</span>
+<span class="sd">    based on</span>
+<span class="sd">    https://github.com/ericjang/gumbel-softmax/blob/3c8584924603869e90ca74ac20a6a03d99a91ef9/Categorical%20VAE.ipynb ,</span>
+<span class="sd">    (MIT license)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">y_soft</span> <span class="o">=</span> <span class="n">_gumbel_softmax_sample</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hard</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">y_soft</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># this bit is based on</span>
+        <span class="c1"># https://discuss.pytorch.org/t/stop-gradients-for-st-gumbel-softmax/530/5</span>
+        <span class="n">y_hard</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span><span class="o">.</span><span class="n">scatter_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="c1"># this cool bit of code achieves two things:</span>
+        <span class="c1"># - makes the output value exactly one-hot (since we add then</span>
+        <span class="c1">#   subtract y_soft value)</span>
+        <span class="c1"># - makes the gradient equal to y_soft gradient (since we strip</span>
+        <span class="c1">#   all other gradients)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y_hard</span> <span class="o">-</span> <span class="n">y_soft</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="n">y_soft</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y_soft</span>
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+<span class="k">def</span> <span class="nf">_sample_logistic</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="n">U</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">resize_</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">uniform_</span><span class="p">()</span> <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">th</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c1">#U2 = out.resize_(shape).uniform_() if out is not None else th.rand(shape)</span>
+
+    <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">U</span><span class="p">)</span> <span class="o">-</span> <span class="n">th</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">U</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_sigmoid_sample</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of Bernouilli reparametrization based on Maddison et al. 2017</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span>
+    <span class="n">logistic_noise</span> <span class="o">=</span> <span class="n">_sample_logistic</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">out</span><span class="o">=</span><span class="n">logits</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">new</span><span class="p">())</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">+</span> <span class="n">logistic_noise</span>
+    <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">y</span> <span class="o">/</span> <span class="n">tau</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">gumbel_sigmoid</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">ones_tensor</span><span class="p">,</span> <span class="n">zeros_tensor</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="n">y_soft</span> <span class="o">=</span> <span class="n">_sigmoid_sample</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hard</span><span class="p">:</span>
+        <span class="n">y_hard</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_soft</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">ones_tensor</span><span class="p">,</span> <span class="n">zeros_tensor</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y_hard</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="n">y_soft</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="n">y_soft</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y_soft</span>
+    <span class="k">return</span> <span class="n">y</span>
+
+
+<div class="viewcode-block" id="ChannelBatchNorm1d"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.ChannelBatchNorm1d">[docs]</a><span class="k">class</span> <span class="nc">ChannelBatchNorm1d</span><span class="p">(</span><span class="n">_BatchNorm</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Applies Batch Normalization over a 2D or 3D input (a mini-batch of 1D</span>
+<span class="sd">    inputs with optional additional channel dimension) as described in the paper</span>
+<span class="sd">    `Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift`_ .</span>
+
+<span class="sd">    Variant which is adapted for the SAM model, where the Channel dimension is</span>
+<span class="sd">    considered as extra-features. Thus considering the input as a</span>
+<span class="sd">    `N x (channels * in_features)` tensor.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y = \frac{x - \mathrm{E}[x]}{\sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta</span>
+
+<span class="sd">    The mean and standard-deviation are calculated per-dimension over</span>
+<span class="sd">    the mini-batches and :math:`\gamma` and :math:`\beta` are learnable parameter vectors</span>
+<span class="sd">    of size `C` (where `C` is the input size).</span>
+
+<span class="sd">    By default, during training this layer keeps running estimates of its</span>
+<span class="sd">    computed mean and variance, which are then used for normalization during</span>
+<span class="sd">    evaluation. The running estimates are kept with a default :attr:`momentum`</span>
+<span class="sd">    of 0.1.</span>
+
+<span class="sd">    If :attr:`track_running_stats` is set to ``False``, this layer then does not</span>
+<span class="sd">    keep running estimates, and batch statistics are instead used during</span>
+<span class="sd">    evaluation time as well.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This :attr:`momentum` argument is different from one used in optimizer</span>
+<span class="sd">        classes and the conventional notion of momentum. Mathematically, the</span>
+<span class="sd">        update rule for running statistics here is</span>
+<span class="sd">        :math:`\hat{x}_\text{new} = (1 - \text{momentum}) \times \hat{x} + \text{momemtum} \times x_t`,</span>
+<span class="sd">        where :math:`\hat{x}` is the estimated statistic and :math:`x_t` is the</span>
+<span class="sd">        new observed value.</span>
+
+<span class="sd">    Because the Batch Normalization is done over the `C` dimension, computing statistics</span>
+<span class="sd">    on `(N, L)` slices, it&#39;s common terminology to call this Temporal Batch Normalization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num_features: :math:`C` from an expected input of size</span>
+<span class="sd">            :math:`(N, C, L)` or :math:`L` from input of size :math:`(N, L)`</span>
+<span class="sd">        eps: a value added to the denominator for numerical stability.</span>
+<span class="sd">            Default: 1e-5</span>
+<span class="sd">        momentum: the value used for the running_mean and running_var</span>
+<span class="sd">            computation. Can be set to ``None`` for cumulative moving average</span>
+<span class="sd">            (i.e. simple average). Default: 0.1</span>
+<span class="sd">        affine: a boolean value that when set to ``True``, this module has</span>
+<span class="sd">            learnable affine parameters. Default: ``True``</span>
+<span class="sd">        track_running_stats: a boolean value that when set to ``True``, this</span>
+<span class="sd">            module tracks the running mean and variance, and when set to ``False``,</span>
+<span class="sd">            this module does not track such statistics and always uses batch</span>
+<span class="sd">            statistics in both training and eval modes. Default: ``True``</span>
+
+<span class="sd">    Shape:</span>
+<span class="sd">        - Input: :math:`(N, C)` or :math:`(N, C, L)`</span>
+<span class="sd">        - Output: :math:`(N, C)` or :math:`(N, C, L)` (same shape as input)</span>
+
+<span class="sd">    Examples::</span>
+<span class="sd">        &gt;&gt;&gt; # With Learnable Parameters</span>
+<span class="sd">        &gt;&gt;&gt; m = nn.BatchNorm1d(100)</span>
+<span class="sd">        &gt;&gt;&gt; # Without Learnable Parameters</span>
+<span class="sd">        &gt;&gt;&gt; m = nn.BatchNorm1d(100, affine=False)</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(20, 100)</span>
+<span class="sd">        &gt;&gt;&gt; output = m(input)</span>
+
+<span class="sd">    .. _`Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift`:</span>
+<span class="sd">        https://arxiv.org/abs/1502.03167</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_channels</span><span class="p">,</span> <span class="n">num_features</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ChannelBatchNorm1d</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_channels</span><span class="o">*</span><span class="n">num_features</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_channels</span> <span class="o">=</span> <span class="n">num_channels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_features</span> <span class="o">=</span> <span class="n">num_features</span>
+
+    <span class="k">def</span> <span class="nf">_check_input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">input</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;expected 2D or 3D input (got </span><span class="si">{}</span><span class="s1">D input)&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">dim</span><span class="p">()))</span>
+
+<div class="viewcode-block" id="ChannelBatchNorm1d.forward"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.ChannelBatchNorm1d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="n">_input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_channels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_features</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ChannelBatchNorm1d</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">_input</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_features</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MatrixSampler"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.MatrixSampler">[docs]</a><span class="k">class</span> <span class="nc">MatrixSampler</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Matrix Sampler, following a Bernoulli distribution. with learnable</span>
+<span class="sd">    parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph_size (int or tuple): shape of the matrix to sample. If is int,</span>
+<span class="sd">           samples a square matrix.</span>
+<span class="sd">        mask (torch.Tensor): Allows to forbid some elements to be sampled.</span>
+<span class="sd">           Defaults to ``1 - th.eye()``.</span>
+<span class="sd">        gumbel (bool): Use either gumbel softmax (True) or gumbel sigmoid (False)</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        weights: the learnable weights of the module of shape</span>
+<span class="sd">            `(graph_size x graph_size)` if the input was `int` else `(*graph_size)`</span>
+<span class="sd">    Shape:</span>
+<span class="sd">        - output: `graph_size` if tuple given, else `(graph_size, graph_size)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph_size</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gumbel</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MatrixSampler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">graph_size</span><span class="p">,</span> <span class="n">graph_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph_size</span> <span class="o">=</span> <span class="n">graph_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_size</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">==</span><span class="nb">bool</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">mask</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gumble</span> <span class="o">=</span> <span class="n">gumbel</span>
+
+        <span class="n">ones_tensor</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;ones_tensor&quot;</span><span class="p">,</span> <span class="n">ones_tensor</span><span class="p">)</span>
+
+        <span class="n">zeros_tensor</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;zeros_tensor&quot;</span><span class="p">,</span> <span class="n">zeros_tensor</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MatrixSampler.forward"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.MatrixSampler.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">drawhard</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a sampled graph.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gumble</span><span class="p">):</span>
+
+            <span class="n">drawn_proba</span> <span class="o">=</span> <span class="n">gumbel_softmax</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)],</span> <span class="mi">1</span><span class="p">),</span>
+                               <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="n">drawhard</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">drawn_proba</span> <span class="o">=</span> <span class="n">gumbel_sigmoid</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ones_tensor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zeros_tensor</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">hard</span><span class="o">=</span><span class="n">drawhard</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mask&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">*</span> <span class="n">drawn_proba</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">drawn_proba</span></div>
+
+    <span class="k">def</span> <span class="nf">get_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mask&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_skeleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">functional_linear3d</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply a linear transformation to the incoming data: :math:`y = xA^T + b`.</span>
+<span class="sd">    Shape:</span>
+<span class="sd">        - Input: :math:`(N, *, in\_features)` where `*` means any number of</span>
+<span class="sd">          additional dimensions</span>
+<span class="sd">        - Weight: :math:`(out\_features, in\_features)`</span>
+<span class="sd">        - Bias: :math:`(out\_features)`</span>
+<span class="sd">        - Output: :math:`(N, *, out\_features)`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="n">bias</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Linear3D"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.Linear3D">[docs]</a><span class="k">class</span> <span class="nc">Linear3D</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Applies a linear transformation to the incoming data: :math:`y = Ax + b`.</span>
+<span class="sd">    Broadcasts following a 3rd dimension. If input is 2d, input is repeated over</span>
+<span class="sd">    all channels. This layer is a linear layer with 3D parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sizes: Triplet of int values defining the shape of the 3D tensor:</span>
+<span class="sd">            (channels, in_features, out_features)</span>
+<span class="sd">        bias: If set to False, the layer will not learn an additive bias.</span>
+<span class="sd">            Default: ``True``</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        weight (torch.Tensor): the learnable weights of the module of shape</span>
+<span class="sd">          `(out_features x in_features)`</span>
+<span class="sd">        bias (torch.Tensor): the learnable bias of the module of shape `(out_features)`</span>
+<span class="sd">    Shape:</span>
+<span class="sd">        - Input: :math:`(N, *, in\_features)` where :math:`*` means number of</span>
+<span class="sd">          channels or no additional dimension.</span>
+<span class="sd">        - Output: :math:`(N, channels, out\_features)`.</span>
+<span class="sd">    Examples::</span>
+<span class="sd">        &gt;&gt;&gt; m = cdt.utils.torch.Linear3D(3, 20, 30)</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(128, 20)</span>
+<span class="sd">        &gt;&gt;&gt; output = m(input)</span>
+<span class="sd">        &gt;&gt;&gt; print(output.size())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Linear3D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">stdv</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="n">stdv</span><span class="p">,</span> <span class="n">stdv</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="n">stdv</span><span class="p">,</span> <span class="n">stdv</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Linear3D.forward"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.Linear3D.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">input</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="nb">input</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]),</span>
+                                <span class="n">noise</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">adj_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">*</span> <span class="n">adj_matrix</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">functional_linear3d</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Linear3D.extra_repr"><a class="viewcode-back" href="../../../utils.html#cdt.utils.torch.Linear3D.extra_repr">[docs]</a>    <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;in_features=</span><span class="si">{}</span><span class="s1">, out_features=</span><span class="si">{}</span><span class="s1">, bias=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

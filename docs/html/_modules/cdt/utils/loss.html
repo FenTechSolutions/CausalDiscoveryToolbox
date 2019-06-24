@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.loss &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
+  <title>cdt.utils.loss &mdash; Causal Discovery Toolbox 0.5.2 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.1
+                0.5.2
               </div>
             
           
@@ -377,6 +377,36 @@
             <span class="n">loss</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">mk_pred</span> <span class="o">-</span> <span class="n">mk_tar</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># L2</span>
 
         <span class="k">return</span> <span class="n">loss</span></div>
+
+
+<div class="viewcode-block" id="notears_constr"><a class="viewcode-back" href="../../../utils.html#cdt.utils.loss.notears_constr">[docs]</a><span class="k">def</span> <span class="nf">notears_constr</span><span class="p">(</span><span class="n">adj_m</span><span class="p">,</span> <span class="n">max_pow</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;No Tears constraint for binary adjacency matrixes. Represents a</span>
+<span class="sd">    differenciable constraint to converge towards a DAG.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">       If adj_m is non binary: Feed adj_m * adj_m as input (Hadamard product).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        adj_m (array-like): Adjacency matrix of the graph</span>
+<span class="sd">        max_pow (int): maximum value to which the infinite sum is to be computed.</span>
+<span class="sd">           defaults to the shape of the adjacency_matrix</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray or torch.Tensor: Scalar value of the loss with the type</span>
+<span class="sd">            depending on the input.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       Zheng, X., Aragam, B., Ravikumar, P. K., &amp; Xing, E. P. (2018). DAGs with</span>
+<span class="sd">       NO TEARS: Continuous Optimization for Structure Learning. In Advances in</span>
+<span class="sd">       Neural Information Processing Systems (pp. 9472-9483).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m_exp</span> <span class="o">=</span> <span class="p">[</span><span class="n">adj_m</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">max_pow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_pow</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">m_exp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">m_exp</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">max_pow</span><span class="p">):</span>
+        <span class="n">m_exp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_exp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">adj_m</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">m_exp</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">diag</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m_exp</span><span class="p">)])</span></div>
 </pre></div>
 
            </div>

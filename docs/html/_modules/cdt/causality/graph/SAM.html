@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.SAM &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
+  <title>cdt.causality.graph.SAM &mdash; Causal Discovery Toolbox 0.5.2 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.1
+                0.5.2
               </div>
             
           
@@ -192,310 +192,289 @@
 <span class="sd">.. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
 <span class="sd">.. SOFTWARE.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
-<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
-
-
-<span class="k">class</span> <span class="nc">CNormalized_Linear</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Linear layer with column-wise normalized input matrix.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize the layer.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">CNormalized_Linear</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_features</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset the parameters.&quot;&quot;&quot;</span>
-        <span class="n">stdv</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="n">stdv</span><span class="p">,</span> <span class="n">stdv</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="n">stdv</span><span class="p">,</span> <span class="n">stdv</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Feed-forward through the network.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()))</span>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;For print purposes.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> \
-            <span class="o">+</span> <span class="s1">&#39;in_features=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">)</span> \
-            <span class="o">+</span> <span class="s1">&#39;, out_features=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">)</span> \
-            <span class="o">+</span> <span class="s1">&#39;, bias=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
-
-
-<span class="k">class</span> <span class="nc">SAM_discriminator</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Discriminator for the SAM model.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">zero_components</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init the SAM discriminator.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SAM_discriminator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sht</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;shortcut&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">activation_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_function&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">)</span>
-        <span class="n">activation_argument</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_argument&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">batch_norm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_norm&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">dropout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dropout&quot;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
-
-        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">batch_norm</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">dropout</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">activation_argument</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">(</span><span class="n">activation_argument</span><span class="p">))</span>
-
-        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
-        <span class="c1"># print(self.layers)</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Feed-forward the model.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">SAM_block</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;SAM-Block: conditional generator.</span>
-
-<span class="sd">    Generates one variable while selecting the parents. Uses filters to do so.</span>
-<span class="sd">    One fixed filter and one with parameters on order to keep a fixed skeleton.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">zero_components</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize a generator.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SAM_block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="n">activation_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_function&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">)</span>
-        <span class="n">activation_argument</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_argument&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">batch_norm</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_norm&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CNormalized_Linear</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">batch_norm</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">activation_argument</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation_function</span><span class="p">(</span><span class="n">activation_argument</span><span class="p">))</span>
-
-        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
-
-        <span class="c1"># Filtering the unconnected nodes.</span>
-        <span class="n">_filter</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">zero_components</span><span class="p">:</span>
-            <span class="n">_filter</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;_filter&#39;</span><span class="p">,</span> <span class="n">_filter</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fs_filter</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">_filter</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Feed-forward the model.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">*</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">fs_filter</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">notears_constr</span>
+<span class="kn">from</span> <span class="nn">...utils.torch</span> <span class="k">import</span> <span class="n">ChannelBatchNorm1d</span><span class="p">,</span> <span class="n">MatrixSampler</span><span class="p">,</span> <span class="n">Linear3D</span>
+<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 
 
 <span class="k">class</span> <span class="nc">SAM_generators</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Ensemble of all the generators.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                 <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SAM_generators</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">data_shape</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Building skeleton</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">linear</span>
+        <span class="n">nb_vars</span> <span class="o">=</span> <span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_vars</span> <span class="o">=</span> <span class="n">nb_vars</span>
+        <span class="k">if</span> <span class="n">skeleton</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">skeleton</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nb_vars</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nb_vars</span><span class="p">)</span>  <span class="c1"># 1 row for noise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">skeleton</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">skeleton</span><span class="p">),</span> <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_vars</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">linear</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_layer</span> <span class="o">=</span> <span class="n">Linear3D</span><span class="p">((</span><span class="n">nb_vars</span><span class="p">,</span> <span class="n">nb_vars</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_layer</span> <span class="o">=</span> <span class="n">Linear3D</span><span class="p">((</span><span class="n">nb_vars</span><span class="p">,</span> <span class="n">nb_vars</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nh</span><span class="p">))</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ChannelBatchNorm1d</span><span class="p">(</span><span class="n">nb_vars</span><span class="p">,</span> <span class="n">nh</span><span class="p">))</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span> <span class="o">=</span> <span class="n">Linear3D</span><span class="p">((</span><span class="n">nb_vars</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
-        <span class="c1"># building the computation graph</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">):</span>
-            <span class="n">pname</span> <span class="o">=</span> <span class="s1">&#39;noise_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="n">pname</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pname</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;skeleton&#39;</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">)</span>
 
-        <span class="c1"># Init all the blocks</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SAM_block</span><span class="p">(</span>
-                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">zero_components</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="p">,</span> <span class="n">drawn_neurons</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward through all the generators.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Feed-forward the model.&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">:</span>
-            <span class="n">i</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">normal_</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_layer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">adj_matrix</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">skeleton</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_layer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                                                                    <span class="n">noise</span><span class="p">,</span>
+                                                                    <span class="n">adj_matrix</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">skeleton</span><span class="p">)),</span>
+                                       <span class="n">drawn_neurons</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">generated_variables</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">](</span>
-            <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generated_variables</span>
+        <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="s1">&#39;reset_parameters&#39;</span><span class="p">):</span>
+                    <span class="n">layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">run_SAM</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Execute the SAM model.</span>
+<span class="k">class</span> <span class="nc">SAM_discriminator</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;SAM discriminator.&quot;&quot;&quot;</span>
 
-<span class="sd">    :param df_data: Input data; either np.array or pd.DataFrame</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">device</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">train_epochs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;train_epochs&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-    <span class="n">test_epochs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;test_epochs&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="n">hlayers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SAM_discriminator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nfeatures</span> <span class="o">=</span> <span class="n">nfeatures</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">nfeatures</span><span class="p">,</span> <span class="n">dnh</span><span class="p">))</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">dnh</span><span class="p">))</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="o">.</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hlayers</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dnh</span><span class="p">,</span> <span class="n">dnh</span><span class="p">))</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">dnh</span><span class="p">))</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="o">.</span><span class="mi">2</span><span class="p">))</span>
 
-    <span class="n">lr_gen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lr_gen&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
-    <span class="n">lr_disc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lr_disc&#39;</span><span class="p">,</span> <span class="n">lr_gen</span><span class="p">)</span>
-    <span class="n">verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">regul_param</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;regul_param&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
-    <span class="n">dnh</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dnh&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dnh</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
 
-    <span class="n">d_str</span> <span class="o">=</span> <span class="s2">&quot;Epoch: </span><span class="si">{}</span><span class="s2"> -- Disc: </span><span class="si">{}</span><span class="s2"> -- Gen: </span><span class="si">{}</span><span class="s2"> -- L1: </span><span class="si">{}</span><span class="s2">&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">list_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">df_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_data</span><span class="p">[</span><span class="n">list_nodes</span><span class="p">])</span><span class="o">.</span><span class="n">values</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="n">list_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">df_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nfeatures</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">obs_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">th</span><span class="o">.</span><span class="n">unbind</span><span class="p">(</span><span class="n">obs_data</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+                                                      <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="s1">&#39;reset_parameters&#39;</span><span class="p">):</span>
+                <span class="n">layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">run_SAM</span><span class="p">(</span><span class="n">in_data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+            <span class="n">train</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr_gen</span><span class="o">=.</span><span class="mi">001</span><span class="p">,</span>
+            <span class="n">lr_disc</span><span class="o">=.</span><span class="mi">01</span><span class="p">,</span> <span class="n">lambda1</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">lambda2</span><span class="o">=</span><span class="mf">0.0000001</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">losstype</span><span class="o">=</span><span class="s2">&quot;fgan&quot;</span><span class="p">,</span>
+            <span class="n">dagstart</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dagloss</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">dagpenalization</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">dagpenalization_increase</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hlayers</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+
+    <span class="n">list_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">in_data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">in_data</span><span class="p">[</span><span class="n">list_nodes</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">nb_var</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_nodes</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="n">batch_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
-
     <span class="c1"># Get the list of indexes to ignore</span>
     <span class="k">if</span> <span class="n">skeleton</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">zero_components</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">)]</span>
-        <span class="n">skel</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">skel</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">())):</span>
-            <span class="n">zero_components</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">skeleton</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>
+
+    <span class="n">sam</span> <span class="o">=</span> <span class="n">SAM_generators</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">nh</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="n">skeleton</span><span class="p">,</span>
+                         <span class="n">linear</span><span class="o">=</span><span class="n">linear</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="n">sam</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+    <span class="n">g_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sam</span><span class="o">.</span><span class="n">parameters</span><span class="p">()),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_gen</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">losstype</span> <span class="o">!=</span> <span class="s2">&quot;mse&quot;</span><span class="p">:</span>
+        <span class="n">discriminator</span> <span class="o">=</span> <span class="n">SAM_discriminator</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="n">hlayers</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">discriminator</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+        <span class="n">d_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">discriminator</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_disc</span><span class="p">)</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">zero_components</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">)]</span>
-    <span class="n">sam</span> <span class="o">=</span> <span class="n">SAM_generators</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">zero_components</span><span class="p">,</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+        <span class="n">disc_loss</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">activation_function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;activation_function&#39;</span><span class="p">,</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;activation_function&quot;</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">pass</span>
-    <span class="n">discriminator_sam</span> <span class="o">=</span> <span class="n">SAM_discriminator</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">cols</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">activation_function</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">,</span>
-        <span class="n">activation_argument</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;activation_function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_function</span>
+    <span class="n">graph_sampler</span> <span class="o">=</span> <span class="n">MatrixSampler</span><span class="p">(</span><span class="n">nb_var</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">skeleton</span><span class="p">,</span>
+                                  <span class="n">gumbel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">graph_sampler</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">graph_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">graph_sampler</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_gen</span><span class="p">)</span>
 
-    <span class="n">sam</span> <span class="o">=</span> <span class="n">sam</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">discriminator_sam</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">linear</span><span class="p">:</span>
+        <span class="n">neuron_sampler</span> <span class="o">=</span> <span class="n">MatrixSampler</span><span class="p">((</span><span class="n">nh</span><span class="p">,</span> <span class="n">nb_var</span><span class="p">),</span> <span class="n">mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                       <span class="n">gumbel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">neuron_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">neuron_sampler</span><span class="o">.</span><span class="n">parameters</span><span class="p">()),</span>
+                                         <span class="n">lr</span><span class="o">=</span><span class="n">lr_gen</span><span class="p">)</span>
 
-    <span class="c1"># Select parameters to optimize : ignore the non connected nodes</span>
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
-    <span class="n">g_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">sam</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_gen</span><span class="p">)</span>
-    <span class="n">d_optimizer</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
-        <span class="n">discriminator_sam</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_disc</span><span class="p">)</span>
+    <span class="n">_true</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">_false</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_var</span><span class="p">,</span> <span class="n">nb_var</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
-    <span class="n">true_variable</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">false_variable</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">causal_filters</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">nb_var</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">noise_row</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_var</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">data_iterator</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">true_variable</span> <span class="o">=</span> <span class="n">true_variable</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">false_variable</span> <span class="o">=</span> <span class="n">false_variable</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">causal_filters</span> <span class="o">=</span> <span class="n">causal_filters</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-
-    <span class="n">data_iterator</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="c1"># TRAIN</span>
-    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="n">test_epochs</span><span class="p">):</span>
+    <span class="c1"># RUN</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">train</span> <span class="o">+</span> <span class="n">test</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pbar</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">train</span><span class="o">+</span><span class="n">test</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i_batch</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_iterator</span><span class="p">):</span>
-            <span class="n">batch_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">[:,</span> <span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">)]</span>
-
             <span class="n">g_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-            <span class="n">d_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">graph_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">losstype</span> <span class="o">!=</span> <span class="s2">&quot;mse&quot;</span><span class="p">:</span>
+                <span class="n">d_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">linear</span><span class="p">:</span>
+                <span class="n">neuron_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
             <span class="c1"># Train the discriminator</span>
-            <span class="n">generated_variables</span> <span class="o">=</span> <span class="n">sam</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-            <span class="n">disc_losses</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">gen_losses</span> <span class="o">=</span> <span class="p">[]</span>
 
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
-                <span class="n">generator_output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">v</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="n">batch_vectors</span><span class="p">[:</span> <span class="n">i</span><span class="p">],</span> <span class="p">[</span>
-                    <span class="n">generated_variables</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
-                    <span class="n">batch_vectors</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="c1"># 1. Train discriminator on fake</span>
-                <span class="n">disc_output_detached</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span>
-                    <span class="n">generator_output</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
-                <span class="n">disc_output</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span><span class="n">generator_output</span><span class="p">)</span>
-                <span class="n">disc_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">criterion</span><span class="p">(</span><span class="n">disc_output_detached</span><span class="p">,</span> <span class="n">false_variable</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">train</span><span class="p">:</span>
+                <span class="n">drawn_graph</span> <span class="o">=</span> <span class="n">graph_sampler</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">linear</span><span class="p">:</span>
+                    <span class="n">drawn_neurons</span> <span class="o">=</span> <span class="n">neuron_sampler</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">drawn_neurons</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">noise</span><span class="o">.</span><span class="n">normal_</span><span class="p">()</span>
+            <span class="n">generated_variables</span> <span class="o">=</span> <span class="n">sam</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span>
+                                      <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">drawn_graph</span><span class="p">,</span> <span class="n">noise_row</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span>
+                                      <span class="n">drawn_neurons</span><span class="p">)</span>
 
-                <span class="c1"># 2. Train the generator :</span>
-                <span class="n">gen_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">criterion</span><span class="p">(</span><span class="n">disc_output</span><span class="p">,</span> <span class="n">true_variable</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">losstype</span> <span class="o">==</span> <span class="s2">&quot;mse&quot;</span><span class="p">:</span>
+                <span class="n">gen_loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">generated_variables</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">disc_vars_d</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">generated_variables</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">batch</span><span class="p">)</span>
+                <span class="n">disc_vars_g</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">generated_variables</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+                <span class="n">true_vars_disc</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
 
-            <span class="n">true_output</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-            <span class="n">adv_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">disc_losses</span><span class="p">)</span><span class="o">/</span><span class="n">cols</span> <span class="o">+</span> \
-                <span class="n">criterion</span><span class="p">(</span><span class="n">true_output</span><span class="p">,</span> <span class="n">true_variable</span><span class="p">)</span>
-            <span class="n">gen_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">gen_losses</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">losstype</span> <span class="o">==</span> <span class="s2">&quot;gan&quot;</span><span class="p">:</span>
+                    <span class="n">disc_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">criterion</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">_false</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span> <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">disc_vars_d</span><span class="p">])</span> <span class="o">/</span> <span class="n">nb_var</span> \
+                                     <span class="o">+</span> <span class="n">criterion</span><span class="p">(</span><span class="n">true_vars_disc</span><span class="p">,</span> <span class="n">_true</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">true_vars_disc</span><span class="p">))</span>
+                    <span class="c1"># Gen Losses per generator: multiply py the number of channels</span>
+                    <span class="n">gen_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">criterion</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span>
+                                              <span class="n">_true</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span>
+                                    <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">disc_vars_g</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">losstype</span> <span class="o">==</span> <span class="s2">&quot;fgan&quot;</span><span class="p">:</span>
 
-            <span class="n">adv_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-            <span class="n">d_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                    <span class="n">disc_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">th</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">gen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">disc_vars_d</span><span class="p">])</span> <span class="o">/</span> <span class="n">nb_var</span> <span class="o">-</span> <span class="n">th</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">true_vars_disc</span><span class="p">)</span>
+                    <span class="n">gen_loss</span> <span class="o">=</span> <span class="o">-</span><span class="nb">sum</span><span class="p">([</span><span class="n">th</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">gen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">disc_vars_g</span><span class="p">])</span>
 
-            <span class="c1"># 3. Compute filter regularization</span>
-            <span class="n">filters</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">fs_filter</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sam</span><span class="o">.</span><span class="n">blocks</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">l1_reg</span> <span class="o">=</span> <span class="n">regul_param</span> <span class="o">*</span> <span class="n">filters</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="n">gen_loss</span> <span class="o">+</span> <span class="n">l1_reg</span>
+                <span class="n">disc_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">d_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">200</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i_batch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">filters</span> <span class="o">=</span> <span class="n">graph_sampler</span><span class="o">.</span><span class="n">get_proba</span><span class="p">()</span>
 
-                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">d_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span>
-                                                  <span class="n">adv_loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
-                                                  <span class="n">gen_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">/</span> <span class="n">cols</span><span class="p">,</span>
-                                                  <span class="n">l1_reg</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
-            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">struc_loss</span> <span class="o">=</span> <span class="n">lambda1</span><span class="o">*</span><span class="n">drawn_graph</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-            <span class="c1"># STORE ASSYMETRY values for output</span>
-            <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">train_epochs</span><span class="p">:</span>
-                <span class="n">causal_filters</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">func_loss</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">linear</span> <span class="k">else</span> <span class="n">lambda2</span><span class="o">*</span><span class="n">drawn_neurons</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">regul_loss</span> <span class="o">=</span> <span class="n">struc_loss</span> <span class="o">+</span> <span class="n">func_loss</span>
+
+            <span class="k">if</span> <span class="n">dagloss</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="n">train</span> <span class="o">*</span> <span class="n">dagstart</span><span class="p">:</span>
+                <span class="n">dag_constraint</span> <span class="o">=</span> <span class="n">notears_constr</span><span class="p">(</span><span class="n">filters</span><span class="o">*</span><span class="n">filters</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">gen_loss</span> <span class="o">+</span> <span class="n">regul_loss</span> <span class="o">+</span> <span class="p">(</span><span class="n">dagpenalization</span> <span class="o">+</span>
+                                                <span class="p">(</span><span class="n">epoch</span> <span class="o">-</span> <span class="n">train</span> <span class="o">*</span> <span class="n">dagstart</span><span class="p">)</span>
+                                                <span class="o">*</span> <span class="n">dagpenalization_increase</span><span class="p">)</span> <span class="o">*</span> <span class="n">dag_constraint</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">gen_loss</span> <span class="o">+</span> <span class="n">regul_loss</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i_batch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="n">gen</span><span class="o">=</span><span class="n">gen_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="o">/</span><span class="n">cols</span><span class="p">,</span>
+                                 <span class="n">disc</span><span class="o">=</span><span class="n">disc_loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                                 <span class="n">regul_loss</span><span class="o">=</span><span class="n">regul_loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                                 <span class="n">tot</span><span class="o">=</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">&lt;</span> <span class="n">train</span> <span class="o">+</span> <span class="n">test</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;=</span> <span class="n">train</span><span class="p">:</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
             <span class="n">g_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">graph_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">linear</span><span class="p">:</span>
+                <span class="n">neuron_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">causal_filters</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">test_epochs</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="SAM"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.SAM">[docs]</a><span class="k">class</span> <span class="nc">SAM</span><span class="p">(</span><span class="n">GraphModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;SAM Algorithm.</span>
 
 <span class="sd">    **Description:** Structural Agnostic Model is an causal discovery algorithm</span>
-<span class="sd">    leveraging</span>
+<span class="sd">    for DAG recovery leveraging both distributional asymetries and conditional</span>
+<span class="sd">    independencies. the first version of SAM without DAG constraint is available</span>
+<span class="sd">    as ``SAMv1``.</span>
 
 <span class="sd">    **Data Type:** Continuous</span>
 
 <span class="sd">    **Assumptions:** The class of generative models is not restricted with a</span>
-<span class="sd">    hard contraint, but with the hyperparameter ``nh``. This algorithms greatly</span>
+<span class="sd">    hard contraint, but with soft constraints parametrized with the ``lambda1``</span>
+<span class="sd">    and ``lambda2`` parameters, with gumbel softmax sampling. This algorithms greatly</span>
 <span class="sd">    benefits from bootstrapped runs (nruns &gt;=8 recommended).</span>
-<span class="sd">    GPUs are recommended but not compulsory.</span>
+<span class="sd">    GPUs are recommended but not compulsory. The output is a DAG, but may need a</span>
+<span class="sd">    thresholding as the output is averaged over multiple runs.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        lr (float): Learning rate of the generators</span>
 <span class="sd">        dlr (float): Learning rate of the discriminator</span>
-<span class="sd">        l1 (float): L1 penalization on the causal filters</span>
+<span class="sd">        lambda1 (float): L0 penalization coefficient on the causal filters</span>
+<span class="sd">        lambda2 (float): L0 penalization coefficient on the hidden units of the</span>
+<span class="sd">           neural network</span>
 <span class="sd">        nh (int): Number of hidden units in the generators&#39; hidden layers</span>
-<span class="sd">        dnh (int): Number of hidden units in the discriminator&#39;s hidden layer$</span>
+<span class="sd">           (regularized with lambda2)</span>
+<span class="sd">        dnh (int): Number of hidden units in the discriminator&#39;s hidden layer</span>
 <span class="sd">        train_epochs (int): Number of training epochs</span>
-<span class="sd">        test_epochs (int): Number of test epochs (saving and averaging the causal filters)</span>
+<span class="sd">        test_epochs (int): Number of test epochs (saving and averaging</span>
+<span class="sd">           the causal filters)</span>
 <span class="sd">        batch_size (int): Size of the batches to be fed to the SAM model.</span>
+<span class="sd">           Defaults to full-batch.</span>
+<span class="sd">        losstype (str): type of the loss to be used (either &#39;fgan&#39; (default),</span>
+<span class="sd">           &#39;gan&#39; or &#39;mse&#39;).</span>
+<span class="sd">        hlayers (int): Defines the number of hidden layers in the discriminator.</span>
+<span class="sd">        dagloss (bool): Activate the DAG with No-TEARS constraint.</span>
+<span class="sd">        dagstart (float): Controls when the DAG constraint is to be introduced</span>
+<span class="sd">           in the training (float ranging from 0 to 1, 0 denotes the start of</span>
+<span class="sd">           the training and 1 the end).</span>
+<span class="sd">        dagpenalisation (float): Initial value of the DAG constraint.</span>
+<span class="sd">        dagpenalisation_increase (float): Increase incrementally at each epoch</span>
+<span class="sd">           the coefficient of the constraint.</span>
+<span class="sd">        linear (bool): If true, all generators are set to be linear generators.</span>
 <span class="sd">        nruns (int): Number of runs to be made for causal estimation.</span>
-<span class="sd">               Recommended: &gt;=12 for optimal performance.</span>
+<span class="sd">               Recommended: &gt;=8 for optimal performance.</span>
 <span class="sd">        njobs (int): Numbers of jobs to be run in Parallel.</span>
 <span class="sd">               Recommended: 1 if no GPU available, 2*number of GPUs else.</span>
 <span class="sd">        gpus (int): Number of available GPUs for the algorithm.</span>
@@ -503,8 +482,8 @@
 
 <span class="sd">    .. note::</span>
 <span class="sd">       Ref: Kalainathan, Diviyan &amp; Goudet, Olivier &amp; Guyon, Isabelle &amp;</span>
-<span class="sd">       Lopez-Paz, David &amp; Sebag, Michèle. (2018). SAM: Structural Agnostic</span>
-<span class="sd">       Model, Causal Discovery and Penalized Adversarial Learning.</span>
+<span class="sd">       Lopez-Paz, David &amp; Sebag, Michèle. (2018). Structural Agnostic Modeling:</span>
+<span class="sd">       Adversarial Learning of Causal Graphs.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
@@ -525,25 +504,34 @@
 <span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dlr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-                 <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                 <span class="n">nruns</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init and parametrize the SAM model.</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">dlr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">lambda1</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">lambda2</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                 <span class="n">train_epochs</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">batchsize</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">losstype</span><span class="o">=</span><span class="s2">&quot;fgan&quot;</span><span class="p">,</span> <span class="n">dagstart</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">dagloss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dagpenalization</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">dagpenalization_increase</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hlayers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                 <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Init and parametrize the SAM model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SAM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dlr</span> <span class="o">=</span> <span class="n">dlr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">l1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span> <span class="o">=</span> <span class="n">lambda1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda2</span> <span class="o">=</span> <span class="n">lambda2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nh</span> <span class="o">=</span> <span class="n">nh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dnh</span> <span class="o">=</span> <span class="n">dnh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">train_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">test_epochs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span> <span class="o">=</span> <span class="n">nruns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span> <span class="o">=</span> <span class="n">batchsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losstype</span> <span class="o">=</span> <span class="n">losstype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dagstart</span> <span class="o">=</span> <span class="n">dagstart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dagloss</span> <span class="o">=</span> <span class="n">dagloss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dagpenalization</span> <span class="o">=</span> <span class="n">dagpenalization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dagpenalization_increase</span> <span class="o">=</span> <span class="n">dagpenalization_increase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">linear</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hlayers</span> <span class="o">=</span> <span class="n">hlayers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">njobs</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">njobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpus</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span> <span class="o">=</span> <span class="n">nruns</span>
 
 <div class="viewcode-block" id="SAM.predict"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.graph.SAM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">return_list_results</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -557,32 +545,54 @@
 <span class="sd">            networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term</span>
 <span class="sd">            of the ith variable for the jth generator.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">list_out</span> <span class="o">=</span> <span class="n">parallel_run</span><span class="p">(</span><span class="n">run_SAM</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span>
-                                    <span class="n">skeleton</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
-                                    <span class="n">lr_gen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">lr_disc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dlr</span><span class="p">,</span>
-                                    <span class="n">regul_param</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span>
-                                    <span class="n">dnh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dnh</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span>
-                                    <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span>
-                                    <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span>
-                                    <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-                                    <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">skeleton</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span>
+                                                     <span class="n">nodelist</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">list_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_SAM</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
-                                <span class="n">lr_gen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">lr_disc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dlr</span><span class="p">,</span>
-                                <span class="n">regul_param</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dnh</span><span class="p">,</span>
-                                <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span>
-                                <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-                                <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="n">return_list_results</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">list_out</span>
+            <span class="n">skeleton</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_SAM</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="n">skeleton</span><span class="p">,</span>
+                               <span class="n">lr_gen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span>
+                               <span class="n">lr_disc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dlr</span><span class="p">,</span>
+                               <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                               <span class="n">lambda1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span><span class="p">,</span> <span class="n">lambda2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda2</span><span class="p">,</span>
+                               <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dnh</span><span class="p">,</span>
+                               <span class="n">train</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span>
+                               <span class="n">test</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span><span class="p">,</span>
+                               <span class="n">dagstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagstart</span><span class="p">,</span>
+                               <span class="n">dagloss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagloss</span><span class="p">,</span>
+                               <span class="n">dagpenalization</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagpenalization</span><span class="p">,</span>
+                               <span class="n">dagpenalization_increase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagpenalization_increase</span><span class="p">,</span>
+                               <span class="n">losstype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">losstype</span><span class="p">,</span>
+                               <span class="n">linear</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">,</span>
+                               <span class="n">hlayers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hlayers</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">W</span> <span class="o">=</span> <span class="n">list_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">list_out</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                <span class="n">W</span> <span class="o">+=</span> <span class="n">w</span>
-            <span class="n">W</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">parallel_run</span><span class="p">(</span><span class="n">run_SAM</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="n">skeleton</span><span class="p">,</span>
+                                   <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span>
+                                   <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span> <span class="n">lr_gen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span>
+                                   <span class="n">lr_disc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dlr</span><span class="p">,</span>
+                                   <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                   <span class="n">lambda1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span><span class="p">,</span> <span class="n">lambda2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda2</span><span class="p">,</span>
+                                   <span class="n">nh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nh</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dnh</span><span class="p">,</span>
+                                   <span class="n">train</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span>
+                                   <span class="n">test</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batchsize</span><span class="p">,</span>
+                                   <span class="n">dagstart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagstart</span><span class="p">,</span>
+                                   <span class="n">dagloss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagloss</span><span class="p">,</span>
+                                   <span class="n">dagpenalization</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagpenalization</span><span class="p">,</span>
+                                   <span class="n">dagpenalization_increase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dagpenalization_increase</span><span class="p">,</span>
+                                   <span class="n">losstype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">losstype</span><span class="p">,</span>
+                                   <span class="n">linear</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">,</span>
+                                   <span class="n">hlayers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hlayers</span><span class="p">)</span>
+        <span class="n">list_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_out</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All solutions contain NaNs&quot;</span><span class="p">)</span>
+            <span class="k">raise</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">list_out</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">list_out</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">W</span><span class="p">),</span>
                                 <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span>
                                  <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span></div>

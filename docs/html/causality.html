@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
+  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.2 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.1
+                0.5.2
               </div>
             
           
@@ -127,6 +127,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#lingam"><span class="hidden-section">LiNGAM</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pc"><span class="hidden-section">PC</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sam"><span class="hidden-section">SAM</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#samv1"><span class="hidden-section">SAMv1</span></a></li>
 </ul>
 </li>
 </ul>
@@ -2366,15 +2367,120 @@ the graph).</p>
 <h3><span class="hidden-section">SAM</span><a class="headerlink" href="#sam" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.graph.SAM">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">SAM</code><span class="sig-paren">(</span><em class="sig-param">lr=0.1</em>, <em class="sig-param">dlr=0.1</em>, <em class="sig-param">l1=0.1</em>, <em class="sig-param">nh=50</em>, <em class="sig-param">dnh=200</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">SAM</code><span class="sig-paren">(</span><em class="sig-param">lr=0.01</em>, <em class="sig-param">dlr=0.01</em>, <em class="sig-param">lambda1=0.01</em>, <em class="sig-param">lambda2=1e-05</em>, <em class="sig-param">nh=200</em>, <em class="sig-param">dnh=200</em>, <em class="sig-param">train_epochs=10000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">batchsize=-1</em>, <em class="sig-param">losstype='fgan'</em>, <em class="sig-param">dagstart=0.5</em>, <em class="sig-param">dagloss=True</em>, <em class="sig-param">dagpenalization=0</em>, <em class="sig-param">dagpenalization_increase=0.001</em>, <em class="sig-param">linear=False</em>, <em class="sig-param">hlayers=2</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">nruns=8</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>SAM Algorithm.</p>
 <p><strong>Description:</strong> Structural Agnostic Model is an causal discovery algorithm
-leveraging</p>
+for DAG recovery leveraging both distributional asymetries and conditional
+independencies. the first version of SAM without DAG constraint is available
+as <code class="docutils literal notranslate"><span class="pre">SAMv1</span></code>.</p>
+<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Assumptions:</strong> The class of generative models is not restricted with a
+hard contraint, but with soft constraints parametrized with the <code class="docutils literal notranslate"><span class="pre">lambda1</span></code>
+and <code class="docutils literal notranslate"><span class="pre">lambda2</span></code> parameters, with gumbel softmax sampling. This algorithms greatly
+benefits from bootstrapped runs (nruns &gt;=8 recommended).
+GPUs are recommended but not compulsory. The output is a DAG, but may need a
+thresholding as the output is averaged over multiple runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lr</strong> (<em>float</em>) – Learning rate of the generators</p></li>
+<li><p><strong>dlr</strong> (<em>float</em>) – Learning rate of the discriminator</p></li>
+<li><p><strong>lambda1</strong> (<em>float</em>) – L0 penalization coefficient on the causal filters</p></li>
+<li><p><strong>lambda2</strong> (<em>float</em>) – L0 penalization coefficient on the hidden units of the
+neural network</p></li>
+<li><p><strong>nh</strong> (<em>int</em>) – Number of hidden units in the generators’ hidden layers
+(regularized with lambda2)</p></li>
+<li><p><strong>dnh</strong> (<em>int</em>) – Number of hidden units in the discriminator’s hidden layer</p></li>
+<li><p><strong>train_epochs</strong> (<em>int</em>) – Number of training epochs</p></li>
+<li><p><strong>test_epochs</strong> (<em>int</em>) – Number of test epochs (saving and averaging
+the causal filters)</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model.
+Defaults to full-batch.</p></li>
+<li><p><strong>losstype</strong> (<em>str</em>) – type of the loss to be used (either ‘fgan’ (default),
+‘gan’ or ‘mse’).</p></li>
+<li><p><strong>hlayers</strong> (<em>int</em>) – Defines the number of hidden layers in the discriminator.</p></li>
+<li><p><strong>dagloss</strong> (<em>bool</em>) – Activate the DAG with No-TEARS constraint.</p></li>
+<li><p><strong>dagstart</strong> (<em>float</em>) – Controls when the DAG constraint is to be introduced
+in the training (float ranging from 0 to 1, 0 denotes the start of
+the training and 1 the end).</p></li>
+<li><p><strong>dagpenalisation</strong> (<em>float</em>) – Initial value of the DAG constraint.</p></li>
+<li><p><strong>dagpenalisation_increase</strong> (<em>float</em>) – Increase incrementally at each epoch
+the coefficient of the constraint.</p></li>
+<li><p><strong>linear</strong> (<em>bool</em>) – If true, all generators are set to be linear generators.</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation.
+Recommended: &gt;=8 for optimal performance.</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel.
+Recommended: 1 if no GPU available, 2*number of GPUs else.</p></li>
+<li><p><strong>gpus</strong> (<em>int</em>) – Number of available GPUs for the algorithm.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbose mode</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ref: Kalainathan, Diviyan &amp; Goudet, Olivier &amp; Guyon, Isabelle &amp;
+Lopez-Paz, David &amp; Sebag, Michèle. (2018). Structural Agnostic Modeling:
+Adversarial Learning of Causal Graphs.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.causality.graph</span> <span class="k">import</span> <span class="n">SAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="k">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;sachs&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">SAM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#The predict() method works without a graph, or with a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#directed or undirected graph provided as an input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>    <span class="c1">#No graph provided as an argument</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>  <span class="c1">#With an undirected graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>  <span class="c1">#With a directed graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#To view the graph created, run the below commands:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="cdt.causality.graph.SAM.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph=None</em>, <em class="sig-param">return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute SAM on a dataset given a skeleton or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Observational data for estimation of causal relationships by SAM</p></li>
+<li><p><strong>skeleton</strong> (<em>numpy.ndarray</em>) – A priori knowledge about the causal relationships as an adjacency matrix.
+Can be fed either directed or undirected links.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Graph estimated by SAM, where A[i,j] is the term
+of the ith variable for the jth generator.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="samv1">
+<h3><span class="hidden-section">SAMv1</span><a class="headerlink" href="#samv1" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cdt.causality.graph.SAMv1">
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">SAMv1</code><span class="sig-paren">(</span><em class="sig-param">lr=0.1</em>, <em class="sig-param">dlr=0.1</em>, <em class="sig-param">l1=0.1</em>, <em class="sig-param">nh=50</em>, <em class="sig-param">dnh=200</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAMv1.html#SAMv1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAMv1" title="Permalink to this definition">¶</a></dt>
+<dd><p>SAM Algorithm. Implementation of the first version of the SAM algorithm,
+available at <a class="reference external" href="https://arxiv.org/abs/1803.04929v1">https://arxiv.org/abs/1803.04929v1</a>.</p>
+<p><strong>Description:</strong> Structural Agnostic Model is an fully-differenciable
+causal discovery algorithm leveraging both distributional assymetries and
+conditional independencies.</p>
 <p><strong>Data Type:</strong> Continuous</p>
 <p><strong>Assumptions:</strong> The class of generative models is not restricted with a
 hard contraint, but with the hyperparameter <code class="docutils literal notranslate"><span class="pre">nh</span></code>. This algorithms greatly
 benefits from bootstrapped runs (nruns &gt;=8 recommended).
-GPUs are recommended but not compulsory.</p>
+GPUs are recommended but not compulsory. Output is not a DAG</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2421,8 +2527,8 @@ Model, Causal Discovery and Penalized Adversarial Learning.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="cdt.causality.graph.SAM.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph=None</em>, <em class="sig-param">return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM.predict" title="Permalink to this definition">¶</a></dt>
+<dt id="cdt.causality.graph.SAMv1.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">graph=None</em>, <em class="sig-param">return_list_results=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAMv1.html#SAMv1.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAMv1.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute SAM on a dataset given a skeleton or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

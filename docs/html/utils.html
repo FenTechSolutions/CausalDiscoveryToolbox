@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils &mdash; Causal Discovery Toolbox 0.5.1 documentation</title>
+  <title>cdt.utils &mdash; Causal Discovery Toolbox 0.5.2 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.1
+                0.5.2
               </div>
             
           
@@ -106,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.graph">cdt.utils.graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.loss">cdt.utils.loss</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.parallel">cdt.utils.parallel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdt.utils.torch">cdt.utils.torch</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">cdt.metrics</a></li>
@@ -718,6 +719,42 @@ parameters.</p>
 
 </dd></dl>
 
+<dl class="function">
+<dt id="cdt.utils.loss.notears_constr">
+<code class="sig-prename descclassname">cdt.utils.loss.</code><code class="sig-name descname">notears_constr</code><span class="sig-paren">(</span><em class="sig-param">adj_m</em>, <em class="sig-param">max_pow=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/loss.html#notears_constr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.loss.notears_constr" title="Permalink to this definition">¶</a></dt>
+<dd><p>No Tears constraint for binary adjacency matrixes. Represents a
+differenciable constraint to converge towards a DAG.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If adj_m is non binary: Feed adj_m * adj_m as input (Hadamard product).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adj_m</strong> (<em>array-like</em>) – Adjacency matrix of the graph</p></li>
+<li><p><strong>max_pow</strong> (<em>int</em>) – maximum value to which the infinite sum is to be computed.
+defaults to the shape of the adjacency_matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Scalar value of the loss with the type</dt><dd><p>depending on the input.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray or torch.Tensor</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Zheng, X., Aragam, B., Ravikumar, P. K., &amp; Xing, E. P. (2018). DAGs with
+NO TEARS: Continuous Optimization for Structure Learning. In Advances in
+Neural Information Processing Systems (pp. 9472-9483).</p>
+</div>
+</dd></dl>
+
 </div>
 <div class="section" id="module-cdt.utils.parallel">
 <span id="cdt-utils-parallel"></span><h2>cdt.utils.parallel<a class="headerlink" href="#module-cdt.utils.parallel" title="Permalink to this headline">¶</a></h2>
@@ -782,6 +819,215 @@ does correspond to the initial order.</p>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cdt.utils.torch">
+<span id="cdt-utils-torch"></span><h2>cdt.utils.torch<a class="headerlink" href="#module-cdt.utils.torch" title="Permalink to this headline">¶</a></h2>
+<p>PyTorch utilities for models.</p>
+<p>Author: Diviyan Kalainathan, Olivier Goudet
+Date: 09/3/2018</p>
+<dl class="class">
+<dt id="cdt.utils.torch.ChannelBatchNorm1d">
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.torch.</code><code class="sig-name descname">ChannelBatchNorm1d</code><span class="sig-paren">(</span><em class="sig-param">num_channels</em>, <em class="sig-param">num_features</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#ChannelBatchNorm1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.ChannelBatchNorm1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies Batch Normalization over a 2D or 3D input (a mini-batch of 1D
+inputs with optional additional channel dimension) as described in the paper
+<a class="reference external" href="https://arxiv.org/abs/1502.03167">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a> .</p>
+<p>Variant which is adapted for the SAM model, where the Channel dimension is
+considered as extra-features. Thus considering the input as a
+<cite>N x (channels * in_features)</cite> tensor.</p>
+<div class="math notranslate nohighlight">
+\[y = \frac{x - \mathrm{E}[x]}{\sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta\]</div>
+<p>The mean and standard-deviation are calculated per-dimension over
+the mini-batches and <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are learnable parameter vectors
+of size <cite>C</cite> (where <cite>C</cite> is the input size).</p>
+<p>By default, during training this layer keeps running estimates of its
+computed mean and variance, which are then used for normalization during
+evaluation. The running estimates are kept with a default <code class="xref py py-attr docutils literal notranslate"><span class="pre">momentum</span></code>
+of 0.1.</p>
+<p>If <code class="xref py py-attr docutils literal notranslate"><span class="pre">track_running_stats</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, this layer then does not
+keep running estimates, and batch statistics are instead used during
+evaluation time as well.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This <code class="xref py py-attr docutils literal notranslate"><span class="pre">momentum</span></code> argument is different from one used in optimizer
+classes and the conventional notion of momentum. Mathematically, the
+update rule for running statistics here is
+<span class="math notranslate nohighlight">\(\hat{x}_\text{new} = (1 - \text{momentum}) \times \hat{x} + \text{momemtum} \times x_t\)</span>,
+where <span class="math notranslate nohighlight">\(\hat{x}\)</span> is the estimated statistic and <span class="math notranslate nohighlight">\(x_t\)</span> is the
+new observed value.</p>
+</div>
+<p>Because the Batch Normalization is done over the <cite>C</cite> dimension, computing statistics
+on <cite>(N, L)</cite> slices, it’s common terminology to call this Temporal Batch Normalization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_features</strong> – <span class="math notranslate nohighlight">\(C\)</span> from an expected input of size
+<span class="math notranslate nohighlight">\((N, C, L)\)</span> or <span class="math notranslate nohighlight">\(L\)</span> from input of size <span class="math notranslate nohighlight">\((N, L)\)</span></p></li>
+<li><p><strong>eps</strong> – a value added to the denominator for numerical stability.
+Default: 1e-5</p></li>
+<li><p><strong>momentum</strong> – the value used for the running_mean and running_var
+computation. Can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> for cumulative moving average
+(i.e. simple average). Default: 0.1</p></li>
+<li><p><strong>affine</strong> – a boolean value that when set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, this module has
+learnable affine parameters. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>track_running_stats</strong> – a boolean value that when set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, this
+module tracks the running mean and variance, and when set to <code class="docutils literal notranslate"><span class="pre">False</span></code>,
+this module does not track such statistics and always uses batch
+statistics in both training and eval modes. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Shape:</dt><dd><ul class="simple">
+<li><p>Input: <span class="math notranslate nohighlight">\((N, C)\)</span> or <span class="math notranslate nohighlight">\((N, C, L)\)</span></p></li>
+<li><p>Output: <span class="math notranslate nohighlight">\((N, C)\)</span> or <span class="math notranslate nohighlight">\((N, C, L)\)</span> (same shape as input)</p></li>
+</ul>
+</dd>
+<dt>Examples::</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># With Learnable Parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Without Learnable Parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">affine</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="method">
+<dt id="cdt.utils.torch.ChannelBatchNorm1d.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#ChannelBatchNorm1d.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.ChannelBatchNorm1d.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.utils.torch.Linear3D">
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.torch.</code><code class="sig-name descname">Linear3D</code><span class="sig-paren">(</span><em class="sig-param">sizes</em>, <em class="sig-param">bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#Linear3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.Linear3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a linear transformation to the incoming data: <span class="math notranslate nohighlight">\(y = Ax + b\)</span>.
+Broadcasts following a 3rd dimension. If input is 2d, input is repeated over
+all channels. This layer is a linear layer with 3D parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sizes</strong> – Triplet of int values defining the shape of the 3D tensor:
+(channels, in_features, out_features)</p></li>
+<li><p><strong>bias</strong> – If set to False, the layer will not learn an additive bias.
+Default: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>weight</strong> (<em>torch.Tensor</em>) – the learnable weights of the module of shape
+<cite>(out_features x in_features)</cite></p></li>
+<li><p><strong>bias</strong> (<em>torch.Tensor</em>) – the learnable bias of the module of shape <cite>(out_features)</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Shape:</dt><dd><ul class="simple">
+<li><p>Input: <span class="math notranslate nohighlight">\((N, *, in\_features)\)</span> where <span class="math notranslate nohighlight">\(*\)</span> means number of
+channels or no additional dimension.</p></li>
+<li><p>Output: <span class="math notranslate nohighlight">\((N, channels, out\_features)\)</span>.</p></li>
+</ul>
+</dd>
+<dt>Examples::</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">torch</span><span class="o">.</span><span class="n">Linear3D</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="method">
+<dt id="cdt.utils.torch.Linear3D.extra_repr">
+<code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#Linear3D.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.Linear3D.extra_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the extra representation of the module</p>
+<p>To print customized extra information, you should reimplement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.utils.torch.Linear3D.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">noise=None</em>, <em class="sig-param">adj_matrix=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#Linear3D.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.Linear3D.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cdt.utils.torch.gumbel_softmax">
+<code class="sig-prename descclassname">cdt.utils.torch.</code><code class="sig-name descname">gumbel_softmax</code><span class="sig-paren">(</span><em class="sig-param">logits</em>, <em class="sig-param">tau=1</em>, <em class="sig-param">hard=False</em>, <em class="sig-param">eps=1e-10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#gumbel_softmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.gumbel_softmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of pytorch.
+(<a class="reference external" href="https://github.com/pytorch/pytorch/blob/e4eee7c2cf43f4edba7a14687ad59d3ed61d9833/torch/nn/functional.py">https://github.com/pytorch/pytorch/blob/e4eee7c2cf43f4edba7a14687ad59d3ed61d9833/torch/nn/functional.py</a>)
+Sample from the Gumbel-Softmax distribution and optionally discretize.
+:param logits: <cite>[batch_size, n_class]</cite> unnormalized log-probs
+:param tau: non-negative scalar temperature
+:param hard: if <code class="docutils literal notranslate"><span class="pre">True</span></code>, take <cite>argmax</cite>, but differentiate w.r.t. soft sample y</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>[batch_size, n_class] sample from the Gumbel-Softmax distribution.
+If hard=True, then the returned sample will be one-hot, otherwise it will
+be a probability distribution that sums to 1 across classes</p>
+</dd>
+</dl>
+<p>Constraints:
+- this implementation only works on batch_size x num_features tensor for now
+based on
+<a class="reference external" href="https://github.com/ericjang/gumbel-softmax/blob/3c8584924603869e90ca74ac20a6a03d99a91ef9/Categorical%20VAE.ipynb">https://github.com/ericjang/gumbel-softmax/blob/3c8584924603869e90ca74ac20a6a03d99a91ef9/Categorical%20VAE.ipynb</a> ,
+(MIT license)</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cdt.utils.torch.MatrixSampler">
+<em class="property">class </em><code class="sig-prename descclassname">cdt.utils.torch.</code><code class="sig-name descname">MatrixSampler</code><span class="sig-paren">(</span><em class="sig-param">graph_size</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">gumbel=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#MatrixSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.MatrixSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Matrix Sampler, following a Bernoulli distribution. with learnable
+parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph_size</strong> (<em>int</em><em> or </em><em>tuple</em>) – shape of the matrix to sample. If is int,
+samples a square matrix.</p></li>
+<li><p><strong>mask</strong> (<em>torch.Tensor</em>) – Allows to forbid some elements to be sampled.
+Defaults to <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">th.eye()</span></code>.</p></li>
+<li><p><strong>gumbel</strong> (<em>bool</em>) – Use either gumbel softmax (True) or gumbel sigmoid (False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><p><strong>weights</strong> – the learnable weights of the module of shape
+<cite>(graph_size x graph_size)</cite> if the input was <cite>int</cite> else <cite>(*graph_size)</cite></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Shape:</dt><dd><ul class="simple">
+<li><p>output: <cite>graph_size</cite> if tuple given, else <cite>(graph_size, graph_size)</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="cdt.utils.torch.MatrixSampler.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">tau=1</em>, <em class="sig-param">drawhard=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/utils/torch.html#MatrixSampler.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.torch.MatrixSampler.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a sampled graph.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
