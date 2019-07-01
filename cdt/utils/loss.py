@@ -127,12 +127,13 @@ class MMDloss(th.nn.Module):
         """Init the model."""
         super(MMDloss, self).__init__()
         if bandwidths is None:
-            self.bandwidths = [0.01, 0.1, 1, 10, 100]
+            bandwidths = th.Tensor([0.01, 0.1, 1, 10, 100])
         else:
-            self.bandwidths = bandwidths
+            bandwidths = bandwidths
         s = th.cat([th.ones([input_size, 1]) / input_size,
                     th.ones([input_size, 1]) / -input_size], 0)
 
+        self.register_buffer('bandwidths', bandwidths.unsqueeze(0).unsqueeze(0))
         self.register_buffer('S', (s @ s.t()))
 
     def forward(self, x, y):
@@ -144,12 +145,11 @@ class MMDloss(th.nn.Module):
         # X2 = XX.diag().unsqueeze(0)
         X2 = (X * X).sum(dim=1).unsqueeze(0)
         # print(X2.shape)
-        # raise ValueError
         # exponent entries of the RBF kernel (without the sigma) for each
         # combination of the rows in 'X'
         exponent = -2*XX + X2.expand_as(XX) + X2.t().expand_as(XX)
-        lossMMD = th.sum(sum([self.S *(exponent * -bandwidth).exp()
-                              for bandwidth in self.bandwidths]))
+        b = exponent.unsqueeze(2).expand(-1,-1, self.bandwidths.shape[2]) * -self.bandwidths
+        lossMMD = th.sum(self.S.unsqueeze(2) * b.exp())
         return lossMMD
 
 

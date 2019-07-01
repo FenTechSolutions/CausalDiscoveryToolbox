@@ -104,7 +104,7 @@ class CGNN_model(th.nn.Module):
                     corr_noises.append([(i, j), getattr(self, pname)])
 
             self.corr_noise = dict(corr_noises)
-        self.criterion = MMDloss(batch_size)
+        self.criterion = MMDloss(batch_size).to(device)
         self.register_buffer('score', th.FloatTensor([0]))
         self.batch_size = batch_size
 
@@ -181,8 +181,9 @@ def parallel_graph_evaluation(data, adj_matrix, nruns=16,
     njobs, gpus = SETTINGS.get_default(('njobs', njobs), ('gpu', gpus))
 
     if gpus == 0:
-        return graph_evaluation(data, adj_matrix,
-                                device=SETTINGS.default_device, **kwargs)
+        return [graph_evaluation(data, adj_matrix,
+                                 device=SETTINGS.default_device, **kwargs)
+                for run in range(nruns)]
     else:
         output = parallel_run(graph_evaluation, data,
                               adj_matrix, njobs=njobs,

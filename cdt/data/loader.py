@@ -87,7 +87,7 @@ def load_sachs(**kwargs):
             read_list_edges('{}/resources/cyto_full_target.csv'.format(dirname)))
 
 
-def load_tuebingen(shuffle=True):
+def load_tuebingen(shuffle=False):
     dirname = os.path.dirname(os.path.realpath(__file__))
 
     data = read_causal_pairs('{}/resources/Tuebingen_pairs.csv'.format(dirname), scale=False)
