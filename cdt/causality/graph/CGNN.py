@@ -181,9 +181,9 @@ def parallel_graph_evaluation(data, adj_matrix, nruns=16,
     njobs, gpus = SETTINGS.get_default(('njobs', njobs), ('gpu', gpus))
 
     if gpus == 0:
-        return [graph_evaluation(data, adj_matrix,
-                                 device=SETTINGS.default_device, **kwargs)
-                for run in range(nruns)]
+        output = [graph_evaluation(data, adj_matrix,
+                                   device=SETTINGS.default_device, **kwargs)
+                  for run in range(nruns)]
     else:
         output = parallel_run(graph_evaluation, data,
                               adj_matrix, njobs=njobs,
