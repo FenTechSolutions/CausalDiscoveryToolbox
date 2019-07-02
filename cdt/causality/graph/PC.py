@@ -167,7 +167,7 @@ class PC(GraphModel):
                             "discrete": "pcalg::disCItest",
                             "binary": "pcalg::binCItest",
                             "randomized": "RCIT:::CItest"}
-        self.dir_method_indep = {'dcc': "data=X, ic.method=\"dcc\"",
+        self.dir_method_indep = {'dcc': "dm=X, adaptDF = FALSE", # ic.method=\"dcc\"",
                                  'hsic_gamma': "data=X, ic.method=\"hsic.gamma\"",
                                  'hsic_perm': "data=X, ic.method=\"hsic.perm\"",
                                  'hsic_clust': "data=X, ic.method=\"hsic.clust\"",
