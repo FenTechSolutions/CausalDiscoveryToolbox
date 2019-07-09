@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolbox Settings &mdash; Causal Discovery Toolbox 0.5.4 documentation</title>
+  <title>Toolbox Settings &mdash; Causal Discovery Toolbox 0.5.5 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.4
+                0.5.5
               </div>
             
           
@@ -181,12 +181,15 @@ object, a unique instance of the <code class="docutils literal notranslate"><spa
 <li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.default_device</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.autoset_config</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.rpath</span></code></p></li>
 </ol>
 <p>The hardware detection revolves around the presence of GPUs. If GPUs are
 present, <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> and the number of jobs
 is set to the number of GPUs. Else the number of jobs is set to the number
 of CPUs. Another test performed at startup is to check if an R framework
 is available, unlocking additional features of the toolbox.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.rpath</span></code> allows the user to set a custom path for the Rscript
+executable. It should be overriden with the full path as a string.</p>
 <dl class="class">
 <dt id="cdt.utils.Settings.ConfigSettings">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.utils.Settings.</code><code class="sig-name descname">ConfigSettings</code><a class="reference internal" href="_modules/cdt/utils/Settings.html#ConfigSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.utils.Settings.ConfigSettings" title="Permalink to this definition">¶</a></dt>
@@ -199,6 +202,7 @@ hardware.</p></li>
 <li><p><strong>GPU</strong> (<em>int</em>) – The number of available GPUs ; defaults to <cite>0</cite>.</p></li>
 <li><p><strong>default_device</strong> (<em>str</em>) – Default device used for pytorch jobs.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – Sets the verbosity of the toolbox algorithms.</p></li>
+<li><p><strong>rpath</strong> (<em>str</em>) – Path of the <cite>Rscript</cite> executable.</p></li>
 </ul>
 </dd>
 </dl>
