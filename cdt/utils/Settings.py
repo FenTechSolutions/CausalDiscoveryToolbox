@@ -10,12 +10,17 @@ The various attributes of the ``cdt.SETTINGS`` configuration object are:
 3. ``cdt.SETTINGS.default_device``
 4. ``cdt.SETTINGS.autoset_config``
 5. ``cdt.SETTINGS.verbose``
+6. ``cdt.SETTINGS.rpath``
 
 The hardware detection revolves around the presence of GPUs. If GPUs are
 present, ``cdt.SETTINGS.GPU`` is set to ``True`` and the number of jobs
 is set to the number of GPUs. Else the number of jobs is set to the number
 of CPUs. Another test performed at startup is to check if an R framework
 is available, unlocking additional features of the toolbox.
+
+``cdt.SETTINGS.rpath`` allows the user to set a custom path for the Rscript
+executable. It should be overriden with the full path as a string.
+
 
 .. MIT License
 ..
@@ -63,14 +68,15 @@ class ConfigSettings(object):
         GPU (int): The number of available GPUs ; defaults to `0`.
         default_device (str): Default device used for pytorch jobs.
         verbose (bool): Sets the verbosity of the toolbox algorithms.
-
+        rpath (str): Path of the `Rscript` executable.
     """
 
     __slots__ = ("NJOBS",  # Number of parallel jobs runnable
                  "GPU",  # Number of GPUs Available
                  "default_device",  # Default device for gpu (pytorch 0.4)
                  "autoset_config",
-                 "verbose")
+                 "verbose",
+                 "rpath")
 
     def __init__(self):
         """Define here the default values of the parameters."""
@@ -80,6 +86,7 @@ class ConfigSettings(object):
         self.autoset_config = True
         self.verbose = True
         self.default_device = 'cpu'
+        self.rpath = 'Rscript'
 
         if self.autoset_config:
             self = autoset_settings(self)
@@ -91,6 +98,9 @@ class ConfigSettings(object):
         if attr == "GPU" and value and not self.GPU and self.default_device == 'cpu':
             self.default_device = 'cuda:0'
         super(ConfigSettings, self).__setattr__(attr, value)
+        if attr == 'rpath' and not object.__getattribute__(self, 'rpath') is None:
+            from .R import RPackages
+            RPackages.reset()
 
     def get_default(self, *args, **kwargs):
         """Get the default parameters as defined in the Settings instance.

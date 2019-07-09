@@ -19,6 +19,11 @@ of the function, by:
 4. Retrieving all the results in the Python process and cleaning up all the
    temporary files.
 
+.. note::
+   For custom R configurations/path, a placeholder for the Rscript executable
+   path is available at ``cdt.SETTINGS.rpath``. It should be overriden with
+   the full path as a string.
+
 .. MIT License
 ..
 .. Copyright (c) 2018 Diviyan Kalainathan
@@ -48,6 +53,7 @@ import fileinput
 import subprocess
 import uuid
 from shutil import copy, rmtree
+import  cdt.utils.Settings
 
 
 def message_warning(msg, *a, **kwargs):
@@ -95,6 +101,17 @@ class DefaultRPackages(object):
 
     def __init__(self):
         """Init the values of the packages."""
+        self.reset()
+
+    def __repr__(self):
+        """Representation."""
+        return str(["{}: {}".format(i, getattr(self, i)) for i in self.__slots__])
+
+    def __str__(self):
+        """For print purposes."""
+        return str(["{}: {}".format(i, getattr(self, i)) for i in self.__slots__])
+
+    def reset(self):
         self.init = True
         self.pcalg = None
         self.kpcalg = None
@@ -105,14 +122,6 @@ class DefaultRPackages(object):
         self.CAM = None
         self.RCIT = None
         self.init = False
-
-    def __repr__(self):
-        """Representation."""
-        return str(["{}: {}".format(i, getattr(self, i)) for i in self.__slots__])
-
-    def __str__(self):
-        """For print purposes."""
-        return str(["{}: {}".format(i, getattr(self, i)) for i in self.__slots__])
 
     def __getattribute__(self, name):
         """Test if libraries are available on the fly."""
@@ -159,6 +168,7 @@ def launch_R_script(template, arguments, output_function=None,
     """
     id = str(uuid.uuid4())
     os.makedirs('/tmp/cdt_R_script_' + id + '/')
+    rpath = cdt.utils.Settings.SETTINGS.get_default(rpath=None)
     try:
         scriptpath = '/tmp/cdt_R_script_' + id + '/instance_{}'.format(os.path.basename(template))
         copy(template, scriptpath)
@@ -171,13 +181,13 @@ def launch_R_script(template, arguments, output_function=None,
                 print(mline, end='')
 
         if output_function is None:
-            output = subprocess.call("Rscript --vanilla {}".format(scriptpath), shell=True,
+            output = subprocess.call("{} --vanilla {}".format(rpath, scriptpath), shell=True,
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
             if verbose:
-                process = subprocess.Popen("Rscript --vanilla {}".format(scriptpath), shell=True)
+                process = subprocess.Popen("{} --vanilla {}".format(rpath, scriptpath), shell=True)
             else:
-                process = subprocess.Popen("Rscript --vanilla {}".format(scriptpath), shell=True,
+                process = subprocess.Popen("{} --vanilla {}".format(rpath, scriptpath), shell=True,
                                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             process.wait()
             output = output_function()
