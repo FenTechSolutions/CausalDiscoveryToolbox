@@ -13,9 +13,9 @@ If the package is available, the ``launch_R_script`` proceeds to the execution
 of the function, by:
 
 1. Copying the R script template and modifying it with the given arguments
-2. Copying all the data to a temporary folder in /tmp
+2. Copying all the data to a temporary folder
 3. Launching a R subprocess using the modified template and the data, and
-   the script saves the results in a folder in /tmp
+   the script saves the results in the temporary folder
 4. Retrieving all the results in the Python process and cleaning up all the
    temporary files.
 
@@ -53,7 +53,8 @@ import fileinput
 import subprocess
 import uuid
 from shutil import copy, rmtree
-import  cdt.utils.Settings
+from tempfile import gettempdir
+import cdt.utils.Settings
 
 
 def message_warning(msg, *a, **kwargs):
@@ -166,11 +167,11 @@ def launch_R_script(template, arguments, output_function=None,
         else `True` or `False` depending on whether the execution was
         successful.
     """
-    id = str(uuid.uuid4())
-    os.makedirs('/tmp/cdt_R_script_' + id + '/')
+    base_dir = f'{gettempdir()}/cdt_R_script_{uuid.uuid4()}'
+    os.makedirs(base_dir)
     rpath = cdt.utils.Settings.SETTINGS.get_default(rpath=None)
     try:
-        scriptpath = '/tmp/cdt_R_script_' + id + '/instance_{}'.format(os.path.basename(template))
+        scriptpath = f'{base_dir}/instance_{os.path.basename(template)}'
         copy(template, scriptpath)
 
         with fileinput.FileInput(scriptpath, inplace=True) as file:
@@ -195,14 +196,14 @@ def launch_R_script(template, arguments, output_function=None,
     # Cleaning up
     except Exception as e:
         if not debug:
-            rmtree('/tmp/cdt_R_script_' + id + '/')
+            rmtree(base_dir)
         raise e
     except KeyboardInterrupt:
         if not debug:
-            rmtree('/tmp/cdt_R_script_' + id + '/')
+            rmtree(base_dir)
         raise KeyboardInterrupt
     if not debug:
-        rmtree('/tmp/cdt_R_script_' + id + '/')
+        rmtree(base_dir)
     return output
 
 
