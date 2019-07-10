@@ -33,8 +33,10 @@ matrixes that represent the adjacency matrix or `networkx.DiGraph` instances.
 import os
 import numpy as np
 import networkx as nx
+import uuid
 from shutil import rmtree
 from sklearn.metrics import auc, precision_recall_curve
+from tempfile import gettempdir
 from .utils.R import launch_R_script, RPackages
 
 
@@ -195,26 +197,27 @@ def SID(target, pred):
     predictions = retrieve_adjacency_matrix(pred, target.nodes()
                                             if isinstance(target, nx.DiGraph) else None)
 
-    os.makedirs('/tmp/cdt_SID/')
+    base_dir = f'{gettempdir()}/cdt_SID_{uuid.uuid4()}'
+    os.makedirs(base_dir)
 
     def retrieve_result():
         return np.loadtxt('/tmp/cdt_SID/result.csv')
 
     try:
-        np.savetxt('/tmp/cdt_SID/target.csv', true_labels, delimiter=',')
-        np.savetxt('/tmp/cdt_SID/pred.csv', predictions, delimiter=',')
+        np.savetxt(f'{base_dir}/target.csv', true_labels, delimiter=',')
+        np.savetxt(f'{base_dir}/pred.csv', predictions, delimiter=',')
         sid_score = launch_R_script("{}/utils/R_templates/sid.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                    {"{target}": '/tmp/cdt_SID/target.csv',
-                                     "{prediction}": '/tmp/cdt_SID/pred.csv',
-                                     "{result}": '/tmp/cdt_SID/result.csv'},
+                                    {"{target}": f'{base_dir}/target.csv',
+                                     "{prediction}": f'{base_dir}/pred.csv',
+                                     "{result}": f'{base_dir}/result.csv'},
                                     output_function=retrieve_result)
     # Cleanup
     except Exception as e:
-        rmtree('/tmp/cdt_SID')
+        rmtree(base_dir)
         raise e
     except KeyboardInterrupt:
-        rmtree('/tmp/cdt_SID/')
+        rmtree(base_dir)
         raise KeyboardInterrupt
 
-    rmtree('/tmp/cdt_SID')
+    rmtree(base_dir)
     return sid_score
