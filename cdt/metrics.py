@@ -201,7 +201,7 @@ def SID(target, pred):
     os.makedirs(base_dir)
 
     def retrieve_result():
-        return np.loadtxt('/tmp/cdt_SID/result.csv')
+        return np.loadtxt(f'{base_dir}/result.csv')
 
     try:
         np.savetxt(f'{base_dir}/target.csv', true_labels, delimiter=',')
