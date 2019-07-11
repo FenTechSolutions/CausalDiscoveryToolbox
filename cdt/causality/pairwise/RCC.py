@@ -72,7 +72,7 @@ class RCC(PairwiseModel):
         >>> data, labels = load_dataset('tuebingen')
         >>> X_tr, X_te, y_tr, y_te = train_test_split(data, labels, train_size=.5)
         >>>
-        >>> obj = Jarfo()
+        >>> obj = RCC()
         >>> obj.fit(X_tr, y_tr)
         >>> # This example uses the predict() method
         >>> output = obj.predict(X_te)
