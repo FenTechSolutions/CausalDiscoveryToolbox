@@ -130,7 +130,7 @@ def run_SAM(in_data, skeleton=None, device="cpu",
             verbose=True, losstype="fgan",
             dagstart=0, dagloss=False,
             dagpenalization=0.05, dagpenalization_increase=0.0,
-            linear=False, hlayers=2):
+            linear=False, hlayers=2, idx=0):
 
     list_nodes = list(in_data.columns)
     data = scale(in_data[list_nodes].values)
