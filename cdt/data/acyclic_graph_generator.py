@@ -55,6 +55,9 @@ class AcyclicGraphGenerator(object):
         npoints (int): Number of data points to generate.
         nodes (int): Number of nodes in the graph to generate.
         parents_max (int): Maximum number of parents of a node.
+        expected_degree (int): Degree (number of edge per node) expected,
+            only used for erdos graph
+        dag_type (str): type of graph to generate ('default', 'erdos')
 
     Example:
         >>> from cdt.data import AcyclicGraphGenerator
@@ -66,7 +69,8 @@ class AcyclicGraphGenerator(object):
     def __init__(self, causal_mechanism, noise='gaussian',
                  noise_coeff=.4,
                  initial_variable_generator=gmm_cause,
-                 npoints=500, nodes=20, parents_max=5):
+                 npoints=500, nodes=20, parents_max=5, expected_degree=3,
+                 dag_type='default'):
         super(AcyclicGraphGenerator, self).__init__()
         self.mechanism = {'linear': LinearMechanism,
                           'polynomial': Polynomial_Mechanism,
@@ -87,21 +91,38 @@ class AcyclicGraphGenerator(object):
         self.noise_coeff = noise_coeff
         self.adjacency_matrix = np.zeros((nodes, nodes))
         self.parents_max = parents_max
+        self.expected_degree = expected_degree
+        self.dag_type = dag_type
         self.initial_generator = initial_variable_generator
         self.cfunctions = None
         self.g = None
 
-    def init_variables(self, verbose=False):
-        """Redefine the causes, mechanisms and the structure of the graph,
-        called by ``self.generate()`` if never called.
+    def init_dag(self, verbose):
+        """Redefine the structure of the graph depending on dag_type
+        ('default', 'erdos')
 
         Args:
             verbose (bool): Verbosity
         """
-        for j in range(1, self.nodes):
-            nb_parents = np.random.randint(0, min([self.parents_max, j])+1)
-            for i in np.random.choice(range(0, j), nb_parents, replace=False):
-                self.adjacency_matrix[i, j] = 1
+        if self.dag_type == 'default':
+            for j in range(1, self.nodes):
+                nb_parents = np.random.randint(0, min([self.parents_max, j])+1)
+                for i in np.random.choice(range(0, j), nb_parents, replace=False):
+                    self.adjacency_matrix[i, j] = 1
+
+        elif self.dag_type == 'erdos':
+            nb_edges = self.expected_degree * self.nodes
+            prob_connection = 2 * nb_edges/(self.nodes**2 - self.nodes)
+            causal_order = np.random.permutation(np.arange(self.nodes))
+
+            for i in range(self.nodes - 1):
+                node = causal_order[i]
+                possible_parents = causal_order[(i+1):]
+                num_parents = np.random.binomial(n=self.nodes - i - 1,
+                                                 p=prob_connection)
+                parents = np.random.choice(possible_parents, size=num_parents,
+                                           replace=False)
+                self.adjacency_matrix[parents, node] = 1
 
         try:
             self.g = nx.DiGraph(self.adjacency_matrix)
@@ -110,7 +131,17 @@ class AcyclicGraphGenerator(object):
         except AssertionError:
             if verbose:
                 print("Regenerating, graph non valid...")
-            self.init_variables(verbose=verbose)
+            self.init_dag(verbose=verbose)
+
+
+    def init_variables(self, verbose=False):
+        """Redefine the causes, mechanisms and the structure of the graph,
+        called by ``self.generate()`` if never called.
+
+        Args:
+            verbose (bool): Verbosity
+        """
+        self.init_dag(verbose)
 
         # Mechanisms
         self.cfunctions = [self.mechanism(int(sum(self.adjacency_matrix[:, i])),
