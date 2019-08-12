@@ -18,7 +18,7 @@ Package for causal inference in graphs and in the pairwise settings for Python>=
 .. image:: https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox
 .. image:: https://img.shields.io/aur/license/pac.svg?maxAge=259200
-.. image:: https://img.shields.io/badge/version-0.5.6-yellow.svg?maxAge=259200
+.. image:: https://img.shields.io/badge/version-0.5.7-yellow.svg?maxAge=259200
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the `bnlearn`, `pcalg` packages), mainly based out of observational data.
 
@@ -44,13 +44,13 @@ Docker images
 
 Docker images are available, including all the dependencies, and enabled functionalities:
 
-.. |36cpu| image:: https://img.shields.io/badge/docker-0.5.6-0db7ed.svg?maxAge=259200
+.. |36cpu| image:: https://img.shields.io/badge/docker-0.5.7-0db7ed.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/cdt-py3.6/
 
-.. |37cpu| image:: https://img.shields.io/badge/docker-0.5.6-0db7ed.svg?maxAge=259200
+.. |37cpu| image:: https://img.shields.io/badge/docker-0.5.7-0db7ed.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/cdt-py3.7/
 
-.. |36gpu| image:: https://img.shields.io/badge/nvidia--docker-0.5.6-76b900.svg?maxAge=259200
+.. |36gpu| image:: https://img.shields.io/badge/nvidia--docker-0.5.7-76b900.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/nv-cdt-py3.6/
 
 .. |36cpudev| image:: https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200
@@ -62,9 +62,9 @@ Docker images are available, including all the dependencies, and enabled functio
     :target: https://hub.docker.com/r/divkal/nv-cdt-dev/
 
 ..  |       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
-..  | Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.6-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.5.6-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
-..  | Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.6-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
-..  | Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.6-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.5.6-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
+..  | Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.7-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.5.7-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+..  | Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.7-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
+..  | Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.7-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.5.7-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
 
 +-------------------+---------+------------+
 |      Branch       | master  |    dev     |

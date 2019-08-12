@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.6 documentation</title>
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.7 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.6
+                0.5.7
               </div>
             
           
@@ -274,6 +274,79 @@
     <span class="n">aupr</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">recall</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">reorder</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">aupr</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_CPDAG</span><span class="p">(</span><span class="n">dag</span><span class="p">):</span>
+    <span class="sa">R</span><span class="sd">&quot;&quot;&quot;Compute the completed partially directed acyclic graph (CPDAG) of</span>
+<span class="sd">    a given DAG</span>
+
+<span class="sd">    CPDAG is a Markov equivalence class of DAGs. Basically, it retain the</span>
+<span class="sd">    skeleton and the v-structures of the original DAG.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dag (numpy.ndarray or networkx.DiGraph): DAG, must be of</span>
+<span class="sd">            ones and zeros.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: Adjacency matrix of the CPDAG.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">pcalg</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;pcalg R package is not available. Please check your installation.&quot;</span><span class="p">)</span>
+
+    <span class="n">dag</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">dag</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/result.csv&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/dag.csv&#39;</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">cpdag</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/utils/R_templates/cpdag.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
+                                    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{dag}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_CPDAG/dag.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{result}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_CPDAG/result.csv&#39;</span><span class="p">},</span>
+                                    <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">)</span>
+    <span class="c1"># Cleanup</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
+
+    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cpdag</span>
+
+
+<span class="k">def</span> <span class="nf">SHD_CPDAG</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the Structural Hamming Distance (SHD) between completed</span>
+<span class="sd">    partially directed acyclic graph (CPDAG).</span>
+
+<span class="sd">    The Structural Hamming Distance on CPDAG is simply the SHD</span>
+<span class="sd">    between two DAGs that are first mapped to their respective CPDAGs.</span>
+<span class="sd">    This distance can be particularly useful when an algorithm only</span>
+<span class="sd">    returns CPDAG.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target DAG, must be of</span>
+<span class="sd">            ones and zeros.</span>
+<span class="sd">        prediction (numpy.ndarray or networkx.DiGraph): DAG or CPDAG</span>
+<span class="sd">            predicted by the algorithm.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Structural Hamming Distance on CPDAG (int).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+                                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">get_CPDAG</span><span class="p">(</span><span class="n">true_labels</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">get_CPDAG</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">SHD</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="SHD"><a class="viewcode-back" href="../../metrics.html#cdt.metrics.SHD">[docs]</a><span class="k">def</span> <span class="nf">SHD</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">double_for_anticausal</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>

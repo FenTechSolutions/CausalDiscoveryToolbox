@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data &mdash; Causal Discovery Toolbox 0.5.6 documentation</title>
+  <title>cdt.data &mdash; Causal Discovery Toolbox 0.5.7 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.6
+                0.5.7
               </div>
             
           
@@ -258,7 +258,7 @@ format.</p>
 <h2>AcyclicGraphGenerator<a class="headerlink" href="#acyclicgraphgenerator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cdt.data.AcyclicGraphGenerator">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">AcyclicGraphGenerator</code><span class="sig-paren">(</span><em class="sig-param">causal_mechanism</em>, <em class="sig-param">noise='gaussian'</em>, <em class="sig-param">noise_coeff=0.4</em>, <em class="sig-param">initial_variable_generator=&lt;function gmm_cause&gt;</em>, <em class="sig-param">npoints=500</em>, <em class="sig-param">nodes=20</em>, <em class="sig-param">parents_max=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">AcyclicGraphGenerator</code><span class="sig-paren">(</span><em class="sig-param">causal_mechanism</em>, <em class="sig-param">noise='gaussian'</em>, <em class="sig-param">noise_coeff=0.4</em>, <em class="sig-param">initial_variable_generator=&lt;function gmm_cause&gt;</em>, <em class="sig-param">npoints=500</em>, <em class="sig-param">nodes=20</em>, <em class="sig-param">parents_max=5</em>, <em class="sig-param">expected_degree=3</em>, <em class="sig-param">dag_type='default'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an acyclic graph and data given a causal mechanism.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -274,6 +274,9 @@ of the graph, defaults to a Gaussian Mixture model.</p></li>
 <li><p><strong>npoints</strong> (<em>int</em>) – Number of data points to generate.</p></li>
 <li><p><strong>nodes</strong> (<em>int</em>) – Number of nodes in the graph to generate.</p></li>
 <li><p><strong>parents_max</strong> (<em>int</em>) – Maximum number of parents of a node.</p></li>
+<li><p><strong>expected_degree</strong> (<em>int</em>) – Degree (number of edge per node) expected,
+only used for erdos graph</p></li>
+<li><p><strong>dag_type</strong> (<em>str</em>) – type of graph to generate (‘default’, ‘erdos’)</p></li>
 </ul>
 </dd>
 </dl>
@@ -298,6 +301,18 @@ generated data and graph.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="cdt.data.AcyclicGraphGenerator.init_dag">
+<code class="sig-name descname">init_dag</code><span class="sig-paren">(</span><em class="sig-param">verbose</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_dag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_dag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redefine the structure of the graph depending on dag_type
+(‘default’, ‘erdos’)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<em>bool</em>) – Verbosity</p>
 </dd>
 </dl>
 </dd></dl>
