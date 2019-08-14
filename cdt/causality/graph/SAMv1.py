@@ -344,10 +344,10 @@ class SAMv1(GraphModel):
 
     Example:
         >>> import networkx as nx
-        >>> from cdt.causality.graph import SAM
+        >>> from cdt.causality.graph import SAMv1
         >>> from cdt.data import load_dataset
         >>> data, graph = load_dataset("sachs")
-        >>> obj = SAM()
+        >>> obj = SAMv1()
         >>> #The predict() method works without a graph, or with a
         >>> #directed or undirected graph provided as an input
         >>> output = obj.predict(data)    #No graph provided as an argument

@@ -111,6 +111,79 @@ def precision_recall(target, prediction, low_confidence_undirected=False):
     return aupr, list(zip(precision, recall))
 
 
+def get_CPDAG(dag):
+    R"""Compute the completed partially directed acyclic graph (CPDAG) of
+    a given DAG
+
+    CPDAG is a Markov equivalence class of DAGs. Basically, it retain the
+    skeleton and the v-structures of the original DAG.
+
+    Args:
+        dag (numpy.ndarray or networkx.DiGraph): DAG, must be of
+            ones and zeros.
+
+    Returns:
+        numpy.ndarray: Adjacency matrix of the CPDAG.
+
+    """
+    if not RPackages.pcalg:
+        raise ImportError("pcalg R package is not available. Please check your installation.")
+
+    dag = retrieve_adjacency_matrix(dag)
+
+    os.makedirs('/tmp/cdt_CPDAG/')
+
+    def retrieve_result():
+        return np.loadtxt('/tmp/cdt_CPDAG/result.csv')
+
+    try:
+        np.savetxt('/tmp/cdt_CPDAG/dag.csv', dag, delimiter=',')
+        cpdag = launch_R_script("{}/utils/R_templates/cpdag.R".format(os.path.dirname(os.path.realpath(__file__))),
+                                    {"{dag}": '/tmp/cdt_CPDAG/dag.csv',
+                                     "{result}": '/tmp/cdt_CPDAG/result.csv'},
+                                    output_function=retrieve_result)
+    # Cleanup
+    except Exception as e:
+        rmtree('/tmp/cdt_CPDAG')
+        raise e
+    except KeyboardInterrupt:
+        rmtree('/tmp/cdt_CPDAG/')
+        raise KeyboardInterrupt
+
+    rmtree('/tmp/cdt_CPDAG')
+
+    return cpdag
+
+
+def SHD_CPDAG(target, pred):
+    r"""Compute the Structural Hamming Distance (SHD) between completed
+    partially directed acyclic graph (CPDAG).
+
+    The Structural Hamming Distance on CPDAG is simply the SHD
+    between two DAGs that are first mapped to their respective CPDAGs.
+    This distance can be particularly useful when an algorithm only
+    returns CPDAG.
+
+    Args:
+        target (numpy.ndarray or networkx.DiGraph): Target DAG, must be of
+            ones and zeros.
+        prediction (numpy.ndarray or networkx.DiGraph): DAG or CPDAG
+            predicted by the algorithm.
+
+    Returns:
+        int: Structural Hamming Distance on CPDAG (int).
+
+    """
+    true_labels = retrieve_adjacency_matrix(target)
+    predictions = retrieve_adjacency_matrix(pred, target.nodes()
+                                            if isinstance(target, nx.DiGraph) else None)
+
+    true_labels = get_CPDAG(true_labels)
+    predictions = get_CPDAG(predictions)
+
+    return SHD(true_labels, predictions, False)
+
+
 def SHD(target, pred, double_for_anticausal=True):
     r"""Compute the Structural Hamming Distance.
 

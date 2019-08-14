@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data.acyclic_graph_generator &mdash; Causal Discovery Toolbox 0.5.5 documentation</title>
+  <title>cdt.data.acyclic_graph_generator &mdash; Causal Discovery Toolbox 0.5.7 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.5
+                0.5.7
               </div>
             
           
@@ -222,6 +222,9 @@
 <span class="sd">        npoints (int): Number of data points to generate.</span>
 <span class="sd">        nodes (int): Number of nodes in the graph to generate.</span>
 <span class="sd">        parents_max (int): Maximum number of parents of a node.</span>
+<span class="sd">        expected_degree (int): Degree (number of edge per node) expected,</span>
+<span class="sd">            only used for erdos graph</span>
+<span class="sd">        dag_type (str): type of graph to generate (&#39;default&#39;, &#39;erdos&#39;)</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from cdt.data import AcyclicGraphGenerator</span>
@@ -233,7 +236,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">causal_mechanism</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span>
                  <span class="n">noise_coeff</span><span class="o">=.</span><span class="mi">4</span><span class="p">,</span>
                  <span class="n">initial_variable_generator</span><span class="o">=</span><span class="n">gmm_cause</span><span class="p">,</span>
-                 <span class="n">npoints</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">parents_max</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+                 <span class="n">npoints</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">parents_max</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">expected_degree</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                 <span class="n">dag_type</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AcyclicGraphGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mechanism</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linear&#39;</span><span class="p">:</span> <span class="n">LinearMechanism</span><span class="p">,</span>
                           <span class="s1">&#39;polynomial&#39;</span><span class="p">:</span> <span class="n">Polynomial_Mechanism</span><span class="p">,</span>
@@ -254,21 +258,38 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">noise_coeff</span> <span class="o">=</span> <span class="n">noise_coeff</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parents_max</span> <span class="o">=</span> <span class="n">parents_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_degree</span> <span class="o">=</span> <span class="n">expected_degree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dag_type</span> <span class="o">=</span> <span class="n">dag_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_generator</span> <span class="o">=</span> <span class="n">initial_variable_generator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfunctions</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="AcyclicGraphGenerator.init_variables"><a class="viewcode-back" href="../../../data.html#cdt.data.AcyclicGraphGenerator.init_variables">[docs]</a>    <span class="k">def</span> <span class="nf">init_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Redefine the causes, mechanisms and the structure of the graph,</span>
-<span class="sd">        called by ``self.generate()`` if never called.</span>
+<div class="viewcode-block" id="AcyclicGraphGenerator.init_dag"><a class="viewcode-back" href="../../../data.html#cdt.data.AcyclicGraphGenerator.init_dag">[docs]</a>    <span class="k">def</span> <span class="nf">init_dag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Redefine the structure of the graph depending on dag_type</span>
+<span class="sd">        (&#39;default&#39;, &#39;erdos&#39;)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            verbose (bool): Verbosity</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
-            <span class="n">nb_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">parents_max</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">nb_parents</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dag_type</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+                <span class="n">nb_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">parents_max</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">nb_parents</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dag_type</span> <span class="o">==</span> <span class="s1">&#39;erdos&#39;</span><span class="p">:</span>
+            <span class="n">nb_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_degree</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span>
+            <span class="n">prob_connection</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nb_edges</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+            <span class="n">causal_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">causal_order</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">possible_parents</span> <span class="o">=</span> <span class="n">causal_order</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):]</span>
+                <span class="n">num_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                                                 <span class="n">p</span><span class="o">=</span><span class="n">prob_connection</span><span class="p">)</span>
+                <span class="n">parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">possible_parents</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">num_parents</span><span class="p">,</span>
+                                           <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">[</span><span class="n">parents</span><span class="p">,</span> <span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">)</span>
@@ -277,7 +298,17 @@
         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Regenerating, graph non valid...&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">init_variables</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_dag</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AcyclicGraphGenerator.init_variables"><a class="viewcode-back" href="../../../data.html#cdt.data.AcyclicGraphGenerator.init_variables">[docs]</a>    <span class="k">def</span> <span class="nf">init_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Redefine the causes, mechanisms and the structure of the graph,</span>
+<span class="sd">        called by ``self.generate()`` if never called.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            verbose (bool): Verbosity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_dag</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="c1"># Mechanisms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfunctions</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mechanism</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])),</span>
