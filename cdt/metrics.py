@@ -131,26 +131,27 @@ def get_CPDAG(dag):
 
     dag = retrieve_adjacency_matrix(dag)
 
-    os.makedirs('/tmp/cdt_CPDAG/')
+    base_dir = '{0!s}/cdt_CPDAG_{1!s}'.format(gettempdir(), uuid.uuid4())
+    os.makedirs(base_dir)
 
     def retrieve_result():
-        return np.loadtxt('/tmp/cdt_CPDAG/result.csv')
+        return np.loadtxt('{}/result.csv'.format(base_dir))
 
     try:
-        np.savetxt('/tmp/cdt_CPDAG/dag.csv', dag, delimiter=',')
+        np.savetxt('{}/dag.csv'.format(base_dir), dag, delimiter=',')
         cpdag = launch_R_script("{}/utils/R_templates/cpdag.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                    {"{dag}": '/tmp/cdt_CPDAG/dag.csv',
-                                     "{result}": '/tmp/cdt_CPDAG/result.csv'},
-                                    output_function=retrieve_result)
+                                {"{dag}": '{}/dag.csv'.format(base_dir),
+                                 "{result}": '{}/result.csv'.format(base_dir)},
+                                output_function=retrieve_result)
     # Cleanup
     except Exception as e:
-        rmtree('/tmp/cdt_CPDAG')
+        rmtree(base_dir)
         raise e
     except KeyboardInterrupt:
-        rmtree('/tmp/cdt_CPDAG/')
+        rmtree(base_dir)
         raise KeyboardInterrupt
 
-    rmtree('/tmp/cdt_CPDAG')
+    rmtree(base_dir)
 
     return cpdag
 
