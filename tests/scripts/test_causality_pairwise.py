@@ -22,7 +22,8 @@ data_pairwise = read_causal_pairs("{}/../datasets/Example_pairwise_pairs.csv".fo
 data_graph = pd.read_csv('{}/../datasets/Example_graph_numdata.csv'.format(os.path.dirname(os.path.realpath(__file__)))).iloc[:50, :5]
 
 graph_skeleton = Glasso().predict(data_graph)
-tueb = load_dataset('tuebingen')[0][:10]
+tueb, labels = load_dataset('tuebingen')
+tueb, labels = tueb[:10], labels[:10]
 
 
 def test_pairwise():
@@ -77,8 +78,20 @@ def test_graph():
     return 0
 
 
+def test_pairwise_t():
+    for method in [NCC]:  # Jarfo
+        print(method)
+        m = method()
+        if hasattr(m, "fit"):
+            m.fit(tueb, labels)
+        r = m.predict(data_pairwise)
+        assert r is not None
+        print(r)
+    return 0
+
 if __name__ == "__main__":
-    test_pairwise()
-    test_graph()
-    test_pairwise_GNN()
-    test_graph_GNN()
+    # test_pairwise()
+    # test_graph()
+    # test_pairwise_GNN()
+    # test_graph_GNN()
+    test_pairwise_t()

@@ -34,27 +34,59 @@ import pandas as pd
 from .model import PairwiseModel
 from tqdm import trange
 from torch.utils import data
+from random import shuffle
 from ...utils.Settings import SETTINGS
 
 
 class Dataset(data.Dataset):
-  'Characterizes a dataset for PyTorch'
-  def __init__(self, dataset, labels):
+    'Characterizes a dataset for PyTorch'
+    def __init__(self, dataset, labels, batch_size=-1):
         'Initialization'
         self.labels = labels
         self.dataset = dataset
+        self.batch_size = batch_size if batch_size != 1 else len(dataset)
+        self.nsets = self.__len__()//self.batch_size
 
-  def __len__(self):
+    def shuffle(self):
+        # self.dataset, self.labels = shuffle(self.dataset, self.labels)
+        # z = list(zip(self.dataset, self.labels))
+        # print(z)
+        # shuffle(z)
+        order = th.randperm(len(self.dataset))
+        self.dataset = [self.dataset[i] for i in order]
+        self.labels = self.labels[order]
+        # self.dataset, self.labels = zip(*z)
+        self.set = [([self.dataset[i+j*self.batch_size]
+                      for i in range(self.batch_size)],
+                      th.index_select(self.labels,0 ,th.LongTensor([i+j*self.batch_size
+                      for i in range(self.batch_size)])))
+                    for j in range(self.nsets)]
+
+    def __iter__(self):
+        self.shuffle()
+        self.count = 0
+        return self
+
+    def __next__(self):
+        if self.count < self.nsets:
+            self.count += 1
+            return self.set[self.count - 1]
+        else:
+            raise StopIteration
+
+
+    def __len__(self):
         'Denotes the total number of samples'
         return len(self.dataset)
 
-  def __getitem__(self, index):
-        'Generates one sample of data'
-        # Select sample
 
-        # Load data and get label
+    # def __getitem__(self, index):
+    #     'Generates one sample of data'
+    #     # Select sample
 
-        return self.dataset[index], self.labels[index]
+    #     # Load data and get label
+
+    #     return self.dataset[index], self.labels[index]
 
 
 class NCC_model(th.nn.Module):
@@ -161,18 +193,10 @@ class NCC(PairwiseModel):
         self.model = self.model.to(device)
         y = y.to(device)
         dataset = []
-        for i, (idx, row) in enumerate(x_tr.iterrows()):
-
-            a = row['A'].reshape((len(row['A']), 1))
-            b = row['B'].reshape((len(row['B']), 1))
-            m = np.hstack((a, b))
-            m = m.astype('float32')
-            m = th.from_numpy(m).t().unsqueeze(0)
-            dataset.append(m)
-        dataset = [m.to(device) for m in dataset]
+        dataset = [th.Tensor(np.vstack([row['A'], row['B']])).t().to(device)
+                   for (idx, row) in x_tr.iterrows()]
         acc = [0]
-        da = th.utils.data.DataLoader(Dataset(dataset, y), batch_size=batch_size,
-                                      shuffle=True)
+        da = Dataset(dataset, y, batch_size)
         data_per_epoch = (len(dataset) // batch_size)
         with trange(epochs, desc="Epochs", disable=not verbose) as te:
             for epoch in te:
@@ -180,15 +204,16 @@ class NCC(PairwiseModel):
                             disable=not (verbose and batch_size == len(dataset))) as t:
                     output = []
                     labels = []
-                    for (batch, label), i in zip(da, t):
+                    for batch, label in da:
+                    # for (batch, label), i in zip(da, t):
                         opt.zero_grad()
                         # print(batch.shape, labels.shape)
-                        out = th.stack([self.model(m) for m in batch], 0).squeeze(2)
+                        out = th.stack([self.model(m.t().unsqueeze(0)) for m in batch], 0).squeeze(2)
                         loss = criterion(out, label)
                         loss.backward()
+                        output.append(out)
                         t.set_postfix(loss=loss.item())
                         opt.step()
-                        output.append(out)
                         labels.append(label)
                     acc = th.where(th.cat(output, 0).data.cpu() > .5,
                                    th.ones(len(output)),
