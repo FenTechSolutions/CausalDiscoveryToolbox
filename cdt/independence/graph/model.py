@@ -142,3 +142,5 @@ class FeatureSelectionModel(GraphSkeletonModel):
             if node not in graph.nodes():
                 graph.add_node(node)
         return graph
+
+from .FSGNN import FSGNN_model as FSGNN

@@ -22,10 +22,10 @@
 .. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 .. SOFTWARE.
 """
+from .PC import PC
 from .CGNN import CGNN
 from .SAMv1 import SAMv1
 from .SAM import SAM
-from .PC import PC
 from .GES import GES
 from .GIES import GIES
 from .CAM import CAM

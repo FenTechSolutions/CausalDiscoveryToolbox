@@ -21,7 +21,7 @@
 .. OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 .. SOFTWARE.
 """
-from .FSGNN import FSGNN
 from .Lasso import (Glasso, HSICLasso)
+from .FSGNN import FSGNN
 from .FSRegression import (RFECVLinearSVR, LinearSVRL2, RRelief,
                            DecisionTreeRegression, ARD)

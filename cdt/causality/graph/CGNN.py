@@ -36,12 +36,12 @@ from copy import deepcopy
 from tqdm import trange
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import scale
-from .model import GraphModel
 from ..pairwise.GNN import GNN
 from ...utils.loss import MMDloss
 from ...utils.Settings import SETTINGS
 from ...utils.graph import dagify_min_edge
 from ...utils.parallel import parallel_run
+from .model import GraphModel
 
 
 def message_warning(msg, *a, **kwargs):

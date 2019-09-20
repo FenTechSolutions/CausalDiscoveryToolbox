@@ -92,3 +92,6 @@ class GraphModel(object):
            Not implemented: will be implemented by the model classes.
         """
         raise NotImplementedError
+
+from .SAM import SAM_generators, SAM_discriminator
+from .CGNN import CGNN_model as CGNN
