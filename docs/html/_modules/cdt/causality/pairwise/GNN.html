@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.GNN &mdash; Causal Discovery Toolbox 0.5.8 documentation</title>
+  <title>cdt.causality.pairwise.GNN &mdash; Causal Discovery Toolbox 0.5.9 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.8
+                0.5.9
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">PyTorch Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
@@ -207,18 +208,26 @@
 <span class="kn">from</span> <span class="nn">...utils.io</span> <span class="k">import</span> <span class="n">MetaDataset</span>
 
 
-<span class="k">class</span> <span class="nc">GNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Torch model for the GNN structure.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GNN_model"><a class="viewcode-back" href="../../../../models.html#cdt.causality.pairwise.GNN_model">[docs]</a><span class="k">class</span> <span class="nc">GNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Torch model for the GNN structure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch_size (int): size of the batch going to be fed to the model</span>
+<span class="sd">        nh (int): Number of hidden units in the hidden layer</span>
+<span class="sd">        lr (float): Learning rate of the Model</span>
+<span class="sd">        train_epochs (int): Number of train epochs</span>
+<span class="sd">        test_epochs (int): Number of test epochs</span>
+<span class="sd">        idx (int): Index (for printing purposes)</span>
+<span class="sd">        verbose (bool): Verbosity of the model</span>
+<span class="sd">        dataloader_workers (int): Number of workers for dataset loading</span>
+<span class="sd">        device (str): device on with the algorithm is going to be run on</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
                  <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Build the Torch graph.</span>
 
-<span class="sd">        :param batch_size: size of the batch going to be fed to the model</span>
-<span class="sd">        :param kwargs: h_layer_dim=(CGNN_SETTINGS.h_layer_dim)</span>
-<span class="sd">                       Number of units in the hidden layer</span>
-<span class="sd">        :param device: device on with the algorithm is going to be run on.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GNN_model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nh</span><span class="p">)</span>
@@ -235,20 +244,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span> <span class="o">=</span> <span class="n">dataloader_workers</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="GNN_model.forward"><a class="viewcode-back" href="../../../../models.html#cdt.causality.pairwise.GNN_model.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Pass data through the net structure.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): input data: shape (:,1)</span>
 
-<span class="sd">        :param x: input data: shape (:,1)</span>
-<span class="sd">        :type x: torch.Variable</span>
-<span class="sd">        :return: output of the shallow net</span>
-<span class="sd">        :rtype: torch.Variable</span>
-
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output of the shallow net</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">normal_</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run the GNN on a pair x,y of FloatTensor data.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GNN_model.run"><a class="viewcode-back" href="../../../../models.html#cdt.causality.pairwise.GNN_model.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the GNN on a pair x,y of FloatTensor data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset (torch.utils.data.Dataset): True data; First element is the cause</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Score of the configuration</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
         <span class="n">teloss</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">pbar</span> <span class="o">=</span> <span class="n">trange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
@@ -271,12 +287,12 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">50</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">pbar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 
-        <span class="k">return</span> <span class="n">teloss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span>
+        <span class="k">return</span> <span class="n">teloss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span></div>
 
     <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="s2">&quot;reset_parameters&quot;</span><span class="p">):</span>
-                <span class="n">layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+                <span class="n">layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
 
 
 <span class="k">def</span> <span class="nf">GNN_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

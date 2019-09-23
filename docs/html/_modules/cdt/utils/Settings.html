@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.Settings &mdash; Causal Discovery Toolbox 0.5.8 documentation</title>
+  <title>cdt.utils.Settings &mdash; Causal Discovery Toolbox 0.5.9 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.8
+                0.5.9
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">PyTorch Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Documentation</a></li>
 </ul>
 
@@ -325,17 +326,25 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Detecting CUDA device(s) : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">devices</span><span class="p">))</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">GPUtil</span><span class="o">.</span><span class="n">getAvailable</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-                                              <span class="n">maxLoad</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">maxMemory</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                                              <span class="n">includeNan</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">GPUtil</span><span class="o">.</span><span class="n">getAvailable</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                                                  <span class="n">maxLoad</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">maxMemory</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                                  <span class="n">includeNan</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No GPU automatically detected. Setting SETTINGS.GPU to 0, &quot;</span> <span class="o">+</span>
+                              <span class="s2">&quot;and SETTINGS.NJOBS to cpu_count.&quot;</span><span class="p">)</span>
+                <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">set_var</span><span class="o">.</span><span class="n">NJOBS</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">set_var</span><span class="o">.</span><span class="n">NJOBS</span> <span class="o">=</span> <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Detecting </span><span class="si">{}</span><span class="s2"> CUDA device(s).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No GPU automatically detected. Setting SETTINGS.GPU to 0, &quot;</span> <span class="o">+</span>
                           <span class="s2">&quot;and SETTINGS.NJOBS to cpu_count.&quot;</span><span class="p">)</span>
             <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">set_var</span><span class="o">.</span><span class="n">NJOBS</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">set_var</span><span class="o">.</span><span class="n">NJOBS</span> <span class="o">=</span> <span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Detecting </span><span class="si">{}</span><span class="s2"> CUDA device(s).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">set_var</span><span class="o">.</span><span class="n">GPU</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">set_var</span></div>
 

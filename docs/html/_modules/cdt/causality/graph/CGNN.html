@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.CGNN &mdash; Causal Discovery Toolbox 0.5.8 documentation</title>
+  <title>cdt.causality.graph.CGNN &mdash; Causal Discovery Toolbox 0.5.9 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.8
+                0.5.9
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">PyTorch Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
@@ -203,12 +204,12 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">trange</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
-<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
 <span class="kn">from</span> <span class="nn">..pairwise.GNN</span> <span class="k">import</span> <span class="n">GNN</span>
 <span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span>
 <span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">...utils.graph</span> <span class="k">import</span> <span class="n">dagify_min_edge</span>
 <span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
 
 
 <span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -244,8 +245,17 @@
                 <span class="n">layer</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">CGNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for one CGNN instance.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CGNN_model"><a class="viewcode-back" href="../../../../models.html#cdt.causality.graph.CGNN_model">[docs]</a><span class="k">class</span> <span class="nc">CGNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class defining the CGNN model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        adj_matrix (numpy.array): Adjacency Matrix of the model to evaluate</span>
+<span class="sd">        batch_size (int): Minibatch size. ~500 is recommended</span>
+<span class="sd">        nh (int): number of hidden units in the hidden layers</span>
+<span class="sd">        device (str): device to which the computation is to be made</span>
+<span class="sd">        confounding (bool): Enables the confounding variant</span>
+<span class="sd">        initial_graph (numpy.array): Initial graph in the confounding case.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">confounding</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">initial_graph</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -282,8 +292,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CGNN_block</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_adj_matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">+</span>
                                                <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate according to the topological order of the graph.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CGNN_model.forward"><a class="viewcode-back" href="../../../../models.html#cdt.causality.graph.CGNN_model.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate according to the topological order of the graph,</span>
+<span class="sd">        outputs a batch of generated data of size batch_size.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Generated data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">normal_</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">confounding</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">topological_order</span><span class="p">:</span>
@@ -296,11 +311,24 @@
                                                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">generated</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">]],</span>
                                                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">corr_noise</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_adj_matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">]]</span>
                                                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[:,</span> <span class="p">[</span><span class="n">i</span><span class="p">]]]]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generated</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generated</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="CGNN_model.run"><a class="viewcode-back" href="../../../../models.html#cdt.causality.graph.CGNN_model.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run the CGNN on a given graph.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Run the CGNN on a given graph.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset (torch.utils.data.Dataset): True Data, on the same device as the model.</span>
+<span class="sd">            train_epochs (int): number of train epochs</span>
+<span class="sd">            test_epochs (int): number of test epochs</span>
+<span class="sd">            verbose (bool): verbosity of the model</span>
+<span class="sd">            idx (int): indicator for printing purposes</span>
+<span class="sd">            lr (float): learning rate of the model</span>
+<span class="sd">            dataloader_workers (int): number of workers</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Average score of the graph on `test_epochs` epochs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
@@ -322,11 +350,11 @@
                     <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;=</span> <span class="n">test_epochs</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">mmd</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">/</span> <span class="n">test_epochs</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">/</span> <span class="n">test_epochs</span></div>
 
     <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
-            <span class="n">block</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
 
 
 <span class="k">def</span> <span class="nf">graph_evaluation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
