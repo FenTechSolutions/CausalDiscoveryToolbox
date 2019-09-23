@@ -158,17 +158,25 @@ def autoset_settings(set_var):
             warnings.warn("Detecting CUDA device(s) : {}".format(devices))
 
     except KeyError:
-        set_var.GPU = len(GPUtil.getAvailable(order='first', limit=8,
-                                              maxLoad=0.5, maxMemory=0.5,
-                                              includeNan=False))
-        if not set_var.GPU:
+        try:
+            set_var.GPU = len(GPUtil.getAvailable(order='first', limit=8,
+                                                  maxLoad=0.5, maxMemory=0.5,
+                                                  includeNan=False))
+
+            if not set_var.GPU:
+                warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to 0, " +
+                              "and SETTINGS.NJOBS to cpu_count.")
+                set_var.GPU = 0
+                set_var.NJOBS = multiprocessing.cpu_count()
+            else:
+                set_var.NJOBS = set_var.GPU
+                warnings.warn("Detecting {} CUDA device(s).".format(set_var.GPU))
+
+        except ValueError:
             warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to 0, " +
                           "and SETTINGS.NJOBS to cpu_count.")
             set_var.GPU = 0
             set_var.NJOBS = multiprocessing.cpu_count()
-        else:
-            set_var.NJOBS = set_var.GPU
-            warnings.warn("Detecting {} CUDA device(s).".format(set_var.GPU))
 
     return set_var
 
