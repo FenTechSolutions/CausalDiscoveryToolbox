@@ -291,3 +291,60 @@ def SID(target, pred):
 
     rmtree('/tmp/cdt_SID')
     return sid_score
+
+
+def SID_CPDAG(target, pred):
+    """Compute the Strutural Intervention Distance. The target graph
+    can be a CPDAG. A lower and upper bounds will be returned, they
+    correspond respectively to the best and worst DAG in the equivalence class
+
+    Args:
+        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of
+            ones and zeros, and instance of either numpy.ndarray or
+            networkx.DiGraph. Must be a DAG.
+
+        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the
+            algorithm to evaluate.
+
+    Returns:
+        int: Lower bound of the Structural Intervention Distance.
+        int: Upper bound of the Structural Intervention Distance.
+
+            The value tends to zero as the graphs tends to be identical.
+
+    .. note::
+        Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,
+        Jonas Peters, Peter Bühlmann: https://arxiv.org/abs/1306.1043
+   """
+    if not RPackages.SID:
+        raise ImportError("SID R package is not available. Please check your installation.")
+
+    true_labels = retrieve_adjacency_matrix(target)
+    predictions = retrieve_adjacency_matrix(pred, target.nodes()
+                                            if isinstance(target, nx.DiGraph) else None)
+
+    os.makedirs('/tmp/cdt_SID/')
+
+    def retrieve_result():
+        return np.loadtxt('/tmp/cdt_SID/result_lower.csv'), \
+               np.loadtxt('/tmp/cdt_SID/result_upper.csv')
+
+    try:
+        np.savetxt('/tmp/cdt_SID/target.csv', true_labels, delimiter=',')
+        np.savetxt('/tmp/cdt_SID/pred.csv', predictions, delimiter=',')
+        sid_lower, sid_upper = launch_R_script("{}/utils/R_templates/sid_cpdag.R".format(os.path.dirname(os.path.realpath(__file__))),
+                                    {"{target}": '/tmp/cdt_SID/target.csv',
+                                     "{prediction}": '/tmp/cdt_SID/pred.csv',
+                                     "{result_lower}": '/tmp/cdt_SID/result_lower.csv',
+                                     "{result_upper}": '/tmp/cdt_SID/result_upper.csv'},
+                                    output_function=retrieve_result)
+    # Cleanup
+    except Exception as e:
+        rmtree('/tmp/cdt_SID')
+        raise e
+    except KeyboardInterrupt:
+        rmtree('/tmp/cdt_SID/')
+        raise KeyboardInterrupt
+
+    rmtree('/tmp/cdt_SID')
+    return sid_lower, sid_upper
