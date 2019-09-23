@@ -40,11 +40,12 @@ from ...utils.Settings import SETTINGS
 
 class Dataset(data.Dataset):
     'Characterizes a dataset for PyTorch'
-    def __init__(self, dataset, labels, batch_size=-1):
+    def __init__(self, dataset, labels, device, batch_size=-1):
         'Initialization'
         self.labels = labels
         self.dataset = dataset
         self.batch_size = batch_size if batch_size != 1 else len(dataset)
+        self.device = device
         self.nsets = self.__len__()//self.batch_size
 
     def shuffle(self):
@@ -56,11 +57,20 @@ class Dataset(data.Dataset):
         self.dataset = [self.dataset[i] for i in order]
         self.labels = self.labels[order]
         # self.dataset, self.labels = zip(*z)
-        self.set = [([self.dataset[i+j*self.batch_size]
-                      for i in range(self.batch_size)],
-                      th.index_select(self.labels,0 ,th.LongTensor([i+j*self.batch_size
-                      for i in range(self.batch_size)])))
-                    for j in range(self.nsets)]
+        if self.device == 'cpu':
+            self.set = [([self.dataset[i+j*self.batch_size]
+                          for i in range(self.batch_size)],
+                          th.index_select(self.labels,0 ,th.LongTensor([i+j*self.batch_size
+                          for i in range(self.batch_size)])))
+                        for j in range(self.nsets)]
+        else:
+            with th.cuda.device(int(self.device[-1])):
+                self.set = [([self.dataset[i+j*self.batch_size]
+                          for i in range(self.batch_size)],
+                          th.index_select(self.labels,0 ,
+                                          th.LongTensor([i+j*self.batch_size
+                                                         for i in range(self.batch_size)]).cuda()))
+                            for j in range(self.nsets)]
 
     def __iter__(self):
         self.shuffle()
@@ -201,7 +211,7 @@ class NCC(PairwiseModel):
         dataset = [th.Tensor(np.vstack([row['A'], row['B']])).t().to(device)
                    for (idx, row) in x_tr.iterrows()]
         acc = [0]
-        da = Dataset(dataset, y, batch_size)
+        da = Dataset(dataset, y, device, batch_size)
         data_per_epoch = (len(dataset) // batch_size)
         with trange(epochs, desc="Epochs", disable=not verbose) as te:
             for epoch in te:
