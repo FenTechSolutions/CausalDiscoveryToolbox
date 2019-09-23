@@ -169,5 +169,5 @@ class PairwiseModel(object):
 
         return output
 
-from .GNN import GNN_model as GNN
-from .NCC import NCC_model as NCC
+from .GNN import GNN_model
+from .NCC import NCC_model

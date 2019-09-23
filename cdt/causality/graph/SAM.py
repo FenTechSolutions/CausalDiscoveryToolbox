@@ -41,7 +41,14 @@ from ...utils.Settings import SETTINGS
 
 
 class SAM_generators(th.nn.Module):
-    """Ensemble of all the generators."""
+    """Ensemble of all the SAM generators.
+
+    Args:
+        data_shape (tuple): Shape of the true data
+        nh (int): Initial number of hidden units in the hidden layers
+        skeleton (numpy.ndarray): Initial skeleton, defaults to a fully connected graph
+        linear (bool): Enables the linear variant
+    """
 
     def __init__(self, data_shape, nh, skeleton=None, linear=False):
         """Init the model."""
@@ -67,7 +74,17 @@ class SAM_generators(th.nn.Module):
         self.register_buffer('skeleton', skeleton)
 
     def forward(self, data, noise, adj_matrix, drawn_neurons=None):
-        """Forward through all the generators."""
+        """Forward through all the generators.
+
+        Args:
+            data (torch.Tensor): True data
+            noise (torch.Tensor): Samples of noise variables
+            adj_matrix (torch.Tensor): Sampled adjacency matrix
+            drawn_neurons (torch.Tensor): Sampled matrix of active neurons
+
+        Returns:
+            torch.Tensor: Batch of generated data
+        """
 
         if self.linear:
             output = self.input_layer(data, noise, adj_matrix * self.skeleton)
@@ -89,7 +106,14 @@ class SAM_generators(th.nn.Module):
 
 
 class SAM_discriminator(th.nn.Module):
-    """SAM discriminator."""
+    """SAM discriminator.
+
+    Args:
+        nfeatures (int): Number of variables in the dataset
+        dnh (int): Number of hidden units in the hidden layers
+        hlayers (int): Number of hidden layers
+        mask (numpy.ndarray): Mask of connections to ignore
+    """
 
     def __init__(self, nfeatures, dnh, hlayers=2, mask=None):
         super(SAM_discriminator, self).__init__()
@@ -111,6 +135,15 @@ class SAM_discriminator(th.nn.Module):
         self.register_buffer("mask", mask.unsqueeze(0))
 
     def forward(self, input, obs_data=None):
+        """Forward pass in the discriminator.
+
+        Args:
+            input (torch.Tensor): True Data or generated data
+            obs_data (torch.Tensor): True data in the case of `input=generated` for padding.
+
+        Returns:
+            torch.Tensor: Output of the discriminator
+        """
         if obs_data is not None:
             return [self.layers(i) for i in th.unbind(obs_data.unsqueeze(1) * (1 - self.mask)
                                                       + input.unsqueeze(1) * self.mask, 1)]

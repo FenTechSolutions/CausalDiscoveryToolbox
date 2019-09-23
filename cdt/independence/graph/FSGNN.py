@@ -38,6 +38,13 @@ from ...utils.parallel import parallel_run_generator
 
 
 class FSGNN_model(th.nn.Module):
+    """Variant of CGNN for feature selection.
+
+    Args:
+        sizes (list): Size of the neural network layers
+        dropout (float): Dropout rate of the neural connections
+        activation_function (torch.nn.Module): Activation function of the network
+    """
     def __init__(self, sizes, dropout=0., activation_function=th.nn.ReLU):
         super(FSGNN_model, self).__init__()
         layers = []
@@ -53,11 +60,35 @@ class FSGNN_model(th.nn.Module):
         self.sizes = sizes
 
     def forward(self, x):
+        """Forward pass in the network.
+
+        Args:
+            x (torch.Tensor): input data
+
+        Returns:
+            torch.Tensor: output of the network
+        """
         self.layers(x)
 
     def train(self, dataset, lr=0.01, l1=0.1, batch_size=-1,
               train_epochs=1000, test_epochs=1000, device=None,
               verbose=None, dataloader_workers=0):
+        """Train the network and output the scores of the features
+
+        Args:
+            dataset (torch.utils.data.Dataset): Original data
+            lr (float): Learning rate
+            l1 (float): Coefficient of the L1 regularization
+            batch_size (int): Batch size of the model, defaults to the dataset size.
+            train_epochs (int): Number of train epochs
+            test_epochs (int): Number of test epochs
+            device (str): Device on which the computation is to be run
+            verbose (bool): Verbosity of the model
+            dataloader_workers (int): Number of workers for dataset loading
+
+        Returns:
+            list: feature selection scores for each feature.
+        """
         device, verbose = SETTINGS.get_default(('device', device), ('verbose', verbose))
         optim = th.optim.Adam(self.parameters(), lr=lr)
         output = th.zeros(self.sizes[0] - 1).to(device)

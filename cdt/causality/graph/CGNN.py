@@ -78,7 +78,16 @@ class CGNN_block(th.nn.Module):
 
 
 class CGNN_model(th.nn.Module):
-    """Class for one CGNN instance."""
+    """Class defining the CGNN model.
+
+    Args:
+        adj_matrix (numpy.array): Adjacency Matrix of the model to evaluate
+        batch_size (int): Minibatch size. ~500 is recommended
+        nh (int): number of hidden units in the hidden layers
+        device (str): device to which the computation is to be made
+        confounding (bool): Enables the confounding variant
+        initial_graph (numpy.array): Initial graph in the confounding case.
+    """
 
     def __init__(self, adj_matrix, batch_size, nh=20, device=None,
                  confounding=False, initial_graph=None, **kwargs):
@@ -116,7 +125,12 @@ class CGNN_model(th.nn.Module):
                                                int(self.adjacency_matrix[:, i].sum()) + 1, nh, 1]))
 
     def forward(self):
-        """Generate according to the topological order of the graph."""
+        """Generate according to the topological order of the graph,
+        outputs a batch of generated data of size batch_size.
+
+        Returns:
+            torch.Tensor: Generated data
+        """
         self.noise.data.normal_()
         if not self.confounding:
             for i in self.topological_order:
@@ -133,7 +147,20 @@ class CGNN_model(th.nn.Module):
 
     def run(self, dataset, train_epochs=1000, test_epochs=1000, verbose=None,
             idx=0, lr=0.01, dataloader_workers=0, **kwargs):
-        """Run the CGNN on a given graph."""
+        """Run the CGNN on a given graph.
+
+        Args:
+            dataset (torch.utils.data.Dataset): True Data, on the same device as the model.
+            train_epochs (int): number of train epochs
+            test_epochs (int): number of test epochs
+            verbose (bool): verbosity of the model
+            idx (int): indicator for printing purposes
+            lr (float): learning rate of the model
+            dataloader_workers (int): number of workers
+
+        Returns:
+            float: Average score of the graph on `test_epochs` epochs
+        """
         verbose = SETTINGS.get_default(verbose=verbose)
         optim = th.optim.Adam(self.parameters(), lr=lr)
         self.score.zero_()

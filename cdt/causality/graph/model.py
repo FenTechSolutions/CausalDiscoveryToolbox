@@ -94,4 +94,4 @@ class GraphModel(object):
         raise NotImplementedError
 
 from .SAM import SAM_generators, SAM_discriminator
-from .CGNN import CGNN_model as CGNN
+from .CGNN import CGNN_model

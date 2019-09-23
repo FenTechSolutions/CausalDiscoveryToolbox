@@ -90,13 +90,15 @@ class Dataset(data.Dataset):
 
 
 class NCC_model(th.nn.Module):
-    """NCC model structure."""
+    """NCC model structure.
+
+    Args:
+        n_hiddens (int): Number of hidden features
+        kernel_size (int): Kernel size of the convolutions
+    """
 
     def __init__(self, n_hiddens=20, kernel_size=3):
         """Init the NCC structure with the number of hidden units.
-
-        :param n_hiddens: Number of hidden units
-        :type n_hiddens: int
         """
         super(NCC_model, self).__init__()
         self.conv = th.nn.Sequential(th.nn.Conv1d(2, n_hiddens, kernel_size),
@@ -113,8 +115,11 @@ class NCC_model(th.nn.Module):
     def forward(self, x):
         """Passing data through the network.
 
-        :param x: 2d tensor containing both (x,y) Variables
-        :return: output of the net
+        Args:
+            x (torch.Tensor): 2d tensor containing both (x,y) Variables
+
+        Returns:
+            torch.Tensor: output of NCC
         """
 
         features = self.conv(x).mean(dim=2)

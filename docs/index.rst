@@ -273,6 +273,7 @@ References
    utils
    metrics
    settings
+   models
    developer
 
 Indices and tables

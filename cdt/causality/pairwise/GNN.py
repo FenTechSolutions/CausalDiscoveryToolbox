@@ -41,17 +41,25 @@ from ...utils.io import MetaDataset
 
 
 class GNN_model(th.nn.Module):
-    """Torch model for the GNN structure."""
+    """Torch model for the GNN structure.
+
+    Args:
+        batch_size (int): size of the batch going to be fed to the model
+        nh (int): Number of hidden units in the hidden layer
+        lr (float): Learning rate of the Model
+        train_epochs (int): Number of train epochs
+        test_epochs (int): Number of test epochs
+        idx (int): Index (for printing purposes)
+        verbose (bool): Verbosity of the model
+        dataloader_workers (int): Number of workers for dataset loading
+        device (str): device on with the algorithm is going to be run on
+    """
 
     def __init__(self, batch_size, nh=20, lr=0.01, train_epochs=1000,
                  test_epochs=1000, idx=0, verbose=None,
                  dataloader_workers=0, **kwargs):
         """Build the Torch graph.
 
-        :param batch_size: size of the batch going to be fed to the model
-        :param kwargs: h_layer_dim=(CGNN_SETTINGS.h_layer_dim)
-                       Number of units in the hidden layer
-        :param device: device on with the algorithm is going to be run on.
         """
         super(GNN_model, self).__init__()
         self.l1 = th.nn.Linear(2, nh)
@@ -70,18 +78,25 @@ class GNN_model(th.nn.Module):
 
     def forward(self, x):
         """Pass data through the net structure.
+        Args:
+            x (torch.Tensor): input data: shape (:,1)
 
-        :param x: input data: shape (:,1)
-        :type x: torch.Variable
-        :return: output of the shallow net
-        :rtype: torch.Variable
-
+        Returns:
+            torch.Tensor: Output of the shallow net
         """
         self.noise.normal_()
         return self.layers(th.cat([x, self.noise], 1))
 
     def run(self, dataset):
-        """Run the GNN on a pair x,y of FloatTensor data."""
+        """Run the GNN on a pair x,y of FloatTensor data.
+
+        Args:
+            dataset (torch.utils.data.Dataset): True data; First element is the cause
+
+        Returns:
+            torch.Tensor: Score of the configuration
+
+        """
         optim = th.optim.Adam(self.parameters(), lr=self.lr)
         teloss = 0
         pbar = trange(self.train_epochs + self.test_epochs,

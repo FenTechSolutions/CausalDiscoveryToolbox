@@ -143,4 +143,4 @@ class FeatureSelectionModel(GraphSkeletonModel):
                 graph.add_node(node)
         return graph
 
-from .FSGNN import FSGNN_model as FSGNN
+from .FSGNN import FSGNN_model
