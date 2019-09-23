@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence.graph.FSGNN &mdash; Causal Discovery Toolbox 0.5.8 documentation</title>
+  <title>cdt.independence.graph.FSGNN &mdash; Causal Discovery Toolbox 0.5.9 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.8
+                0.5.9
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">cdt.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">cdt.metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../settings.html">Toolbox Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">PyTorch Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../developer.html">Developer Documentation</a></li>
 </ul>
 
@@ -204,7 +205,14 @@
 <span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run_generator</span>
 
 
-<span class="k">class</span> <span class="nc">FSGNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="FSGNN_model"><a class="viewcode-back" href="../../../../models.html#cdt.independence.graph.FSGNN_model">[docs]</a><span class="k">class</span> <span class="nc">FSGNN_model</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Variant of CGNN for feature selection.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sizes (list): Size of the neural network layers</span>
+<span class="sd">        dropout (float): Dropout rate of the neural connections</span>
+<span class="sd">        activation_function (torch.nn.Module): Activation function of the network</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">activation_function</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FSGNN_model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -219,12 +227,36 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sizes</span> <span class="o">=</span> <span class="n">sizes</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<div class="viewcode-block" id="FSGNN_model.forward"><a class="viewcode-back" href="../../../../models.html#cdt.independence.graph.FSGNN_model.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward pass in the network.</span>
 
-    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): input data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: output of the network</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FSGNN_model.train"><a class="viewcode-back" href="../../../../models.html#cdt.independence.graph.FSGNN_model.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">l1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
               <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Train the network and output the scores of the features</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset (torch.utils.data.Dataset): Original data</span>
+<span class="sd">            lr (float): Learning rate</span>
+<span class="sd">            l1 (float): Coefficient of the L1 regularization</span>
+<span class="sd">            batch_size (int): Batch size of the model, defaults to the dataset size.</span>
+<span class="sd">            train_epochs (int): Number of train epochs</span>
+<span class="sd">            test_epochs (int): Number of test epochs</span>
+<span class="sd">            device (str): Device on which the computation is to be run</span>
+<span class="sd">            verbose (bool): Verbosity of the model</span>
+<span class="sd">            dataloader_workers (int): Number of workers for dataset loading</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: feature selection scores for each feature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">device</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">((</span><span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="n">device</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">))</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -254,7 +286,7 @@
                     <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
                     <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">test_epochs</span><span class="p">)</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span><span class="o">//</span><span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">test_epochs</span><span class="p">)</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span><span class="o">//</span><span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span></div></div>
 
 
 <div class="viewcode-block" id="FSGNN"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.FSGNN">[docs]</a><span class="k">class</span> <span class="nc">FSGNN</span><span class="p">(</span><span class="n">FeatureSelectionModel</span><span class="p">):</span>
