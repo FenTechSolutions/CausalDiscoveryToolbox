@@ -85,7 +85,7 @@ jobs:
           fi
         - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
         - git add -u
-        - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
+        - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
         - git commit -m "[DEPLOY] $VERSION_NEW [skip travis-ci]"
         - git push deploy HEAD:master
     - stage: deploy 1st stage
@@ -93,7 +93,7 @@ jobs:
       name: "Build and push 3.6"
       script:
       - git pull
-      - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
+      - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-env-base:19.05
       - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-py3.6:$VERSION_NEW .
@@ -102,7 +102,7 @@ jobs:
       name: "Build and push 3.7"
       script:
       - git pull
-      - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
+      - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-env-base:19.05
       - docker build --build-arg python=3.7 --build-arg spy=37 -t divkal/cdt-py3.7:$VERSION_NEW .
@@ -111,7 +111,7 @@ jobs:
       name: "Build and push nv-3.6"
       script:
       - git pull
-      - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
+      - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/nv-cdt-env-base:19.05
       - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
@@ -121,7 +121,7 @@ jobs:
       name: "Push on Pypi"
       script:
       - git pull
-      - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
+      - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
       - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
@@ -129,7 +129,7 @@ jobs:
       name: "Compile docs and push"
       script:
       - git pull
-      - VERSION_NEW=$(cat setup.py| grep version | tail -c 8 | cut -c 1-5)
+      - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
       - git config --global user.email "travis-docs@example.com"
