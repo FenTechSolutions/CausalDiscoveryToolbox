@@ -30,6 +30,7 @@ import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
+from tempfile import gettempdir
 from .model import GraphModel
 from pandas import DataFrame, read_csv
 from ...utils.Settings import SETTINGS
@@ -180,7 +181,7 @@ class PC(GraphModel):
         self.njobs = SETTINGS.get_default(njobs=njobs)
         self.verbose = SETTINGS.get_default(verbose=verbose)
         # Define default args
-        self.arguments = {'{FOLDER}': '/tmp/cdt_pc/',
+        self.arguments = {'{FOLDER}': None,  # Initialized in _run_pc
                           '{FILE}': 'data.csv',
                           '{SKELETON}': 'FALSE',
                           '{EDGES}': 'fixededges.csv',
@@ -277,18 +278,18 @@ class PC(GraphModel):
             self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['corr']
 
         # Run PC
-        id = str(uuid.uuid4())
-        os.makedirs('/tmp/cdt_pc' + id + '/')
-        self.arguments['{FOLDER}'] = '/tmp/cdt_pc' + id + '/'
+        self.arguments['{FOLDER}'] = '{0!s}/cdt_pc_{1!s}/'.format(gettempdir(), uuid.uuid4())
+        run_dir = self.arguments['{FOLDER}']
+        os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_pc' + id + '/result.csv', delimiter=',').values
+            return read_csv('{}/result.csv'.format(run_dir), delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_pc' + id + '/data.csv', header=False, index=False)
+            data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
             if fixedGaps is not None and fixedEdges is not None:
-                fixedGaps.to_csv('/tmp/cdt_pc' + id + '/fixedgaps.csv', index=False, header=False)
-                fixedEdges.to_csv('/tmp/cdt_pc' + id + '/fixededges.csv', index=False, header=False)
+                fixedGaps.to_csv('{}/fixedgaps.csv'.format(run_dir), index=False, header=False)
+                fixedEdges.to_csv('{}/fixededges.csv'.format(run_dir), index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
@@ -297,10 +298,10 @@ class PC(GraphModel):
                                         self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_pc' + id + '')
+            rmtree(run_dir)
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_pc' + id + '/')
+            rmtree(run_dir)
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_pc' + id + '')
+        rmtree(run_dir)
         return pc_result
