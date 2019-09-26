@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.11 documentation</title>
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.12 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.11
+                0.5.12
               </div>
             
           
@@ -459,6 +459,63 @@
 
     <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sid_score</span></div>
+
+
+<span class="k">def</span> <span class="nf">SID_CPDAG</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the Strutural Intervention Distance. The target graph</span>
+<span class="sd">    can be a CPDAG. A lower and upper bounds will be returned, they</span>
+<span class="sd">    correspond respectively to the best and worst DAG in the equivalence class</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of</span>
+<span class="sd">            ones and zeros, and instance of either numpy.ndarray or</span>
+<span class="sd">            networkx.DiGraph. Must be a DAG.</span>
+
+<span class="sd">        prediction (numpy.ndarray or networkx.DiGraph): Prediction made by the</span>
+<span class="sd">            algorithm to evaluate.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Lower bound of the Structural Intervention Distance.</span>
+<span class="sd">        int: Upper bound of the Structural Intervention Distance.</span>
+
+<span class="sd">            The value tends to zero as the graphs tends to be identical.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Ref: Structural Intervention Distance (SID) for Evaluating Causal Graphs,</span>
+<span class="sd">        Jonas Peters, Peter Bühlmann: https://arxiv.org/abs/1306.1043</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;SID R package is not available. Please check your installation.&quot;</span><span class="p">)</span>
+
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+                                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/result_lower.csv&#39;</span><span class="p">),</span> \
+               <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/result_upper.csv&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span> <span class="n">true_labels</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">sid_lower</span><span class="p">,</span> <span class="n">sid_upper</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/utils/R_templates/sid_cpdag.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
+                                    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{target}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{prediction}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{result_lower}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/result_lower.csv&#39;</span><span class="p">,</span>
+                                     <span class="s2">&quot;</span><span class="si">{result_upper}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/result_upper.csv&#39;</span><span class="p">},</span>
+                                    <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">)</span>
+    <span class="c1"># Cleanup</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
+
+    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sid_lower</span><span class="p">,</span> <span class="n">sid_upper</span>
 </pre></div>
 
            </div>
