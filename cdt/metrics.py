@@ -271,19 +271,19 @@ def SID(target, pred):
     predictions = retrieve_adjacency_matrix(pred, target.nodes()
                                             if isinstance(target, nx.DiGraph) else None)
 
-    base_dir = f'{gettempdir()}/cdt_SID_{uuid.uuid4()}'
+    base_dir = '{0!s}/cdt_SID_{1!s}'.format(gettempdir(), uuid.uuid4())
     os.makedirs(base_dir)
 
     def retrieve_result():
-        return np.loadtxt(f'{base_dir}/result.csv')
+        return np.loadtxt('{0!s}/result.csv'.format(base_dir))
 
     try:
-        np.savetxt(f'{base_dir}/target.csv', true_labels, delimiter=',')
-        np.savetxt(f'{base_dir}/pred.csv', predictions, delimiter=',')
+        np.savetxt('{}/target.csv'.format(base_dir), true_labels, delimiter=',')
+        np.savetxt('{}/pred.csv'.format(base_dir), predictions, delimiter=',')
         sid_score = launch_R_script("{}/utils/R_templates/sid.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                    {"{target}": f'{base_dir}/target.csv',
-                                     "{prediction}": f'{base_dir}/pred.csv',
-                                     "{result}": f'{base_dir}/result.csv'},
+                                    {"{target}": '{}/target.csv'.format(base_dir),
+                                     "{prediction}": '{}/pred.csv'.format(base_dir),
+                                     "{result}": '{}/result.csv'.format(base_dir)},
                                     output_function=retrieve_result)
     # Cleanup
     except Exception as e:

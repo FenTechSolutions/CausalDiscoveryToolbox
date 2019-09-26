@@ -278,18 +278,18 @@ class PC(GraphModel):
             self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['corr']
 
         # Run PC
-        self.arguments['{FOLDER}'] = f'{gettempdir()}/cdt_pc_{uuid.uuid4()}/'
+        self.arguments['{FOLDER}'] = '{0!s}/cdt_pc_{1!s}/'.format(gettempdir(), uuid.uuid4())
         run_dir = self.arguments['{FOLDER}']
         os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv(f'{run_dir}/result.csv', delimiter=',').values
+            return read_csv('{}/result.csv'.format(run_dir), delimiter=',').values
 
         try:
-            data.to_csv(f'{run_dir}/data.csv', header=False, index=False)
+            data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
             if fixedGaps is not None and fixedEdges is not None:
-                fixedGaps.to_csv(f'{run_dir}/fixedgaps.csv', index=False, header=False)
-                fixedEdges.to_csv(f'{run_dir}/fixededges.csv', index=False, header=False)
+                fixedGaps.to_csv('{}/fixedgaps.csv'.format(run_dir), index=False, header=False)
+                fixedEdges.to_csv('{}/fixededges.csv'.format(run_dir), index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'

@@ -167,11 +167,11 @@ def launch_R_script(template, arguments, output_function=None,
         else `True` or `False` depending on whether the execution was
         successful.
     """
-    base_dir = f'{gettempdir()}/cdt_R_script_{uuid.uuid4()}'
+    base_dir = '{0!s}/cdt_R_script_{1!s}'.format(gettempdir(), uuid.uuid4())
     os.makedirs(base_dir)
     rpath = cdt.utils.Settings.SETTINGS.get_default(rpath=None)
     try:
-        scriptpath = f'{base_dir}/instance_{os.path.basename(template)}'
+        scriptpath = '{}/instance_{}'.format(base_dir, os.path.basename(template))
         copy(template, scriptpath)
 
         with fileinput.FileInput(scriptpath, inplace=True) as file:
