@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.12 documentation</title>
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.13 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.12
+                0.5.13
               </div>
             
           
@@ -201,8 +201,10 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">auc</span><span class="p">,</span> <span class="n">precision_recall_curve</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">gettempdir</span>
 <span class="kn">from</span> <span class="nn">.utils.R</span> <span class="k">import</span> <span class="n">launch_R_script</span><span class="p">,</span> <span class="n">RPackages</span>
 
 
@@ -297,26 +299,27 @@
 
     <span class="n">dag</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">dag</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/&#39;</span><span class="p">)</span>
+    <span class="n">base_dir</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0!s}</span><span class="s1">/cdt_CPDAG_</span><span class="si">{1!s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/result.csv&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/result.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">))</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/dag.csv&#39;</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/dag.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">),</span> <span class="n">dag</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
         <span class="n">cpdag</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/utils/R_templates/cpdag.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
-                                    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{dag}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_CPDAG/dag.csv&#39;</span><span class="p">,</span>
-                                     <span class="s2">&quot;</span><span class="si">{result}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_CPDAG/result.csv&#39;</span><span class="p">},</span>
-                                    <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">)</span>
+                                <span class="p">{</span><span class="s2">&quot;</span><span class="si">{dag}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/dag.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">),</span>
+                                 <span class="s2">&quot;</span><span class="si">{result}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/result.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)},</span>
+                                <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">)</span>
     <span class="c1"># Cleanup</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG&#39;</span><span class="p">)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">e</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG/&#39;</span><span class="p">)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
 
-    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_CPDAG&#39;</span><span class="p">)</span>
+    <span class="n">rmtree</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cpdag</span>
 
@@ -436,28 +439,29 @@
     <span class="n">predictions</span> <span class="o">=</span> <span class="n">retrieve_adjacency_matrix</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
                                             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+    <span class="n">base_dir</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0!s}</span><span class="s1">/cdt_SID_</span><span class="si">{1!s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">retrieve_result</span><span class="p">():</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/result.csv&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0!s}</span><span class="s1">/result.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">))</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span> <span class="n">true_labels</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/target.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">),</span> <span class="n">true_labels</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/pred.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">),</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
         <span class="n">sid_score</span> <span class="o">=</span> <span class="n">launch_R_script</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/utils/R_templates/sid.R&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))),</span>
-                                    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{target}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/target.csv&#39;</span><span class="p">,</span>
-                                     <span class="s2">&quot;</span><span class="si">{prediction}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/pred.csv&#39;</span><span class="p">,</span>
-                                     <span class="s2">&quot;</span><span class="si">{result}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;/tmp/cdt_SID/result.csv&#39;</span><span class="p">},</span>
+                                    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{target}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/target.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">),</span>
+                                     <span class="s2">&quot;</span><span class="si">{prediction}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/pred.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">),</span>
+                                     <span class="s2">&quot;</span><span class="si">{result}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/result.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)},</span>
                                     <span class="n">output_function</span><span class="o">=</span><span class="n">retrieve_result</span><span class="p">)</span>
     <span class="c1"># Cleanup</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">e</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID/&#39;</span><span class="p">)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
 
-    <span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;/tmp/cdt_SID&#39;</span><span class="p">)</span>
+    <span class="n">rmtree</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sid_score</span></div>
 
 
