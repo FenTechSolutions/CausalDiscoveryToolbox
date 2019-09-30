@@ -111,8 +111,8 @@ jobs:
       - docker pull divkal/cdt-env-base:19.05
       - docker build --build-arg python=3.7 --build-arg spy=37 -t divkal/cdt-py3.7:$VERSION_NEW .
       - docker push divkal/cdt-py3.7:$VERSION_NEW
-      - docker tag divkal/nv-cdt-py3.7:$VERSION_NEW divkal/nv-cdt-py3.7:latest
-      - docker push divkal/nv-cdt-py3.7:latest
+      - docker tag divkal/cdt-py3.7:$VERSION_NEW divkal/cdt-py3.7:latest
+      - docker push divkal/cdt-py3.7:latest
     - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push nv-3.6"
       script:
