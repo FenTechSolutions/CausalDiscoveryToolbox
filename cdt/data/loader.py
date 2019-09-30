@@ -36,19 +36,19 @@ def load_dataset(name, **kwargs):
     datasets into python.
 
     Details on the supported datasets:
-        + **Tuebingen**, dataset of 100 real cause-effect pairs
+        + **tuebingen**, dataset of 100 real cause-effect pairs
            J. M. Mooij,
            J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf: "Distinguishing
            cause from effect using observational data: methods and benchmarks",
            Journal of Machine Learning Research 17(32):1-102, 2016.
 
-        + **Sachs**, Dataset of flow cytometry, real data,
+        + **sachs**, Dataset of flow cytometry, real data,
            11 variables x 7466
            samples; Sachs, K., Perez, O., Pe'er, D., Lauffenburger, D. A., & Nolan,
            G. P. (2005). Causal protein-signaling networks derived from
            multiparameter single-cell data. Science, 308(5721), 523-529.
 
-        + **DREAM4**, multifactorial artificial data of the challenge.
+        + **dream4**, multifactorial artificial data of the challenge.
            Data generated with GeneNetWeaver 2.0, 5 graphs of 100 variables x 100
            samples. Marbach D, Prill RJ, Schaffter T, Mattiussi C, Floreano D,
            and Stolovitzky G. Revealing strengths and weaknesses of methods for
@@ -70,6 +70,9 @@ def load_dataset(name, **kwargs):
         >>> from cdt.data import load_dataset
         >>> s_data, s_graph = load_dataset('sachs')
         >>> t_data, t_labels = load_dataset('tuebingen')
+
+    .. warning::
+       The 'Tuebingen' dataset is loaded with the same label for all samples (1: A causes B)
     """
     dream = [i for i in ['dream4-{}'.format(v) for v in range(1, 6)]]
     loaders = {'tuebingen': load_tuebingen, 'sachs': load_sachs}
