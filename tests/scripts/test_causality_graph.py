@@ -5,7 +5,7 @@ import pandas as pd
 import networkx as nx
 from cdt import SETTINGS
 from cdt.causality.graph import (CAM, GS, GIES, IAMB, CCDr, GES,
-                                 Fast_IAMB, PC, LiNGAM, SAM, MMPC, Inter_IAMB)
+                                 Fast_IAMB, PC, LiNGAM, SAM, MMPC, Inter_IAMB, SAMv1)
 from cdt.independence.stats import AdjMI
 
 
@@ -50,6 +50,11 @@ def test_undirected():
 
 def test_SAM():
     m = SAM(train_epochs=10, test_epochs=10, nh=10, dnh=10, nruns=1, njobs=1)
+    assert isinstance(m.predict(data_graph), nx.DiGraph)
+    return 0
+
+def test_SAMv1():
+    m = SAMv1(train_epochs=10, test_epochs=10, nh=10, dnh=10, nruns=1, njobs=1)
     assert isinstance(m.predict(data_graph), nx.DiGraph)
     return 0
 

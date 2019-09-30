@@ -1,7 +1,7 @@
 """Test the metrics."""
 import numpy as np
 import networkx as nx
-from cdt.metrics import precision_recall, SHD, SID
+from cdt.metrics import precision_recall, SHD, SID, SHD_CPDAG, SID_CPDAG
 from copy import deepcopy
 
 
@@ -28,8 +28,14 @@ def test_SHD():
 def test_SID():
     assert SID(*init()) == 4.0
 
+def test_SIDC():
+    assert type(SID_CPDAG(*init())) == tuple
+
+
+def test_SHDC():
+    assert type(SHD_CPDAG(*init())) == np.float64
 
 if __name__ == '__main__':
     a, b = init()
-    print(nx.adj_matrix(a), nx.adj_matrix(b))
-    print(SID(a, b))
+    print(SID_CPDAG(a, b))
+    print(type(SHD_CPDAG(a, b)) == np.float64)

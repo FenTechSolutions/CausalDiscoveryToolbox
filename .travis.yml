@@ -77,7 +77,9 @@ jobs:
         - ssh-add rel_travis
         - git config --global push.default simple
         - pip install bumpversion
-        - if [[ $TRAVIS_COMMIT_MESSAGE == *"[REL]"* ]];
+        - if [[ $TRAVIS_COMMIT_MESSAGE == *"[NV]"* ]];
+              then echo "No version update";
+              elif [[ $TRAVIS_COMMIT_MESSAGE == *"[REL]"* ]];
               then bumpversion --current-version $VERSION minor setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
               elif [[ $TRAVIS_COMMIT_MESSAGE == *"[MREL]"* ]];
               then bumpversion --current-version $VERSION major setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
@@ -98,6 +100,8 @@ jobs:
       - docker pull divkal/cdt-env-base:19.05
       - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-py3.6:$VERSION_NEW .
       - docker push divkal/cdt-py3.6:$VERSION_NEW
+      - docker tag divkal/cdt-py3.6:$VERSION_NEW divkal/cdt-py3.6:latest
+      - docker push divkal/cdt-py3.6:latest
     - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push 3.7"
       script:
@@ -107,6 +111,8 @@ jobs:
       - docker pull divkal/cdt-env-base:19.05
       - docker build --build-arg python=3.7 --build-arg spy=37 -t divkal/cdt-py3.7:$VERSION_NEW .
       - docker push divkal/cdt-py3.7:$VERSION_NEW
+      - docker tag divkal/nv-cdt-py3.7:$VERSION_NEW divkal/nv-cdt-py3.7:latest
+      - docker push divkal/nv-cdt-py3.7:latest
     - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push nv-3.6"
       script:
@@ -116,6 +122,8 @@ jobs:
       - docker pull divkal/nv-cdt-env-base:19.05
       - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
       - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
+      - docker tag divkal/nv-cdt-py3.6:$VERSION_NEW divkal/nv-cdt-py3.6:latest
+      - docker push divkal/nv-cdt-py3.6:latest
     - stage: deploy 2nd stage
       if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Push on Pypi"
