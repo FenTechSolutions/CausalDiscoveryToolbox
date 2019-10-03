@@ -422,7 +422,7 @@ class CGNN(GraphModel):
         warnings.warn("The pairwise GNN model is computed on each edge of the UMG "
                       "to initialize the model and start CGNN with a DAG")
         gnn = GNN(nh=self.nh, lr=self.lr, nruns=self.nruns,
-                  nb_max_runs=self.nruns, njobs=self.njobs,
+                  njobs=self.njobs,
                   train_epochs=self.train_epochs, test_epochs=self.test_epochs,
                   verbose=self.verbose, gpus=self.gpus, batch_size=self.batch_size,
                   dataloader_workers=self.dataloader_workers)

@@ -53,7 +53,7 @@ def test_pairwise():
 def test_pairwise_GNN():
     method = GNN
     print(method)
-    m = method(train_epochs=10, test_epochs=10, nruns=1, nb_max_runs=2)
+    m = method(train_epochs=10, test_epochs=10, nruns=1)
     r = m.predict(data_pairwise)
     assert r is not None
     print(r)
@@ -63,7 +63,7 @@ def test_pairwise_GNN():
 def test_graph_GNN():
     method = GNN
     print(method)
-    m = method(train_epochs=10, test_epochs=10, nruns=2, nb_max_runs=2)
+    m = method(train_epochs=10, test_epochs=10, nruns=2)
     assert type(m.predict(data_graph, graph_skeleton)) == nx.DiGraph
     return 0
 

@@ -34,7 +34,7 @@ from pandas import DataFrame
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 from sklearn.preprocessing import scale
 from .model import PairwiseModel
-from ...utils.loss import MMDloss, TTestCriterion
+from ...utils.loss import MMDloss
 from ...utils.Settings import SETTINGS
 from ...utils.parallel import parallel_run
 from ...utils.io import MetaDataset
@@ -178,10 +178,7 @@ class GNN(PairwiseModel):
            (defaults to ``cdt.SETTINGS.GPU``)
         idx (int): (optional) index of the pair, for printing purposes
         verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)
-        ttest_threshold (float): threshold to stop the boostraps before
-           ``nb_max_runs`` if the difference is significant
         batch_size (int): batch size, defaults to full-batch
-        nb_max_runs (int): Max number of bootstraps
         train_epochs (int): Number of epochs used for training
         test_epochs (int): Number of epochs used for evaluation
         dataloader_workers (int): how many subprocesses to use for data
@@ -215,8 +212,8 @@ class GNN(PairwiseModel):
     """
 
     def __init__(self, nh=20, lr=0.01, nruns=6, njobs=None, gpus=None,
-                 verbose=None, ttest_threshold=0.01, batch_size=-1,
-                 nb_max_runs=16, train_epochs=1000, test_epochs=1000,
+                 verbose=None, batch_size=-1,
+                 train_epochs=1000, test_epochs=1000,
                  dataloader_workers=0):
         """Init the model."""
         super(GNN, self).__init__()
@@ -226,11 +223,9 @@ class GNN(PairwiseModel):
         self.lr = lr
         self.nruns = nruns
         self.batch_size = batch_size
-        self.nb_max_runs = nb_max_runs
         self.train_epochs = train_epochs
         self.test_epochs = test_epochs
         self.verbose = SETTINGS.get_default(verbose=verbose)
-        self.ttest_threshold = ttest_threshold
         self.dataloader_workers = dataloader_workers
 
     def predict_proba(self, dataset, idx=0):
@@ -248,39 +243,28 @@ class GNN(PairwiseModel):
         else:
             data = [th.Tensor(scale(th.Tensor(i).view(-1, 1)))
                        for i in dataset]
-        ttest_criterion = TTestCriterion(
-            max_iter=self.nb_max_runs, runs_per_iter=self.nruns,
-            threshold=self.ttest_threshold)
 
         AB = []
         BA = []
 
-        while ttest_criterion.loop(AB, BA):
-            if self.gpus > 1:
-                result_pair = parallel_run(GNN_instance, data, njobs=self.njobs,
-                                           gpus=self.gpus, verbose=self.verbose,
-                                           train_epochs=self.train_epochs,
-                                           test_epochs=self.test_epochs,
-                                           nruns=self.nruns,
-                                           batch_size=self.batch_size,
-                                           dataloader_workers=self.dataloader_workers)
-            else:
-                result_pair = [GNN_instance(data, device=SETTINGS.default_device,
-                                            verbose=self.verbose,
-                                            train_epochs=self.train_epochs,
-                                            test_epochs=self.test_epochs,
-                                            batch_size=self.batch_size,
-                                            dataloader_workers=self.dataloader_workers)
-                               for run in range(ttest_criterion.iter,
-                                                ttest_criterion.iter +
-                                                self.nruns)]
-            AB.extend([runpair[0] for runpair in result_pair])
-            BA.extend([runpair[1] for runpair in result_pair])
-
-        if self.verbose:
-            print("{} P-value after {} runs : {}".format(idx,
-                                                         ttest_criterion.iter,
-                                                         ttest_criterion.p_value))
+        if self.gpus > 1:
+            result_pair = parallel_run(GNN_instance, data, njobs=self.njobs,
+                                       gpus=self.gpus, verbose=self.verbose,
+                                       train_epochs=self.train_epochs,
+                                       test_epochs=self.test_epochs,
+                                       nruns=self.nruns,
+                                       batch_size=self.batch_size,
+                                       dataloader_workers=self.dataloader_workers)
+        else:
+            result_pair = [GNN_instance(data, device=SETTINGS.default_device,
+                                        verbose=self.verbose,
+                                        train_epochs=self.train_epochs,
+                                        test_epochs=self.test_epochs,
+                                        batch_size=self.batch_size,
+                                        dataloader_workers=self.dataloader_workers)
+                           for run in range(self.nruns)]
+        AB.extend([runpair[0] for runpair in result_pair])
+        BA.extend([runpair[1] for runpair in result_pair])
 
         score_AB = np.mean(AB)
         score_BA = np.mean(BA)
