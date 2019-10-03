@@ -204,19 +204,19 @@
 <span class="sd">    datasets into python.</span>
 
 <span class="sd">    Details on the supported datasets:</span>
-<span class="sd">        + **Tuebingen**, dataset of 100 real cause-effect pairs</span>
+<span class="sd">        + **tuebingen**, dataset of 100 real cause-effect pairs</span>
 <span class="sd">           J. M. Mooij,</span>
 <span class="sd">           J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf: &quot;Distinguishing</span>
 <span class="sd">           cause from effect using observational data: methods and benchmarks&quot;,</span>
 <span class="sd">           Journal of Machine Learning Research 17(32):1-102, 2016.</span>
 
-<span class="sd">        + **Sachs**, Dataset of flow cytometry, real data,</span>
+<span class="sd">        + **sachs**, Dataset of flow cytometry, real data,</span>
 <span class="sd">           11 variables x 7466</span>
 <span class="sd">           samples; Sachs, K., Perez, O., Pe&#39;er, D., Lauffenburger, D. A., &amp; Nolan,</span>
 <span class="sd">           G. P. (2005). Causal protein-signaling networks derived from</span>
 <span class="sd">           multiparameter single-cell data. Science, 308(5721), 523-529.</span>
 
-<span class="sd">        + **DREAM4**, multifactorial artificial data of the challenge.</span>
+<span class="sd">        + **dream4**, multifactorial artificial data of the challenge.</span>
 <span class="sd">           Data generated with GeneNetWeaver 2.0, 5 graphs of 100 variables x 100</span>
 <span class="sd">           samples. Marbach D, Prill RJ, Schaffter T, Mattiussi C, Floreano D,</span>
 <span class="sd">           and Stolovitzky G. Revealing strengths and weaknesses of methods for</span>
@@ -238,6 +238,9 @@
 <span class="sd">        &gt;&gt;&gt; from cdt.data import load_dataset</span>
 <span class="sd">        &gt;&gt;&gt; s_data, s_graph = load_dataset(&#39;sachs&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; t_data, t_labels = load_dataset(&#39;tuebingen&#39;)</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">       The &#39;Tuebingen&#39; dataset is loaded with the same label for all samples (1: A causes B)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dream</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dream4-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)]]</span>
     <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">:</span> <span class="n">load_tuebingen</span><span class="p">,</span> <span class="s1">&#39;sachs&#39;</span><span class="p">:</span> <span class="n">load_sachs</span><span class="p">}</span>

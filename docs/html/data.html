@@ -361,7 +361,7 @@ datasets into python.</p>
 <dl class="simple">
 <dt>Details on the supported datasets:</dt><dd><ul class="simple">
 <li><dl class="simple">
-<dt><strong>Tuebingen</strong>, dataset of 100 real cause-effect pairs</dt><dd><p>J. M. Mooij,
+<dt><strong>tuebingen</strong>, dataset of 100 real cause-effect pairs</dt><dd><p>J. M. Mooij,
 J. Peters, D. Janzing, J. Zscheischler, B. Schoelkopf: “Distinguishing
 cause from effect using observational data: methods and benchmarks”,
 Journal of Machine Learning Research 17(32):1-102, 2016.</p>
@@ -369,7 +369,7 @@ Journal of Machine Learning Research 17(32):1-102, 2016.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><strong>Sachs</strong>, Dataset of flow cytometry, real data,</dt><dd><p>11 variables x 7466
+<dt><strong>sachs</strong>, Dataset of flow cytometry, real data,</dt><dd><p>11 variables x 7466
 samples; Sachs, K., Perez, O., Pe’er, D., Lauffenburger, D. A., &amp; Nolan,
 G. P. (2005). Causal protein-signaling networks derived from
 multiparameter single-cell data. Science, 308(5721), 523-529.</p>
@@ -377,7 +377,7 @@ multiparameter single-cell data. Science, 308(5721), 523-529.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><strong>DREAM4</strong>, multifactorial artificial data of the challenge.</dt><dd><p>Data generated with GeneNetWeaver 2.0, 5 graphs of 100 variables x 100
+<dt><strong>dream4</strong>, multifactorial artificial data of the challenge.</dt><dd><p>Data generated with GeneNetWeaver 2.0, 5 graphs of 100 variables x 100
 samples. Marbach D, Prill RJ, Schaffter T, Mattiussi C, Floreano D,
 and Stolovitzky G. Revealing strengths and weaknesses of methods for
 gene network inference. PNAS, 107(14):6286-6291, 2010.</p>
@@ -411,6 +411,10 @@ dataframe containing the data, and the target.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s_data</span><span class="p">,</span> <span class="n">s_graph</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;sachs&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t_data</span><span class="p">,</span> <span class="n">t_labels</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;tuebingen&#39;</span><span class="p">)</span>
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The ‘Tuebingen’ dataset is loaded with the same label for all samples (1: A causes B)</p>
 </div>
 </dd></dl>
 
