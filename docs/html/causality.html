@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.13 documentation</title>
+  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.13
+                0.5.14
               </div>
             
           
@@ -553,7 +553,7 @@ conditioning on bins.</p>
 <h3><span class="hidden-section">GNN</span><a class="headerlink" href="#gnn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="cdt.causality.pairwise.GNN">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">GNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ttest_threshold=0.01</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">nb_max_runs=16</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">dataloader_workers=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.</code><code class="sig-name descname">GNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">nruns=6</em>, <em class="sig-param">njobs=None</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">dataloader_workers=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.GNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shallow Generative Neural networks.</p>
 <p><strong>Description:</strong> Pairwise variant of the CGNN approach,
 Models the causal directions x-&gt;y and y-&gt;x with a 1-hidden layer neural
@@ -577,10 +577,7 @@ computationnally heavy. GPUs are recommended.</p>
 (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.GPU</span></code>)</p></li>
 <li><p><strong>idx</strong> (<em>int</em>) – (optional) index of the pair, for printing purposes</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – verbosity (defaults to <code class="docutils literal notranslate"><span class="pre">cdt.SETTINGS.verbose</span></code>)</p></li>
-<li><p><strong>ttest_threshold</strong> (<em>float</em>) – threshold to stop the boostraps before
-<code class="docutils literal notranslate"><span class="pre">nb_max_runs</span></code> if the difference is significant</p></li>
 <li><p><strong>batch_size</strong> (<em>int</em>) – batch size, defaults to full-batch</p></li>
-<li><p><strong>nb_max_runs</strong> (<em>int</em>) – Max number of bootstraps</p></li>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – Number of epochs used for training</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – Number of epochs used for evaluation</p></li>
 <li><p><strong>dataloader_workers</strong> (<em>int</em>) – how many subprocesses to use for data
@@ -1377,6 +1374,7 @@ to recover bayesian networks. It consists in two phases, one growing phase
 in which nodes are added to the markov blanket based on conditional
 independence and a shrinking phase in which most irrelevant nodes are
 removed.</p>
+<p><strong>Required R packages</strong>: bnlearn</p>
 <p><strong>Data Type:</strong> Depends on the test used. Check
 <a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
 <p><strong>Assumptions:</strong> GS outputs a CPDAG, with additional assumptions depending
@@ -1420,6 +1418,7 @@ CMU-CS-03-153</p>
 <p><strong>Description:</strong> The is a bayesian constraint based algorithm
 to recover Markov blankets in a forward selection and a modified backward
 selection process.</p>
+<p><strong>Required R packages</strong>: bnlearn</p>
 <p><strong>Data Type:</strong> Depends on the test used. Check
 <a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
 <p><strong>Assumptions:</strong> IAMB outputs Markov blankets of nodes,
@@ -1461,6 +1460,7 @@ Society Conference”, pp. 376-381. AAAI Press.</p>
 <p><strong>Description:</strong> Similar to IAMB, Fast-IAMB adds speculation to provide more
 computational performance without affecting the accuracy of markov blanket
 recovery.</p>
+<p><strong>Required R packages</strong>: bnlearn</p>
 <p><strong>Data Type:</strong> Depends on the test used. Check
 <a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
 <p><strong>Assumptions:</strong> Fast-IAMB outputs markov blankets of nodes, with additional
@@ -1501,6 +1501,7 @@ Mining”, pp. 809-812. IEEE Computer Society.</p>
 <dd><p>Interleaved IAMB algorithm.</p>
 <p><strong>Description:</strong> Similar to IAMB, Interleaved-IAMB has a progressive
 forward selection minimizing false positives.</p>
+<p><strong>Required R packages</strong>: bnlearn</p>
 <p><strong>Data Type:</strong> Depends on the test used. Check
 <a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
 <p><strong>Assumptions:</strong> Inter-IAMB outputs markov blankets of nodes, with additional
@@ -1545,6 +1546,7 @@ the variables that possess the highest association with the target
 conditionally to the already selected variables. The backward pass tests
 d-separability of variables conditionally to the set and subsets of the
 selected variables.</p>
+<p><strong>Required R packages</strong>: bnlearn</p>
 <p><strong>Data Type:</strong> Depends on the test used. Check
 <a class="reference internal" href="#bnlearntests"><span class="std std-ref">here</span></a> for the list of available tests.</p>
 <p><strong>Assumptions:</strong> MMPC outputs markov blankets of nodes, with additional
@@ -1590,6 +1592,7 @@ Machine Learning,65(1), 31-78.</p>
 <p><strong>Description:</strong> Causal Additive models, a causal discovery algorithm
 relying on fitting Gaussian Processes on data, while considering all noises
 additives and additive contributions of variables.</p>
+<p><strong>Required R packages</strong>: CAM</p>
 <p><strong>Data Type:</strong> Continuous</p>
 <p><strong>Assumptions:</strong> The data follows a generalized additive noise model:
 each variable <span class="math notranslate nohighlight">\(X_i\)</span>  in the graph <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> is generated
@@ -1689,6 +1692,7 @@ The adaptation will be made at a later date.</p>
 learning algorithm as described in Aragam and Zhou (2015). This is a fast,
 score based method for learning Bayesian networks that uses sparse
 regularization and block-cyclic coordinate descent.</p>
+<p><strong>Required R packages</strong>: sparsebn</p>
 <p><strong>Data Type:</strong> Continuous</p>
 <p><strong>Assumptions:</strong> This model does not restrict or prune the search space in
 any way, does not assume faithfulness, does not require a known variable
@@ -1889,6 +1893,7 @@ undirected graph and output a DAG before applying CGNN.</p>
 <p><strong>Description:</strong> Greedy Equivalence Search algorithm. A score-based
 Bayesian algorithm that searches heuristically the graph which minimizes
 a likelihood score on the data.</p>
+<p><strong>Required R packages</strong>: pcalg</p>
 <p><strong>Data Type:</strong> Continuous (<code class="docutils literal notranslate"><span class="pre">score='obs'</span></code>) or Categorical (<code class="docutils literal notranslate"><span class="pre">score='int'</span></code>)</p>
 <p><strong>Assumptions:</strong> The output is a Partially Directed Acyclic Graph (PDAG)
 (A markov equivalence class). The available scores assume linearity of
@@ -2011,6 +2016,7 @@ Causation, Prediction, and Search, MIT Press, Cambridge (MA)</p>
 A score-based Bayesian algorithm that searches heuristically the graph which minimizes
 a likelihood score on the data. The main difference with GES is that it
 accepts interventional data for its inference.</p>
+<p><strong>Required R packages</strong>: pcalg</p>
 <p><strong>Data Type:</strong> Continuous (<code class="docutils literal notranslate"><span class="pre">score='obs'</span></code>) or Categorical (<code class="docutils literal notranslate"><span class="pre">score='int'</span></code>)</p>
 <p><strong>Assumptions:</strong> The output is a Partially Directed Acyclic Graph (PDAG)
 (A markov equivalence class). The available scores assume linearity of
@@ -2134,6 +2140,7 @@ structural equation models, where each variable is modeled as
 <span class="math notranslate nohighlight">\(X_j = \sum_k \alpha_k P_a^{k}(X_j) + E_j,  j \in [1,d]\)</span>,
 with  <span class="math notranslate nohighlight">\(P_a^{k}(X_j)\)</span> the <span class="math notranslate nohighlight">\(k\)</span>-th parent of
 <span class="math notranslate nohighlight">\(X_j\)</span> and <span class="math notranslate nohighlight">\(\alpha_k\)</span> a real scalar.</p>
+<p><strong>Required R packages</strong>: pcalg</p>
 <p><strong>Data Type:</strong> Continuous</p>
 <p><strong>Assumptions:</strong> The underlying causal model is supposed to be composed of
 linear mechanisms and non-gaussian data. Under those assumptions, it is
@@ -2193,6 +2200,7 @@ Journal of Machine Learning Research 7, 2003–2030.</p>
 <p><strong>Description:</strong> PC (Peter - Clark) One of the most famous score based
 approaches for causal discovery. Based on conditional tests on variables
 and sets of variables, it proved itself to be really efficient.</p>
+<p><strong>Required R packages</strong>: pcalg, kpcalg, RCIT</p>
 <p><strong>Data Type:</strong> Continuous and discrete</p>
 <p><strong>Assumptions:</strong> This approach’s complexity grows rapidly with the number
 of variables, even for quick tests. Consider graphs &lt; 200 variables.

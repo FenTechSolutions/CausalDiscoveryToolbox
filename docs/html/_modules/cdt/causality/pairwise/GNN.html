@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.pairwise.GNN &mdash; Causal Discovery Toolbox 0.5.13 documentation</title>
+  <title>cdt.causality.pairwise.GNN &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.13
+                0.5.14
               </div>
             
           
@@ -202,7 +202,7 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">PairwiseModel</span>
-<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span><span class="p">,</span> <span class="n">TTestCriterion</span>
+<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">MMDloss</span>
 <span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
 <span class="kn">from</span> <span class="nn">...utils.io</span> <span class="k">import</span> <span class="n">MetaDataset</span>
@@ -346,10 +346,7 @@
 <span class="sd">           (defaults to ``cdt.SETTINGS.GPU``)</span>
 <span class="sd">        idx (int): (optional) index of the pair, for printing purposes</span>
 <span class="sd">        verbose (bool): verbosity (defaults to ``cdt.SETTINGS.verbose``)</span>
-<span class="sd">        ttest_threshold (float): threshold to stop the boostraps before</span>
-<span class="sd">           ``nb_max_runs`` if the difference is significant</span>
 <span class="sd">        batch_size (int): batch size, defaults to full-batch</span>
-<span class="sd">        nb_max_runs (int): Max number of bootstraps</span>
 <span class="sd">        train_epochs (int): Number of epochs used for training</span>
 <span class="sd">        test_epochs (int): Number of epochs used for evaluation</span>
 <span class="sd">        dataloader_workers (int): how many subprocesses to use for data</span>
@@ -383,8 +380,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">nruns</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ttest_threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                 <span class="n">nb_max_runs</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">train_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
                  <span class="n">dataloader_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -394,11 +391,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span> <span class="o">=</span> <span class="n">nruns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nb_max_runs</span> <span class="o">=</span> <span class="n">nb_max_runs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span> <span class="o">=</span> <span class="n">train_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span> <span class="o">=</span> <span class="n">test_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">get_default</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ttest_threshold</span> <span class="o">=</span> <span class="n">ttest_threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span> <span class="o">=</span> <span class="n">dataloader_workers</span>
 
 <div class="viewcode-block" id="GNN.predict_proba"><a class="viewcode-back" href="../../../../causality.html#cdt.causality.pairwise.GNN.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -416,39 +411,28 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">scale</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">]</span>
-        <span class="n">ttest_criterion</span> <span class="o">=</span> <span class="n">TTestCriterion</span><span class="p">(</span>
-            <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_max_runs</span><span class="p">,</span> <span class="n">runs_per_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span>
-            <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ttest_threshold</span><span class="p">)</span>
 
         <span class="n">AB</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">BA</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">while</span> <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">AB</span><span class="p">,</span> <span class="n">BA</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">result_pair</span> <span class="o">=</span> <span class="n">parallel_run</span><span class="p">(</span><span class="n">GNN_instance</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span>
-                                           <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
-                                           <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
-                                           <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
-                                           <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span>
-                                           <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-                                           <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">result_pair</span> <span class="o">=</span> <span class="p">[</span><span class="n">GNN_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">default_device</span><span class="p">,</span>
-                                            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
-                                            <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
-                                            <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
-                                            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-                                            <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">)</span>
-                               <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
-                                                <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span> <span class="o">+</span>
-                                                <span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)]</span>
-            <span class="n">AB</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
-            <span class="n">BA</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> P-value after </span><span class="si">{}</span><span class="s2"> runs : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span>
-                                                         <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
-                                                         <span class="n">ttest_criterion</span><span class="o">.</span><span class="n">p_value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpus</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">result_pair</span> <span class="o">=</span> <span class="n">parallel_run</span><span class="p">(</span><span class="n">GNN_instance</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">,</span>
+                                       <span class="n">gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpus</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                       <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
+                                       <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
+                                       <span class="n">nruns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">,</span>
+                                       <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                       <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result_pair</span> <span class="o">=</span> <span class="p">[</span><span class="n">GNN_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">default_device</span><span class="p">,</span>
+                                        <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                                        <span class="n">train_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_epochs</span><span class="p">,</span>
+                                        <span class="n">test_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_epochs</span><span class="p">,</span>
+                                        <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                        <span class="n">dataloader_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader_workers</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nruns</span><span class="p">)]</span>
+        <span class="n">AB</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
+        <span class="n">BA</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">runpair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">runpair</span> <span class="ow">in</span> <span class="n">result_pair</span><span class="p">])</span>
 
         <span class="n">score_AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">AB</span><span class="p">)</span>
         <span class="n">score_BA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">BA</span><span class="p">)</span>

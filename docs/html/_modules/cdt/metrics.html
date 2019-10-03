@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.13 documentation</title>
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.13
+                0.5.14
               </div>
             
           
@@ -333,6 +333,8 @@
 <span class="sd">    This distance can be particularly useful when an algorithm only</span>
 <span class="sd">    returns CPDAG.</span>
 
+<span class="sd">    **Required R packages**: pcalg</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target DAG, must be of</span>
 <span class="sd">            ones and zeros.</span>
@@ -408,6 +410,8 @@
 <span class="sd">    checks if the causal relationship between the variables is respected.</span>
 <span class="sd">    The given graphs have to be DAGs for the SID metric to make sense.</span>
 
+<span class="sd">    **Required R packages**: SID</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of</span>
 <span class="sd">            ones and zeros, and instance of either numpy.ndarray or</span>
@@ -469,6 +473,8 @@
     <span class="sd">&quot;&quot;&quot;Compute the Strutural Intervention Distance. The target graph</span>
 <span class="sd">    can be a CPDAG. A lower and upper bounds will be returned, they</span>
 <span class="sd">    correspond respectively to the best and worst DAG in the equivalence class</span>
+
+<span class="sd">    **Required R packages**: SID</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        target (numpy.ndarray or networkx.DiGraph): Target graph, must be of</span>
