@@ -125,7 +125,7 @@ jobs:
       - docker tag divkal/nv-cdt-py3.6:$VERSION_NEW divkal/nv-cdt-py3.6:latest
       - docker push divkal/nv-cdt-py3.6:latest
     - stage: deploy 2nd stage
-      if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
+      if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\]) AND (not commit_message =~ \[NV\])
       name: "Push on Pypi"
       script:
       - git pull

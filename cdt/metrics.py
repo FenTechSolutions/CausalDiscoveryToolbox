@@ -165,6 +165,8 @@ def SHD_CPDAG(target, pred):
     This distance can be particularly useful when an algorithm only
     returns CPDAG.
 
+    **Required R packages**: pcalg
+
     Args:
         target (numpy.ndarray or networkx.DiGraph): Target DAG, must be of
             ones and zeros.
@@ -240,6 +242,8 @@ def SID(target, pred):
     checks if the causal relationship between the variables is respected.
     The given graphs have to be DAGs for the SID metric to make sense.
 
+    **Required R packages**: SID
+
     Args:
         target (numpy.ndarray or networkx.DiGraph): Target graph, must be of
             ones and zeros, and instance of either numpy.ndarray or
@@ -301,6 +305,8 @@ def SID_CPDAG(target, pred):
     """Compute the Strutural Intervention Distance. The target graph
     can be a CPDAG. A lower and upper bounds will be returned, they
     correspond respectively to the best and worst DAG in the equivalence class
+
+    **Required R packages**: SID
 
     Args:
         target (numpy.ndarray or networkx.DiGraph): Target graph, must be of

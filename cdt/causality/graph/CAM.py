@@ -51,6 +51,8 @@ class CAM(GraphModel):
     relying on fitting Gaussian Processes on data, while considering all noises
     additives and additive contributions of variables.
 
+    **Required R packages**: CAM
+
     **Data Type:** Continuous
 
     **Assumptions:** The data follows a generalized additive noise model:

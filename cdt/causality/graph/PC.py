@@ -52,6 +52,8 @@ class PC(GraphModel):
     approaches for causal discovery. Based on conditional tests on variables
     and sets of variables, it proved itself to be really efficient.
 
+    **Required R packages**: pcalg, kpcalg, RCIT
+
     **Data Type:** Continuous and discrete
 
     **Assumptions:** This approach's complexity grows rapidly with the number

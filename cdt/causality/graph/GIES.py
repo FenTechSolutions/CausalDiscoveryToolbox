@@ -49,6 +49,8 @@ class GIES(GraphModel):
     a likelihood score on the data. The main difference with GES is that it
     accepts interventional data for its inference.
 
+    **Required R packages**: pcalg
+
     **Data Type:** Continuous (``score='obs'``) or Categorical (``score='int'``)
 
     **Assumptions:** The output is a Partially Directed Acyclic Graph (PDAG)

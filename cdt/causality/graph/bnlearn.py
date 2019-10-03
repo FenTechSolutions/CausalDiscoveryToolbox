@@ -255,6 +255,8 @@ class GS(BNlearnAlgorithm):
     independence and a shrinking phase in which most irrelevant nodes are
     removed.
 
+    **Required R packages**: bnlearn
+
     **Data Type:** Depends on the test used. Check
     :ref:`here <bnlearntests>` for the list of available tests.
 
@@ -300,6 +302,8 @@ class IAMB(BNlearnAlgorithm):
     to recover Markov blankets in a forward selection and a modified backward
     selection process.
 
+    **Required R packages**: bnlearn
+
     **Data Type:** Depends on the test used. Check
     :ref:`here <bnlearntests>` for the list of available tests.
 
@@ -343,6 +347,8 @@ class Fast_IAMB(BNlearnAlgorithm):
     computational performance without affecting the accuracy of markov blanket
     recovery.
 
+    **Required R packages**: bnlearn
+
     **Data Type:** Depends on the test used. Check
     :ref:`here <bnlearntests>` for the list of available tests.
 
@@ -384,6 +390,8 @@ class Inter_IAMB(BNlearnAlgorithm):
 
     **Description:** Similar to IAMB, Interleaved-IAMB has a progressive
     forward selection minimizing false positives.
+
+    **Required R packages**: bnlearn
 
     **Data Type:** Depends on the test used. Check
     :ref:`here <bnlearntests>` for the list of available tests.
@@ -430,6 +438,8 @@ class MMPC(BNlearnAlgorithm):
     conditionally to the already selected variables. The backward pass tests
     d-separability of variables conditionally to the set and subsets of the
     selected variables.
+
+    **Required R packages**: bnlearn
 
     **Data Type:** Depends on the test used. Check
     :ref:`here <bnlearntests>` for the list of available tests.

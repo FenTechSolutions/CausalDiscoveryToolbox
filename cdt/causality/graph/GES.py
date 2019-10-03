@@ -51,6 +51,8 @@ class GES(GraphModel):
     Bayesian algorithm that searches heuristically the graph which minimizes
     a likelihood score on the data.
 
+    **Required R packages**: pcalg
+
     **Data Type:** Continuous (``score='obs'``) or Categorical (``score='int'``)
 
     **Assumptions:** The output is a Partially Directed Acyclic Graph (PDAG)

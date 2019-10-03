@@ -54,6 +54,8 @@ class LiNGAM(GraphModel):
     with  :math:`P_a^{k}(X_j)` the :math:`k`-th parent of
     :math:`X_j` and :math:`\alpha_k` a real scalar.
 
+    **Required R packages**: pcalg
+
     **Data Type:** Continuous
 
     **Assumptions:** The underlying causal model is supposed to be composed of

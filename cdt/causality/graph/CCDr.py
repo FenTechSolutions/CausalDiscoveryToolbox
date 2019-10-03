@@ -52,6 +52,8 @@ class CCDr(GraphModel):
     score based method for learning Bayesian networks that uses sparse
     regularization and block-cyclic coordinate descent.
 
+    **Required R packages**: sparsebn
+
     **Data Type:** Continuous
 
     **Assumptions:** This model does not restrict or prune the search space in
