@@ -35,9 +35,9 @@ available at the moment, but is considered for later versions.
 The package is structured in 5 modules:
 
 1. Causality: ``cdt.causality`` implements algorithms for causal discovery, either
-   in the pairwise setting, either in the graph setting.
+   in the pairwise setting or the graph setting.
 
-2. Independence: ``cdt.independence`` includes methods to recovery the dependence
+2. Independence: ``cdt.independence`` includes methods to recover the dependence
    graph of the data.
 
 3. Data: ``cdt.data`` provides the user with tools to generate data, and load
@@ -66,11 +66,11 @@ parameters can be customized in the ``.__init__()`` function of the class.
 
 Hardware and algorithm settings
 -------------------------------
-The toolbox has a SETTINGS class that defines the hardware settings . Those
+The toolbox has a SETTINGS class that defines the hardware settings. Those
 settings are unique and their default parameters are defined in
 ``cdt/utils/Settings``.
 
-These parameters are accessible and overridable via accessing the class :
+These parameters are accessible and overridable via accessing the class:
 
 .. code-block:: python
 

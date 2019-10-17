@@ -99,7 +99,7 @@ Dependencies
 ============
 The package is to be as much independent of other packages as possible, as it
 already depends on many libraries. Therefore, all contributions requiring
-the addition of a new dependency will be severly examined.
+the addition of a new dependency will be severely examined.
 
 Two types of dependencies are possible for now:
 
@@ -136,7 +136,7 @@ Your docstrings must include:
 
 Testing
 =======
-The package is thouroughly tested using ``pytest`` and ``codecov`` for code
+The package is thoroughly tested using ``pytest`` and ``codecov`` for code
 coverage. Tests are run using a Continuous Integration Tool, for
 each push on master/dev or pull requests, allowing to provide users with
 immediate feedback.
@@ -183,9 +183,9 @@ Parallelization
 ===============
 
 Many algorithms are computationally heavy, but parallelizable, as they include
-bootsrapped functions, mutltiple runs of a same computation.
+bootstrapped functions, multiple runs of a same computation.
 
-Therefore, using mutiprocessing allows to alleviate the required computation
+Therefore, using multiprocessing allows to alleviate the required computation
 time. For CPU jobs, we use the ``joblib`` library, for its efficiency and ease
 of use. However, for GPU jobs, the multiprocessing interface was recoded,
 in order to account for available resources and a memory leak issue between
