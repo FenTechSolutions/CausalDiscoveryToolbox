@@ -201,8 +201,8 @@ available at the moment, but is considered for later versions.</p>
 <p>The package is structured in 5 modules:</p>
 <ol class="arabic simple">
 <li><p>Causality: <code class="docutils literal notranslate"><span class="pre">cdt.causality</span></code> implements algorithms for causal discovery, either
-in the pairwise setting, either in the graph setting.</p></li>
-<li><p>Independence: <code class="docutils literal notranslate"><span class="pre">cdt.independence</span></code> includes methods to recovery the dependence
+in the pairwise setting or the graph setting.</p></li>
+<li><p>Independence: <code class="docutils literal notranslate"><span class="pre">cdt.independence</span></code> includes methods to recover the dependence
 graph of the data.</p></li>
 <li><p>Data: <code class="docutils literal notranslate"><span class="pre">cdt.data</span></code> provides the user with tools to generate data, and load
 benchmark data.</p></li>
@@ -228,10 +228,10 @@ implemented and documented in the various algorithms.</p>
 </div>
 <div class="section" id="hardware-and-algorithm-settings">
 <h3>Hardware and algorithm settings<a class="headerlink" href="#hardware-and-algorithm-settings" title="Permalink to this headline">¶</a></h3>
-<p>The toolbox has a SETTINGS class that defines the hardware settings . Those
+<p>The toolbox has a SETTINGS class that defines the hardware settings. Those
 settings are unique and their default parameters are defined in
 <code class="docutils literal notranslate"><span class="pre">cdt/utils/Settings</span></code>.</p>
-<p>These parameters are accessible and overridable via accessing the class :</p>
+<p>These parameters are accessible and overridable via accessing the class:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cdt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdt</span><span class="o">.</span><span class="n">SETTINGS</span>
 </pre></div>

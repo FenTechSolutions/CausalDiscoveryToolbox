@@ -65,7 +65,7 @@ apply the Graph Lasso.
    <networkx.classes.digraph.DiGraph at 0x7fe3ccfb1438>
 
 The ``skeleton`` object is a ``networkx.Graph`` instance, which might be quite
-obscure at first but quite handy on the long run. (Check
+obscure at first but is handy in the long run. (Check
 :ref:`here <The graph class>`  for a quick introduction on ``networkx`` graphs).
 We can check the structure of the skeleton by looking at its adjacency matrix:
 
@@ -172,7 +172,7 @@ skeleton to perform our causal discovery.
 -------------------
 
 Having a graph skeleton, we are going to perform causal discovery with
-constraints, by using the `GES` algorithm..
+constraints, by using the `GES` algorithm.
 
 .. seealso:: `D.M. Chickering (2002). Optimal
    structure identification with greedy search. Journal of Machine Learning

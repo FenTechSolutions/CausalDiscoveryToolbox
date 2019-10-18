@@ -261,7 +261,7 @@ and verified the correct import of the new functionalities.</p></li>
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>The package is to be as much independent of other packages as possible, as it
 already depends on many libraries. Therefore, all contributions requiring
-the addition of a new dependency will be severly examined.</p>
+the addition of a new dependency will be severely examined.</p>
 <p>Two types of dependencies are possible for now:</p>
 <ul class="simple">
 <li><p>Python dependencies, defined in <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></p></li>
@@ -294,7 +294,7 @@ built and updated online by the Continuous Integration Tool at each push on the
 </div>
 <div class="section" id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
-<p>The package is thouroughly tested using <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and <code class="docutils literal notranslate"><span class="pre">codecov</span></code> for code
+<p>The package is thoroughly tested using <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and <code class="docutils literal notranslate"><span class="pre">codecov</span></code> for code
 coverage. Tests are run using a Continuous Integration Tool, for
 each push on master/dev or pull requests, allowing to provide users with
 immediate feedback.</p>
@@ -331,8 +331,8 @@ detailed information.</p>
 <div class="section" id="parallelization">
 <h2>Parallelization<a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h2>
 <p>Many algorithms are computationally heavy, but parallelizable, as they include
-bootsrapped functions, mutltiple runs of a same computation.</p>
-<p>Therefore, using mutiprocessing allows to alleviate the required computation
+bootstrapped functions, multiple runs of a same computation.</p>
+<p>Therefore, using multiprocessing allows to alleviate the required computation
 time. For CPU jobs, we use the <code class="docutils literal notranslate"><span class="pre">joblib</span></code> library, for its efficiency and ease
 of use. However, for GPU jobs, the multiprocessing interface was recoded,
 in order to account for available resources and a memory leak issue between

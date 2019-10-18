@@ -238,7 +238,7 @@ Sparse inverse covariance estimation with the graphical lasso. Biostatistics,
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">skeleton</span></code> object is a <code class="docutils literal notranslate"><span class="pre">networkx.Graph</span></code> instance, which might be quite
-obscure at first but quite handy on the long run. (Check
+obscure at first but is handy in the long run. (Check
 <a class="reference internal" href="tutorial.html#the-graph-class"><span class="std std-ref">here</span></a>  for a quick introduction on <code class="docutils literal notranslate"><span class="pre">networkx</span></code> graphs).
 We can check the structure of the skeleton by looking at its adjacency matrix:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
@@ -341,7 +341,7 @@ skeleton to perform our causal discovery.</p>
 <div class="section" id="causal-discovery">
 <h2>3. Causal discovery<a class="headerlink" href="#causal-discovery" title="Permalink to this headline">¶</a></h2>
 <p>Having a graph skeleton, we are going to perform causal discovery with
-constraints, by using the <cite>GES</cite> algorithm..</p>
+constraints, by using the <cite>GES</cite> algorithm.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><cite>D.M. Chickering (2002). Optimal
