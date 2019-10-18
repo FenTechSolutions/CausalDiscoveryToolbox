@@ -1,7 +1,7 @@
 Advanced Tutorial
 =================
 
-This second tutorial targets more experienced users. We will focus on :
+This second tutorial targets more experienced users. We will focus on:
 
 1. Launching `cdt` Docker containers
 

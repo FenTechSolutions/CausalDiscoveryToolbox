@@ -33,7 +33,7 @@ Docker images are available, including all the dependencies, and enabled functio
 
 The packages requires a python version >=3.5, as well as some libraries listed in [requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/requirements.txt). For some additional functionalities, more libraries are needed for these extra functions and options to become available. Here is a quick install guide of the package, starting off with the minimal install up to the full installation. 
 
-**Note** : A (mini/ana)conda framework would help installing all those packages and therefore could be recommended for non-expert users. 
+**Note**: A (mini/ana)conda framework would help installing all those packages and therefore could be recommended for non-expert users. 
 
 ### Install PyTorch
 As some of the key algorithms in the _cdt_ package use the PyTorch package, it is required to install it. 
@@ -51,9 +51,9 @@ $ cd CausalDiscoveryToolbox
 $ pip install -r requirements.txt  # Install the requirements
 $ python setup.py install develop --user
 ```
-**The package is then up and running ! You can run most of the algorithms in the CausalDiscoveryToolbox, you might get warnings: some additional features are not available**
+**The package is then up and running! You can run most of the algorithms in the CausalDiscoveryToolbox, you might get warnings: some additional features are not available**
 
-From now on, you can import the library using :
+From now on, you can import the library using:
 ```python
 import cdt
 ```
@@ -63,7 +63,7 @@ Check out the package structure and more info on the package itself [here](https
 In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, ... while using the _cdt_ framework, it is required to install R.
 
 Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions. 
-The [r-requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt) notes all the R packages used by the toolbox.
+The [r-requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt) notes all of the R packages used by the toolbox.
 
 
 ## Overview
@@ -131,9 +131,9 @@ The following figure shows how the package and its algorithms are structured
 ```
 
 ### Hardware and algorithm settings
-The toolbox has a SETTINGS class that defines the hardware settings . Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**.
+The toolbox has a SETTINGS class that defines the hardware settings. Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**.
 
-These parameters are accessible and overridable via accessing the class :
+These parameters are accessible and overridable via accessing the class:
 
 ```python
 import cdt

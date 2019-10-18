@@ -52,9 +52,9 @@ cdt package
 ```
 
 ## Hardware and algorithm settings
-The toolbox has a SETTINGS class that defines the hardware settings . Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**.
+The toolbox has a SETTINGS class that defines the hardware settings. Those settings are unique and their default parameters are defined in **_cdt/utils/Settings_**.
 
-These parameters are accessible and overridable via accessing the class :
+These parameters are accessible and overridable via accessing the class:
 
 ```python
 import cdt
