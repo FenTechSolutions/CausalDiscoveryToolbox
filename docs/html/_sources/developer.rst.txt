@@ -47,7 +47,7 @@ To submit a pull request, the following are required:
        $ git clone git@github.com:YourLogin/CausalDiscoveryToolbox.git
        $ cd CausalDiscoveryToolbox
        $ git checkout dev
-       $ python setup.py install develop --user
+       $ python setup.py install develop
 
    Where ``python`` refers to your `python 3` installation.
 
