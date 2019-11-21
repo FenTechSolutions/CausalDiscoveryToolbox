@@ -39,8 +39,11 @@ To submit a pull request, the following are required:
 1. Having an up-to-date forked repository of the package and a python 3 installation
 
 2. Clone your forked version of the code locally and install it
-   in developer mode::
+   in developer mode, in a separate python environement
+   (e.g. Anaconda environement)::
 
+       $ conda create --name cdt_dev python=3.6 numpy scipy scikit-learn
+       $ source activate cdt_dev
        $ git clone git@github.com:YourLogin/CausalDiscoveryToolbox.git
        $ cd CausalDiscoveryToolbox
        $ git checkout dev
