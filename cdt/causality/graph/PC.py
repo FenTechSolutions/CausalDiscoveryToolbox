@@ -52,7 +52,7 @@ class PC(GraphModel):
     approaches for causal discovery. Based on conditional tests on variables
     and sets of variables, it proved itself to be really efficient.
 
-    **Required R packages**: pcalg, kpcalg, RCIT
+    **Required R packages**: pcalg, kpcalg, RCIT (variant, see notes)
 
     **Data Type:** Continuous and discrete
 
@@ -64,7 +64,6 @@ class PC(GraphModel):
 
     Args:
         CItest (str): Test for conditional independence.
-        method (str): Heuristic for testing CI.
         alpha (float): significance level (number in (0, 1) for the individual
            conditional independence tests.
         njobs (int): number of processor cores to use for parallel computation.
@@ -79,19 +78,29 @@ class PC(GraphModel):
         dir_method_indep (dict): contains all available heuristics for CI
            testing.
 
-    Available heuristics for conditional independence tests:
-        + gaussian: "pcalg::gaussCItest"
-        + hsic: "kpcalg::kernelCItest"
-        + discrete: "pcalg::disCItest"
-        + binary: "pcalg::binCItest"
-        + randomized: "RCIT:::CItest"
+    .. Available heuristics for conditional independence tests:
+    ..     + gaussian: "pcalg::gaussCItest"
+    ..     + hsic: "kpcalg::kernelCItest"
+    ..     + discrete: "pcalg::disCItest"
+    ..     + binary: "pcalg::binCItest"
+    ..     + randomized: "RCIT:::CItest"
+
+    .. Available CI tests:
+    ..     + dcc: "data=X, ic.method=\"dcc\""
+    ..     + hsic_gamma: "data=X, ic.method=\"hsic.gamma\""
+    ..     + hsic_perm: "data=X, ic.method=\"hsic.perm\""
+    ..     + hsic_clust: "data=X, ic.method=\"hsic.clust\""
+    ..     + corr: "C = cor(X), n = nrow(X)"
+    ..     + rcit: "data=X, ic.method=\"RCIT::RCIT\""
+    ..     + rcot: "data=X, ic.method=\"RCIT::RCoT\""
 
     Available CI tests:
-        + dcc: "data=X, ic.method=\"dcc\""
+        + binary: "data=X, ic.method=\"dcc\""
+        + discrete: "data=X, ic.method=\"dcc\""
         + hsic_gamma: "data=X, ic.method=\"hsic.gamma\""
         + hsic_perm: "data=X, ic.method=\"hsic.perm\""
         + hsic_clust: "data=X, ic.method=\"hsic.clust\""
-        + corr: "C = cor(X), n = nrow(X)"
+        + gaussian: "C = cor(X), n = nrow(X)"
         + rcit: "data=X, ic.method=\"RCIT::RCIT\""
         + rcot: "data=X, ic.method=\"RCIT::RCoT\""
 
@@ -137,6 +146,9 @@ class PC(GraphModel):
 
        Imported from the Pcalg package.
 
+       The RCIT package has been adapted to fit the `CDT` package, please use the variant available at
+       https://github.com/Diviyan-Kalainathan/RCIT
+
     Example:
         >>> import networkx as nx
         >>> from cdt.causality.graph import PC
@@ -165,16 +177,20 @@ class PC(GraphModel):
                               "https://github.com/Diviyan-Kalainathan/RCIT")
 
         super(PC, self).__init__()
-        self.dir_CI_test = {"gaussian": "pcalg::gaussCItest",
-                            "hsic": "kpcalg::kernelCItest",
-                            "discrete": "pcalg::disCItest",
-                            "binary": "pcalg::binCItest",
-                            "randomized": "RCIT:::CItest"}
-        self.dir_method_indep = {'dcc': "dm=X, adaptDF = FALSE", # ic.method=\"dcc\"",
+        self.dir_CI_test = {'binary': "pcalg::binCItest", # ic.method=\"dcc\"",
+                                 'discrete': "pcalg::disCItest",
+                                 'hsic_gamma': "kpcalg::kernelCItest",
+                                 'hsic_perm': "kpcalg::kernelCItest",
+                                 'hsic_clust': "kpcalg::kernelCItest",
+                                 'gaussian': "pcalg::gaussCItest",
+                                 'rcit': "RCIT:::CItest",
+                                 'rcot': "RCIT:::CItest"}
+        self.dir_method_indep = {'binary': "dm=X, adaptDF = FALSE", # ic.method=\"dcc\"",
+                                 'discrete': "dm=X, adaptDF = FALSE",
                                  'hsic_gamma': "data=X, ic.method=\"hsic.gamma\"",
                                  'hsic_perm': "data=X, ic.method=\"hsic.perm\"",
                                  'hsic_clust': "data=X, ic.method=\"hsic.clust\"",
-                                 'corr': "C = cor(X), n = nrow(X)",
+                                 'gaussian': "C = cor(X), n = nrow(X)",
                                  'rcit': "data=X, ic.method=\"RCIT::RCIT\"",
                                  'rcot': "data=X, ic.method=\"RCIT::RCoT\""}
         self.CI_test = CItest
@@ -209,7 +225,7 @@ class PC(GraphModel):
         """
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.dir_CI_test[self.CI_test]
-        self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.method_indep]
+        self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.CI_test]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(self.alpha)
         self.arguments['{NJOBS}'] = str(self.njobs)
@@ -252,7 +268,7 @@ class PC(GraphModel):
        """
         # Building setup w/ arguments.
         self.arguments['{CITEST}'] = self.dir_CI_test[self.CI_test]
-        self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.method_indep]
+        self.arguments['{METHOD_INDEP}'] = self.dir_method_indep[self.CI_test]
         self.arguments['{DIRECTED}'] = 'TRUE'
         self.arguments['{ALPHA}'] = str(self.alpha)
         self.arguments['{NJOBS}'] = str(self.njobs)
@@ -267,17 +283,6 @@ class PC(GraphModel):
         """Setting up and running pc with all arguments."""
         # Checking coherence of arguments
         # print(self.arguments)
-        if (self.arguments['{CITEST}'] == self.dir_CI_test['hsic']
-           and self.arguments['{METHOD_INDEP}'] == self.dir_method_indep['corr']):
-            warnings.warn('Selected method for indep is unfit for the hsic test,'
-                          ' setting the hsic.gamma method.')
-            self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['hsic_gamma']
-
-        elif (self.arguments['{CITEST}'] == self.dir_CI_test['gaussian']
-              and self.arguments['{METHOD_INDEP}'] != self.dir_method_indep['corr']):
-            warnings.warn('Selected method for indep is unfit for the selected test,'
-                          ' setting the classic correlation-based method.')
-            self.arguments['{METHOD_INDEP}'] = self.dir_method_indep['corr']
 
         # Run PC
         self.arguments['{FOLDER}'] = '{0!s}/cdt_pc_{1!s}/'.format(gettempdir(), uuid.uuid4())
