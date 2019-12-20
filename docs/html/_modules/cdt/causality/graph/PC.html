@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.PC &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
+  <title>cdt.causality.graph.PC &mdash; Causal Discovery Toolbox 0.5.15 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.14
+                0.5.15
               </div>
             
           
@@ -197,12 +197,12 @@
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
-<span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">gettempdir</span>
-<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">read_csv</span>
-<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
-<span class="kn">from</span> <span class="nn">...utils.R</span> <span class="k">import</span> <span class="n">RPackages</span><span class="p">,</span> <span class="n">launch_R_script</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">gettempdir</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">GraphModel</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">read_csv</span>
+<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">...utils.R</span> <span class="kn">import</span> <span class="n">RPackages</span><span class="p">,</span> <span class="n">launch_R_script</span>
 
 
 <span class="k">def</span> <span class="nf">message_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -220,7 +220,7 @@
 <span class="sd">    approaches for causal discovery. Based on conditional tests on variables</span>
 <span class="sd">    and sets of variables, it proved itself to be really efficient.</span>
 
-<span class="sd">    **Required R packages**: pcalg, kpcalg, RCIT</span>
+<span class="sd">    **Required R packages**: pcalg, kpcalg, RCIT (variant, see notes)</span>
 
 <span class="sd">    **Data Type:** Continuous and discrete</span>
 
@@ -232,7 +232,6 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        CItest (str): Test for conditional independence.</span>
-<span class="sd">        method (str): Heuristic for testing CI.</span>
 <span class="sd">        alpha (float): significance level (number in (0, 1) for the individual</span>
 <span class="sd">           conditional independence tests.</span>
 <span class="sd">        njobs (int): number of processor cores to use for parallel computation.</span>
@@ -247,19 +246,29 @@
 <span class="sd">        dir_method_indep (dict): contains all available heuristics for CI</span>
 <span class="sd">           testing.</span>
 
-<span class="sd">    Available heuristics for conditional independence tests:</span>
-<span class="sd">        + gaussian: &quot;pcalg::gaussCItest&quot;</span>
-<span class="sd">        + hsic: &quot;kpcalg::kernelCItest&quot;</span>
-<span class="sd">        + discrete: &quot;pcalg::disCItest&quot;</span>
-<span class="sd">        + binary: &quot;pcalg::binCItest&quot;</span>
-<span class="sd">        + randomized: &quot;RCIT:::CItest&quot;</span>
+<span class="sd">    .. Available heuristics for conditional independence tests:</span>
+<span class="sd">    ..     + gaussian: &quot;pcalg::gaussCItest&quot;</span>
+<span class="sd">    ..     + hsic: &quot;kpcalg::kernelCItest&quot;</span>
+<span class="sd">    ..     + discrete: &quot;pcalg::disCItest&quot;</span>
+<span class="sd">    ..     + binary: &quot;pcalg::binCItest&quot;</span>
+<span class="sd">    ..     + randomized: &quot;RCIT:::CItest&quot;</span>
+
+<span class="sd">    .. Available CI tests:</span>
+<span class="sd">    ..     + dcc: &quot;data=X, ic.method=\&quot;dcc\&quot;&quot;</span>
+<span class="sd">    ..     + hsic_gamma: &quot;data=X, ic.method=\&quot;hsic.gamma\&quot;&quot;</span>
+<span class="sd">    ..     + hsic_perm: &quot;data=X, ic.method=\&quot;hsic.perm\&quot;&quot;</span>
+<span class="sd">    ..     + hsic_clust: &quot;data=X, ic.method=\&quot;hsic.clust\&quot;&quot;</span>
+<span class="sd">    ..     + corr: &quot;C = cor(X), n = nrow(X)&quot;</span>
+<span class="sd">    ..     + rcit: &quot;data=X, ic.method=\&quot;RCIT::RCIT\&quot;&quot;</span>
+<span class="sd">    ..     + rcot: &quot;data=X, ic.method=\&quot;RCIT::RCoT\&quot;&quot;</span>
 
 <span class="sd">    Available CI tests:</span>
-<span class="sd">        + dcc: &quot;data=X, ic.method=\&quot;dcc\&quot;&quot;</span>
+<span class="sd">        + binary: &quot;data=X, ic.method=\&quot;dcc\&quot;&quot;</span>
+<span class="sd">        + discrete: &quot;data=X, ic.method=\&quot;dcc\&quot;&quot;</span>
 <span class="sd">        + hsic_gamma: &quot;data=X, ic.method=\&quot;hsic.gamma\&quot;&quot;</span>
 <span class="sd">        + hsic_perm: &quot;data=X, ic.method=\&quot;hsic.perm\&quot;&quot;</span>
 <span class="sd">        + hsic_clust: &quot;data=X, ic.method=\&quot;hsic.clust\&quot;&quot;</span>
-<span class="sd">        + corr: &quot;C = cor(X), n = nrow(X)&quot;</span>
+<span class="sd">        + gaussian: &quot;C = cor(X), n = nrow(X)&quot;</span>
 <span class="sd">        + rcit: &quot;data=X, ic.method=\&quot;RCIT::RCIT\&quot;&quot;</span>
 <span class="sd">        + rcot: &quot;data=X, ic.method=\&quot;RCIT::RCoT\&quot;&quot;</span>
 
@@ -305,6 +314,9 @@
 
 <span class="sd">       Imported from the Pcalg package.</span>
 
+<span class="sd">       The RCIT package has been adapted to fit the `CDT` package, please use the variant available at</span>
+<span class="sd">       https://github.com/Diviyan-Kalainathan/RCIT</span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import networkx as nx</span>
 <span class="sd">        &gt;&gt;&gt; from cdt.causality.graph import PC</span>
@@ -324,7 +336,7 @@
 <span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CItest</span><span class="o">=</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">method_indep</span><span class="o">=</span><span class="s1">&#39;corr&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CItest</span><span class="o">=</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">method_indep</span><span class="o">=</span><span class="s1">&#39;corr&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
                  <span class="n">njobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model and its available arguments.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">RPackages</span><span class="o">.</span><span class="n">pcalg</span> <span class="ow">and</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">kpcalg</span> <span class="ow">and</span> <span class="n">RPackages</span><span class="o">.</span><span class="n">RCIT</span><span class="p">):</span>
@@ -333,16 +345,20 @@
                               <span class="s2">&quot;https://github.com/Diviyan-Kalainathan/RCIT&quot;</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">PC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dir_CI_test</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;gaussian&quot;</span><span class="p">:</span> <span class="s2">&quot;pcalg::gaussCItest&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;hsic&quot;</span><span class="p">:</span> <span class="s2">&quot;kpcalg::kernelCItest&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;discrete&quot;</span><span class="p">:</span> <span class="s2">&quot;pcalg::disCItest&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;binary&quot;</span><span class="p">:</span> <span class="s2">&quot;pcalg::binCItest&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;randomized&quot;</span><span class="p">:</span> <span class="s2">&quot;RCIT:::CItest&quot;</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dcc&#39;</span><span class="p">:</span> <span class="s2">&quot;dm=X, adaptDF = FALSE&quot;</span><span class="p">,</span> <span class="c1"># ic.method=\&quot;dcc\&quot;&quot;,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir_CI_test</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;binary&#39;</span><span class="p">:</span> <span class="s2">&quot;pcalg::binCItest&quot;</span><span class="p">,</span> <span class="c1"># ic.method=\&quot;dcc\&quot;&quot;,</span>
+                                 <span class="s1">&#39;discrete&#39;</span><span class="p">:</span> <span class="s2">&quot;pcalg::disCItest&quot;</span><span class="p">,</span>
+                                 <span class="s1">&#39;hsic_gamma&#39;</span><span class="p">:</span> <span class="s2">&quot;kpcalg::kernelCItest&quot;</span><span class="p">,</span>
+                                 <span class="s1">&#39;hsic_perm&#39;</span><span class="p">:</span> <span class="s2">&quot;kpcalg::kernelCItest&quot;</span><span class="p">,</span>
+                                 <span class="s1">&#39;hsic_clust&#39;</span><span class="p">:</span> <span class="s2">&quot;kpcalg::kernelCItest&quot;</span><span class="p">,</span>
+                                 <span class="s1">&#39;gaussian&#39;</span><span class="p">:</span> <span class="s2">&quot;pcalg::gaussCItest&quot;</span><span class="p">,</span>
+                                 <span class="s1">&#39;rcit&#39;</span><span class="p">:</span> <span class="s2">&quot;RCIT:::CItest&quot;</span><span class="p">,</span>
+                                 <span class="s1">&#39;rcot&#39;</span><span class="p">:</span> <span class="s2">&quot;RCIT:::CItest&quot;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;binary&#39;</span><span class="p">:</span> <span class="s2">&quot;dm=X, adaptDF = FALSE&quot;</span><span class="p">,</span> <span class="c1"># ic.method=\&quot;dcc\&quot;&quot;,</span>
+                                 <span class="s1">&#39;discrete&#39;</span><span class="p">:</span> <span class="s2">&quot;dm=X, adaptDF = FALSE&quot;</span><span class="p">,</span>
                                  <span class="s1">&#39;hsic_gamma&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">hsic.gamma</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
                                  <span class="s1">&#39;hsic_perm&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">hsic.perm</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
                                  <span class="s1">&#39;hsic_clust&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">hsic.clust</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
-                                 <span class="s1">&#39;corr&#39;</span><span class="p">:</span> <span class="s2">&quot;C = cor(X), n = nrow(X)&quot;</span><span class="p">,</span>
+                                 <span class="s1">&#39;gaussian&#39;</span><span class="p">:</span> <span class="s2">&quot;C = cor(X), n = nrow(X)&quot;</span><span class="p">,</span>
                                  <span class="s1">&#39;rcit&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">RCIT::RCIT</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
                                  <span class="s1">&#39;rcot&#39;</span><span class="p">:</span> <span class="s2">&quot;data=X, ic.method=</span><span class="se">\&quot;</span><span class="s2">RCIT::RCoT</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CI_test</span> <span class="o">=</span> <span class="n">CItest</span>
@@ -377,7 +393,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Building setup w/ arguments.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_CI_test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI_test</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI_test</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{DIRECTED}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">)</span>
@@ -420,7 +436,7 @@
 <span class="sd">       &quot;&quot;&quot;</span>
         <span class="c1"># Building setup w/ arguments.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_CI_test</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI_test</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">method_indep</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI_test</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{DIRECTED}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{ALPHA}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{NJOBS}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">njobs</span><span class="p">)</span>
@@ -435,17 +451,6 @@
         <span class="sd">&quot;&quot;&quot;Setting up and running pc with all arguments.&quot;&quot;&quot;</span>
         <span class="c1"># Checking coherence of arguments</span>
         <span class="c1"># print(self.arguments)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_CI_test</span><span class="p">[</span><span class="s1">&#39;hsic&#39;</span><span class="p">]</span>
-           <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="s1">&#39;corr&#39;</span><span class="p">]):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Selected method for indep is unfit for the hsic test,&#39;</span>
-                          <span class="s1">&#39; setting the hsic.gamma method.&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="s1">&#39;hsic_gamma&#39;</span><span class="p">]</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{CITEST}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_CI_test</span><span class="p">[</span><span class="s1">&#39;gaussian&#39;</span><span class="p">]</span>
-              <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="s1">&#39;corr&#39;</span><span class="p">]):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Selected method for indep is unfit for the selected test,&#39;</span>
-                          <span class="s1">&#39; setting the classic correlation-based method.&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{METHOD_INDEP}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_method_indep</span><span class="p">[</span><span class="s1">&#39;corr&#39;</span><span class="p">]</span>
 
         <span class="c1"># Run PC</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{FOLDER}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0!s}</span><span class="s1">/cdt_pc_</span><span class="si">{1!s}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>

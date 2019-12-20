@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence.graph.FSRegression &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
+  <title>cdt.independence.graph.FSRegression &mdash; Causal Discovery Toolbox 0.5.15 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.14
+                0.5.15
               </div>
             
           
@@ -194,13 +194,13 @@
 <span class="sd">.. SOFTWARE.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">FeatureSelectionModel</span>
-<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="k">import</span> <span class="n">RFECV</span>
-<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="k">import</span> <span class="n">SVR</span><span class="p">,</span> <span class="n">LinearSVR</span>
-<span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="k">import</span> <span class="n">DecisionTreeRegressor</span>
-<span class="kn">from</span> <span class="nn">skrebate</span> <span class="k">import</span> <span class="n">ReliefF</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">FeatureSelectionModel</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFECV</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVR</span><span class="p">,</span> <span class="n">LinearSVR</span>
+<span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeRegressor</span>
+<span class="kn">from</span> <span class="nn">skrebate</span> <span class="kn">import</span> <span class="n">ReliefF</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">ARDRegression</span> <span class="k">as</span> <span class="n">ard</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">ARDRegression</span> <span class="k">as</span> <span class="n">ard</span>
 
 
 <div class="viewcode-block" id="RFECVLinearSVR"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.RFECVLinearSVR">[docs]</a><span class="k">class</span> <span class="nc">RFECVLinearSVR</span><span class="p">(</span><span class="n">FeatureSelectionModel</span><span class="p">):</span>
@@ -223,7 +223,7 @@
 <span class="sd">       &gt;&gt;&gt; ugraph = obj.predict(df_features)  # Predict skeleton</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RFECVLinearSVR</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="RFECVLinearSVR.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.RFECVLinearSVR.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -259,7 +259,7 @@
 <span class="sd">            &gt;&gt;&gt; ugraph = obj.predict(df_features)  # Predict skeleton</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LinearSVRL2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="LinearSVRL2.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.LinearSVRL2.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -295,7 +295,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DecisionTreeRegression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="DecisionTreeRegression.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.DecisionTreeRegression.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -331,7 +331,7 @@
 <span class="sd">            &gt;&gt;&gt; output = obj.predict_features(df_features, df_target)</span>
 <span class="sd">            &gt;&gt;&gt; ugraph = obj.predict(df_features)  # Predict skeleton</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ARD</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ARD.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.ARD.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -367,7 +367,7 @@
 <span class="sd">            &gt;&gt;&gt; output = obj.predict_features(df_features, df_target)</span>
 <span class="sd">            &gt;&gt;&gt; ugraph = obj.predict(df_features)  # Predict skeleton</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RRelief</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="RRelief.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.RRelief.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
