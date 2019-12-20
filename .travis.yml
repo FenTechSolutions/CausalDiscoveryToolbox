@@ -132,7 +132,7 @@ jobs:
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull divkal/cdt-py3.7:$VERSION_NEW
-      - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
+      - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install --upgrade keyrings.alt && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
     - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Compile docs and push"
       script:
