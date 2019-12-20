@@ -106,7 +106,7 @@ def precision_recall(target, prediction, low_confidence_undirected=False):
         pred[pred == pred.transpose()] *= min(min(pred[np.nonzero(pred)])*.5, .1)
     precision, recall, _ = precision_recall_curve(
         true_labels.ravel(), pred.ravel())
-    aupr = auc(recall, precision, reorder=True)
+    aupr = auc(recall, precision)
 
     return aupr, list(zip(precision, recall))
 

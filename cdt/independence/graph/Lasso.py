@@ -27,7 +27,7 @@ Date: 1/06/17
 
 """
 import networkx as nx
-from sklearn.covariance import GraphLasso
+from sklearn.covariance import GraphicalLasso
 from .model import GraphSkeletonModel, FeatureSelectionModel
 from .HSICLasso import hsiclasso
 import numpy as np
@@ -62,7 +62,7 @@ class Glasso(GraphSkeletonModel):
         Returns:
             networkx.Graph: Graph skeleton
         """
-        edge_model = GraphLasso(alpha=alpha, max_iter=max_iter)
+        edge_model = GraphicalLasso(alpha=alpha, max_iter=max_iter)
         edge_model.fit(data.values)
 
         return nx.relabel_nodes(nx.DiGraph(edge_model.get_precision()),
