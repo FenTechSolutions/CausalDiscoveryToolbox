@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.causality.graph.SAM &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
+  <title>cdt.causality.graph.SAM &mdash; Causal Discovery Toolbox 0.5.15 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.14
+                0.5.15
               </div>
             
           
@@ -198,14 +198,14 @@
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">th</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">scale</span>
-<span class="kn">from</span> <span class="nn">.model</span> <span class="k">import</span> <span class="n">GraphModel</span>
-<span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="k">import</span> <span class="n">parallel_run</span>
-<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="k">import</span> <span class="n">notears_constr</span>
-<span class="kn">from</span> <span class="nn">...utils.torch</span> <span class="k">import</span> <span class="n">ChannelBatchNorm1d</span><span class="p">,</span> <span class="n">MatrixSampler</span><span class="p">,</span> <span class="n">Linear3D</span>
-<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">scale</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">GraphModel</span>
+<span class="kn">from</span> <span class="nn">...utils.parallel</span> <span class="kn">import</span> <span class="n">parallel_run</span>
+<span class="kn">from</span> <span class="nn">...utils.loss</span> <span class="kn">import</span> <span class="n">notears_constr</span>
+<span class="kn">from</span> <span class="nn">...utils.torch</span> <span class="kn">import</span> <span class="n">ChannelBatchNorm1d</span><span class="p">,</span> <span class="n">MatrixSampler</span><span class="p">,</span> <span class="n">Linear3D</span>
+<span class="kn">from</span> <span class="nn">...utils.Settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 
 
 <div class="viewcode-block" id="SAM_generators"><a class="viewcode-back" href="../../../../models.html#cdt.causality.graph.SAM_generators">[docs]</a><span class="k">class</span> <span class="nc">SAM_generators</span><span class="p">(</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -218,7 +218,7 @@
 <span class="sd">        linear (bool): Enables the linear variant</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">,</span> <span class="n">nh</span><span class="p">,</span> <span class="n">skeleton</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init the model.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SAM_generators</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -283,7 +283,7 @@
 <span class="sd">        mask (numpy.ndarray): Mask of connections to ignore</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="n">hlayers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">,</span> <span class="n">dnh</span><span class="p">,</span> <span class="n">hlayers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SAM_discriminator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nfeatures</span> <span class="o">=</span> <span class="n">nfeatures</span>
         <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -538,7 +538,7 @@
 <span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">dlr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">lambda1</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">lambda2</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">dlr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">lambda1</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">lambda2</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">nh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">dnh</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
                  <span class="n">train_epochs</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">test_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">batchsize</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">losstype</span><span class="o">=</span><span class="s2">&quot;fgan&quot;</span><span class="p">,</span> <span class="n">dagstart</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">dagloss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dagpenalization</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">dagpenalization_increase</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hlayers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>

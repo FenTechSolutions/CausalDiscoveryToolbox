@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.utils.parallel &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
+  <title>cdt.utils.parallel &mdash; Causal Discovery Toolbox 0.5.15 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.14
+                0.5.15
               </div>
             
           
@@ -202,11 +202,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Manager</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Manager</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
-<span class="kn">from</span> <span class="nn">.Settings</span> <span class="k">import</span> <span class="n">SETTINGS</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">.Settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 
 
 <span class="k">def</span> <span class="nf">worker_subprocess</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">devices</span><span class="p">,</span> <span class="n">lockd</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">lockr</span><span class="p">,</span>
@@ -270,7 +270,7 @@
     <span class="k">if</span> <span class="n">gpus</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">function</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nruns</span><span class="p">))</span>
     <span class="n">manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
-    <span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;cuda:{i</span><span class="si">%g</span><span class="s1">pus}&#39;</span> <span class="k">if</span> <span class="n">gpus</span> <span class="o">!=</span><span class="mi">0</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;cuda:{i</span><span class="si">%g</span><span class="s1">pus}&#39;</span> <span class="k">if</span> <span class="n">gpus</span> <span class="o">!=</span><span class="mi">0</span>
                             <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">njobs</span><span class="p">)])</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     <span class="n">pids</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
@@ -315,7 +315,7 @@
     <span class="k">if</span> <span class="n">gpus</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">njobs</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">function</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">args</span><span class="p">,</span><span class="n">kwargs</span> <span class="ow">in</span> <span class="n">generator</span><span class="p">)</span>
     <span class="n">manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
-    <span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;cuda:{i</span><span class="si">%g</span><span class="s1">pus}&#39;</span> <span class="k">if</span> <span class="n">gpus</span> <span class="o">!=</span><span class="mi">0</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;cuda:{i</span><span class="si">%g</span><span class="s1">pus}&#39;</span> <span class="k">if</span> <span class="n">gpus</span> <span class="o">!=</span><span class="mi">0</span>
                             <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">njobs</span><span class="p">)])</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     <span class="n">pids</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>

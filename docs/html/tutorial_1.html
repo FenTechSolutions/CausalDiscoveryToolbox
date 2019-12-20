@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Basic Tutorial &mdash; Causal Discovery Toolbox 0.5.14 documentation</title>
+  <title>Basic Tutorial &mdash; Causal Discovery Toolbox 0.5.15 documentation</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.5.14
+                0.5.15
               </div>
             
           
@@ -208,7 +208,7 @@ Science, 308(5721), 523-529</cite>.</p>
 known ground truth and real data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cdt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;sachs&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 <span class="go">praf  pmek   plcg   PIP2   PIP3  p44/42  pakts473    PKA    PKC   P38  pjnk</span>
 <span class="go">0  26.4  13.2   8.82  18.30  58.80    6.61      17.0  414.0  17.00  44.9  40.0</span>
 <span class="go">1  35.9  16.5  12.30  16.80   8.13   18.60      32.5  352.0   3.37  16.5  61.5</span>
@@ -233,7 +233,7 @@ Sparse inverse covariance estimation with the graphical lasso. Biostatistics,
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">glasso</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">independence</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">Glasso</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">skeleton</span> <span class="o">=</span> <span class="n">glasso</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
 <span class="go">&lt;networkx.classes.digraph.DiGraph at 0x7fe3ccfb1438&gt;</span>
 </pre></div>
 </div>
@@ -241,7 +241,7 @@ Sparse inverse covariance estimation with the graphical lasso. Biostatistics,
 obscure at first but is handy in the long run. (Check
 <a class="reference internal" href="tutorial.html#the-graph-class"><span class="std std-ref">here</span></a>  for a quick introduction on <code class="docutils literal notranslate"><span class="pre">networkx</span></code> graphs).
 We can check the structure of the skeleton by looking at its adjacency matrix:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 <span class="go">matrix([[ 9.26744031e-04, -6.13751618e-04,  1.66612981e-05,</span>
 <span class="go">         -1.10912131e-06, -3.04172363e-05, -9.71526466e-05,</span>
 <span class="go">          7.00340545e-05, -1.93863471e-06, -7.31774543e-06,</span>
@@ -299,7 +299,7 @@ Riccardo Dalla Favera and Andrea Califano
 DOI: https://doi.org/10.1186/1471-2105-7-S1-S7</cite></p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_skeleton</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_indirect_links</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="s1">&#39;aracne&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">new_skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">new_skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 <span class="go">matrix([[9.26576364e-04, 0.00000000e+00, 1.66279016e-05, 0.00000000e+00,</span>
 <span class="go">0.00000000e+00, 0.00000000e+00, 6.99676073e-05, 0.00000000e+00,</span>
 <span class="go">0.00000000e+00, 2.26182196e-06, 8.29822467e-06],</span>
@@ -350,7 +350,7 @@ Research 3 , 507–554</cite></p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">causality</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">GES</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">output_graph</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">new_skeleton</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">output_graph</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">(</span><span class="n">output_graph</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
 <span class="go">matrix([[0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1],</span>
 <span class="go">        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],</span>
 <span class="go">        [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],</span>
@@ -385,7 +385,7 @@ package includes 3 different metrics in the <code class="docutils literal notran
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.metrics</span> <span class="kn">import</span> <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SID</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">metric</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">output_graph</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SID</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
 <span class="go">[(0.3212943387361992, [(0.1487603305785124, 1.0), (0.16279069767441862, 0.3888888888888889), (1.0, 0.0)]),</span>
 <span class="go">array(76.),</span>
 <span class="go">47]</span>
@@ -394,7 +394,7 @@ package includes 3 different metrics in the <code class="docutils literal notran
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model2</span> <span class="o">=</span> <span class="n">cdt</span><span class="o">.</span><span class="n">causality</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">CAM</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">output_graph_nc</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">scores_nc</span> <span class="o">=</span> <span class="p">[</span><span class="n">metric</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">output_graph_nc</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">(</span><span class="n">precision_recall</span><span class="p">,</span> <span class="n">SID</span><span class="p">,</span> <span class="n">SHD</span><span class="p">)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">scores_nc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">scores_nc</span><span class="p">)</span>
 <span class="go">[(0.4423624964377315, [(0.1487603305785124, 1.0), (0.3103448275862069, 0.5), (1.0, 0.0)]),</span>
 <span class="go">array(68.),</span>
 <span class="go">29]</span>
