@@ -157,21 +157,30 @@ class BNlearnAlgorithm(GraphModel):
         self.arguments['{OPTIM}'] = str(self.optim).upper()
         self.arguments['{ALPHA}'] = str(self.alpha)
 
-        whitelist = DataFrame(list(nx.edges(graph)), columns=["from", "to"])
-        blacklist = DataFrame(list(nx.edges(nx.DiGraph(DataFrame(-nx.adj_matrix(graph, weight=None).todense() + 1,
-                                                                 columns=list(graph.nodes()),
-                                                                 index=list(graph.nodes()))))), columns=["from", "to"])
+        cols = list(data.columns)
+        data.columns = [i for i in range(data.shape[1])]
+        graph2 = nx.relabel_nodes(graph, {j: i for i, j in
+                                                 zip(['X' + str(i) for i
+                                                      in range(data.shape[1])], cols)})
+
+        whitelist = DataFrame(list(nx.edges(graph2)), columns=["from", "to"])
+        blacklist = DataFrame(list(nx.edges(nx.DiGraph(DataFrame(-nx.adj_matrix(graph2, weight=None).todense() + 1,
+                                                                 columns=list(graph2.nodes()),
+                                                                 index=list(graph2.nodes()))))), columns=["from", "to"])
         results = self._run_bnlearn(data, whitelist=whitelist,
                                    blacklist=blacklist, verbose=self.verbose)
         try:
             return nx.relabel_nodes(nx.DiGraph(results),
-                                    {idx: i for idx, i in enumerate(data.columns)})
+                                    {idx: i for idx, i in enumerate(cols)})
 
         except nx.exception.NetworkXError as e:
             if results.shape[1] == 2:
                 output = nx.DiGraph()
+                output.add_nodes_from(['X' + str(i) for i in range(data.shape[1])])
                 output.add_edges_from(results)
-                return output
+                return nx.relabel_nodes(output, {i: j for i, j in
+                                                 zip(['X' + str(i) for i
+                                                      in range(data.shape[1])], cols)})
             else:
                 raise e
 
@@ -209,10 +218,15 @@ class BNlearnAlgorithm(GraphModel):
         self.arguments['{OPTIM}'] = str(self.optim).upper()
         self.arguments['{ALPHA}'] = str(self.alpha)
 
+        cols = list(data.columns)
+        data.columns = [i for i in range(data.shape[1])]
         results = self._run_bnlearn(data, verbose=self.verbose)
         graph = nx.DiGraph()
+        graph.add_nodes_from(['X' + str(i) for i in range(data.shape[1])])
         graph.add_edges_from(results)
-        return graph
+        return nx.relabel_nodes(graph, {i: j for i, j in
+                                        zip(['X' + str(i) for i
+                                             in range(data.shape[1])], cols)})
 
     def _run_bnlearn(self, data, whitelist=None, blacklist=None, verbose=True):
         """Setting up and running bnlearn with all arguments."""

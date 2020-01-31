@@ -31,5 +31,5 @@ if({SKELETON}){
   whitelist = NULL
   blacklist = NULL
 }
-result <- {ALGORITHM}(dataset, whitelist=whitelist, blacklist=blacklist, alpha={ALPHA}, B={BETA}, optimized={OPTIM} ,test={SCORE}, debug={VERBOSE});
+result <- {ALGORITHM}(dataset, whitelist=whitelist, blacklist=blacklist, alpha={ALPHA}, B={BETA}, test={SCORE}, debug={VERBOSE});
 write.csv(result$arc, row.names=FALSE, file = '{FOLDER}{OUTPUT}');
