@@ -3,7 +3,7 @@ Developer Documentation
 =======================
 This project is an open-source community project,
 hosted on GitHub at the following address:
-https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox
+https://github.com/FenTechSolutions/CausalDiscoveryToolbox
 
 We abide by the principles of openness, respect, and consideration of others of
 the Python Software Foundation: https://www.python.org/psf/codeofconduct/
@@ -13,7 +13,7 @@ Bug reporting
 =============
 Encountering a bug while using this package may occur. In order to fix the said
 bug and improve all users' experience, it is highly recommended to submit a bug
-report on the GitHub issue tracker: https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/issues
+report on the GitHub issue tracker: https://github.com/FenTechSolutions/CausalDiscoveryToolbox/issues
 
 When reporting a bug, please mention:
 
@@ -32,7 +32,7 @@ When reporting a bug, please mention:
 Contributing
 ============
 The recommended way to contribute to the Causal Discovery Toolbox is to submit a
-pull request on the ``dev`` branch of https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox
+pull request on the ``dev`` branch of https://github.com/FenTechSolutions/CausalDiscoveryToolbox
 
 To submit a pull request, the following are required:
 
@@ -159,11 +159,11 @@ Continuous Integration
 ======================
 Continuous integration (travis-ci) is enabled on this project, it allows for:
 
-1. Testing new code with ``pytest`` and upload the code coverage results to https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox
+1. Testing new code with ``pytest`` and upload the code coverage results to https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox
 
 2. Bumping a new version of the package and push it to GitHub.
 
-3. Building new docker images and push them to https://hub.docker.com/u/divkal
+3. Building new docker images and push them to https://hub.docker.com/u/fentech
 
 4. Push the new package version to PyPi
 

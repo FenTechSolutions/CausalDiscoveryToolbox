@@ -11,12 +11,12 @@ Causal Discovery Toolbox Documentation
 
 Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
-.. image:: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master
-    :target: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox
-.. image:: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=dev
-    :target: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox
-.. image:: https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox
+.. image:: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=master
+    :target: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox
+.. image:: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=dev
+    :target: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox
+.. image:: https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox
 .. image:: https://img.shields.io/aur/license/pac.svg?maxAge=259200
 .. image:: https://img.shields.io/badge/version-0.5.17-yellow.svg?maxAge=259200
 
@@ -33,7 +33,7 @@ Open-source project
 ===================
 
 The package is open-source and under the MIT license, the source code is
-available at : https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox
+available at : https://github.com/FenTechSolutions/CausalDiscoveryToolbox
 
 When using this package, please cite: `Kalainathan, D., & Goudet, O. (2019).
 Causal Discovery Toolbox: Uncover causal relationships in Python.
@@ -81,7 +81,7 @@ Installation
 ============
 
 The packages requires a python version >=3.5, as well as some libraries listed
-in the `requirements file <https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/requirements.txt>`_.
+in the `requirements file <https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/requirements.txt>`_.
 For some additional functionalities, more libraries are needed for these extra
 functions and options to become available. Here is a quick install guide of the
 package, starting off with the minimal install up to the full installation.
@@ -106,7 +106,7 @@ Or you can also install it from source.
 
 .. code-block:: bash
 
-   $ git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git  # Download the package
+   $ git clone https://github.com/FenTechSolutions/CausalDiscoveryToolbox.git  # Download the package
    $ cd CausalDiscoveryToolbox
    $ pip install -r requirements.txt  # Install the requirements
    $ python setup.py install develop --user
@@ -124,8 +124,8 @@ Additional : R and R libraries
 ------------------------------
 In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, ... while using the _cdt_ framework, it is required to install R.
 
-Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions. 
-The `r-requirements file <https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt>`_ notes all the R packages used by the toolbox.
+Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions.
+The `r-requirements file <https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/r_requirements.txt>`_ notes all the R packages used by the toolbox.
 
 
 Overview

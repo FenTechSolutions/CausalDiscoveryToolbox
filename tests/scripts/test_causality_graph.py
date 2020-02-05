@@ -15,7 +15,7 @@ SETTINGS.verbose = False
 
 
 def test_graph():
-    for method in [CAM, GS, GIES,  IAMB, Fast_IAMB,
+    for method in [GS, GIES,  IAMB, Fast_IAMB,
                    PC, LiNGAM, CCDr, GES, MMPC, Inter_IAMB]:
         print(method)
         m = method()

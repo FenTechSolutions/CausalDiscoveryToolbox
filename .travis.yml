@@ -29,15 +29,15 @@ jobs:
       if: (branch != master) OR (fork = true)
       name: "Build and test"
       script:
-      - docker pull divkal/cdt-env-base:19.05
-      - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-dev .
+      - docker pull fentechai/nv-cdt-base:20.01
+      - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt-dev .
       - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-            docker run -e CODECOV_TOKEN --rm divkal/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN';
+            docker run -e CODECOV_TOKEN --rm fentechai/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN';
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
-            docker push divkal/cdt-dev;
-            docker build -f nv-Dockerfile -t divkal/nv-cdt-dev .;
-            docker push divkal/nv-cdt-dev;
-            else docker run --rm divkal/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
+            docker push fentechai/cdt-dev;
+            docker build -f nv-Dockerfile -t fentechai/nv-cdt-dev .;
+            docker push fentechai/nv-cdt-dev;
+            else docker run --rm fentechai/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest';
         fi
     - stage: build docs only
       if: (branch = master) AND (fork = false) AND (commit_message =~ \[DOC\])
@@ -45,15 +45,15 @@ jobs:
       script:
       - git pull
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-py3.7:$VERSION
+      - docker pull fentechai/cdt:$VERSION
       - git config --global user.email "travis-docs@example.com"
       - git config --global user.name "Travis CI Docs"
       - chmod 600 rel_travis
       - eval `ssh-agent -s`
       - ssh-add rel_travis
       - git config --global push.default simple
-      - docker run -v $(pwd):/cdtlib --rm divkal/cdt-py3.7:$VERSION /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
-      - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
+      - docker run -v $(pwd):/cdtlib --rm fentechai/cdt:$VERSION /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
+      - git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
       - git add ./docs
       - git commit -m "[DEPLOY] Docs $VERSION_NEW [skip travis-ci]"
       - git push deploy HEAD:master
@@ -62,15 +62,15 @@ jobs:
       name: "Build and push 3.6 image for testing"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:19.05
-      - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-test .
-      - docker push divkal/cdt-test
+      - docker pull fentechai/cdt-env-base:19.05
+      - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt-test .
+      - docker push fentechai/cdt-test
     - stage: test
       if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Test and bumpversion"
-      script: docker run -e CODECOV_TOKEN --rm divkal/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN'
+      script: docker run -e CODECOV_TOKEN --rm fentechai/cdt-test /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN'
       after_success:
-        - git config --global user.email "travis-bumpversion@example.com"
+        - git config --global user.email "ci@travis.com"
         - git config --global user.name "Travis CI Bumpversion"
         - chmod 600 rel_travis
         - eval `ssh-agent -s`
@@ -85,7 +85,7 @@ jobs:
               then bumpversion --current-version $VERSION major setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
               else bumpversion --current-version $VERSION patch setup.py README.md docs/index.rst docs/conf.py cdt/__init__.py;
           fi
-        - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
+        - git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
         - git add -u
         - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
         - git commit -m "[DEPLOY] $VERSION_NEW [skip travis-ci]"
@@ -97,33 +97,22 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:19.05
-      - docker build --build-arg python=3.6 --build-arg spy=36 -t divkal/cdt-py3.6:$VERSION_NEW .
-      - docker push divkal/cdt-py3.6:$VERSION_NEW
-      - docker tag divkal/cdt-py3.6:$VERSION_NEW divkal/cdt-py3.6:latest
-      - docker push divkal/cdt-py3.6:latest
-    - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
-      name: "Build and push 3.7"
-      script:
-      - git pull
-      - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-env-base:19.05
-      - docker build --build-arg python=3.7 --build-arg spy=37 -t divkal/cdt-py3.7:$VERSION_NEW .
-      - docker push divkal/cdt-py3.7:$VERSION_NEW
-      - docker tag divkal/cdt-py3.7:$VERSION_NEW divkal/cdt-py3.7:latest
-      - docker push divkal/cdt-py3.7:latest
+      - docker pull fentechai/cdt-base:20.01
+      - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt:$VERSION_NEW .
+      - docker push fentechai/cdt:$VERSION_NEW
+      - docker tag fentechai/cdt:$VERSION_NEW fentechai/cdt:latest
+      - docker push fentechai/cdt:latest
     - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Build and push nv-3.6"
       script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/nv-cdt-env-base:19.11
-      - docker build -f nv-Dockerfile -t divkal/nv-cdt-py3.6:$VERSION_NEW .
-      - docker push divkal/nv-cdt-py3.6:$VERSION_NEW
-      - docker tag divkal/nv-cdt-py3.6:$VERSION_NEW divkal/nv-cdt-py3.6:latest
-      - docker push divkal/nv-cdt-py3.6:latest
+      - docker pull fentechai/nv-cdt-base:20.01
+      - docker build -f nv-Dockerfile -t fentechai/nv-cdt:$VERSION_NEW .
+      - docker push fentechai/nv-cdt:$VERSION_NEW
+      - docker tag fentechai/nv-cdt:$VERSION_NEW fentechai/nv-cdt:latest
+      - docker push fentechai/nv-cdt:latest
     - stage: deploy 2nd stage
       if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\]) AND (not commit_message =~ \[NV\])
       name: "Push on Pypi"
@@ -131,23 +120,23 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-py3.7:$VERSION_NEW
-      - docker run -e PYPI_PASSWORD --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install --upgrade keyrings.alt && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
+      - docker pull fentechai/cdt:$VERSION_NEW
+      - docker run -e PYPI_PASSWORD --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install --upgrade keyrings.alt && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
     - if: (branch = master) AND (fork = false) AND (not commit_message =~ \[DOC\])
       name: "Compile docs and push"
       script:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull divkal/cdt-py3.7:$VERSION_NEW
-      - git config --global user.email "travis-docs@example.com"
+      - docker pull fentechai/cdt:$VERSION_NEW
+      - git config --global user.email "ci@travis.com"
       - git config --global user.name "Travis CI Docs"
       - chmod 600 rel_travis
       - eval `ssh-agent -s`
       - ssh-add rel_travis
       - git config --global push.default simple
-      - docker run -v $(pwd):/cdtlib --rm divkal/cdt-py3.7:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
-      - git remote add deploy git@github.com:Diviyan-Kalainathan/CausalDiscoveryToolbox.git
+      - docker run -v $(pwd):/cdtlib --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
+      - git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
       - git add ./docs
       - git commit -m "[DEPLOY] Docs $VERSION_NEW [skip travis-ci]"
       - git push deploy HEAD:master

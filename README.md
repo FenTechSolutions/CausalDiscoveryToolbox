@@ -2,19 +2,19 @@
 
 The Causal Discovery Toolbox is a package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
-[![Build Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
-[![Dev Status](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=dev)](https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox)
-[![codecov](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox)
-[![Hex.pm](https://img.shields.io/aur/license/pac.svg?maxAge=259200)](https://raw.githubusercontent.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/master/LICENSE.md)
+[![Build Status](https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=master)](https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox)
+[![Dev Status](https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=dev)](https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox)
+[![codecov](https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox)
+[![Hex.pm](https://img.shields.io/badge/License-MIT-blue.svg?maxAge=259200)](https://raw.githubusercontent.com/FenTechSolutions/CausalDiscoveryToolbox/master/LICENSE.md)
 [![version](https://img.shields.io/badge/version-0.5.17-yellow.svg?maxAge=259200)](#)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/cdt.svg)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
 
-## [Check out the documentation here](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/index.html) 
+## [Check out the documentation here](https://fentechsolutions.github.io/CausalDiscoveryToolbox/html/index.html) 
 ## [Please cite us if you use our software](https://arxiv.org/abs/1903.02278)
 
-[A tutorial is available here](https://diviyan-kalainathan.github.io/CausalDiscoveryToolbox/html/tutorial.html)
+[A tutorial is available here](https://fentechsolutions.github.io/CausalDiscoveryToolbox/html/tutorial.html)
 
 Install it using pip: (See more details on installation below)
 ```sh
@@ -31,7 +31,7 @@ Docker images are available, including all the dependencies, and enabled functio
 
 ## Installation
 
-The packages requires a python version >=3.5, as well as some libraries listed in [requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/requirements.txt). For some additional functionalities, more libraries are needed for these extra functions and options to become available. Here is a quick install guide of the package, starting off with the minimal install up to the full installation. 
+The packages requires a python version >=3.5, as well as some libraries listed in [requirements file](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/requirements.txt). For some additional functionalities, more libraries are needed for these extra functions and options to become available. Here is a quick install guide of the package, starting off with the minimal install up to the full installation. 
 
 **Note**: A (mini/ana)conda framework would help installing all those packages and therefore could be recommended for non-expert users. 
 
@@ -46,7 +46,7 @@ pip install cdt
 ```
 Or you can also install it from source.
 ```sh
-$ git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git  # Download the package 
+$ git clone https://github.com/FenTechSolutions/CausalDiscoveryToolbox.git  # Download the package 
 $ cd CausalDiscoveryToolbox
 $ pip install -r requirements.txt  # Install the requirements
 $ python setup.py install develop --user
@@ -57,13 +57,13 @@ From now on, you can import the library using:
 ```python
 import cdt
 ```
-Check out the package structure and more info on the package itself [here](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/documentation.md).  
+Check out the package structure and more info on the package itself [here](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/documentation.md).  
 
 ### Additional : R and R libraries
 In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, ... while using the _cdt_ framework, it is required to install R.
 
-Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions. 
-The [r-requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt) notes all of the R packages used by the toolbox.
+Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions. 
+The [r-requirements file](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/r_requirements.txt) notes all of the R packages used by the toolbox.
 
 
 ## Overview
