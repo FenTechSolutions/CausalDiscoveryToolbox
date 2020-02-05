@@ -11,14 +11,14 @@ Causal Discovery Toolbox Documentation
 
 Package for causal inference in graphs and in the pairwise settings for Python>=3.5. Tools for graph structure recovery and dependencies are included. The package is based on Numpy, Scikit-learn, Pytorch and R.
 
-.. image:: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=master
-    :target: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox
-.. image:: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox.svg?branch=dev
-    :target: https://travis-ci.org/Diviyan-Kalainathan/CausalDiscoveryToolbox
-.. image:: https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/Diviyan-Kalainathan/CausalDiscoveryToolbox
+.. image:: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=master
+    :target: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox
+.. image:: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=dev
+    :target: https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox
+.. image:: https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox
 .. image:: https://img.shields.io/aur/license/pac.svg?maxAge=259200
-.. image:: https://img.shields.io/badge/version-0.5.17-yellow.svg?maxAge=259200
+.. image:: https://img.shields.io/badge/version-0.5.18-yellow.svg?maxAge=259200
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the `bnlearn`, `pcalg` packages), mainly based out of observational data.
 
@@ -33,7 +33,7 @@ Open-source project
 ===================
 
 The package is open-source and under the MIT license, the source code is
-available at : https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox
+available at : https://github.com/FenTechSolutions/CausalDiscoveryToolbox
 
 When using this package, please cite: `Kalainathan, D., & Goudet, O. (2019).
 Causal Discovery Toolbox: Uncover causal relationships in Python.
@@ -44,13 +44,13 @@ Docker images
 
 Docker images are available, including all the dependencies, and enabled functionalities:
 
-.. |36cpu| image:: https://img.shields.io/badge/docker-0.5.17-0db7ed.svg?maxAge=259200
+.. |36cpu| image:: https://img.shields.io/badge/docker-0.5.18-0db7ed.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/cdt-py3.6/
 
-.. |37cpu| image:: https://img.shields.io/badge/docker-0.5.17-0db7ed.svg?maxAge=259200
+.. |37cpu| image:: https://img.shields.io/badge/docker-0.5.18-0db7ed.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/cdt-py3.7/
 
-.. |36gpu| image:: https://img.shields.io/badge/nvidia--docker-0.5.17-76b900.svg?maxAge=259200
+.. |36gpu| image:: https://img.shields.io/badge/nvidia--docker-0.5.18-76b900.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/nv-cdt-py3.6/
 
 .. |36cpudev| image:: https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200
@@ -62,9 +62,9 @@ Docker images are available, including all the dependencies, and enabled functio
     :target: https://hub.docker.com/r/divkal/nv-cdt-dev/
 
 ..  |       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
-..  | Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.17-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.5.17-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
-..  | Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.17-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
-..  | Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.17-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.5.17-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
+..  | Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.18-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.5.18-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+..  | Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.18-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
+..  | Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.18-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.5.18-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
 
 +-------------------+---------+------------+
 |      Branch       | master  |    dev     |
@@ -81,7 +81,7 @@ Installation
 ============
 
 The packages requires a python version >=3.5, as well as some libraries listed
-in the `requirements file <https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/requirements.txt>`_.
+in the `requirements file <https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/requirements.txt>`_.
 For some additional functionalities, more libraries are needed for these extra
 functions and options to become available. Here is a quick install guide of the
 package, starting off with the minimal install up to the full installation.
@@ -106,7 +106,7 @@ Or you can also install it from source.
 
 .. code-block:: bash
 
-   $ git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git  # Download the package
+   $ git clone https://github.com/FenTechSolutions/CausalDiscoveryToolbox.git  # Download the package
    $ cd CausalDiscoveryToolbox
    $ pip install -r requirements.txt  # Install the requirements
    $ python setup.py install develop --user
@@ -124,8 +124,8 @@ Additional : R and R libraries
 ------------------------------
 In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, ... while using the _cdt_ framework, it is required to install R.
 
-Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions. 
-The `r-requirements file <https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt>`_ notes all the R packages used by the toolbox.
+Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions.
+The `r-requirements file <https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/r_requirements.txt>`_ notes all the R packages used by the toolbox.
 
 
 Overview
