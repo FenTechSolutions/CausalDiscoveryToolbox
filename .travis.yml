@@ -62,7 +62,7 @@ jobs:
       name: "Build and push 3.6 image for testing"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull fentechai/cdt-env-base:19.05
+      - docker pull fentechai/cdt-env-base:20.01
       - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt-test .
       - docker push fentechai/cdt-test
     - stage: test

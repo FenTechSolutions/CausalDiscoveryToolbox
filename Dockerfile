@@ -1,4 +1,4 @@
-FROM divkal/cdt-env-base:19.05
+FROM fentechai/cdt-base:20.01
 MAINTAINER Diviyan Kalainathan <diviyan@lri.fr>
 LABEL description="Docker image for the Causal Discovery Toolbox"
 ARG python
