@@ -108,7 +108,7 @@ class GNN_model(th.nn.Module):
             for i, (x, y) in enumerate(dataloader):
                 optim.zero_grad()
                 pred = self.forward(x)
-                loss = self.criterion(pred, y)
+                loss = self.criterion(th.cat([x, pred], 1), th.cat([x, y], 1))
                 if epoch < self.train_epochs:
                     loss.backward()
                     optim.step()
