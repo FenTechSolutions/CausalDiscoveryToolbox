@@ -107,8 +107,8 @@ cdt.independence.graph
 .. autoclass:: RFECVLinearSVR
    :members:
 
-:hidden:`RRelief`
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: RRelief
-   :members:
+.. :hidden:`RRelief`
+.. ~~~~~~~~~~~~~~~~~
+..
+.. .. autoclass:: RRelief
+..    :members:

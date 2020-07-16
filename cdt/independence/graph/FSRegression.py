@@ -30,7 +30,7 @@ from .model import FeatureSelectionModel
 from sklearn.feature_selection import RFECV
 from sklearn.svm import SVR, LinearSVR
 from sklearn.tree import DecisionTreeRegressor
-from skrebate import ReliefF
+# from skrebate import ReliefF
 import numpy as np
 from sklearn.linear_model import ARDRegression as ard
 
@@ -186,37 +186,37 @@ class ARD(FeatureSelectionModel):
         return np.abs(clf.coef_)
 
 
-class RRelief(FeatureSelectionModel):
-    """ Feature selection with RRelief.
-
-        Example:
-            >>> from cdt.independence.graph import RRelief
-            >>> from sklearn.datasets import load_boston
-            >>> boston = load_boston()
-            >>> df_features = pd.DataFrame(boston['data'])
-            >>> df_target = pd.DataFrame(boston['target'])
-            >>> obj = RRelief()
-            >>> output = obj.predict_features(df_features, df_target)
-            >>> ugraph = obj.predict(df_features)  # Predict skeleton
-    """
-    def __init__(self):
-        super(RRelief, self).__init__()
-
-    def predict_features(self, df_features, df_target, idx=0, **kwargs):
-        """For one variable, predict its neighbouring nodes.
-
-        Args:
-            df_features (pandas.DataFrame):
-            df_target (pandas.Series):
-            idx (int): (optional) for printing purposes
-            kwargs (dict): additional options for algorithms
-
-        Returns:
-            list: scores of each feature relatively to the target
-        """
-        X = df_features.values
-        y = np.ravel(df_target.values)
-        rr = ReliefF()
-        rr.fit(X, y)
-
-        return rr.feature_importances_
+# class RRelief(FeatureSelectionModel):
+#     """ Feature selection with RRelief.
+#
+#         Example:
+#             >>> from cdt.independence.graph import RRelief
+#             >>> from sklearn.datasets import load_boston
+#             >>> boston = load_boston()
+#             >>> df_features = pd.DataFrame(boston['data'])
+#             >>> df_target = pd.DataFrame(boston['target'])
+#             >>> obj = RRelief()
+#             >>> output = obj.predict_features(df_features, df_target)
+#             >>> ugraph = obj.predict(df_features)  # Predict skeleton
+#     """
+#     def __init__(self):
+#         super(RRelief, self).__init__()
+#
+#     def predict_features(self, df_features, df_target, idx=0, **kwargs):
+#         """For one variable, predict its neighbouring nodes.
+#
+#         Args:
+#             df_features (pandas.DataFrame):
+#             df_target (pandas.Series):
+#             idx (int): (optional) for printing purposes
+#             kwargs (dict): additional options for algorithms
+#
+#         Returns:
+#             list: scores of each feature relatively to the target
+#         """
+#         X = df_features.values
+#         y = np.ravel(df_target.values)
+#         rr = ReliefF()
+#         rr.fit(X, y)
+#
+#         return rr.feature_importances_
