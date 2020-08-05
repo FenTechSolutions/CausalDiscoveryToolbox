@@ -259,10 +259,10 @@ class BNlearnAlgorithm(GraphModel):
                                              self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            # rmtree(run_dir)
+            rmtree(run_dir)
             raise e
         except KeyboardInterrupt:
-            # rmtree(run_dir)
+            rmtree(run_dir)
             raise KeyboardInterrupt
         rmtree(run_dir)
         return bnlearn_result
