@@ -82,17 +82,18 @@ verbose = {VERBOSE} # FALSE
 setOptions = {SETOPTIONS} # NULL
 parentsOf = 1:ncol(dataset)
 alpha <- {ALPHA} # 0.01
-if ({SKELETON}){
-  fixedGaps <- read.csv(file='{FOLDER}{GAPS}', sep=",", header=FALSE) # NULL
-  fixedEdges <- read.csv(file='{FOLDER}{EDGES}', sep=",", header=FALSE) # NULL
-  fixedGaps = (data.matrix(fixedGaps))
-  fixedEdges = (data.matrix(fixedEdges))
-  rownames(fixedGaps) <- colnames(fixedGaps)
-  rownames(fixedEdges) <- colnames(fixedEdges)
+fixedGaps = NULL
+fixedEdges = NULL
 
-}else{
-  fixedGaps = NULL
-  fixedEdges = NULL
+if ({E_GAPS}){
+  fixedGaps <- read.csv(file='{FOLDER}{GAPS}', sep=",", header=FALSE) # NULL
+  fixedGaps = (data.matrix(fixedGaps))
+  rownames(fixedGaps) <- colnames(fixedGaps)
+}
+if ({E_EDGES}){
+  fixedEdges <- read.csv(file='{FOLDER}{EDGES}', sep=",", header=FALSE) # NULL
+  fixedEdges = (data.matrix(fixedEdges))
+  rownames(fixedEdges) <- colnames(fixedEdges)
 }
 result <- runPC(dataset, suffStat = NULL, parentsOf, alpha,
                variableSelMat, setOptions,

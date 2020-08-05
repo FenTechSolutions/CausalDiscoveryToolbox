@@ -56,3 +56,5 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+test_data.csv
+test_target.csv

@@ -64,7 +64,6 @@ class IndependenceModel(object):
             networkx.Graph: Undirected graph representing the skeleton.
         """
         graph = Graph()
-
         for idx_i, i in enumerate(data.columns):
             for idx_j, j in enumerate(data.columns[idx_i+1:]):
                 score = self.predict(data[i].values, data[j].values)

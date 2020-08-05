@@ -30,6 +30,7 @@ import uuid
 import warnings
 import networkx as nx
 from shutil import rmtree
+from tempfile import gettempdir
 from .model import GraphModel
 from pandas import read_csv
 from ...utils.Settings import SETTINGS
@@ -123,23 +124,23 @@ class CCDr(GraphModel):
     def _run_ccdr(self, data, fixedGaps=None, verbose=True):
         """Setting up and running CCDr with all arguments."""
         # Run CCDr
-        id = str(uuid.uuid4())
-        os.makedirs('/tmp/cdt_CCDR' + id + '/')
-        self.arguments['{FOLDER}'] = '/tmp/cdt_CCDR' + id + '/'
+        self.arguments['{FOLDER}'] = '{0!s}/cdt_ccdr_{1!s}/'.format(gettempdir(), uuid.uuid4())
+        run_dir = self.arguments['{FOLDER}']
+        os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_CCDR' + id + '/result.csv', delimiter=',').values
+            return read_csv('{}/result.csv'.format(run_dir), delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_CCDR' + id + '/data.csv', header=False, index=False)
+            data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
             ccdr_result = launch_R_script("{}/R_templates/CCDr.R".format(os.path.dirname(os.path.realpath(__file__))),
                                          self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_CCDR' + id + '')
+            rmtree(run_dir)
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_CCDR' + id + '/')
+            rmtree(run_dir)
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_CCDR' + id + '')
+        rmtree(run_dir)
         return ccdr_result
