@@ -90,8 +90,8 @@ def test_pairwise_t():
     return 0
 
 if __name__ == "__main__":
-    # test_pairwise()
-    # test_graph()
-    # test_pairwise_GNN()
-    # test_graph_GNN()
+    test_pairwise()
+    test_graph()
+    test_pairwise_GNN()
+    test_graph_GNN()
     test_pairwise_t()

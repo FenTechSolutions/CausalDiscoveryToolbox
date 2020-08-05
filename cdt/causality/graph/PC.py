@@ -294,12 +294,17 @@ class PC(GraphModel):
 
         try:
             data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
-            if fixedGaps is not None and fixedEdges is not None:
+            if fixedGaps is not None:
                 fixedGaps.to_csv('{}/fixedgaps.csv'.format(run_dir), index=False, header=False)
-                fixedEdges.to_csv('{}/fixededges.csv'.format(run_dir), index=False, header=False)
-                self.arguments['{SKELETON}'] = 'TRUE'
+                self.arguments['{E_GAPS}'] = 'TRUE'
             else:
-                self.arguments['{SKELETON}'] = 'FALSE'
+                self.arguments['{E_GAPS}'] = 'FALSE'
+
+            if fixedEdges is not None:
+                fixedEdges.to_csv('{}/fixededges.csv'.format(run_dir), index=False, header=False)
+                self.arguments['{E_EDGES}'] = 'TRUE'
+            else:
+                self.arguments['{E_EDGES}'] = 'FALSE'
 
             pc_result = launch_R_script("{}/R_templates/pc.R".format(os.path.dirname(os.path.realpath(__file__))),
                                         self.arguments, output_function=retrieve_result, verbose=verbose)
