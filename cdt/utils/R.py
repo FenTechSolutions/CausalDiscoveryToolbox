@@ -189,12 +189,14 @@ def launch_R_script(template, arguments, output_function=None,
                 print(mline, end='')
 
         if output_function is None:
-            output = subprocess.call([rpath, "--vanilla", scriptpath])
+            output = subprocess.call([str(rpath), "--vanilla", str(scriptpath)],
+                                     stdout=subprocess.DEVNULL,
+                                     stderr=subprocess.DEVNULL)
         else:
             if verbose:
-                process = subprocess.Popen([rpath, "--vanilla", scriptpath])
+                process = subprocess.Popen([str(rpath), "--vanilla", str(scriptpath)])
             else:
-                process = subprocess.Popen([rpath, "--vanilla", scriptpath],
+                process = subprocess.Popen([str(rpath), "--vanilla", str(scriptpath)],
                                            stdout=subprocess.DEVNULL,
                                            stderr=subprocess.DEVNULL)
             process.wait()
