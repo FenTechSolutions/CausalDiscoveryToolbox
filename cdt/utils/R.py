@@ -178,7 +178,7 @@ def launch_R_script(template, arguments, output_function=None,
 
         # Converting Paths to OS-compliant paths
         for arg in arguments:
-            if isinstance(arguments[arg], Path):
+            if isinstance(arguments[arg], (Path, str)):
                 arguments[arg] = str(arguments[arg]).replace('\\', '\\\\')
 
         with fileinput.FileInput(scriptpath, inplace=True) as file:
