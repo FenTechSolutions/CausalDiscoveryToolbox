@@ -26,6 +26,7 @@ import os
 import uuid
 import warnings
 import networkx as nx
+from pathlib import Path
 from shutil import rmtree
 from tempfile import gettempdir
 from .model import GraphModel
@@ -110,12 +111,12 @@ class GIES(GraphModel):
         self.scores = {'int': 'GaussL0penIntScore',
                        'obs': 'GaussL0penObsScore'}
         self.arguments = {'{FOLDER}': '/tmp/cdt_gies/',
-                          '{FILE}': 'data.csv',
+                          '{FILE}': os.sep + 'data.csv',
                           '{SKELETON}': 'FALSE',
-                          '{GAPS}': 'fixedgaps.csv',
+                          '{GAPS}': os.sep + 'fixedgaps.csv',
                           '{SCORE}': 'GaussL0penObsScore',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': 'result.csv'}
+                          '{OUTPUT}': os.sep + 'result.csv'}
         self.verbose = SETTINGS.get_default(verbose=verbose)
         self.score = score
 
@@ -177,23 +178,23 @@ class GIES(GraphModel):
     def _run_gies(self, data, fixedGaps=None, verbose=True):
         """Setting up and running GIES with all arguments."""
         # Run gies
-        self.arguments['{FOLDER}'] = '{0!s}/cdt_gies_{1!s}/'.format(gettempdir(), uuid.uuid4())
+        self.arguments['{FOLDER}'] = Path('{0!s}/cdt_gies_{1!s}/'.format(gettempdir(), uuid.uuid4()))
         run_dir = self.arguments['{FOLDER}']
         os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('{}/result.csv'.format(run_dir), delimiter=',').values
+            return read_csv(Path('{}/result.csv'.format(run_dir)), delimiter=',').values
 
         try:
-            data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
+            data.to_csv(Path('{}/data.csv'.format(run_dir)), header=False, index=False)
             if fixedGaps is not None:
-                fixedGaps.to_csv('{}/fixedgaps.csv'.format(run_dir), index=False, header=False)
+                fixedGaps.to_csv(Path('{}/fixedgaps.csv'.format(run_dir)), index=False, header=False)
                 self.arguments['{SKELETON}'] = 'TRUE'
             else:
                 self.arguments['{SKELETON}'] = 'FALSE'
 
 
-            gies_result = launch_R_script("{}/R_templates/gies.R".format(os.path.dirname(os.path.realpath(__file__))),
+            gies_result = launch_R_script(Path("{}/R_templates/gies.R".format(os.path.dirname(os.path.realpath(__file__)))),
                                           self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:

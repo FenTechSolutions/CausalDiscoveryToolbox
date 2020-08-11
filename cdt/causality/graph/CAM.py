@@ -29,6 +29,7 @@ import os
 import uuid
 import warnings
 import networkx as nx
+from pathlib import Path
 from shutil import rmtree
 from pandas import read_csv
 from tempfile import gettempdir
@@ -130,7 +131,7 @@ class CAM(GraphModel):
                               'linear': 'selLm',
                               'linearboost': 'selLmBoost'}
         self.arguments = {'{FOLDER}': '/tmp/cdt_CAM/',
-                          '{FILE}': 'data.csv',
+                          '{FILE}': os.sep + 'data.csv',
                           '{SCORE}': 'SEMGAM',
                           '{VARSEL}': 'TRUE',
                           '{SELMETHOD}': 'selGamBoost',
@@ -139,7 +140,7 @@ class CAM(GraphModel):
                           '{NJOBS}': str(SETTINGS.NJOBS),
                           '{CUTOFF}': str(0.001),
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': 'result.csv'}
+                          '{OUTPUT}': os.sep + 'result.csv'}
         self.score = score
         self.cutoff = cutoff
         self.variablesel = variablesel
@@ -185,16 +186,16 @@ class CAM(GraphModel):
     def _run_cam(self, data, fixedGaps=None, verbose=True):
         """Setting up and running CAM with all arguments."""
         # Run CAM
-        self.arguments['{FOLDER}'] = '{0!s}/cdt_cam_{1!s}/'.format(gettempdir(), uuid.uuid4())
+        self.arguments['{FOLDER}'] = Path('{0!s}/cdt_cam_{1!s}/'.format(gettempdir(), uuid.uuid4()))
         run_dir = self.arguments['{FOLDER}']
         os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('{}/result.csv'.format(run_dir), delimiter=',').values
+            return read_csv(Path('{}/result.csv'.format(run_dir)), delimiter=',').values
 
         try:
-            data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
-            cam_result = launch_R_script("{}/R_templates/cam.R".format(os.path.dirname(os.path.realpath(__file__))),
+            data.to_csv(Path('{}/data.csv'.format(run_dir)), header=False, index=False)
+            cam_result = launch_R_script(Path("{}/R_templates/cam.R".format(os.path.dirname(os.path.realpath(__file__)))),
                                          self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:

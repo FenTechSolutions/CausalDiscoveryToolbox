@@ -29,6 +29,7 @@ import os
 import uuid
 import warnings
 import networkx as nx
+from pathlib import Path
 from shutil import rmtree
 from tempfile import gettempdir
 from .model import GraphModel
@@ -90,9 +91,9 @@ class CCDr(GraphModel):
 
         super(CCDr, self).__init__()
         self.arguments = {'{FOLDER}': '/tmp/cdt_CCDR/',
-                          '{FILE}': 'data.csv',
+                          '{FILE}': os.sep + 'data.csv',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': 'result.csv'}
+                          '{OUTPUT}': os.sep + 'result.csv'}
         # ToDo self.alpha = 0
         self.verbose = SETTINGS.get_default(verbose=verbose)
 
@@ -124,16 +125,16 @@ class CCDr(GraphModel):
     def _run_ccdr(self, data, fixedGaps=None, verbose=True):
         """Setting up and running CCDr with all arguments."""
         # Run CCDr
-        self.arguments['{FOLDER}'] = '{0!s}/cdt_ccdr_{1!s}/'.format(gettempdir(), uuid.uuid4())
+        self.arguments['{FOLDER}'] = Path('{0!s}/cdt_ccdr_{1!s}/'.format(gettempdir(), uuid.uuid4()))
         run_dir = self.arguments['{FOLDER}']
         os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('{}/result.csv'.format(run_dir), delimiter=',').values
+            return read_csv(Path('{}/result.csv'.format(run_dir)), delimiter=',').values
 
         try:
-            data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
-            ccdr_result = launch_R_script("{}/R_templates/CCDr.R".format(os.path.dirname(os.path.realpath(__file__))),
+            data.to_csv(Path('{}/data.csv'.format(run_dir)), header=False, index=False)
+            ccdr_result = launch_R_script(Path("{}/R_templates/CCDr.R".format(os.path.dirname(os.path.realpath(__file__)))),
                                          self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:

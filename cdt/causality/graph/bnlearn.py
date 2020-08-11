@@ -29,6 +29,7 @@ import os
 import uuid
 import warnings
 import networkx as nx
+from pathlib import Path
 from shutil import rmtree
 from tempfile import gettempdir
 from .model import GraphModel
@@ -123,17 +124,17 @@ class BNlearnAlgorithm(GraphModel):
             raise ImportError("R Package bnlearn is not available.")
         super(BNlearnAlgorithm, self).__init__()
         self.arguments = {'{FOLDER}': '/tmp/cdt_bnlearn/',
-                          '{FILE}': 'data.csv',
+                          '{FILE}': os.sep + 'data.csv',
                           '{SKELETON}': 'FALSE',
                           '{ALGORITHM}': None,
-                          '{WHITELIST}': 'whitelist.csv',
-                          '{BLACKLIST}': 'blacklist.csv',
+                          '{WHITELIST}': os.sep + 'whitelist.csv',
+                          '{BLACKLIST}': os.sep + 'blacklist.csv',
                           '{SCORE}': 'NULL',
                           '{OPTIM}': 'FALSE',
                           '{ALPHA}': '0.05',
                           '{BETA}': 'NULL',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': 'result.csv'}
+                          '{OUTPUT}': os.sep + 'result.csv'}
         self.score = score
         self.alpha = alpha
         self.beta = beta
@@ -234,28 +235,28 @@ class BNlearnAlgorithm(GraphModel):
     def _run_bnlearn(self, data, whitelist=None, blacklist=None, verbose=True):
         """Setting up and running bnlearn with all arguments."""
         # Run the algorithm
-        self.arguments['{FOLDER}'] = '{0!s}/cdt_bnlearn_{1!s}/'.format(gettempdir(), uuid.uuid4())
+        self.arguments['{FOLDER}'] = Path('{0!s}/cdt_bnlearn_{1!s}/'.format(gettempdir(), uuid.uuid4()))
         run_dir = self.arguments['{FOLDER}']
         os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('{}result.csv'.format(run_dir), delimiter=',').values
+            return read_csv(Path('{}/result.csv'.format(run_dir)), delimiter=',').values
 
         try:
-            data.to_csv('{}/data.csv'.format(run_dir), index=False)
+            data.to_csv(Path('{}/data.csv'.format(run_dir)), index=False)
             if blacklist is not None:
-                blacklist.to_csv('{}blacklist.csv'.format(run_dir), index=False, header=False)
+                blacklist.to_csv(Path('{}/blacklist.csv'.format(run_dir)), index=False, header=False)
                 self.arguments['{E_BLACKL}'] = 'TRUE'
             else:
                 self.arguments['{E_BLACKL}'] = 'FALSE'
 
             if whitelist is not None:
-                whitelist.to_csv('{}whitelist.csv'.format(run_dir), index=False, header=False)
+                whitelist.to_csv(Path('{}/whitelist.csv'.format(run_dir)), index=False, header=False)
                 self.arguments['{E_WHITEL}'] = 'TRUE'
             else:
                 self.arguments['{E_WHITEL}'] = 'FALSE'
 
-            bnlearn_result = launch_R_script("{}/R_templates/bnlearn.R".format(os.path.dirname(os.path.realpath(__file__))),
+            bnlearn_result = launch_R_script(Path("{}/R_templates/bnlearn.R".format(os.path.dirname(os.path.realpath(__file__)))),
                                              self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:

@@ -53,6 +53,7 @@ import fileinput
 import subprocess
 import uuid
 from shutil import copy, rmtree
+from pathlib import Path
 from tempfile import gettempdir
 import cdt.utils.Settings
 
@@ -142,7 +143,8 @@ class DefaultRPackages(object):
         Returns:
             bool: `True` if the package is available, `False` otherwise
         """
-        test_package = not bool(launch_R_script("{}/R_templates/test_import.R".format(os.path.dirname(os.path.realpath(__file__))),                                      {"{package}": package}, verbose=True))
+        test_package = not bool(launch_R_script(Path("{}/R_templates/test_import.R".format(os.path.dirname(os.path.realpath(__file__)))),
+                                                     {"{package}": package}, verbose=True))
         return test_package
 
 
@@ -167,12 +169,17 @@ def launch_R_script(template, arguments, output_function=None,
         else `True` or `False` depending on whether the execution was
         successful.
     """
-    base_dir = '{0!s}/cdt_R_script_{1!s}'.format(gettempdir(), uuid.uuid4())
+    base_dir = Path('{0!s}/cdt_R_script_{1!s}'.format(gettempdir(), uuid.uuid4()))
     os.makedirs(base_dir)
     rpath = cdt.utils.Settings.SETTINGS.get_default(rpath=None)
     try:
-        scriptpath = '{}/instance_{}'.format(base_dir, os.path.basename(template))
+        scriptpath = Path('{}/instance_{}'.format(base_dir, os.path.basename(template)))
         copy(template, scriptpath)
+
+        # Converting Paths to OS-compliant paths
+        for arg in arguments:
+            if isinstance(arguments[arg], Path):
+                arguments[arg] = str(arguments[arg]).replace('\\', '\\\\')
 
         with fileinput.FileInput(scriptpath, inplace=True) as file:
             for line in file:
@@ -182,14 +189,14 @@ def launch_R_script(template, arguments, output_function=None,
                 print(mline, end='')
 
         if output_function is None:
-            output = subprocess.call("{} --vanilla {}".format(rpath, scriptpath), shell=True,
-                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            output = subprocess.call([rpath, "--vanilla", scriptpath])
         else:
             if verbose:
-                process = subprocess.Popen("{} --vanilla {}".format(rpath, scriptpath), shell=True)
+                process = subprocess.Popen([rpath, "--vanilla", scriptpath])
             else:
-                process = subprocess.Popen("{} --vanilla {}".format(rpath, scriptpath), shell=True,
-                                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                process = subprocess.Popen([rpath, "--vanilla", scriptpath],
+                                           stdout=subprocess.DEVNULL,
+                                           stderr=subprocess.DEVNULL)
             process.wait()
             output = output_function()
 
