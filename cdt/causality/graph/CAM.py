@@ -28,6 +28,7 @@ Author: Diviyan Kalainathan
 import os
 import uuid
 import warnings
+import platform
 import networkx as nx
 from pathlib import Path
 from shutil import rmtree
@@ -183,9 +184,11 @@ class CAM(GraphModel):
         return nx.relabel_nodes(nx.DiGraph(results),
                                 {idx: i for idx, i in enumerate(data.columns)})
 
-    def _run_cam(self, data, fixedGaps=None, verbose=True):
+    def _run_cam(self, data, fixedGaps=None, verbose=False):
         """Setting up and running CAM with all arguments."""
         # Run CAM
+        if platform.system() == "Windows":
+            self.arguments['{NJOBS}'] = str(1)
         self.arguments['{FOLDER}'] = Path('{0!s}/cdt_cam_{1!s}/'.format(gettempdir(), uuid.uuid4()))
         run_dir = self.arguments['{FOLDER}']
         os.makedirs(run_dir, exist_ok=True)
