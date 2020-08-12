@@ -188,7 +188,6 @@ def launch_R_script(template, arguments, output_function=None,
             print(mline, end='')
 
     if output_function is None:
-        print(rpath,scriptpath)
         try:
             output = subprocess.call([str(rpath), "--vanilla", str(scriptpath)],
                                     stdout=subprocess.DEVNULL,

@@ -284,8 +284,8 @@ def run_SAM(in_data, skeleton=None, device="cpu",
                                  tot=loss.item())
 
             if epoch < train + test - 1:
-                loss.backward()
-            
+                loss.backward(retain_graph=True)
+
             if epoch >= train:
                 output.add_(filters.data)
 
