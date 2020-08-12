@@ -84,7 +84,7 @@ class ConfigSettings(object):
         self.NJOBS = 8
         self.GPU = 0
         self.autoset_config = True
-        self.verbose = True
+        self.verbose = False
         self.default_device = 'cpu'
         self.rpath = 'Rscript'
 
