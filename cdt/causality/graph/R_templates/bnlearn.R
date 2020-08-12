@@ -23,13 +23,14 @@
 library(methods)
 library(bnlearn)
 dataset <- read.csv(file='{FOLDER}{FILE}', sep=",");
+whitelist = NULL
+blacklist = NULL
 
-if({SKELETON}){
-  whitelist <- read.csv(file='{FOLDER}{WHITELIST}', sep=",") # NULL
+if({E_BLACKL}){
   blacklist <- read.csv(file='{FOLDER}{BLACKLIST}', sep=",") # NULL
-}else{
-  whitelist = NULL
-  blacklist = NULL
+}
+if({E_WHITEL}){
+  whitelist <- read.csv(file='{FOLDER}{WHITELIST}', sep=",") # NULL
 }
 result <- {ALGORITHM}(dataset, whitelist=whitelist, blacklist=blacklist, alpha={ALPHA}, B={BETA}, test={SCORE}, debug={VERBOSE});
 write.csv(result$arc, row.names=FALSE, file = '{FOLDER}{OUTPUT}');

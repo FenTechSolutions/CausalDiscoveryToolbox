@@ -84,7 +84,7 @@ class ConfigSettings(object):
         self.NJOBS = 8
         self.GPU = 0
         self.autoset_config = True
-        self.verbose = True
+        self.verbose = False
         self.default_device = 'cpu'
         self.rpath = 'Rscript'
 
@@ -172,7 +172,7 @@ def autoset_settings(set_var):
                 set_var.NJOBS = set_var.GPU
                 warnings.warn("Detecting {} CUDA device(s).".format(set_var.GPU))
 
-        except ValueError:
+        except (ValueError, FileNotFoundError):
             warnings.warn("No GPU automatically detected. Setting SETTINGS.GPU to 0, " +
                           "and SETTINGS.NJOBS to cpu_count.")
             set_var.GPU = 0

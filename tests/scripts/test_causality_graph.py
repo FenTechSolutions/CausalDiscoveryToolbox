@@ -5,7 +5,8 @@ import pandas as pd
 import networkx as nx
 from cdt import SETTINGS
 from cdt.causality.graph import (CAM, GS, GIES, IAMB, CCDr, GES,
-                                 Fast_IAMB, PC, LiNGAM, SAM, MMPC, Inter_IAMB, SAMv1)
+                                 Fast_IAMB, PC, LiNGAM, SAM, MMPC,
+                                 Inter_IAMB, SAMv1, CCDr)
 from cdt.independence.stats import AdjMI
 
 
@@ -15,7 +16,7 @@ SETTINGS.verbose = False
 
 
 def test_graph():
-    for method in [GS, GIES,  IAMB, Fast_IAMB,
+    for method in [GS, GIES,  IAMB, Fast_IAMB, CAM, CCDr,
                    PC, LiNGAM, CCDr, GES, MMPC, Inter_IAMB]:
         print(method)
         m = method()
@@ -60,6 +61,7 @@ def test_SAMv1():
 
 
 if __name__ == "__main__":
-    test_SAM()
+    # test_SAM()
     test_directed()
     test_undirected()
+    test_graph()

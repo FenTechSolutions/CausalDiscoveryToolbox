@@ -35,6 +35,7 @@ import numpy as np
 import networkx as nx
 import uuid
 from shutil import rmtree
+from pathlib import Path
 from sklearn.metrics import auc, precision_recall_curve
 from tempfile import gettempdir
 from .utils.R import launch_R_script, RPackages
@@ -131,17 +132,17 @@ def get_CPDAG(dag):
 
     dag = retrieve_adjacency_matrix(dag)
 
-    base_dir = '{0!s}/cdt_CPDAG_{1!s}'.format(gettempdir(), uuid.uuid4())
+    base_dir = Path('{0!s}/cdt_CPDAG_{1!s}'.format(gettempdir(), uuid.uuid4()))
     os.makedirs(base_dir)
 
     def retrieve_result():
-        return np.loadtxt('{}/result.csv'.format(base_dir))
+        return np.loadtxt(Path('{}/result.csv'.format(base_dir)))
 
     try:
-        np.savetxt('{}/dag.csv'.format(base_dir), dag, delimiter=',')
-        cpdag = launch_R_script("{}/utils/R_templates/cpdag.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                {"{dag}": '{}/dag.csv'.format(base_dir),
-                                 "{result}": '{}/result.csv'.format(base_dir)},
+        np.savetxt(Path('{}/dag.csv'.format(base_dir)), dag, delimiter=',')
+        cpdag = launch_R_script(Path("{}/utils/R_templates/cpdag.R".format(os.path.dirname(os.path.realpath(__file__)))),
+                                {"{dag}": Path('{}/dag.csv'.format(base_dir)),
+                                 "{result}": Path('{}/result.csv'.format(base_dir))},
                                 output_function=retrieve_result)
     # Cleanup
     except Exception as e:
@@ -275,19 +276,19 @@ def SID(target, pred):
     predictions = retrieve_adjacency_matrix(pred, target.nodes()
                                             if isinstance(target, nx.DiGraph) else None)
 
-    base_dir = '{0!s}/cdt_SID_{1!s}'.format(gettempdir(), uuid.uuid4())
+    base_dir = Path('{0!s}/cdt_SID_{1!s}'.format(gettempdir(), uuid.uuid4()))
     os.makedirs(base_dir)
 
     def retrieve_result():
-        return np.loadtxt('{0!s}/result.csv'.format(base_dir))
+        return np.loadtxt(Path('{0!s}/result.csv'.format(base_dir)))
 
     try:
-        np.savetxt('{}/target.csv'.format(base_dir), true_labels, delimiter=',')
-        np.savetxt('{}/pred.csv'.format(base_dir), predictions, delimiter=',')
-        sid_score = launch_R_script("{}/utils/R_templates/sid.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                    {"{target}": '{}/target.csv'.format(base_dir),
-                                     "{prediction}": '{}/pred.csv'.format(base_dir),
-                                     "{result}": '{}/result.csv'.format(base_dir)},
+        np.savetxt(Path('{}/target.csv'.format(base_dir)), true_labels, delimiter=',')
+        np.savetxt(Path('{}/pred.csv'.format(base_dir)), predictions, delimiter=',')
+        sid_score = launch_R_script(Path("{}/utils/R_templates/sid.R".format(os.path.dirname(os.path.realpath(__file__)))),
+                                    {"{target}": Path('{}/target.csv'.format(base_dir)),
+                                     "{prediction}": Path('{}/pred.csv'.format(base_dir)),
+                                     "{result}": Path('{}/result.csv'.format(base_dir))},
                                     output_function=retrieve_result)
     # Cleanup
     except Exception as e:
@@ -333,28 +334,29 @@ def SID_CPDAG(target, pred):
     predictions = retrieve_adjacency_matrix(pred, target.nodes()
                                             if isinstance(target, nx.DiGraph) else None)
 
-    os.makedirs('/tmp/cdt_SID/')
+    base_dir = Path('{0!s}/cdt_SID_{1!s}'.format(gettempdir(), uuid.uuid4()))
+    os.makedirs(base_dir)
 
     def retrieve_result():
-        return np.loadtxt('/tmp/cdt_SID/result_lower.csv'), \
-               np.loadtxt('/tmp/cdt_SID/result_upper.csv')
+        return np.loadtxt(Path('{0!s}/result_lower.csv'.format(base_dir))), \
+               np.loadtxt(Path('{0!s}/result_upper.csv'.format(base_dir)))
 
     try:
-        np.savetxt('/tmp/cdt_SID/target.csv', true_labels, delimiter=',')
-        np.savetxt('/tmp/cdt_SID/pred.csv', predictions, delimiter=',')
-        sid_lower, sid_upper = launch_R_script("{}/utils/R_templates/sid_cpdag.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                    {"{target}": '/tmp/cdt_SID/target.csv',
-                                     "{prediction}": '/tmp/cdt_SID/pred.csv',
-                                     "{result_lower}": '/tmp/cdt_SID/result_lower.csv',
-                                     "{result_upper}": '/tmp/cdt_SID/result_upper.csv'},
+        np.savetxt(Path('{}/target.csv'.format(base_dir)), true_labels, delimiter=',')
+        np.savetxt(Path('{}/pred.csv'.format(base_dir)), predictions, delimiter=',')
+        sid_lower, sid_upper = launch_R_script(Path("{}/utils/R_templates/sid_cpdag.R".format(os.path.dirname(os.path.realpath(__file__)))),
+                                    {"{target}": Path('{}/target.csv'.format(base_dir)),
+                                     "{prediction}": Path('{}/pred.csv'.format(base_dir)),
+                                     "{result_lower}": Path('{}/result_lower.csv'.format(base_dir)),
+                                     "{result_upper}": Path('{}/result_upper.csv'.format(base_dir))},
                                     output_function=retrieve_result)
     # Cleanup
     except Exception as e:
-        rmtree('/tmp/cdt_SID')
+        rmtree(base_dir)
         raise e
     except KeyboardInterrupt:
-        rmtree('/tmp/cdt_SID/')
+        rmtree(base_dir)
         raise KeyboardInterrupt
 
-    rmtree('/tmp/cdt_SID')
+    rmtree(base_dir)
     return sid_lower, sid_upper

@@ -29,6 +29,7 @@ import os
 import uuid
 import warnings
 import networkx as nx
+from pathlib import Path
 from shutil import rmtree
 from tempfile import gettempdir
 from .model import GraphModel
@@ -200,10 +201,10 @@ class PC(GraphModel):
         self.verbose = SETTINGS.get_default(verbose=verbose)
         # Define default args
         self.arguments = {'{FOLDER}': None,  # Initialized in _run_pc
-                          '{FILE}': 'data.csv',
+                          '{FILE}': os.sep + 'data.csv',
                           '{SKELETON}': 'FALSE',
-                          '{EDGES}': 'fixededges.csv',
-                          '{GAPS}': 'fixedgaps.csv',
+                          '{EDGES}': os.sep + 'fixededges.csv',
+                          '{GAPS}': os.sep + 'fixedgaps.csv',
                           '{CITEST}': "pcalg::gaussCItest",
                           '{METHOD_INDEP}': "C = cor(X), n = nrow(X)",
                           '{SELMAT}': 'NULL',
@@ -211,7 +212,7 @@ class PC(GraphModel):
                           '{SETOPTIONS}': 'NULL',
                           '{ALPHA}': '',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': 'result.csv'}
+                          '{OUTPUT}': os.sep + 'result.csv'}
 
     def orient_undirected_graph(self, data, graph, **kwargs):
         """Run PC on an undirected graph.
@@ -285,23 +286,28 @@ class PC(GraphModel):
         # print(self.arguments)
 
         # Run PC
-        self.arguments['{FOLDER}'] = '{0!s}/cdt_pc_{1!s}/'.format(gettempdir(), uuid.uuid4())
+        self.arguments['{FOLDER}'] = Path('{0!s}/cdt_pc_{1!s}/'.format(gettempdir(), uuid.uuid4()))
         run_dir = self.arguments['{FOLDER}']
         os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('{}/result.csv'.format(run_dir), delimiter=',').values
+            return read_csv(Path('{}/result.csv'.format(run_dir)), delimiter=',').values
 
         try:
-            data.to_csv('{}/data.csv'.format(run_dir), header=False, index=False)
-            if fixedGaps is not None and fixedEdges is not None:
-                fixedGaps.to_csv('{}/fixedgaps.csv'.format(run_dir), index=False, header=False)
-                fixedEdges.to_csv('{}/fixededges.csv'.format(run_dir), index=False, header=False)
-                self.arguments['{SKELETON}'] = 'TRUE'
+            data.to_csv(Path('{}/data.csv'.format(run_dir)), header=False, index=False)
+            if fixedGaps is not None:
+                fixedGaps.to_csv(Path('{}/fixedgaps.csv'.format(run_dir)), index=False, header=False)
+                self.arguments['{E_GAPS}'] = 'TRUE'
             else:
-                self.arguments['{SKELETON}'] = 'FALSE'
+                self.arguments['{E_GAPS}'] = 'FALSE'
 
-            pc_result = launch_R_script("{}/R_templates/pc.R".format(os.path.dirname(os.path.realpath(__file__))),
+            if fixedEdges is not None:
+                fixedEdges.to_csv(Path('{}/fixededges.csv'.format(run_dir)), index=False, header=False)
+                self.arguments['{E_EDGES}'] = 'TRUE'
+            else:
+                self.arguments['{E_EDGES}'] = 'FALSE'
+
+            pc_result = launch_R_script(Path("{}/R_templates/pc.R".format(os.path.dirname(os.path.realpath(__file__)))),
                                         self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:

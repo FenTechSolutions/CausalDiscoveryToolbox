@@ -29,7 +29,9 @@ import os
 import uuid
 import warnings
 import networkx as nx
+from pathlib import Path
 from shutil import rmtree
+from tempfile import gettempdir
 from .model import GraphModel
 from pandas import DataFrame, read_csv
 from ...utils.R import RPackages, launch_R_script
@@ -122,17 +124,17 @@ class BNlearnAlgorithm(GraphModel):
             raise ImportError("R Package bnlearn is not available.")
         super(BNlearnAlgorithm, self).__init__()
         self.arguments = {'{FOLDER}': '/tmp/cdt_bnlearn/',
-                          '{FILE}': 'data.csv',
+                          '{FILE}': os.sep + 'data.csv',
                           '{SKELETON}': 'FALSE',
                           '{ALGORITHM}': None,
-                          '{WHITELIST}': 'whitelist.csv',
-                          '{BLACKLIST}': 'blacklist.csv',
+                          '{WHITELIST}': os.sep + 'whitelist.csv',
+                          '{BLACKLIST}': os.sep + 'blacklist.csv',
                           '{SCORE}': 'NULL',
                           '{OPTIM}': 'FALSE',
                           '{ALPHA}': '0.05',
                           '{BETA}': 'NULL',
                           '{VERBOSE}': 'FALSE',
-                          '{OUTPUT}': 'result.csv'}
+                          '{OUTPUT}': os.sep + 'result.csv'}
         self.score = score
         self.alpha = alpha
         self.beta = beta
@@ -159,9 +161,10 @@ class BNlearnAlgorithm(GraphModel):
 
         cols = list(data.columns)
         data.columns = [i for i in range(data.shape[1])]
-        graph2 = nx.relabel_nodes(graph, {j: i for i, j in
-                                                 zip(['X' + str(i) for i
-                                                      in range(data.shape[1])], cols)})
+        mapping = {j: i for i, j in zip(['X' + str(i) for i
+                                         in range(data.shape[1])], cols)}
+
+        graph2 = nx.relabel_nodes(graph, mapping)
 
         whitelist = DataFrame(list(nx.edges(graph2)), columns=["from", "to"])
         blacklist = DataFrame(list(nx.edges(nx.DiGraph(DataFrame(-nx.adj_matrix(graph2, weight=None).todense() + 1,
@@ -219,8 +222,9 @@ class BNlearnAlgorithm(GraphModel):
         self.arguments['{ALPHA}'] = str(self.alpha)
 
         cols = list(data.columns)
-        data.columns = [i for i in range(data.shape[1])]
-        results = self._run_bnlearn(data, verbose=self.verbose)
+        data2 = data.copy()
+        data2.columns = [i for i in range(data.shape[1])]
+        results = self._run_bnlearn(data2, verbose=self.verbose)
         graph = nx.DiGraph()
         graph.add_nodes_from(['X' + str(i) for i in range(data.shape[1])])
         graph.add_edges_from(results)
@@ -231,32 +235,37 @@ class BNlearnAlgorithm(GraphModel):
     def _run_bnlearn(self, data, whitelist=None, blacklist=None, verbose=True):
         """Setting up and running bnlearn with all arguments."""
         # Run the algorithm
-        id = str(uuid.uuid4())
-        os.makedirs('/tmp/cdt_bnlearn' + id + '/')
-        self.arguments['{FOLDER}'] = '/tmp/cdt_bnlearn' + id + '/'
+        self.arguments['{FOLDER}'] = Path('{0!s}/cdt_bnlearn_{1!s}/'.format(gettempdir(), uuid.uuid4()))
+        run_dir = self.arguments['{FOLDER}']
+        os.makedirs(run_dir, exist_ok=True)
 
         def retrieve_result():
-            return read_csv('/tmp/cdt_bnlearn' + id + '/result.csv', delimiter=',').values
+            return read_csv(Path('{}/result.csv'.format(run_dir)), delimiter=',').values
 
         try:
-            data.to_csv('/tmp/cdt_bnlearn' + id + '/data.csv', index=False)
+            data.to_csv(Path('{}/data.csv'.format(run_dir)), index=False)
             if blacklist is not None:
-                whitelist.to_csv('/tmp/cdt_bnlearn' + id + '/whitelist.csv', index=False, header=False)
-                blacklist.to_csv('/tmp/cdt_bnlearn' + id + '/blacklist.csv', index=False, header=False)
-                self.arguments['{SKELETON}'] = 'TRUE'
+                blacklist.to_csv(Path('{}/blacklist.csv'.format(run_dir)), index=False, header=False)
+                self.arguments['{E_BLACKL}'] = 'TRUE'
             else:
-                self.arguments['{SKELETON}'] = 'FALSE'
+                self.arguments['{E_BLACKL}'] = 'FALSE'
 
-            bnlearn_result = launch_R_script("{}/R_templates/bnlearn.R".format(os.path.dirname(os.path.realpath(__file__))),
+            if whitelist is not None:
+                whitelist.to_csv(Path('{}/whitelist.csv'.format(run_dir)), index=False, header=False)
+                self.arguments['{E_WHITEL}'] = 'TRUE'
+            else:
+                self.arguments['{E_WHITEL}'] = 'FALSE'
+
+            bnlearn_result = launch_R_script(Path("{}/R_templates/bnlearn.R".format(os.path.dirname(os.path.realpath(__file__)))),
                                              self.arguments, output_function=retrieve_result, verbose=verbose)
         # Cleanup
         except Exception as e:
-            rmtree('/tmp/cdt_bnlearn' + id + '')
+            rmtree(run_dir)
             raise e
         except KeyboardInterrupt:
-            rmtree('/tmp/cdt_bnlearn' + id + '/')
+            rmtree(run_dir)
             raise KeyboardInterrupt
-        rmtree('/tmp/cdt_bnlearn' + id)
+        rmtree(run_dir)
         return bnlearn_result
 
 

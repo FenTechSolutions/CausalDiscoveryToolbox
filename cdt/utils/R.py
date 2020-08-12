@@ -53,6 +53,7 @@ import fileinput
 import subprocess
 import uuid
 from shutil import copy, rmtree
+from pathlib import Path
 from tempfile import gettempdir
 import cdt.utils.Settings
 
@@ -142,7 +143,8 @@ class DefaultRPackages(object):
         Returns:
             bool: `True` if the package is available, `False` otherwise
         """
-        test_package = not bool(launch_R_script("{}/R_templates/test_import.R".format(os.path.dirname(os.path.realpath(__file__))),                                      {"{package}": package}, verbose=True))
+        test_package = not bool(launch_R_script(Path("{}/R_templates/test_import.R".format(os.path.dirname(os.path.realpath(__file__)))),
+                                                     {"{package}": package}, verbose=True))
         return test_package
 
 
@@ -167,41 +169,60 @@ def launch_R_script(template, arguments, output_function=None,
         else `True` or `False` depending on whether the execution was
         successful.
     """
-    base_dir = '{0!s}/cdt_R_script_{1!s}'.format(gettempdir(), uuid.uuid4())
+    base_dir = Path('{0!s}/cdt_R_script_{1!s}'.format(gettempdir(), uuid.uuid4()))
     os.makedirs(base_dir)
     rpath = cdt.utils.Settings.SETTINGS.get_default(rpath=None)
-    try:
-        scriptpath = '{}/instance_{}'.format(base_dir, os.path.basename(template))
-        copy(template, scriptpath)
+    scriptpath = Path('{}/instance_{}'.format(base_dir, os.path.basename(template)))
+    copy(template, scriptpath)
 
-        with fileinput.FileInput(scriptpath, inplace=True) as file:
-            for line in file:
-                mline = line
-                for elt in arguments:
-                    mline = mline.replace(elt, arguments[elt])
-                print(mline, end='')
+    # Converting Paths to OS-compliant paths
+    for arg in arguments:
+        if isinstance(arguments[arg], (Path, str)):
+            arguments[arg] = str(arguments[arg]).replace('\\', '\\\\')
 
-        if output_function is None:
-            output = subprocess.call("{} --vanilla {}".format(rpath, scriptpath), shell=True,
-                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        else:
+    with fileinput.FileInput(scriptpath, inplace=True) as file:
+        for line in file:
+            mline = line
+            for elt in arguments:
+                mline = mline.replace(elt, arguments[elt])
+            print(mline, end='')
+
+    if output_function is None:
+        try:
+            output = subprocess.call([str(rpath), "--vanilla", str(scriptpath)],
+                                    stdout=subprocess.DEVNULL,
+                                    stderr=subprocess.DEVNULL)
+        except Exception as e:
+            print("R Call errored, is R available ?")
+            raise e
+
+    else:
+        try:
             if verbose:
-                process = subprocess.Popen("{} --vanilla {}".format(rpath, scriptpath), shell=True)
+                process = subprocess.Popen([str(rpath), "--vanilla", str(scriptpath)])
             else:
-                process = subprocess.Popen("{} --vanilla {}".format(rpath, scriptpath), shell=True,
-                                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                process = subprocess.Popen([str(rpath), "--vanilla", str(scriptpath)],
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             process.wait()
+        except KeyboardInterrupt:
+            if not debug:
+                rmtree(base_dir)
+            raise KeyboardInterrupt
+        try:
             output = output_function()
+        # Cleaning up
+        except Exception as e:
+            if not debug:
+                rmtree(base_dir)
+            if not verbose:
+                out, err = process.communicate()
+                print("\nR Python Error Output \n-----------------------\n")
+                print(e)
+                raise RuntimeError("RProcessError \nR Process Error Output \n-----------------------\n" + str(err, "ISO-8859-1")) from None
+            print("\nR Python Error Output \n-----------------------\n")
+            print(e)
+            raise RuntimeError("RProcessError ") from None
 
-    # Cleaning up
-    except Exception as e:
-        if not debug:
-            rmtree(base_dir)
-        raise e
-    except KeyboardInterrupt:
-        if not debug:
-            rmtree(base_dir)
-        raise KeyboardInterrupt
     if not debug:
         rmtree(base_dir)
     return output
