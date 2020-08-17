@@ -29,7 +29,7 @@ jobs:
       if: (branch != master) OR (fork = true)
       name: "Build and test"
       script:
-      - docker pull fentechai/nv-cdt-base:20.01
+      - docker pull fentechai/nv-cdt-base:20.07
       - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt-dev .
       - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
             docker run -e CODECOV_TOKEN --rm fentechai/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN';
@@ -62,7 +62,7 @@ jobs:
       name: "Build and push 3.6 image for testing"
       script:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull fentechai/cdt-base:20.01
+      - docker pull fentechai/cdt-base:20.07
       - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt-test .
       - docker push fentechai/cdt-test
     - stage: test
@@ -97,7 +97,7 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull fentechai/cdt-base:20.01
+      - docker pull fentechai/cdt-base:20.07
       - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt:$VERSION_NEW .
       - docker push fentechai/cdt:$VERSION_NEW
       - docker tag fentechai/cdt:$VERSION_NEW fentechai/cdt:latest
@@ -108,7 +108,7 @@ jobs:
       - git pull
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker pull fentechai/nv-cdt-base:20.01
+      - docker pull fentechai/nv-cdt-base:20.07
       - docker build -f nv-Dockerfile -t fentechai/nv-cdt:$VERSION_NEW .
       - docker push fentechai/nv-cdt:$VERSION_NEW
       - docker tag fentechai/nv-cdt:$VERSION_NEW fentechai/nv-cdt:latest

@@ -173,14 +173,14 @@ def launch_R_script(template, arguments, output_function=None,
     os.makedirs(base_dir)
     rpath = cdt.utils.Settings.SETTINGS.get_default(rpath=None)
     scriptpath = Path('{}/instance_{}'.format(base_dir, os.path.basename(template)))
-    copy(template, scriptpath)
+    copy(str(template), str(scriptpath))
 
     # Converting Paths to OS-compliant paths
     for arg in arguments:
         if isinstance(arguments[arg], (Path, str)):
             arguments[arg] = str(arguments[arg]).replace('\\', '\\\\')
 
-    with fileinput.FileInput(scriptpath, inplace=True) as file:
+    with fileinput.FileInput(str(scriptpath), inplace=True) as file:
         for line in file:
             mline = line
             for elt in arguments:
