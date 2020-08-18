@@ -6,7 +6,7 @@ The Causal Discovery Toolbox is a package for causal inference in graphs and in 
 [![Dev Status](https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=dev)](https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox)
 [![codecov](https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox/branch/master/graph/badge.svg)](https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox)
 [![Hex.pm](https://img.shields.io/badge/License-MIT-blue.svg?maxAge=259200)](https://raw.githubusercontent.com/FenTechSolutions/CausalDiscoveryToolbox/master/LICENSE.md)
-[![version](https://img.shields.io/badge/version-0.5.20-yellow.svg?maxAge=259200)](#)
+[![version](https://img.shields.io/badge/version-0.5.21-yellow.svg?maxAge=259200)](#)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/cdt.svg)
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the __bnlearn__, __pcalg__ packages), mainly based out of observational data.
@@ -25,8 +25,8 @@ Docker images are available, including all the dependencies, and enabled functio
 
 |       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
 |:----------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------:|
-| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.20-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/cdt/)      |       [![d36cpudev](https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/cdt-dev)       |
-| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.20-76b900.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/nv-cdt/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--docker-latest-76b900.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/nv-cdt-dev) |
+| Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.21-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/cdt/)      |       [![d36cpudev](https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/cdt-dev)       |
+| Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.21-76b900.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/nv-cdt/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--docker-latest-76b900.svg?maxAge=259200)](https://hub.docker.com/r/fentechai/nv-cdt-dev) |
 
 ## Installation
 
