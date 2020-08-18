@@ -1,15 +1,19 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PyTorch Models &mdash; Causal Discovery Toolbox 0.5.18 documentation</title>
+  <title>PyTorch Models &mdash; Causal Discovery Toolbox 0.5.21 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
   
   
@@ -19,25 +23,22 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Developer Documentation" href="developer.html" />
@@ -68,7 +69,7 @@
             
             
               <div class="version">
-                0.5.18
+                0.5.21
               </div>
             
           
@@ -85,6 +86,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -117,6 +119,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -155,7 +158,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>PyTorch Models</li>
     
@@ -193,9 +196,9 @@ these are directly assessible as <cite>torch.nn.Module</cite>, using the extensi
 </ul>
 <div class="section" id="cgnn">
 <h2>CGNN<a class="headerlink" href="#cgnn" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.causality.graph.model.CGNN_model">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">CGNN_model</code><span class="sig-paren">(</span><em class="sig-param">adj_matrix</em>, <em class="sig-param">batch_size</em>, <em class="sig-param">nh=20</em>, <em class="sig-param">device=None</em>, <em class="sig-param">confounding=False</em>, <em class="sig-param">initial_graph=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.CGNN_model" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">CGNN_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">adj_matrix</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">nh</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">confounding</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">initial_graph</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.CGNN_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class defining the CGNN model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -209,7 +212,7 @@ these are directly assessible as <cite>torch.nn.Module</cite>, using the extensi
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.causality.graph.model.CGNN_model.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.CGNN_model.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate according to the topological order of the graph,
@@ -224,9 +227,9 @@ outputs a batch of generated data of size batch_size.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.causality.graph.model.CGNN_model.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">dataloader_workers=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN_model.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.CGNN_model.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">train_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">test_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">lr</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">dataloader_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/CGNN.html#CGNN_model.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.CGNN_model.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the CGNN on a given graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -254,9 +257,9 @@ outputs a batch of generated data of size batch_size.</p>
 </div>
 <div class="section" id="sam">
 <h2>SAM<a class="headerlink" href="#sam" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.causality.graph.model.SAM_generators">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_generators</code><span class="sig-paren">(</span><em class="sig-param">data_shape</em>, <em class="sig-param">nh</em>, <em class="sig-param">skeleton=None</em>, <em class="sig-param">linear=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_generators</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_shape</span></em>, <em class="sig-param"><span class="n">nh</span></em>, <em class="sig-param"><span class="n">skeleton</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">linear</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ensemble of all the SAM generators.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -268,9 +271,9 @@ outputs a batch of generated data of size batch_size.</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.causality.graph.model.SAM_generators.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">noise</em>, <em class="sig-param">adj_matrix</em>, <em class="sig-param">drawn_neurons=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">noise</span></em>, <em class="sig-param"><span class="n">adj_matrix</span></em>, <em class="sig-param"><span class="n">drawn_neurons</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forward through all the generators.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -292,9 +295,9 @@ outputs a batch of generated data of size batch_size.</p>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.causality.graph.model.SAM_discriminator">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_discriminator</code><span class="sig-paren">(</span><em class="sig-param">nfeatures</em>, <em class="sig-param">dnh</em>, <em class="sig-param">hlayers=2</em>, <em class="sig-param">mask=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_discriminator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_discriminator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_discriminator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nfeatures</span></em>, <em class="sig-param"><span class="n">dnh</span></em>, <em class="sig-param"><span class="n">hlayers</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">mask</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_discriminator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_discriminator" title="Permalink to this definition">¶</a></dt>
 <dd><p>SAM discriminator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -306,9 +309,9 @@ outputs a batch of generated data of size batch_size.</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.causality.graph.model.SAM_discriminator.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">obs_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_discriminator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_discriminator.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em>, <em class="sig-param"><span class="n">obs_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_discriminator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_discriminator.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forward pass in the discriminator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -331,9 +334,9 @@ outputs a batch of generated data of size batch_size.</p>
 </div>
 <div class="section" id="ncc">
 <h2>NCC<a class="headerlink" href="#ncc" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.causality.pairwise.model.NCC_model">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.model.</code><code class="sig-name descname">NCC_model</code><span class="sig-paren">(</span><em class="sig-param">n_hiddens=20</em>, <em class="sig-param">kernel_size=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.NCC_model" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.model.</code><code class="sig-name descname">NCC_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_hiddens</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">kernel_size</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.NCC_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>NCC model structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -343,9 +346,9 @@ outputs a batch of generated data of size batch_size.</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.causality.pairwise.model.NCC_model.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.NCC_model.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/NCC.html#NCC_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.NCC_model.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Passing data through the network.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -365,9 +368,9 @@ outputs a batch of generated data of size batch_size.</p>
 </div>
 <div class="section" id="gnn">
 <h2>GNN<a class="headerlink" href="#gnn" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.causality.pairwise.model.GNN_model">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.model.</code><code class="sig-name descname">GNN_model</code><span class="sig-paren">(</span><em class="sig-param">batch_size</em>, <em class="sig-param">nh=20</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">dataloader_workers=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.GNN_model" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.pairwise.model.</code><code class="sig-name descname">GNN_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">nh</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">lr</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">train_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">test_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dataloader_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.GNN_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Torch model for the GNN structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -384,9 +387,9 @@ outputs a batch of generated data of size batch_size.</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.causality.pairwise.model.GNN_model.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.GNN_model.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.GNN_model.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pass data through the net structure.
 :param x: input data: shape (:,1)
 :type x: torch.Tensor</p>
@@ -400,9 +403,9 @@ outputs a batch of generated data of size batch_size.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.causality.pairwise.model.GNN_model.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">dataset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN_model.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.GNN_model.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/pairwise/GNN.html#GNN_model.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.pairwise.model.GNN_model.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the GNN on a pair x,y of FloatTensor data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -422,7 +425,7 @@ outputs a batch of generated data of size batch_size.</p>
 </div>
 <div class="section" id="fsgnn">
 <h2>FSGNN<a class="headerlink" href="#fsgnn" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.model.FSGNN_model">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.model.</code><code class="sig-name descname">FSGNN_model</code><span class="sig-paren">(</span><em class="sig-param">sizes</em>, <em class="sig-param">dropout=0.0</em>, <em class="sig-param">activation_function=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FSGNN_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Variant of CGNN for feature selection.</p>
@@ -435,9 +438,9 @@ outputs a batch of generated data of size batch_size.</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.model.FSGNN_model.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FSGNN_model.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN_model.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FSGNN_model.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forward pass in the network.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -452,9 +455,9 @@ outputs a batch of generated data of size batch_size.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.model.FSGNN_model.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">l1=0.1</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">device=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">dataloader_workers=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN_model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FSGNN_model.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">lr</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">l1</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">train_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">test_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dataloader_workers</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN_model.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FSGNN_model.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train the network and output the scores of the features</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -504,11 +507,19 @@ outputs a batch of generated data of size batch_size.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -519,7 +530,6 @@ outputs a batch of generated data of size batch_size.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

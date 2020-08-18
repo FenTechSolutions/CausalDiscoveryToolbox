@@ -1,15 +1,19 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Causal Discovery Toolbox Documentation &mdash; Causal Discovery Toolbox 0.5.18 documentation</title>
+  <title>Causal Discovery Toolbox Documentation &mdash; Causal Discovery Toolbox 0.5.21 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
   
   
@@ -19,25 +23,22 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Get started" href="tutorial.html" /> 
@@ -67,7 +68,7 @@
             
             
               <div class="version">
-                0.5.18
+                0.5.21
               </div>
             
           
@@ -84,6 +85,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -109,6 +111,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -147,7 +150,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
       <li>Causal Discovery Toolbox Documentation</li>
     
@@ -177,7 +180,7 @@
 <a class="reference external image-reference" href="https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox"><img alt="https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=dev" src="https://travis-ci.org/FenTechSolutions/CausalDiscoveryToolbox.svg?branch=dev" /></a>
 <a class="reference external image-reference" href="https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox"><img alt="https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox/branch/master/graph/badge.svg" src="https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox/branch/master/graph/badge.svg" /></a>
 <img alt="https://img.shields.io/aur/license/pac.svg?maxAge=259200" src="https://img.shields.io/aur/license/pac.svg?maxAge=259200" />
-<img alt="https://img.shields.io/badge/version-0.5.18-yellow.svg?maxAge=259200" src="https://img.shields.io/badge/version-0.5.18-yellow.svg?maxAge=259200" />
+<img alt="https://img.shields.io/badge/version-0.5.21-yellow.svg?maxAge=259200" src="https://img.shields.io/badge/version-0.5.21-yellow.svg?maxAge=259200" />
 <p>It implements lots of algorithms for graph structure recovery (including algorithms from the <cite>bnlearn</cite>, <cite>pcalg</cite> packages), mainly based out of observational data.</p>
 <p>Install it using pip: (See more details on installation below)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install cdt
@@ -209,15 +212,15 @@ arXiv:1903.02278</a>.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Python 3.6 - CPU</p></td>
-<td><p><a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.6/"><img alt="36cpu" src="https://img.shields.io/badge/docker-0.5.18-0db7ed.svg?maxAge=259200" /></a></p></td>
+<td><p><a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.6/"><img alt="36cpu" src="https://img.shields.io/badge/docker-0.5.21-0db7ed.svg?maxAge=259200" /></a></p></td>
 <td><p><a class="reference external" href="https://hub.docker.com/r/divkal/cdt-dev/"><img alt="36cpudev" src="https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200" /></a></p></td>
 </tr>
 <tr class="row-odd"><td><p>Python 3.7 - CPU</p></td>
-<td><p><a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.7/"><img alt="37cpu" src="https://img.shields.io/badge/docker-0.5.18-0db7ed.svg?maxAge=259200" /></a></p></td>
+<td><p><a class="reference external" href="https://hub.docker.com/r/divkal/cdt-py3.7/"><img alt="37cpu" src="https://img.shields.io/badge/docker-0.5.21-0db7ed.svg?maxAge=259200" /></a></p></td>
 <td><p><img alt="37cpudev" src="https://img.shields.io/badge/docker-unavailable-lightgrey.svg?maxAge=259200" /></p></td>
 </tr>
 <tr class="row-even"><td><p>Python 3.6 - GPU</p></td>
-<td><p><a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-py3.6/"><img alt="36gpu" src="https://img.shields.io/badge/nvidia--docker-0.5.18-76b900.svg?maxAge=259200" /></a></p></td>
+<td><p><a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-py3.6/"><img alt="36gpu" src="https://img.shields.io/badge/nvidia--docker-0.5.21-76b900.svg?maxAge=259200" /></a></p></td>
 <td><p><a class="reference external" href="https://hub.docker.com/r/divkal/nv-cdt-dev/"><img alt="36gpudev" src="https://img.shields.io/badge/nvidia--docker-latest-76b900.svg?maxAge=259200" /></a></p></td>
 </tr>
 </tbody>
@@ -387,11 +390,19 @@ The <a class="reference external" href="https://github.com/FenTechSolutions/Caus
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -402,7 +413,6 @@ The <a class="reference external" href="https://github.com/FenTechSolutions/Caus
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

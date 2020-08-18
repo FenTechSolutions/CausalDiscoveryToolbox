@@ -1,15 +1,19 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence.graph.FSRegression &mdash; Causal Discovery Toolbox 0.5.18 documentation</title>
+  <title>cdt.independence.graph.FSRegression &mdash; Causal Discovery Toolbox 0.5.21 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
 
   
   
@@ -19,25 +23,22 @@
   
 
   
-  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                0.5.18
+                0.5.21
               </div>
             
           
@@ -83,6 +84,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -108,6 +110,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -146,7 +149,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
@@ -198,7 +201,7 @@
 <span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFECV</span>
 <span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVR</span><span class="p">,</span> <span class="n">LinearSVR</span>
 <span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeRegressor</span>
-<span class="kn">from</span> <span class="nn">skrebate</span> <span class="kn">import</span> <span class="n">ReliefF</span>
+<span class="c1"># from skrebate import ReliefF</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">ARDRegression</span> <span class="k">as</span> <span class="n">ard</span>
 
@@ -354,40 +357,40 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="RRelief"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.RRelief">[docs]</a><span class="k">class</span> <span class="nc">RRelief</span><span class="p">(</span><span class="n">FeatureSelectionModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Feature selection with RRelief.</span>
-
-<span class="sd">        Example:</span>
-<span class="sd">            &gt;&gt;&gt; from cdt.independence.graph import RRelief</span>
-<span class="sd">            &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
-<span class="sd">            &gt;&gt;&gt; boston = load_boston()</span>
-<span class="sd">            &gt;&gt;&gt; df_features = pd.DataFrame(boston[&#39;data&#39;])</span>
-<span class="sd">            &gt;&gt;&gt; df_target = pd.DataFrame(boston[&#39;target&#39;])</span>
-<span class="sd">            &gt;&gt;&gt; obj = RRelief()</span>
-<span class="sd">            &gt;&gt;&gt; output = obj.predict_features(df_features, df_target)</span>
-<span class="sd">            &gt;&gt;&gt; ugraph = obj.predict(df_features)  # Predict skeleton</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RRelief</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-<div class="viewcode-block" id="RRelief.predict_features"><a class="viewcode-back" href="../../../../independence.html#cdt.independence.graph.RRelief.predict_features">[docs]</a>    <span class="k">def</span> <span class="nf">predict_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;For one variable, predict its neighbouring nodes.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            df_features (pandas.DataFrame):</span>
-<span class="sd">            df_target (pandas.Series):</span>
-<span class="sd">            idx (int): (optional) for printing purposes</span>
-<span class="sd">            kwargs (dict): additional options for algorithms</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list: scores of each feature relatively to the target</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">df_features</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">df_target</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-        <span class="n">rr</span> <span class="o">=</span> <span class="n">ReliefF</span><span class="p">()</span>
-        <span class="n">rr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">rr</span><span class="o">.</span><span class="n">feature_importances_</span></div></div>
+<span class="c1"># class RRelief(FeatureSelectionModel):</span>
+<span class="c1">#     &quot;&quot;&quot; Feature selection with RRelief.</span>
+<span class="c1">#</span>
+<span class="c1">#         Example:</span>
+<span class="c1">#             &gt;&gt;&gt; from cdt.independence.graph import RRelief</span>
+<span class="c1">#             &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
+<span class="c1">#             &gt;&gt;&gt; boston = load_boston()</span>
+<span class="c1">#             &gt;&gt;&gt; df_features = pd.DataFrame(boston[&#39;data&#39;])</span>
+<span class="c1">#             &gt;&gt;&gt; df_target = pd.DataFrame(boston[&#39;target&#39;])</span>
+<span class="c1">#             &gt;&gt;&gt; obj = RRelief()</span>
+<span class="c1">#             &gt;&gt;&gt; output = obj.predict_features(df_features, df_target)</span>
+<span class="c1">#             &gt;&gt;&gt; ugraph = obj.predict(df_features)  # Predict skeleton</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def __init__(self):</span>
+<span class="c1">#         super(RRelief, self).__init__()</span>
+<span class="c1">#</span>
+<span class="c1">#     def predict_features(self, df_features, df_target, idx=0, **kwargs):</span>
+<span class="c1">#         &quot;&quot;&quot;For one variable, predict its neighbouring nodes.</span>
+<span class="c1">#</span>
+<span class="c1">#         Args:</span>
+<span class="c1">#             df_features (pandas.DataFrame):</span>
+<span class="c1">#             df_target (pandas.Series):</span>
+<span class="c1">#             idx (int): (optional) for printing purposes</span>
+<span class="c1">#             kwargs (dict): additional options for algorithms</span>
+<span class="c1">#</span>
+<span class="c1">#         Returns:</span>
+<span class="c1">#             list: scores of each feature relatively to the target</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         X = df_features.values</span>
+<span class="c1">#         y = np.ravel(df_target.values)</span>
+<span class="c1">#         rr = ReliefF()</span>
+<span class="c1">#         rr.fit(X, y)</span>
+<span class="c1">#</span>
+<span class="c1">#         return rr.feature_importances_</span>
 </pre></div>
 
            </div>
@@ -400,11 +403,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -415,7 +426,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,15 +1,19 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.data &mdash; Causal Discovery Toolbox 0.5.18 documentation</title>
+  <title>cdt.data &mdash; Causal Discovery Toolbox 0.5.21 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
   
   
@@ -19,25 +23,22 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cdt.utils" href="utils.html" />
@@ -68,7 +69,7 @@
             
             
               <div class="version">
-                0.5.18
+                0.5.21
               </div>
             
           
@@ -85,6 +86,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -115,6 +117,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -153,7 +156,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>cdt.data</li>
     
@@ -195,7 +198,7 @@ noise variable accounting for all unobserved variables):</p>
 and acyclic graphs can be generated using the <code class="docutils literal notranslate"><span class="pre">cdt.data.AcyclicGraphGenerator</span></code> class.</p>
 <div class="section" id="causalpairgenerator">
 <h2>CausalPairGenerator<a class="headerlink" href="#causalpairgenerator" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.data.CausalPairGenerator">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">CausalPairGenerator</code><span class="sig-paren">(</span><em class="sig-param">causal_mechanism</em>, <em class="sig-param">noise=&lt;function normal_noise&gt;</em>, <em class="sig-param">noise_coeff=0.4</em>, <em class="sig-param">initial_variable_generator=&lt;function gmm_cause&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates Bivariate Causal Distributions.</p>
@@ -220,9 +223,9 @@ of the graph, defaults to a Gaussian Mixture model.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;generated_pairs&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.data.CausalPairGenerator.generate">
-<code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param">npairs</em>, <em class="sig-param">npoints=500</em>, <em class="sig-param">rescale=True</em>, <em class="sig-param">njobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">npairs</span></em>, <em class="sig-param"><span class="n">npoints</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">rescale</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">njobs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.generate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate Causal pairs, such that one variable causes the other.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -245,9 +248,9 @@ format.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.data.CausalPairGenerator.to_csv">
-<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param">fname_radical</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname_radical</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/causal_pair_generator.html#CausalPairGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.CausalPairGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save data to the csv format by default, in two separate files.</p>
 <p>Optional keyword arguments can be passed to pandas.</p>
 </dd></dl>
@@ -257,7 +260,7 @@ format.</p>
 </div>
 <div class="section" id="acyclicgraphgenerator">
 <h2>AcyclicGraphGenerator<a class="headerlink" href="#acyclicgraphgenerator" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.data.AcyclicGraphGenerator">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">AcyclicGraphGenerator</code><span class="sig-paren">(</span><em class="sig-param">causal_mechanism</em>, <em class="sig-param">noise='gaussian'</em>, <em class="sig-param">noise_coeff=0.4</em>, <em class="sig-param">initial_variable_generator=&lt;function gmm_cause&gt;</em>, <em class="sig-param">npoints=500</em>, <em class="sig-param">nodes=20</em>, <em class="sig-param">parents_max=5</em>, <em class="sig-param">expected_degree=3</em>, <em class="sig-param">dag_type='default'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an acyclic graph and data given a causal mechanism.</p>
@@ -288,9 +291,9 @@ only used for erdos graph</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;generated_graph&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.data.AcyclicGraphGenerator.generate">
-<code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param">rescale=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">generate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rescale</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.generate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate data from an FCM defined in <code class="docutils literal notranslate"><span class="pre">self.init_variables()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -306,9 +309,9 @@ generated data and graph.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.data.AcyclicGraphGenerator.init_dag">
-<code class="sig-name descname">init_dag</code><span class="sig-paren">(</span><em class="sig-param">verbose</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_dag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_dag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_dag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_dag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_dag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Redefine the structure of the graph depending on dag_type
 (‘default’, ‘erdos’)</p>
 <dl class="field-list simple">
@@ -318,9 +321,9 @@ generated data and graph.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.data.AcyclicGraphGenerator.init_variables">
-<code class="sig-name descname">init_variables</code><span class="sig-paren">(</span><em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_variables" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_variables</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.init_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.init_variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Redefine the causes, mechanisms and the structure of the graph,
 called by <code class="docutils literal notranslate"><span class="pre">self.generate()</span></code> if never called.</p>
 <dl class="field-list simple">
@@ -330,9 +333,9 @@ called by <code class="docutils literal notranslate"><span class="pre">self.gene
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.data.AcyclicGraphGenerator.to_csv">
-<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param">fname_radical</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname_radical</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/acyclic_graph_generator.html#AcyclicGraphGenerator.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.AcyclicGraphGenerator.to_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the generated data to the csv format by default,
 in two separate files: data, and the adjacency matrix of the
 corresponding graph.</p>
@@ -353,9 +356,9 @@ adjacency matrix of the generated graph.</p></li>
 </div>
 <div class="section" id="load-dataset">
 <h2>load_dataset<a class="headerlink" href="#load-dataset" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="cdt.data.load_dataset">
-<code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">load_dataset</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/loader.html#load_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.load_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.data.</code><code class="sig-name descname">load_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/data/loader.html#load_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.data.load_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main function of this module, allows to easily import well-known causal
 datasets into python.</p>
 <dl class="simple">
@@ -441,11 +444,19 @@ dataframe containing the data, and the target.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -456,7 +467,6 @@ dataframe containing the data, and the target.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,15 +1,19 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.independence &mdash; Causal Discovery Toolbox 0.5.18 documentation</title>
+  <title>cdt.independence &mdash; Causal Discovery Toolbox 0.5.21 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
   
   
@@ -19,25 +23,22 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cdt.data" href="data.html" />
@@ -68,7 +69,7 @@
             
             
               <div class="version">
-                0.5.18
+                0.5.21
               </div>
             
           
@@ -85,6 +86,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -117,7 +119,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#hsiclasso"><span class="hidden-section">HSICLasso</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#linearsvrl2"><span class="hidden-section">LinearSVRL2</span></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#rfecvlinearsvr"><span class="hidden-section">RFECVLinearSVR</span></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#rrelief"><span class="hidden-section">RRelief</span></a></li>
 </ul>
 </li>
 </ul>
@@ -133,6 +134,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -171,7 +173,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>cdt.independence</li>
     
@@ -196,9 +198,9 @@
 <h1>cdt.independence<a class="headerlink" href="#cdt-independence" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-cdt.independence.stats">
 <span id="cdt-independence-stats"></span><h2>cdt.independence.stats<a class="headerlink" href="#module-cdt.independence.stats" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.model.IndependenceModel">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.model.</code><code class="sig-name descname">IndependenceModel</code><span class="sig-paren">(</span><em class="sig-param">predictor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.model.</code><code class="sig-name descname">IndependenceModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predictor</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for independence and utilities to recover the
 undirected graph out of data.</p>
 <dl class="field-list simple">
@@ -206,9 +208,9 @@ undirected graph out of data.</p>
 <dd class="field-odd"><p><strong>predictor</strong> (<em>function</em>) – function to estimate dependence (0 : independence), taking as input 2 array-like variables.</p>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.model.IndependenceModel.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a dependence test statistic between variables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -226,9 +228,9 @@ undirected graph out of data.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.model.IndependenceModel.predict_undirected_graph">
-<code class="sig-name descname">predict_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict_undirected_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_undirected_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/model.html#IndependenceModel.predict_undirected_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.model.IndependenceModel.predict_undirected_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a skeleton using a pairwise independence criterion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -247,7 +249,7 @@ undirected graph out of data.</p>
 
 <div class="section" id="adjmi">
 <h3><span class="hidden-section">AdjMI</span><a class="headerlink" href="#adjmi" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.AdjMI">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">AdjMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dependency criterion made of binning and mutual information.</p>
@@ -272,9 +274,9 @@ doi=10.1007/BF01025868.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.AdjMI.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#AdjMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.AdjMI.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the independence test.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -297,7 +299,7 @@ doi=10.1007/BF01025868.</p>
 </div>
 <div class="section" id="kendalltau">
 <h3><span class="hidden-section">KendallTau</span><a class="headerlink" href="#kendalltau" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.KendallTau">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">KendallTau</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute Kendall’s Tau.</p>
@@ -309,9 +311,9 @@ doi=10.1007/BF01025868.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.KendallTau.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#KendallTau.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.KendallTau.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -334,7 +336,7 @@ doi=10.1007/BF01025868.</p>
 </div>
 <div class="section" id="miregression">
 <h3><span class="hidden-section">MIRegression</span><a class="headerlink" href="#miregression" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.MIRegression">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">MIRegression</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test statistic based on a mutual information regression.</p>
@@ -346,9 +348,9 @@ doi=10.1007/BF01025868.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.MIRegression.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#MIRegression.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.MIRegression.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -371,7 +373,7 @@ doi=10.1007/BF01025868.</p>
 </div>
 <div class="section" id="normalizedhsic">
 <h3><span class="hidden-section">NormalizedHSIC</span><a class="headerlink" href="#normalizedhsic" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.NormalizedHSIC">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">NormalizedHSIC</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kernel-based independence test statistic. Uses RBF kernel.</p>
@@ -383,9 +385,9 @@ doi=10.1007/BF01025868.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.NormalizedHSIC.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a, b, sig=[-1, -1], maxpnt=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">sig</span><span class="o">=</span><span class="default_value">[- 1, - 1]</span></em>, <em class="sig-param"><span class="n">maxpnt</span><span class="o">=</span><span class="default_value">500</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#NormalizedHSIC.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormalizedHSIC.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -410,7 +412,7 @@ doi=10.1007/BF01025868.</p>
 </div>
 <div class="section" id="normmi">
 <h3><span class="hidden-section">NormMI</span><a class="headerlink" href="#normmi" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.NormMI">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">NormMI</code><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dependency criterion made of binning and mutual information.</p>
@@ -439,9 +441,9 @@ doi=10.1007/BF01025868.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.NormMI.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/all_types.html#NormMI.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.NormMI.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the independence test.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -464,7 +466,7 @@ doi=10.1007/BF01025868.</p>
 </div>
 <div class="section" id="pearsoncorrelation">
 <h3><span class="hidden-section">PearsonCorrelation</span><a class="headerlink" href="#pearsoncorrelation" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.PearsonCorrelation">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">PearsonCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pearson’s correlation coefficient.</p>
@@ -479,9 +481,9 @@ doi=10.1007/BF01025868.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.PearsonCorrelation.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#PearsonCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.PearsonCorrelation.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -504,7 +506,7 @@ doi=10.1007/BF01025868.</p>
 </div>
 <div class="section" id="spearmancorrelation">
 <h3><span class="hidden-section">SpearmanCorrelation</span><a class="headerlink" href="#spearmancorrelation" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.stats.SpearmanCorrelation">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.stats.</code><code class="sig-name descname">SpearmanCorrelation</code><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spearman correlation.</p>
@@ -517,9 +519,9 @@ doi=10.1007/BF01025868.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.stats.SpearmanCorrelation.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/stats/numerical.html#SpearmanCorrelation.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.stats.SpearmanCorrelation.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -543,13 +545,13 @@ doi=10.1007/BF01025868.</p>
 </div>
 <div class="section" id="module-cdt.independence.graph">
 <span id="cdt-independence-graph"></span><h2>cdt.independence.graph<a class="headerlink" href="#module-cdt.independence.graph" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.model.GraphSkeletonModel">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.model.</code><code class="sig-name descname">GraphSkeletonModel</code><a class="reference internal" href="_modules/cdt/independence/graph/model.html#GraphSkeletonModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.GraphSkeletonModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for undirected graph recovery directly out of data.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.model.GraphSkeletonModel.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#GraphSkeletonModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.GraphSkeletonModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#GraphSkeletonModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.GraphSkeletonModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Infer a undirected graph out of data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -570,14 +572,14 @@ doi=10.1007/BF01025868.</p>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.model.</code><code class="sig-name descname">FeatureSelectionModel</code><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for methods using feature selection
 on each variable independently.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">threshold=0.05</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_data</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the skeleton of the graph from raw data.</p>
 <p>Returns iteratively the feature selection algorithm on each node.</p>
 <dl class="field-list simple">
@@ -597,9 +599,9 @@ on each variable independently.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel.predict_features">
-<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_features</span></em>, <em class="sig-param"><span class="n">df_target</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -623,9 +625,9 @@ on each variable independently.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.model.FeatureSelectionModel.run_feature_selection">
-<code class="sig-name descname">run_feature_selection</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.run_feature_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.run_feature_selection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run_feature_selection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_data</span></em>, <em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/model.html#FeatureSelectionModel.run_feature_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.model.FeatureSelectionModel.run_feature_selection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run feature selection for one node: wrapper around
 <code class="docutils literal notranslate"><span class="pre">self.predict_features</span></code>.</p>
 <dl class="field-list simple">
@@ -649,7 +651,7 @@ on each variable independently.</p>
 
 <div class="section" id="ard">
 <h3><span class="hidden-section">ARD</span><a class="headerlink" href="#ard" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.ARD">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">ARD</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature selection with Bayesian ARD regression.</p>
@@ -664,9 +666,9 @@ on each variable independently.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.ARD.predict_features">
-<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_features</span></em>, <em class="sig-param"><span class="n">df_target</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#ARD.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.ARD.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -691,7 +693,7 @@ on each variable independently.</p>
 </div>
 <div class="section" id="decisiontreeregression">
 <h3><span class="hidden-section">DecisionTreeRegression</span><a class="headerlink" href="#decisiontreeregression" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.DecisionTreeRegression">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">DecisionTreeRegression</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature selection with decision tree regression.</p>
@@ -706,9 +708,9 @@ on each variable independently.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.DecisionTreeRegression.predict_features">
-<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_features</span></em>, <em class="sig-param"><span class="n">df_target</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#DecisionTreeRegression.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.DecisionTreeRegression.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -733,7 +735,7 @@ on each variable independently.</p>
 </div>
 <div class="section" id="fsgnn">
 <h3><span class="hidden-section">FSGNN</span><a class="headerlink" href="#fsgnn" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.FSGNN">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">FSGNN</code><span class="sig-paren">(</span><em class="sig-param">nh=20</em>, <em class="sig-param">dropout=0.0</em>, <em class="sig-param">activation_function=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em class="sig-param">lr=0.01</em>, <em class="sig-param">l1=0.1</em>, <em class="sig-param">batch_size=-1</em>, <em class="sig-param">train_epochs=1000</em>, <em class="sig-param">test_epochs=1000</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">nruns=3</em>, <em class="sig-param">dataloader_workers=0</em>, <em class="sig-param">njobs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature Selection using MMD and Generative Neural Networks.</p>
@@ -767,9 +769,9 @@ process. (default: 0)</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.FSGNN.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">df_data</em>, <em class="sig-param">threshold=0.05</em>, <em class="sig-param">gpus=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_data</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">gpus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the skeleton of the graph from raw data.</p>
 <p>Returns iteratively the feature selection algorithm on each node.</p>
 <dl class="field-list simple">
@@ -789,7 +791,7 @@ process. (default: 0)</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.FSGNN.predict_features">
 <code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">datasetclass=&lt;class 'torch.utils.data.dataset.TensorDataset'&gt;</em>, <em class="sig-param">device=None</em>, <em class="sig-param">idx=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSGNN.html#FSGNN.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.FSGNN.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbours.</p>
@@ -819,7 +821,7 @@ custom loading of data.</p></li>
 </div>
 <div class="section" id="glasso">
 <h3><span class="hidden-section">Glasso</span><a class="headerlink" href="#glasso" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.Glasso">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">Glasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso" title="Permalink to this definition">¶</a></dt>
 <dd><p>Graphical Lasso to find an adjacency matrix</p>
@@ -838,9 +840,9 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 <span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.Glasso.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">alpha=0.01</em>, <em class="sig-param">max_iter=2000</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#Glasso.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.Glasso.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the graph skeleton.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -864,7 +866,7 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 </div>
 <div class="section" id="hsiclasso">
 <h3><span class="hidden-section">HSICLasso</span><a class="headerlink" href="#hsiclasso" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.HSICLasso">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">HSICLasso</code><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso" title="Permalink to this definition">¶</a></dt>
 <dd><p>Graphical Lasso with a kernel-based independence test.</p>
@@ -879,9 +881,9 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.HSICLasso.predict_features">
-<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_features</span></em>, <em class="sig-param"><span class="n">df_target</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/Lasso.html#HSICLasso.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.HSICLasso.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -906,7 +908,7 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 </div>
 <div class="section" id="linearsvrl2">
 <h3><span class="hidden-section">LinearSVRL2</span><a class="headerlink" href="#linearsvrl2" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.LinearSVRL2">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">LinearSVRL2</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature selection with Linear Support Vector Regression.</p>
@@ -921,9 +923,9 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.LinearSVRL2.predict_features">
-<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">C=0.1</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_features</span></em>, <em class="sig-param"><span class="n">df_target</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">C</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#LinearSVRL2.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.LinearSVRL2.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -949,7 +951,7 @@ covariance estimation with the graphical lasso. Biostatistics, 9(3),
 </div>
 <div class="section" id="rfecvlinearsvr">
 <h3><span class="hidden-section">RFECVLinearSVR</span><a class="headerlink" href="#rfecvlinearsvr" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<dl class="py class">
 <dt id="cdt.independence.graph.RFECVLinearSVR">
 <em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">RFECVLinearSVR</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR" title="Permalink to this definition">¶</a></dt>
 <dd><dl>
@@ -973,51 +975,9 @@ Mach. Learn., 46(1-3), 389–422, 2002.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="cdt.independence.graph.RFECVLinearSVR.predict_features">
-<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR.predict_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>For one variable, predict its neighbouring nodes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df_features</strong> (<em>pandas.DataFrame</em>) – </p></li>
-<li><p><strong>df_target</strong> (<em>pandas.Series</em>) – </p></li>
-<li><p><strong>idx</strong> (<em>int</em>) – (optional) for printing purposes</p></li>
-<li><p><strong>kwargs</strong> (<em>dict</em>) – additional options for algorithms</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>scores of each feature relatively to the target</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="rrelief">
-<h3><span class="hidden-section">RRelief</span><a class="headerlink" href="#rrelief" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="cdt.independence.graph.RRelief">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.independence.graph.</code><code class="sig-name descname">RRelief</code><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief" title="Permalink to this definition">¶</a></dt>
-<dd><p>Feature selection with RRelief.</p>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.independence.graph</span> <span class="kn">import</span> <span class="n">RRelief</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df_target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">boston</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">RRelief</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict_features</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">df_target</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ugraph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_features</span><span class="p">)</span>  <span class="c1"># Predict skeleton</span>
-</pre></div>
-</div>
-<dl class="method">
-<dt id="cdt.independence.graph.RRelief.predict_features">
-<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param">df_features</em>, <em class="sig-param">df_target</em>, <em class="sig-param">idx=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RRelief.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RRelief.predict_features" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_features</span></em>, <em class="sig-param"><span class="n">df_target</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/independence/graph/FSRegression.html#RFECVLinearSVR.predict_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.independence.graph.RFECVLinearSVR.predict_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>For one variable, predict its neighbouring nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1063,11 +1023,19 @@ Mach. Learn., 46(1-3), 389–422, 2002.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1078,7 +1046,6 @@ Mach. Learn., 46(1-3), 389–422, 2002.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

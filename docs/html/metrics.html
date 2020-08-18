@@ -1,15 +1,19 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.18 documentation</title>
+  <title>cdt.metrics &mdash; Causal Discovery Toolbox 0.5.21 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
   
   
@@ -19,25 +23,22 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Toolbox Settings" href="settings.html" />
@@ -68,7 +69,7 @@
             
             
               <div class="version">
-                0.5.18
+                0.5.21
               </div>
             
           
@@ -85,6 +86,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -110,6 +112,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -148,7 +151,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>cdt.metrics</li>
     
@@ -181,9 +184,9 @@ matrixes that represent the adjacency matrix or <cite>networkx.DiGraph</cite> in
 <code class="docutils literal notranslate"><span class="pre">prediction</span></code>, special care has to be given to the order of the nodes,
 as the type <cite>networkx.DiGraph</cite> does not retain node order.</p>
 </div>
-<dl class="function">
+<dl class="py function">
 <dt id="cdt.metrics.precision_recall">
-<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">precision_recall</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">prediction</em>, <em class="sig-param">low_confidence_undirected=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#precision_recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.precision_recall" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">precision_recall</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">prediction</span></em>, <em class="sig-param"><span class="n">low_confidence_undirected</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#precision_recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.precision_recall" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute precision-recall statistics for directed graphs.</p>
 <p>Precision recall statistics are useful to compare algorithms that make
 predictions with a confidence score. Using these statistics, performance
@@ -234,9 +237,9 @@ Default: False</p></li>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="cdt.metrics.SHD">
-<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">SHD</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">pred</em>, <em class="sig-param">double_for_anticausal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#SHD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.SHD" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">SHD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">pred</span></em>, <em class="sig-param"><span class="n">double_for_anticausal</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#SHD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.SHD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Structural Hamming Distance.</p>
 <p>The Structural Hamming Distance (SHD) is a standard distance to compare
 graphs by their adjacency matrix. It consists in computing the difference
@@ -277,9 +280,9 @@ mistakes. Default: True</p></li>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="cdt.metrics.SID">
-<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">SID</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">pred</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#SID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.SID" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cdt.metrics.</code><code class="sig-name descname">SID</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/metrics.html#SID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.metrics.SID" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Strutural Intervention Distance.</p>
 <p>[R wrapper] The Structural Intervention Distance (SID) is a new distance
 for graphs introduced by Peters and Bühlmann (2013). This distance was
@@ -347,11 +350,19 @@ Jonas Peters, Peter Bühlmann: <a class="reference external" href="https://arxiv
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -362,7 +373,6 @@ Jonas Peters, Peter Bühlmann: <a class="reference external" href="https://arxiv
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
