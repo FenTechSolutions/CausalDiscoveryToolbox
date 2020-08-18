@@ -109,7 +109,7 @@ jobs:
       - VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker pull fentechai/nv-cdt-base:20.07
-      - docker build -f nv-Dockerfile -t fentechai/nv-cdt:$VERSION_NEW .
+      - docker build --build-arg python=3.6 --build-arg spy=36  -f nv-Dockerfile -t fentechai/nv-cdt:$VERSION_NEW .
       - docker push fentechai/nv-cdt:$VERSION_NEW
       - docker tag fentechai/nv-cdt:$VERSION_NEW fentechai/nv-cdt:latest
       - docker push fentechai/nv-cdt:latest
