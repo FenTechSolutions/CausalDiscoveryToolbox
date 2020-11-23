@@ -55,7 +55,7 @@ class CausalPairGenerator(object):
 
     Example:
         >>> from cdt.data import CausalPairGenerator
-        >>> generator = ('linear')
+        >>> generator = CausalPairGenerator('linear')
         >>> data, labels = generator.generate(100, npoints=500)
         >>> generator.to_csv('generated_pairs')
     """
