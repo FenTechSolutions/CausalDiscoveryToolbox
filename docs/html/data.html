@@ -218,7 +218,7 @@ of the graph, defaults to a Gaussian Mixture model.</p></li>
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cdt.data</span> <span class="kn">import</span> <span class="n">CausalPairGenerator</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span> <span class="o">=</span> <span class="n">CausalPairGenerator</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">generator</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;generated_pairs&#39;</span><span class="p">)</span>
 </pre></div>
