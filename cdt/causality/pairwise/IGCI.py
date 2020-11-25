@@ -139,8 +139,8 @@ class IGCI(PairwiseModel):
         """
         a, b = dataset
         estimators = {'entropy': lambda x, y: eval_entropy(x) - eval_entropy(y), 'integral': integral_approx_estimator}
-        ref_measures = {'gaussian': lambda x: standard_scale.fit_transform(x.reshape((-1, 1))),
-                        'uniform': lambda x: min_max_scale.fit_transform(x.reshape((-1, 1))), 'None': lambda x: x}
+        ref_measures = {'gaussian': lambda x: standard_scale.fit_transform(x.reshape((-1, 1))).ravel(),
+                        'uniform': lambda x: min_max_scale.fit_transform(x.reshape((-1, 1))).ravel(), 'None': lambda x: x}
 
         ref_measure = ref_measures[ref_measure]
         _estimator = estimators[estimator]
