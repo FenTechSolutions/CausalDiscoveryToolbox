@@ -23,7 +23,7 @@
 library(methods)
 library(pcalg)
 
-dataset <- read.csv(file='{FOLDER}{FILE}', sep=",");
+dataset <- read.csv(file='{FOLDER}{FILE}', header=FALSE, sep=",");
 
 if({SKELETON}){
   fixedGaps <- read.csv(file='{FOLDER}{GAPS}', sep=",", header=FALSE) # NULL

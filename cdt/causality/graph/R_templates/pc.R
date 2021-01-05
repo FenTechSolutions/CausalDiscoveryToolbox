@@ -74,7 +74,7 @@ runPC <- function(X, suffStat, parentsOf, alpha, variableSelMat, setOptions,
   list(resList = result, resMat = pcmat)
 }
 
- dataset <- read.csv(file='{FOLDER}{FILE}', sep=",");
+ dataset <- read.csv(file='{FOLDER}{FILE}', header=FALSE, sep=",");
 
 variableSelMat = {SELMAT}  # NULL
 directed = {DIRECTED}  # TRUE

@@ -24,7 +24,7 @@
 library(sparsebn)
 library(MASS)
 
-dataset <- read.csv(file='{FOLDER}{FILE}', sep=",");
+dataset <- read.csv(file='{FOLDER}{FILE}', header=FALSE, sep=",");
 dat <- sparsebnData(as.matrix(dataset), type = "c");
 estDAG <- estimate.dag(data = dat);
 

@@ -23,7 +23,7 @@
 
 library(CAM)
 
-dataset <- read.csv(file='{FOLDER}{FILE}', sep=",");
+dataset <- read.csv(file='{FOLDER}{FILE}', header=FALSE, sep=",");
 estDAG <- CAM(dataset, scoreName = "{SCORE}", numCores = {NJOBS}, output = {VERBOSE},
               variableSel = {VARSEL}, variableSelMethod = {SELMETHOD}, pruning = {PRUNING},
               pruneMethod = {PRUNMETHOD}, pruneMethodPars = list(cutOffPVal = {CUTOFF}))
