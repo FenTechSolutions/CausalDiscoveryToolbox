@@ -173,7 +173,7 @@ class AcyclicGraphGenerator(object):
             if rescale:
                 self.data['V{}'.format(i)] = scale(self.data['V{}'.format(i)].values)
 
-        return self.data, self.g
+        return self.data, nx.relabel_nodes(self.g, {i:'V'+str(i) for i in self.g.nodes}, copy=True)
 
     def to_csv(self, fname_radical, **kwargs):
         """
