@@ -36,7 +36,9 @@ from sklearn.preprocessing import scale
 from .model import GraphModel
 from ...utils.parallel import parallel_run
 from ...utils.loss import notears_constr
-from ...utils.torch import ChannelBatchNorm1d, MatrixSampler, Linear3D
+from ...utils.torch import (ChannelBatchNorm1d, MatrixSampler,
+                            Linear3D, ParallelBatchNorm1d,
+                            SimpleMatrixConnection)
 from ...utils.Settings import SETTINGS
 
 
@@ -48,7 +50,7 @@ class SAM_generators(th.nn.Module):
 
         for channel in range(self.nb_vars):
             perm_matrix = skeleton[:, channel] * th.eye(data_shape[1],data_shape[1])
-            skeleton_list = [i for i in th.unbind(perm_matrix, 1) if len(th.nonzero(i)) > 0]
+            skeleton_list = [i for i in th.unbind(perm_matrix, 1) if th.count_nonzero(i) > 0]
             perm_matrix = th.stack(skeleton_list, 1) if len(skeleton_list)>0 else th.zeros(data_shape[1], 1)
             reshape_skeleton[channel, :, :perm_matrix.shape[1]] = perm_matrix
 
@@ -190,12 +192,9 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
             sampletype="sigmoidproba",
             dagstart=0, dagloss=False,
             dagpenalization=0.05, dagpenalization_increase=0.0,
-            categorical_threshold=50, use_filter=False,
-            filter_threshold=0.5, dag_threshold=0.5,
+            categorical_threshold=50,
             linear=False, numberHiddenLayersG=2, numberHiddenLayersD=2, idx=0):
 
-    d_str = "Epoch: {} -- Disc: {:.4f} --  Total: {:.4f} -- Gen: {:.4f} -- L1: {:.4f}"
-    # print("KLPenal:{}, fganLoss:{}".format(KLpenalization, fganLoss))
     list_nodes = list(in_data.columns)
     if is_mixed:
         onehotdata = []
@@ -217,8 +216,6 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
     data = th.from_numpy(data).to(device)
     if batch_size == -1:
         batch_size = data.shape[0]
-
-    lambda2_sauv = lambda2
 
     lambda1 = lambda1/data.shape[0]
     lambda2 = lambda2/data.shape[0]
@@ -331,7 +328,6 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
                     gen_loss = -th.mean(th.exp(disc_vars_g - 1), [0, 2]).sum()
 
             filters = graph_sampler.get_proba()
-
             struc_loss = lambda1*drawn_graph.sum()
 
             if linear :
@@ -342,7 +338,7 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
 
 
                 elif functionalComplexity=="l2_norm":
-                    l2_reg = th.tensor(0.).to(device)
+                    l2_reg = th.Tensor([0.]).to(device)
                     for param in sam.parameters():
                         l2_reg += th.norm(param)
 
@@ -352,14 +348,6 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
 
 
             # Optional: prune edges and sam parameters before dag search
-            if epoch == int(train*dagstart) and use_filter:
-                ones_tensor = th.ones(len(list_nodes),len(list_nodes))
-                zeros_tensor = th.zeros(len(list_nodes),len(list_nodes))
-                if not linear:
-                    skeleton = th.where(filters.cpu() > filter_threshold, ones_tensor, zeros_tensor)
-                sam.apply_filter(skeleton, (batch_size, cols), device)
-                graph_sampler.set_skeleton(skeleton.to(device))
-                g_optimizer = th.optim.Adam(list(sam.parameters()), lr=lr_gen)
 
             if dagloss and epoch > train * dagstart:
                 dag_constraint = notears_constr(filters*filters)
@@ -397,7 +385,7 @@ class SAM(GraphModel):
     independencies. the first version of SAM without DAG constraint is available
     as ``SAMv1``.
 
-    **Data Type:** Continuous, Mixed (Experimental)
+    **Data Type:** Continuous, (Mixed - Experimental)
 
     **Assumptions:** The class of generative models is not restricted with a
     hard contraint, but with soft constraints parametrized with the ``lambda1``
@@ -409,33 +397,39 @@ class SAM(GraphModel):
     Args:
         lr (float): Learning rate of the generators
         dlr (float): Learning rate of the discriminator
+        mixed_data (bool): Experimental -- Enable for mixed-type datasets
         lambda1 (float): L0 penalization coefficient on the causal filters
-        lambda2 (float): L0 penalization coefficient on the hidden units of the
+        lambda2 (float): L2 penalization coefficient on the weights of the
            neural network
         nh (int): Number of hidden units in the generators' hidden layers
            (regularized with lambda2)
-        dnh (int): Number of hidden units in the discriminator's hidden layer
+        dnh (int): Number of hidden units in the discriminator's hidden layers
         train_epochs (int): Number of training epochs
         test_epochs (int): Number of test epochs (saving and averaging
            the causal filters)
-        batch_size (int): Size of the batches to be fed to the SAM model.
-           Defaults to full-batch.
+        batch_size (int): Size of the batches to be fed to the SAM model
+           Defaults to full-batch
         losstype (str): type of the loss to be used (either 'fgan' (default),
-           'gan' or 'mse').
-        hlayers (int): Defines the number of hidden layers in the discriminator.
-        dagloss (bool): Activate the DAG with No-TEARS constraint.
+           'gan' or 'mse')
+        dagloss (bool): Activate the DAG with No-TEARS constraint
         dagstart (float): Controls when the DAG constraint is to be introduced
            in the training (float ranging from 0 to 1, 0 denotes the start of
-           the training and 1 the end).
-        dagpenalisation (float): Initial value of the DAG constraint.
+           the training and 1 the end)
+        dagpenalisation (float): Initial value of the DAG constraint
         dagpenalisation_increase (float): Increase incrementally at each epoch
-           the coefficient of the constraint.
-        linear (bool): If true, all generators are set to be linear generators.
-        nruns (int): Number of runs to be made for causal estimation.
-               Recommended: >=32 for optimal performance.
-        njobs (int): Numbers of jobs to be run in Parallel.
-               Recommended: 1 if no GPU available, 2*number of GPUs else.
-        gpus (int): Number of available GPUs for the algorithm.
+           the coefficient of the constraint
+        functional_complexity (str): Type of functional complexity penalization
+           (choose between 'l2_norm' and 'n_hidden_units')
+        hlayers (int): Defines the number of hidden layers in the generators
+        dhlayers (int): Defines the number of hidden layers in the discriminator
+        sampling_type (str): Type of sampling used in the structural gates of the
+           model (choose between 'sigmoid', 'sigmoid_proba' and 'gumble_proba')
+        linear (bool): If true, all generators are set to be linear generators
+        nruns (int): Number of runs to be made for causal estimation
+               Recommended: >=32 for optimal performance
+        njobs (int): Numbers of jobs to be run in Parallel
+               Recommended: 1 if no GPU available, 2*number of GPUs else
+        gpus (int): Number of available GPUs for the algorithm
         verbose (bool): verbose mode
 
     .. note::
@@ -465,14 +459,13 @@ class SAM(GraphModel):
     def __init__(self, lr=0.01, dlr=0.001, mixed_data=False,
                  lambda1=10, lambda2=0.001,
                  nh=20, dnh=200,
-                 train_epochs=3000, test_epochs=1000, batchsize=-1,
-                 losstype="fgan", dagstart=0.5, dagloss=True,
+                 train_epochs=3000, test_epochs=1000, batch_size=-1,
+                 losstype="fgan", dagloss=True, dagstart=0.5,
                  dagpenalization=0,
-                 dagpenalization_increase=0.01, use_filter=False,
-                 filter_threshold=.5,
+                 dagpenalization_increase=0.01,
                  functional_complexity='l2_norm', hlayers=2, dhlayers=2,
-                 sampling_type='sigmoidproba', linear=False,
-                 njobs=None, gpus=None, verbose=None, nruns=8):
+                 sampling_type='sigmoidproba', linear=False, nruns=8,
+                 njobs=None, gpus=None, verbose=None):
 
         """Init and parametrize the SAM model."""
         super(SAM, self).__init__()
@@ -485,19 +478,17 @@ class SAM(GraphModel):
         self.dnh = dnh
         self.train = train_epochs
         self.test = test_epochs
-        self.batchsize = batchsize
+        self.batch_size = batch_size
         self.dagstart = dagstart
         self.dagloss = dagloss
         self.dagpenalization = dagpenalization
         self.dagpenalization_increase = dagpenalization_increase
-        self.use_filter = use_filter
-        self.filter_threshold = filter_threshold
         self.losstype = losstype
         self.functionalComplexity = functional_complexity
         self.sampletype = sampling_type
         self.linear = linear
-        self.numberHiddenLayersD = hlayers
-        self.numberHiddenLayersG = dhlayers
+        self.numberHiddenLayersG = hlayers
+        self.numberHiddenLayersD = dhlayers
         self.njobs = SETTINGS.get_default(njobs=njobs)
         self.gpus = SETTINGS.get_default(gpu=gpus)
         self.verbose = SETTINGS.get_default(verbose=verbose)
@@ -529,13 +520,11 @@ class SAM(GraphModel):
                                lambda1=self.lambda1, lambda2=self.lambda2,
                                nh=self.nh, dnh=self.dnh,
                                train=self.train,
-                               test=self.test, batch_size=self.batchsize,
+                               test=self.test, batch_size=self.batch_size,
                                dagstart=self.dagstart,
                                dagloss=self.dagloss,
                                dagpenalization=self.dagpenalization,
                                dagpenalization_increase=self.dagpenalization_increase,
-                               use_filter=self.use_filter,
-                               filter_threshold=self.filter_threshold,
                                losstype=self.losstype,
                                functionalComplexity=self.functionalComplexity,
                                sampletype=self.sampletype,
@@ -552,13 +541,11 @@ class SAM(GraphModel):
                                    lambda1=self.lambda1, lambda2=self.lambda2,
                                    nh=self.nh, dnh=self.dnh,
                                    train=self.train,
-                                   test=self.test, batch_size=self.batchsize,
+                                   test=self.test, batch_size=self.batch_size,
                                    dagstart=self.dagstart,
                                    dagloss=self.dagloss,
                                    dagpenalization=self.dagpenalization,
                                    dagpenalization_increase=self.dagpenalization_increase,
-                                   use_filter=self.use_filter,
-                                   filter_threshold=self.filter_threshold,
                                    losstype=self.losstype,
                                    functionalComplexity=self.functionalComplexity,
                                    sampletype=self.sampletype,

@@ -30,7 +30,7 @@ import torch as th
 from torch.nn import Parameter
 from torch.nn.modules.batchnorm import _BatchNorm
 import torch.distributions.relaxed_bernoulli as relaxed_bernoulli
-from torch.distributions.transformed_distribution import  TransformedDistribution
+from torch.distributions.transformed_distribution import TransformedDistribution
 from torch.distributions.transforms import SigmoidTransform,AffineTransform
 from torch.distributions.uniform import Uniform
 
