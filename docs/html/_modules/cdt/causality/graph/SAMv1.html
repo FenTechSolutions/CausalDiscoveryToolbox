@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>cdt.causality.graph.SAMv1 &mdash; Causal Discovery Toolbox 0.5.22 documentation</title>
+  <title>cdt.causality.graph.SAMv1 &mdash; Causal Discovery Toolbox 0.5.23 documentation</title>
   
 
   
@@ -19,7 +19,10 @@
   
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
   
+
   
+  
+
   
 
   
@@ -32,7 +35,6 @@
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
@@ -67,7 +69,7 @@
             
             
               <div class="version">
-                0.5.22
+                0.5.23
               </div>
             
           
@@ -130,6 +132,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -399,7 +403,6 @@
         <span class="n">activation_function</span><span class="o">=</span><span class="n">th</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">,</span>
         <span class="n">activation_argument</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;activation_function&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_function</span>
-
     <span class="n">sam</span> <span class="o">=</span> <span class="n">sam</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     <span class="n">discriminator_sam</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -440,12 +443,8 @@
                 <span class="c1"># 1. Train discriminator on fake</span>
                 <span class="n">disc_output_detached</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span>
                     <span class="n">generator_output</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
-                <span class="n">disc_output</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span><span class="n">generator_output</span><span class="p">)</span>
                 <span class="n">disc_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">criterion</span><span class="p">(</span><span class="n">disc_output_detached</span><span class="p">,</span> <span class="n">false_variable</span><span class="p">))</span>
-
-                <span class="c1"># 2. Train the generator :</span>
-                <span class="n">gen_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">criterion</span><span class="p">(</span><span class="n">disc_output</span><span class="p">,</span> <span class="n">true_variable</span><span class="p">))</span>
 
             <span class="n">true_output</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
             <span class="n">adv_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">disc_losses</span><span class="p">)</span><span class="o">/</span><span class="n">cols</span> <span class="o">+</span> \
@@ -454,6 +453,17 @@
 
             <span class="n">adv_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
             <span class="n">d_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">g_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+                <span class="n">generator_output</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">v</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="n">batch_vectors</span><span class="p">[:</span> <span class="n">i</span><span class="p">],</span> <span class="p">[</span>
+                    <span class="n">generated_variables</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                    <span class="n">batch_vectors</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># 1. Train discriminator on fake</span>
+                <span class="n">disc_output</span> <span class="o">=</span> <span class="n">discriminator_sam</span><span class="p">(</span><span class="n">generator_output</span><span class="p">)</span>
+
+                <span class="c1"># 2. Train the generator :</span>
+                <span class="n">gen_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">criterion</span><span class="p">(</span><span class="n">disc_output</span><span class="p">,</span> <span class="n">true_variable</span><span class="p">))</span>
 
             <span class="c1"># 3. Compute filter regularization</span>
             <span class="n">filters</span> <span class="o">=</span> <span class="n">th</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
@@ -611,28 +621,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+        &#169; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

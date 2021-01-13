@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>PyTorch Models &mdash; Causal Discovery Toolbox 0.5.22 documentation</title>
+  <title>PyTorch Models &mdash; Causal Discovery Toolbox 0.5.23 documentation</title>
   
 
   
@@ -19,7 +19,10 @@
   
     <link rel="shortcut icon" href="_static/favicon.png"/>
   
+
   
+  
+
   
 
   
@@ -32,7 +35,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
@@ -69,7 +71,7 @@
             
             
               <div class="version">
-                0.5.22
+                0.5.23
               </div>
             
           
@@ -154,6 +156,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -165,7 +169,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/models.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -259,74 +263,32 @@ outputs a batch of generated data of size batch_size.</p>
 <h2>SAM<a class="headerlink" href="#sam" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="cdt.causality.graph.model.SAM_generators">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_generators</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_shape</span></em>, <em class="sig-param"><span class="n">nh</span></em>, <em class="sig-param"><span class="n">skeleton</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">linear</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensemble of all the SAM generators.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_shape</strong> (<em>tuple</em>) – Shape of the true data</p></li>
-<li><p><strong>nh</strong> (<em>int</em>) – Initial number of hidden units in the hidden layers</p></li>
-<li><p><strong>skeleton</strong> (<em>numpy.ndarray</em>) – Initial skeleton, defaults to a fully connected graph</p></li>
-<li><p><strong>linear</strong> (<em>bool</em>) – Enables the linear variant</p></li>
-</ul>
-</dd>
-</dl>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_generators</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_shape</span></em>, <em class="sig-param"><span class="n">nh</span></em>, <em class="sig-param"><span class="n">skeleton</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cat_sizes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">linear</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">numberHiddenLayersG</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensemble of all the generators.</p>
 <dl class="py method">
 <dt id="cdt.causality.graph.model.SAM_generators.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">noise</span></em>, <em class="sig-param"><span class="n">adj_matrix</span></em>, <em class="sig-param"><span class="n">drawn_neurons</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">adj_matrix</span></em>, <em class="sig-param"><span class="n">drawn_neurons</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_generators.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_generators.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forward through all the generators.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>torch.Tensor</em>) – True data</p></li>
-<li><p><strong>noise</strong> (<em>torch.Tensor</em>) – Samples of noise variables</p></li>
-<li><p><strong>adj_matrix</strong> (<em>torch.Tensor</em>) – Sampled adjacency matrix</p></li>
-<li><p><strong>drawn_neurons</strong> (<em>torch.Tensor</em>) – Sampled matrix of active neurons</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Batch of generated data</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="cdt.causality.graph.model.SAM_discriminator">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_discriminator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nfeatures</span></em>, <em class="sig-param"><span class="n">dnh</span></em>, <em class="sig-param"><span class="n">hlayers</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">mask</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_discriminator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_discriminator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.model.</code><code class="sig-name descname">SAM_discriminator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nfeatures</span></em>, <em class="sig-param"><span class="n">dnh</span></em>, <em class="sig-param"><span class="n">numberHiddenLayersD</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">mask</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_discriminator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_discriminator" title="Permalink to this definition">¶</a></dt>
 <dd><p>SAM discriminator.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nfeatures</strong> (<em>int</em>) – Number of variables in the dataset</p></li>
-<li><p><strong>dnh</strong> (<em>int</em>) – Number of hidden units in the hidden layers</p></li>
-<li><p><strong>hlayers</strong> (<em>int</em>) – Number of hidden layers</p></li>
-<li><p><strong>mask</strong> (<em>numpy.ndarray</em>) – Mask of connections to ignore</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt id="cdt.causality.graph.model.SAM_discriminator.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em>, <em class="sig-param"><span class="n">obs_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM_discriminator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.model.SAM_discriminator.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward pass in the discriminator.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>torch.Tensor</em>) – True Data or generated data</p></li>
-<li><p><strong>obs_data</strong> (<em>torch.Tensor</em>) – True data in the case of <cite>input=generated</cite> for padding.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Output of the discriminator</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -492,37 +454,29 @@ outputs a batch of generated data of size batch_size.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="developer.html" class="btn btn-neutral float-right" title="Developer Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="settings.html" class="btn btn-neutral float-left" title="Toolbox Settings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="developer.html" class="btn btn-neutral float-right" title="Developer Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="settings.html" class="btn btn-neutral float-left" title="Toolbox Settings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+        &#169; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

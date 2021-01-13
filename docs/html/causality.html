@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.22 documentation</title>
+  <title>cdt.causality &mdash; Causal Discovery Toolbox 0.5.23 documentation</title>
   
 
   
@@ -19,7 +19,10 @@
   
     <link rel="shortcut icon" href="_static/favicon.png"/>
   
+
   
+  
+
   
 
   
@@ -32,7 +35,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
     
@@ -69,7 +71,7 @@
             
             
               <div class="version">
-                0.5.22
+                0.5.23
               </div>
             
           
@@ -181,6 +183,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -192,7 +196,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/causality.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -2373,13 +2377,13 @@ the graph).</p>
 <h3><span class="hidden-section">SAM</span><a class="headerlink" href="#sam" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="cdt.causality.graph.SAM">
-<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">SAM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lr</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">dlr</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">lambda1</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">lambda2</span><span class="o">=</span><span class="default_value">1e-05</span></em>, <em class="sig-param"><span class="n">nh</span><span class="o">=</span><span class="default_value">200</span></em>, <em class="sig-param"><span class="n">dnh</span><span class="o">=</span><span class="default_value">200</span></em>, <em class="sig-param"><span class="n">train_epochs</span><span class="o">=</span><span class="default_value">10000</span></em>, <em class="sig-param"><span class="n">test_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">batchsize</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">losstype</span><span class="o">=</span><span class="default_value">'fgan'</span></em>, <em class="sig-param"><span class="n">dagstart</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">dagloss</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dagpenalization</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">dagpenalization_increase</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">linear</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">hlayers</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">njobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gpus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nruns</span><span class="o">=</span><span class="default_value">8</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cdt.causality.graph.</code><code class="sig-name descname">SAM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lr</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">dlr</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">mixed_data</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">lambda1</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">lambda2</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">nh</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">dnh</span><span class="o">=</span><span class="default_value">200</span></em>, <em class="sig-param"><span class="n">train_epochs</span><span class="o">=</span><span class="default_value">3000</span></em>, <em class="sig-param"><span class="n">test_epochs</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">losstype</span><span class="o">=</span><span class="default_value">'fgan'</span></em>, <em class="sig-param"><span class="n">dagloss</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dagstart</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">dagpenalization</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">dagpenalization_increase</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">functional_complexity</span><span class="o">=</span><span class="default_value">'l2_norm'</span></em>, <em class="sig-param"><span class="n">hlayers</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">dhlayers</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">sampling_type</span><span class="o">=</span><span class="default_value">'sigmoidproba'</span></em>, <em class="sig-param"><span class="n">linear</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">nruns</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">njobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gpus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cdt/causality/graph/SAM.html#SAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cdt.causality.graph.SAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>SAM Algorithm.</p>
 <p><strong>Description:</strong> Structural Agnostic Model is an causal discovery algorithm
 for DAG recovery leveraging both distributional asymetries and conditional
 independencies. the first version of SAM without DAG constraint is available
 as <code class="docutils literal notranslate"><span class="pre">SAMv1</span></code>.</p>
-<p><strong>Data Type:</strong> Continuous</p>
+<p><strong>Data Type:</strong> Continuous, (Mixed - Experimental)</p>
 <p><strong>Assumptions:</strong> The class of generative models is not restricted with a
 hard contraint, but with soft constraints parametrized with the <code class="docutils literal notranslate"><span class="pre">lambda1</span></code>
 and <code class="docutils literal notranslate"><span class="pre">lambda2</span></code> parameters, with gumbel softmax sampling. This algorithms greatly
@@ -2391,33 +2395,39 @@ thresholding as the output is averaged over multiple runs.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lr</strong> (<em>float</em>) – Learning rate of the generators</p></li>
 <li><p><strong>dlr</strong> (<em>float</em>) – Learning rate of the discriminator</p></li>
+<li><p><strong>mixed_data</strong> (<em>bool</em>) – Experimental – Enable for mixed-type datasets</p></li>
 <li><p><strong>lambda1</strong> (<em>float</em>) – L0 penalization coefficient on the causal filters</p></li>
-<li><p><strong>lambda2</strong> (<em>float</em>) – L0 penalization coefficient on the hidden units of the
+<li><p><strong>lambda2</strong> (<em>float</em>) – L2 penalization coefficient on the weights of the
 neural network</p></li>
 <li><p><strong>nh</strong> (<em>int</em>) – Number of hidden units in the generators’ hidden layers
 (regularized with lambda2)</p></li>
-<li><p><strong>dnh</strong> (<em>int</em>) – Number of hidden units in the discriminator’s hidden layer</p></li>
+<li><p><strong>dnh</strong> (<em>int</em>) – Number of hidden units in the discriminator’s hidden layers</p></li>
 <li><p><strong>train_epochs</strong> (<em>int</em>) – Number of training epochs</p></li>
 <li><p><strong>test_epochs</strong> (<em>int</em>) – Number of test epochs (saving and averaging
 the causal filters)</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model.
-Defaults to full-batch.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Size of the batches to be fed to the SAM model
+Defaults to full-batch</p></li>
 <li><p><strong>losstype</strong> (<em>str</em>) – type of the loss to be used (either ‘fgan’ (default),
-‘gan’ or ‘mse’).</p></li>
-<li><p><strong>hlayers</strong> (<em>int</em>) – Defines the number of hidden layers in the discriminator.</p></li>
-<li><p><strong>dagloss</strong> (<em>bool</em>) – Activate the DAG with No-TEARS constraint.</p></li>
+‘gan’ or ‘mse’)</p></li>
+<li><p><strong>dagloss</strong> (<em>bool</em>) – Activate the DAG with No-TEARS constraint</p></li>
 <li><p><strong>dagstart</strong> (<em>float</em>) – Controls when the DAG constraint is to be introduced
 in the training (float ranging from 0 to 1, 0 denotes the start of
-the training and 1 the end).</p></li>
-<li><p><strong>dagpenalisation</strong> (<em>float</em>) – Initial value of the DAG constraint.</p></li>
+the training and 1 the end)</p></li>
+<li><p><strong>dagpenalisation</strong> (<em>float</em>) – Initial value of the DAG constraint</p></li>
 <li><p><strong>dagpenalisation_increase</strong> (<em>float</em>) – Increase incrementally at each epoch
-the coefficient of the constraint.</p></li>
-<li><p><strong>linear</strong> (<em>bool</em>) – If true, all generators are set to be linear generators.</p></li>
-<li><p><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation.
-Recommended: &gt;=8 for optimal performance.</p></li>
-<li><p><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel.
-Recommended: 1 if no GPU available, 2*number of GPUs else.</p></li>
-<li><p><strong>gpus</strong> (<em>int</em>) – Number of available GPUs for the algorithm.</p></li>
+the coefficient of the constraint</p></li>
+<li><p><strong>functional_complexity</strong> (<em>str</em>) – Type of functional complexity penalization
+(choose between ‘l2_norm’ and ‘n_hidden_units’)</p></li>
+<li><p><strong>hlayers</strong> (<em>int</em>) – Defines the number of hidden layers in the generators</p></li>
+<li><p><strong>dhlayers</strong> (<em>int</em>) – Defines the number of hidden layers in the discriminator</p></li>
+<li><p><strong>sampling_type</strong> (<em>str</em>) – Type of sampling used in the structural gates of the
+model (choose between ‘sigmoid’, ‘sigmoid_proba’ and ‘gumble_proba’)</p></li>
+<li><p><strong>linear</strong> (<em>bool</em>) – If true, all generators are set to be linear generators</p></li>
+<li><p><strong>nruns</strong> (<em>int</em>) – Number of runs to be made for causal estimation
+Recommended: &gt;=32 for optimal performance</p></li>
+<li><p><strong>njobs</strong> (<em>int</em>) – Numbers of jobs to be run in Parallel
+Recommended: 1 if no GPU available, 2*number of GPUs else</p></li>
+<li><p><strong>gpus</strong> (<em>int</em>) – Number of available GPUs for the algorithm</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – verbose mode</p></li>
 </ul>
 </dd>
@@ -2565,37 +2575,29 @@ of the ith variable for the jth generator.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="independence.html" class="btn btn-neutral float-right" title="cdt.independence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tutorial_2.html" class="btn btn-neutral float-left" title="Advanced Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="independence.html" class="btn btn-neutral float-right" title="cdt.independence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorial_2.html" class="btn btn-neutral float-left" title="Advanced Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2018, Diviyan Kalainathan, Olivier Goudet
+        &#169; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
