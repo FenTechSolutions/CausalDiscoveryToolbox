@@ -6,11 +6,6 @@ ARG python
 RUN mkdir -p /CDT
 COPY . /CDT
 RUN cd /CDT && \
-    apt-get update --allow-unauthenticated && \
-    apt-get -q install "python3.6" "python3.6-dev" -y
-RUN apt-get -q install python3-pip python3-setuptools -y && \
-    rm /usr/bin/python3 && ln -s /usr/bin/python3.6 /usr/bin/python3
-RUN cd /CDT && \
     python3 -m pip install -r requirements.txt && \
     python3 -m pip install pytest pytest-cov && \
     python3 -m pip install codecov && \

@@ -7,6 +7,7 @@ ARG spy
 RUN mkdir -p /CDT
 COPY . /CDT
 RUN cd /CDT && \
+    add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update --allow-unauthenticated && \
     apt-get -q install "python${python}" "python${python}-dev" python3-pip python3-setuptools -y && \
     rm /usr/bin/python3 && ln -s /usr/bin/python${python} /usr/bin/python3 && \
