@@ -228,7 +228,6 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
         activation_function=th.nn.LeakyReLU,
         activation_argument=0.2, **kwargs)
     kwargs["activation_function"] = activation_function
-
     sam = sam.to(device)
     discriminator_sam = discriminator_sam.to(device)
     data = data.to(device)
@@ -269,12 +268,8 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
                 # 1. Train discriminator on fake
                 disc_output_detached = discriminator_sam(
                     generator_output.detach())
-                disc_output = discriminator_sam(generator_output)
                 disc_losses.append(
                     criterion(disc_output_detached, false_variable))
-
-                # 2. Train the generator :
-                gen_losses.append(criterion(disc_output, true_variable))
 
             true_output = discriminator_sam(batch)
             adv_loss = sum(disc_losses)/cols + \
@@ -283,6 +278,17 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
 
             adv_loss.backward()
             d_optimizer.step()
+            g_optimizer.zero_grad()
+
+            for i in range(cols):
+                generator_output = th.cat([v for c in [batch_vectors[: i], [
+                    generated_variables[i]],
+                    batch_vectors[i + 1:]] for v in c], 1)
+                # 1. Train discriminator on fake
+                disc_output = discriminator_sam(generator_output)
+
+                # 2. Train the generator :
+                gen_losses.append(criterion(disc_output, true_variable))
 
             # 3. Compute filter regularization
             filters = th.stack(
