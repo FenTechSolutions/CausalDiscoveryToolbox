@@ -62,6 +62,7 @@ def test_SAMv1():
 
 if __name__ == "__main__":
     test_SAM()
+    test_SAMv1()
     # test_directed()
     # test_undirected()
     # test_graph()
