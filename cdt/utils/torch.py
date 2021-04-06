@@ -360,26 +360,26 @@ class Linear3D(th.nn.Module):
 
     def forward(self, input, adj_matrix=None, permutation_matrix=None):
 
-        input_ = [input]
+        input_ = input
 
         if input.dim() == 2:
             if permutation_matrix is not None:
-                input_.append(input.unsqueeze(1).expand([input.shape[0], self.channels, permutation_matrix.shape[1]]))
+                input_ = input.unsqueeze(1).expand([input.shape[0], self.channels, permutation_matrix.shape[1]])
             elif hasattr(self, "noise"):
-                input_.append(input.unsqueeze(1).expand([input.shape[0], self.channels, self.in_features - 1 ]))
+                input_ = input.unsqueeze(1).expand([input.shape[0], self.channels, self.in_features - 1 ])
             else:
-                input_.append(input.unsqueeze(1).expand([input.shape[0], self.channels, self.in_features]))
+                input_ = input.unsqueeze(1).expand([input.shape[0], self.channels, self.in_features])
 
         if adj_matrix is not None and permutation_matrix is not None:
-            input_.append((input_[-1].transpose(0, 1) @ (adj_matrix.t().unsqueeze(2) * permutation_matrix)).transpose(0, 1))
+            input_ = (input_[-1].transpose(0, 1) @ (adj_matrix.t().unsqueeze(2) * permutation_matrix)).transpose(0, 1)
         elif adj_matrix is not None:
-            input_.append(input_[-1] * adj_matrix.t().unsqueeze(0))
+            input_ = input_[-1] * adj_matrix.t().unsqueeze(0)
         elif permutation_matrix is not None:
-            input_.append((input_[-1].transpose(0, 1) @ permutation_matrix).t())
+            input_ = (input_[-1].transpose(0, 1) @ permutation_matrix).t()
 
         if hasattr(self, 'noise'):
             self.noise.normal_()
-            input_.append(th.cat([input_[-1], self.noise], 2))
+            input_ = th.cat([input_[-1], self.noise], 2)
 
         return functional_linear3d(input_[-1], self.weight, self.bias)
 

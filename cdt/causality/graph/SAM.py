@@ -188,7 +188,7 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
             train=10000, test=1,
             batch_size=-1, lr_gen=.001,
             lr_disc=.01, lambda1=0.001, lambda2=0.0000001, nh=None, dnh=None,
-            verbose=True, losstype="fgan", functionalComplexity="n_hidden_units",
+            verbose=True, losstype="fgan",
             sampletype="sigmoidproba",
             dagstart=0, dagloss=False,
             dagpenalization=0.05, dagpenalization_increase=0.0,
@@ -256,9 +256,6 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
 
     graph_optimizer = th.optim.Adam(graph_sampler.parameters(), lr=lr_gen)
 
-    if not linear and functionalComplexity=="n_hidden_units":
-        neuron_sampler = MatrixSampler((nh, len(list_nodes)), mask=False, gumble=True).to(device)
-        neuron_optimizer = th.optim.Adam(list(neuron_sampler.parameters()),lr=lr_gen)
 
     _true = th.ones(1).to(device)
     _false = th.zeros(1).to(device)
@@ -282,14 +279,8 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
 
             drawn_graph = graph_sampler()
 
-            if not linear and functionalComplexity=="n_hidden_units":
-                drawn_neurons = neuron_sampler()
 
-
-            if linear or functionalComplexity!="n_hidden_units":
-                generated_variables = sam(batch, drawn_graph)
-            else:
-                generated_variables = sam(batch, drawn_graph, drawn_neurons)
+            generated_variables = sam(batch, drawn_graph)
 
             if losstype != "mse":
                 disc_vars_d = discriminator(generated_variables.detach(), batch)
@@ -311,8 +302,6 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
             g_optimizer.zero_grad()
             graph_optimizer.zero_grad()
 
-            if not linear and functionalComplexity=="n_hidden_units":
-                neuron_optimizer.zero_grad()
 
             if losstype == "mse":
                 gen_loss = criterion(generated_variables, batch)
@@ -332,17 +321,12 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
 
             if linear :
                 func_loss = 0
-            else :
-                if functionalComplexity=="n_hidden_units":
-                    func_loss = lambda2*drawn_neurons.sum()
+            else:
+                l2_reg = th.Tensor([0.]).to(device)
+                for param in sam.parameters():
+                    l2_reg += th.norm(param)
 
-
-                elif functionalComplexity=="l2_norm":
-                    l2_reg = th.Tensor([0.]).to(device)
-                    for param in sam.parameters():
-                        l2_reg += th.norm(param)
-
-                    func_loss = lambda2*l2_reg
+                func_loss = lambda2*l2_reg
 
             regul_loss = struc_loss + func_loss
 
@@ -370,8 +354,6 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
 
             g_optimizer.step()
             graph_optimizer.step()
-            if not linear and functionalComplexity=="n_hidden_units":
-                neuron_optimizer.step()
 
     return output.div_(test).cpu().numpy()
     # Evaluate total effect with final DAG
@@ -418,8 +400,6 @@ class SAM(GraphModel):
         dagpenalisation (float): Initial value of the DAG constraint
         dagpenalisation_increase (float): Increase incrementally at each epoch
            the coefficient of the constraint
-        functional_complexity (str): Type of functional complexity penalization
-           (choose between 'l2_norm' and 'n_hidden_units')
         hlayers (int): Defines the number of hidden layers in the generators
         dhlayers (int): Defines the number of hidden layers in the discriminator
         sampling_type (str): Type of sampling used in the structural gates of the
@@ -463,7 +443,7 @@ class SAM(GraphModel):
                  losstype="fgan", dagloss=True, dagstart=0.5,
                  dagpenalization=0,
                  dagpenalization_increase=0.01,
-                 functional_complexity='l2_norm', hlayers=2, dhlayers=2,
+                 hlayers=2, dhlayers=2,
                  sampling_type='sigmoidproba', linear=False, nruns=8,
                  njobs=None, gpus=None, verbose=None):
 
@@ -484,7 +464,6 @@ class SAM(GraphModel):
         self.dagpenalization = dagpenalization
         self.dagpenalization_increase = dagpenalization_increase
         self.losstype = losstype
-        self.functionalComplexity = functional_complexity
         self.sampletype = sampling_type
         self.linear = linear
         self.numberHiddenLayersG = hlayers
@@ -494,7 +473,7 @@ class SAM(GraphModel):
         self.verbose = SETTINGS.get_default(verbose=verbose)
         self.nruns = nruns
 
-    def predict(self, data, graph=None,
+    def predict(self, data, blacklist=None,
                 return_list_results=False):
         """Execute SAM on a dataset given a skeleton or not.
 
@@ -506,9 +485,18 @@ class SAM(GraphModel):
             networkx.DiGraph: Graph estimated by SAM, where A[i,j] is the term
             of the ith variable for the jth generator.
         """
-        if graph is not None:
-            skeleton = th.Tensor(nx.adjacency_matrix(graph,
-                                                     nodelist=list(data.columns)).todense())
+        if blacklist is not None:
+            if isinstance(blacklist, nx.Graph):
+                skeleton = nx.adjacency_matrix(blacklist,
+                                               nodelist=list(data.columns)).todense()
+            elif isinstance(blacklist, pd.DataFrame):
+                skeleton = blacklist[data.columns].values
+            elif isinstance(blacklist, np.ndarray):
+                skeleton = blacklist
+            else:
+                raise ValueError('Unsupported type ! Fill an array-like or graph')
+
+
         else:
             skeleton = None
 
@@ -526,7 +514,6 @@ class SAM(GraphModel):
                                dagpenalization=self.dagpenalization,
                                dagpenalization_increase=self.dagpenalization_increase,
                                losstype=self.losstype,
-                               functionalComplexity=self.functionalComplexity,
                                sampletype=self.sampletype,
                                linear=self.linear,
                                numberHiddenLayersD=self.numberHiddenLayersD,
@@ -547,7 +534,6 @@ class SAM(GraphModel):
                                    dagpenalization=self.dagpenalization,
                                    dagpenalization_increase=self.dagpenalization_increase,
                                    losstype=self.losstype,
-                                   functionalComplexity=self.functionalComplexity,
                                    sampletype=self.sampletype,
                                    linear=self.linear,
                                    numberHiddenLayersD=self.numberHiddenLayersD,
