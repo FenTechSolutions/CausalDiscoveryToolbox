@@ -360,8 +360,6 @@ class Linear3D(th.nn.Module):
 
     def forward(self, input, adj_matrix=None, permutation_matrix=None):
 
-        input_ = input
-
         if input.dim() == 2:
             if permutation_matrix is not None:
                 input_ = input.unsqueeze(1).expand([input.shape[0], self.channels, permutation_matrix.shape[1]])
