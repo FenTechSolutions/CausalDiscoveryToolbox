@@ -367,6 +367,8 @@ class Linear3D(th.nn.Module):
                 input_ = input.unsqueeze(1).expand([input.shape[0], self.channels, self.in_features - 1 ])
             else:
                 input_ = input.unsqueeze(1).expand([input.shape[0], self.channels, self.in_features])
+        else:
+            input_ = input
 
         if adj_matrix is not None and permutation_matrix is not None:
             input_ = (input_.transpose(0, 1) @ (adj_matrix.t().unsqueeze(2) * permutation_matrix)).transpose(0, 1)
