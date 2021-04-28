@@ -371,17 +371,17 @@ class Linear3D(th.nn.Module):
                 input_ = input.unsqueeze(1).expand([input.shape[0], self.channels, self.in_features])
 
         if adj_matrix is not None and permutation_matrix is not None:
-            input_ = (input_[-1].transpose(0, 1) @ (adj_matrix.t().unsqueeze(2) * permutation_matrix)).transpose(0, 1)
+            input_ = (input_.transpose(0, 1) @ (adj_matrix.t().unsqueeze(2) * permutation_matrix)).transpose(0, 1)
         elif adj_matrix is not None:
-            input_ = input_[-1] * adj_matrix.t().unsqueeze(0)
+            input_ = input_ * adj_matrix.t().unsqueeze(0)
         elif permutation_matrix is not None:
-            input_ = (input_[-1].transpose(0, 1) @ permutation_matrix).t()
+            input_ = (input_.transpose(0, 1) @ permutation_matrix).t()
 
         if hasattr(self, 'noise'):
             self.noise.normal_()
-            input_ = th.cat([input_[-1], self.noise], 2)
+            input_ = th.cat([input_, self.noise], 2)
 
-        return functional_linear3d(input_[-1], self.weight, self.bias)
+        return functional_linear3d(input_, self.weight, self.bias)
 
     def extra_repr(self):
         return 'in_features={}, out_features={}, bias={}'.format(
