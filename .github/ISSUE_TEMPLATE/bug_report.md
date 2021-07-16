@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Encountering a bug while using this package may occur. In order to fix the said bug and improve all users’ experience, it is highly recommended to submit a bug report on the GitHub issue tracker: https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/issues
+Encountering a bug while using this package may occur. In order to fix the said bug and improve all users’ experience, it is highly recommended to submit a bug report on the GitHub issue tracker: https://github.com/FenTechSolutions/CausalDiscoveryToolbox/issues
 
 **Describe the bug**
 A clear and concise description of what the bug is.

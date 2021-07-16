@@ -38,7 +38,7 @@ Check out their website to install the PyTorch version suited to your hardware c
 
 ## Install the CausalDiscoveryToolboxPackage
 ```sh
-$ git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git  # Download the package 
+$ git clone https://github.com/FenTechSolutions/CausalDiscoveryToolbox.git  # Download the package 
 $ cd CausalDiscoveryToolbox
 $ pip install -r requirements.txt  # Install the requirements
 $ python setup.py install develop --user
@@ -49,13 +49,13 @@ From now on, you can import the library using :
 ```python
 import cdt
 ```
-Check out the package structure and more info on the package itself [here](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/documentation.md).  
+Check out the package structure and more info on the package itself [here](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/documentation.md).  
 
 ## Additional : R and R libraries
 In order to have access to additional algorithms from various R packages such as bnlearn, kpcalg, pcalg, ... while using the _cdt_ framework, it is required to install R.
 
 Using bioconductor (https://www.bioconductor.org/) might be an easier alternative to install all packages.
-Check out the [r-requirements file](https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox/blob/master/r_requirements.txt) to see all the packages used by the toolbox.
+Check out the [r-requirements file](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/r_requirements.txt) to see all the packages used by the toolbox.
 
 <!-- python>=3.5 -->
 
@@ -66,7 +66,7 @@ Check out the [r-requirements file](https://github.com/Diviyan-Kalainathan/Causa
 
 <!-- Get source code -->
 <!-- ``` -->
-<!-- git clone https://github.com/Diviyan-Kalainathan/CausalDiscoveryToolbox.git -->
+<!-- git clone https://github.com/FenTechSolutions/CausalDiscoveryToolbox.git -->
 <!-- ``` -->
 
 <!-- Setup python package -->
