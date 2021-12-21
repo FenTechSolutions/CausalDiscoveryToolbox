@@ -137,13 +137,13 @@ class GES(GraphModel):
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
         self.arguments['{SCORE}'] = self.scores[self.score]
 
-        fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
+        fe = DataFrame(nx.adjacency_matrix(graph, nodelist=sorted(graph.nodes()), weight=None).todense())
         fg = DataFrame(1 - fe.values)
 
         results = self._run_ges(data, fixedGaps=fg, verbose=self.verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
-                                {idx: i for idx, i in enumerate(data.columns)})
+                                {idx: i for idx, i in enumerate(sorted(data.columns))})
 
     def orient_directed_graph(self, data, graph):
         """Run GES on a directed graph.
