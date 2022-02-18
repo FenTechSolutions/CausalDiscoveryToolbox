@@ -210,7 +210,7 @@ def run_SAM(df_data, skeleton=None, device=None, **kwargs):
     # Get the list of indexes to ignore
     if skeleton is not None:
         zero_components = [[] for i in range(cols)]
-        skel = nx.adj_matrix(skeleton, weight=None)
+        skel = nx.adjacency_matrix(skeleton, weight=None, nodelist=sorted(skeleton.nodes()))
         for i, j in zip(*((1-skel).nonzero())):
             zero_components[j].append(i)
     else:
@@ -427,7 +427,7 @@ class SAMv1(GraphModel):
             W /= self.nruns
         return nx.relabel_nodes(nx.DiGraph(W),
                                 {idx: i for idx,
-                                 i in enumerate(data.columns)})
+                                 i in enumerate(sorted(data.columns))})
 
     def orient_directed_graph(self, *args, **kwargs):
         """Orient a (partially directed) graph."""

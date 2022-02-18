@@ -232,13 +232,13 @@ class PC(GraphModel):
         self.arguments['{NJOBS}'] = str(self.njobs)
         self.arguments['{VERBOSE}'] = str(self.verbose).upper()
 
-        fe = DataFrame(nx.adj_matrix(graph, weight=None).todense())
+        fe = DataFrame(nx.adjacency_matrix(graph, nodelist=sorted(graph.nodes()), weight=None).todense())
         fg = DataFrame(1 - fe.values)
 
         results = self._run_pc(data, fixedEdges=fe, fixedGaps=fg, verbose=self.verbose)
 
         return nx.relabel_nodes(nx.DiGraph(results),
-                                {idx: i for idx, i in enumerate(data.columns)})
+                                {idx: i for idx, i in enumerate(sorted(data.columns))})
 
     def orient_directed_graph(self, data, graph, *args, **kwargs):
         """Run PC on a directed_graph (Only takes account of the skeleton of
