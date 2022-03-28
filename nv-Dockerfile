@@ -1,4 +1,4 @@
-FROM fentechai/nv-cdt-env-base:21.01
+FROM fentechai/nv-cdt-env-base:22.02
 MAINTAINER Diviyan Kalainathan <diviyan@lri.fr>
 LABEL description="Nvidia Docker image for the Causal Discovery Toolbox"
 ARG python
