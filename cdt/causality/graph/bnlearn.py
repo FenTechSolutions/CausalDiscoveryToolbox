@@ -118,7 +118,7 @@ class BNlearnAlgorithm(GraphModel):
     """
 
     def __init__(self, score='NULL', alpha=0.05, beta='NULL',
-                 optim=False, verbose=None):
+                 optim=False, verbose=None, algorithm=None):
         """Init the model."""
         if not RPackages.bnlearn:
             raise ImportError("R Package bnlearn is not available.")
@@ -126,7 +126,7 @@ class BNlearnAlgorithm(GraphModel):
         self.arguments = {'{FOLDER}': '/tmp/cdt_bnlearn/',
                           '{FILE}': os.sep + 'data.csv',
                           '{SKELETON}': 'FALSE',
-                          '{ALGORITHM}': None,
+                          '{ALGORITHM}': algorithm,
                           '{WHITELIST}': os.sep + 'whitelist.csv',
                           '{BLACKLIST}': os.sep + 'blacklist.csv',
                           '{SCORE}': 'NULL',
@@ -312,10 +312,11 @@ class GS(BNlearnAlgorithm):
         >>> plt.show()
     """
 
-    def __init__(self):
+    def __init__(self, score='NULL', alpha=0.05, beta='NULL',
+                 optim=False, verbose=None):
         """Init the model."""
-        super(GS, self).__init__()
-        self.arguments['{ALGORITHM}'] = 'gs'
+        super(GS, self).__init__(score='NULL', alpha=0.05, beta='NULL',
+                                 optim=False, verbose=None, algorithm="gs")
 
 
 class IAMB(BNlearnAlgorithm):
@@ -334,7 +335,7 @@ class IAMB(BNlearnAlgorithm):
     with additional assumptions depending on the conditional test used.
 
     .. note::
-       Tsamardinos  I,  Aliferis  CF,  Statnikov  A  (2003).   "Algorithms  for  Large  Scale  Markov  Blanket
+       Tsamardinos I,  Aliferis CF, Statnikov A (2003). "Algorithms for Large Scale Markov Blanket
        Discovery".  In "Proceedings of the Sixteenth International Florida Artificial Intelligence Research
        Society Conference", pp. 376-381. AAAI Press.
 
@@ -357,10 +358,11 @@ class IAMB(BNlearnAlgorithm):
         >>> plt.show()
     """
 
-    def __init__(self):
+    def __init__(self, score='NULL', alpha=0.05, beta='NULL',
+                 optim=False, verbose=None):
         """Init the model."""
-        super(IAMB, self).__init__()
-        self.arguments['{ALGORITHM}'] = 'iamb'
+        super(IAMB, self).__init__(score='NULL', alpha=0.05, beta='NULL',
+                                   optim=False, verbose=None, algorithm="iamb")
 
 
 class Fast_IAMB(BNlearnAlgorithm):
@@ -402,10 +404,11 @@ class Fast_IAMB(BNlearnAlgorithm):
         >>> plt.show()
     """
 
-    def __init__(self):
+    def __init__(self, score='NULL', alpha=0.05, beta='NULL',
+                 optim=False, verbose=None):
         """Init the model."""
-        super(Fast_IAMB, self).__init__()
-        self.arguments['{ALGORITHM}'] = 'fast.iamb'
+        super(Fast_IAMB, self).__init__(score='NULL', alpha=0.05, beta='NULL',
+                                        optim=False, verbose=None, algorithm='fast.iamb')
 
 
 class Inter_IAMB(BNlearnAlgorithm):
@@ -446,10 +449,11 @@ class Inter_IAMB(BNlearnAlgorithm):
         >>> plt.show()
     """
 
-    def __init__(self):
+    def __init__(self, score='NULL', alpha=0.05, beta='NULL',
+                 optim=False, verbose=None):
         """Init the model."""
-        super(Inter_IAMB, self).__init__()
-        self.arguments['{ALGORITHM}'] = 'inter.iamb'
+        super(Inter_IAMB, self).__init__(score='NULL', alpha=0.05, beta='NULL',
+                                         optim=False, verbose=None, algorithm="inter.iamb")
 
 
 class MMPC(BNlearnAlgorithm):
@@ -497,7 +501,8 @@ class MMPC(BNlearnAlgorithm):
         >>> plt.show()
     """
 
-    def __init__(self):
+    def __init__(self, score='NULL', alpha=0.05, beta='NULL',
+                 optim=False, verbose=None):
         """Init the model."""
-        super(MMPC, self).__init__()
-        self.arguments['{ALGORITHM}'] = 'mmpc'
+        super(MMPC, self).__init__(score='NULL', alpha=0.05, beta='NULL',
+                                   optim=False, verbose=None, algorithm='mmpc')
