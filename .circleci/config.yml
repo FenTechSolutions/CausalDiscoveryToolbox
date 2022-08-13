@@ -198,7 +198,7 @@ workflows:
           filters:
             branches:
               only:
-                - main
+                - circleci-project-setup
 
       - build-push-docker-images:
           name: build-cpu-image
@@ -206,10 +206,6 @@ workflows:
           target-image: fentechai/cdt
           dockerfile: Dockerfile
           requires: [bumpversion]
-          filters:
-            branches:
-              only:
-                - circleci-project-setup
 
       - build-push-docker-images:
           name: build-gpu-image
@@ -217,21 +213,8 @@ workflows:
           target-image: fentechai/nv-cdt
           dockerfile: nv-Dockerfile
           requires: [bumpversion]
-          filters:
-            branches:
-              only:
-                - circleci-project-setup
 
       - deploy-pypi:
           requires: [build-cpu-image]
-          filters:
-            branches:
-              only:
-                - circleci-project-setup
-
       - build-docs:
           requires: [build-cpu-image]
-          filters:
-            branches:
-              only:
-                - circleci-project-setup
