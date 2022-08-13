@@ -209,7 +209,7 @@ workflows:
           filters:
             branches:
               only:
-                - main
+                - circleci-project-setup
 
       - build-push-docker-images:
           name: build-gpu-image
@@ -220,18 +220,18 @@ workflows:
           filters:
             branches:
               only:
-                - main
+                - circleci-project-setup
 
       - deploy-pypi:
           requires: [build-cpu-image]
           filters:
             branches:
               only:
-                - main
+                - circleci-project-setup
 
       - build-docs:
           requires: [build-cpu-image]
           filters:
             branches:
               only:
-                - main
+                - circleci-project-setup
