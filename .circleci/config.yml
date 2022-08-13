@@ -186,20 +186,19 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-test
-        name: build-test-image
+      - build-test:
+          name: build-test-image
 
-      - test-image
-        name: test-image
-        requires: [build-test-image]
+      - test-image:
+          name: test-image
+          requires: [build-test-image]
 
-      - bumpversion
-        requires: [test-image]
-        filters:
-          branches:
-            only:
-              - main
-
+      - bumpversion:
+          requires: [test-image]
+          filters:
+            branches:
+              only:
+                - main
 
       - build-push-docker-images:
           name: build-cpu-image
@@ -212,7 +211,6 @@ workflows:
               only:
                 - main
 
-
       - build-push-docker-images:
           name: build-gpu-image
           base-image: fentechai/nv-cdt-base
@@ -224,15 +222,14 @@ workflows:
               only:
                 - main
 
-
-      - deploy-pypi
+      - deploy-pypi:
           requires: [build-cpu-image]
           filters:
             branches:
               only:
                 - main
 
-      - build-docs
+      - build-docs:
           requires: [build-cpu-image]
           filters:
             branches:
