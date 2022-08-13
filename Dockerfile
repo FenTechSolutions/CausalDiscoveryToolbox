@@ -1,4 +1,4 @@
-FROM fentechai/cdt-env-base:22.02
+FROM fentechai/cdt-env:latest
 MAINTAINER Diviyan Kalainathan <diviyan@lri.fr>
 LABEL description="Docker image for the Causal Discovery Toolbox"
 ARG python
@@ -9,8 +9,6 @@ COPY . /CDT
 RUN cd /CDT && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update --allow-unauthenticated && \
-    apt-get -q install "python${python}" "python${python}-dev" python3-pip python3-setuptools -y && \
-    rm /usr/bin/python3 && ln -s /usr/bin/python${python} /usr/bin/python3 && \
     python3 -m pip install -r requirements.txt && \
     python3 -m pip install pytest pytest-cov && \
     python3 -m pip install codecov && \

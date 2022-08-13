@@ -32,7 +32,7 @@ jobs:
       - docker pull fentechai/nv-cdt-env-base:21.01
       - docker build --build-arg python=3.6 --build-arg spy=36 -t fentechai/cdt-dev .
       - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-            docker run -e CODECOV_TOKEN --rm fentechai/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report= --cov=./cdt && codecov --token $CODECOV_TOKEN';
+            docker run -e CODECOV_TOKEN --rm fentechai/cdt-dev /bin/sh -c 'cd /CDT && pip3 uninstall cdt -y && python3 setup.py install develop --user && pytest --cov-report=xml --cov=./cdt && codecov --token $CODECOV_TOKEN';
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
             docker push fentechai/cdt-dev;
             docker build -f nv-Dockerfile -t fentechai/nv-cdt-dev .;
