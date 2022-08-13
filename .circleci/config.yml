@@ -22,7 +22,7 @@ jobs:
           name: "Build test image"
           command: |
             docker pull fentechai/cdt-base:latest
-            docker build  -t fentechai/cdt-test:$CIRCLE_BRANCH
+            docker build  -t fentechai/cdt-test:$CIRCLE_BRANCH .
             docker login -u $DOCKER_USER  -p $DOCKER_PASS
             docker push fentechai/cdt-test:$CIRCLE_BRANCH
 
