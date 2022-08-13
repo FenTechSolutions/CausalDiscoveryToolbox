@@ -111,9 +111,7 @@ jobs:
             source $BASH_ENV
       - when:
           condition:
-            or:
-              - equal: [ circleci-project-setup, << pipeline.git.branch >> ]
-              - equal: [ dev, << pipeline.git.branch >> ]
+            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Push Docker image
@@ -189,15 +187,54 @@ workflows:
   default:
     jobs:
       - build-test
+        name: build-test-image
+
       - test-image
+        name: test-image
+        requires: [build-test-image]
+
       - bumpversion
+        requires: [test-image]
+        filters:
+          branches:
+            only:
+              - main
+
+
       - build-push-docker-images:
+          name: build-cpu-image
           base-image: fentechai/cdt-base
           target-image: fentechai/cdt
           dockerfile: Dockerfile
+          requires: [bumpversion]
+          filters:
+            branches:
+              only:
+                - main
+
+
       - build-push-docker-images:
+          name: build-gpu-image
           base-image: fentechai/nv-cdt-base
           target-image: fentechai/nv-cdt
           dockerfile: nv-Dockerfile
+          requires: [bumpversion]
+          filters:
+            branches:
+              only:
+                - main
+
+
       - deploy-pypi
+          requires: [build-cpu-image]
+          filters:
+            branches:
+              only:
+                - main
+
       - build-docs
+          requires: [build-cpu-image]
+          filters:
+            branches:
+              only:
+                - main
