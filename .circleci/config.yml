@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Test CDT installation
           command: |
-            cd /CDT && pip3 uninstall cdt-y
+            cd /CDT && pip3 uninstall cdt -y
             python3 setup.py install develop --user
             pytest --cov-report=xml --cov=./cdt
             codecov --token $CODECOV_TOKEN

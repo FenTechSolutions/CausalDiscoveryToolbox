@@ -189,7 +189,7 @@ def launch_R_script(template, arguments, output_function=None,
 
     if output_function is None:
         try:
-            output = subprocess.call([str(rpath), "--vanilla", str(scriptpath)],
+            output = subprocess.call([str(rpath), "--no-restore --no-save --no-site-file", str(scriptpath)],
                                     stdout=subprocess.DEVNULL,
                                     stderr=subprocess.DEVNULL)
         except Exception as e:
@@ -199,9 +199,9 @@ def launch_R_script(template, arguments, output_function=None,
     else:
         try:
             if verbose:
-                process = subprocess.Popen([str(rpath), "--vanilla", str(scriptpath)])
+                process = subprocess.Popen([str(rpath), "--no-restore --no-save --no-site-file", str(scriptpath)])
             else:
-                process = subprocess.Popen([str(rpath), "--vanilla", str(scriptpath)],
+                process = subprocess.Popen([str(rpath), "--no-restore --no-save --no-site-file", str(scriptpath)],
                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             process.wait()
         except KeyboardInterrupt:
