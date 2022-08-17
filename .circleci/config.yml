@@ -37,6 +37,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Test CDT installation
+          no_output_timeout: 40m
           command: |
             cd /CDT && pip3 uninstall cdt -y
             python3 setup.py install develop --user

@@ -11,8 +11,13 @@ from .features import extract_features, FeatureMapper
 import numpy as np
 from sklearn import pipeline
 from sklearn.base import BaseEstimator
-from sklearn.ensemble import GradientBoostingClassifier
 from multiprocessing import Pool
+try:
+    # For latest versions of scikit-learn
+    from sklearn.ensemble import HistGradientBoostingClassifier as GradBoostClassifier
+except ImportError:
+    from sklearn.ensemble import GradientBoostingClassifier as GradBoostClassifier
+
 
 gbc_params = {
     'loss':'deviance',
@@ -265,17 +270,17 @@ class CauseEffectSystemCombination(BaseEstimator):
             CauseEffectEstimatorID(
                 features_direction=self.features, 
                 features_independence=self.features,
-                regressor=GradientBoostingClassifier,
+                regressor=GradBoostClassifier,
                 params=gbc_params,
                 symmetrize=symmetrize), 
             CauseEffectEstimatorSymmetric(
                 features=self.features,
-                regressor=GradientBoostingClassifier,
+                regressor=GradBoostClassifier,
                 params=gbc_params,
                 symmetrize=symmetrize),
             CauseEffectEstimatorOneStep(
                 features=self.features,
-                regressor=GradientBoostingClassifier,
+                regressor=GradBoostClassifier,
                 params=gbc_params,
                 symmetrize=symmetrize),
         ]

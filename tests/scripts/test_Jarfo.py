@@ -65,11 +65,11 @@ def test_tuebingen():
 def test_categorical():
     data, labels = load_dataset('tuebingen')
     data = data[:10]
-    for idx in range(10):
-        data.iloc[idx, 0] = np.digitize(data.iloc[idx, 0],
-                                        np.histogram(data.iloc[idx, 0])[1])
-        data.iloc[idx, 1] = np.digitize(data.iloc[idx, 1],
-                                        np.histogram(data.iloc[idx, 1])[1])
+    for idx in data.index:
+        data.at[idx, "A"] = np.digitize(data.loc[idx, "A"],
+                                        np.histogram(data.loc[idx, "A"])[1])
+        data.at[idx, "B"] = np.digitize(data.loc[idx, "B"],
+                                        np.histogram(data.loc[idx, "B"])[1])
     labels = labels[:10]
     m = Jarfo()
     m.fit(data, labels[['Target']])
