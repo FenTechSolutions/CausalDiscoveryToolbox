@@ -15,23 +15,26 @@ from multiprocessing import Pool
 try:
     # For latest versions of scikit-learn
     from sklearn.ensemble import HistGradientBoostingClassifier as GradBoostClassifier
+    extra_params = None
+
 except ImportError:
     from sklearn.ensemble import GradientBoostingClassifier as GradBoostClassifier
-
+    extra_params = {'n_estimators': 500,
+                    'subsample': 1.0,
+                    'min_samples_split': 8,
+                    'loss':'deviance',
+                    }
 
 gbc_params = {
-    'loss':'deviance',
     'learning_rate': 0.1,
-    'n_estimators': 500,
-    'subsample': 1.0,
-    'min_samples_split': 8,
     'min_samples_leaf': 1,
     'max_depth': 9,
-    'init': None,
     'random_state': 1,
-    'max_features': None,
     'verbose': 0
     }
+if extra_params is not None:
+    gbc_params.update(extra_params)
+
 
 selected_features = [
     'Adjusted Mutual Information[A,A type,B,B type]',
