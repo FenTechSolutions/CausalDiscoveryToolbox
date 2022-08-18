@@ -27,54 +27,12 @@ Author: Olivier Goudet
 """
 
 from .model import FeatureSelectionModel
-from sklearn.feature_selection import RFECV
+# from sklearn.feature_selection import RFECV
 from sklearn.svm import SVR, LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 # from skrebate import ReliefF
 import numpy as np
 from sklearn.linear_model import ARDRegression as ard
-
-
-class RFECVLinearSVR(FeatureSelectionModel):
-    """ Recursive Feature elimination with cross validation,
-    with support vector regressors
-
-    .. note::
-       Ref: Guyon, I., Weston, J., Barnhill, S., & Vapnik, V.,
-       “Gene selection for cancer classification using support vector machines”,
-       Mach. Learn., 46(1-3), 389–422, 2002.
-       
-   Example:
-       >>> from cdt.independence.graph import RFECVLinearSVR
-       >>> from sklearn.datasets import load_boston
-       >>> boston = load_boston()
-       >>> df_features = pd.DataFrame(boston['data'])
-       >>> df_target = pd.DataFrame(boston['target'])
-       >>> obj = RFECVLinearSVR()
-       >>> output = obj.predict_features(df_features, df_target)
-       >>> ugraph = obj.predict(df_features)  # Predict skeleton
-    """
-
-    def __init__(self):
-        super(RFECVLinearSVR, self).__init__()
-
-    def predict_features(self, df_features, df_target, idx=0, **kwargs):
-        """For one variable, predict its neighbouring nodes.
-
-        Args:
-            df_features (pandas.DataFrame):
-            df_target (pandas.Series):
-            idx (int): (optional) for printing purposes
-            kwargs (dict): additional options for algorithms
-
-        Returns:
-            list: scores of each feature relatively to the target
-        """
-        estimator = SVR(kernel='linear')
-        selector = RFECV(estimator, step=1)
-        selector = selector.fit(df_features.values, np.ravel(df_target.values))
-
-        return selector.grid_scores_
 
 
 class LinearSVRL2(FeatureSelectionModel):
