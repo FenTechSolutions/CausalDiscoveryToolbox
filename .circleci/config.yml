@@ -159,10 +159,10 @@ jobs:
            - run:
                name: Build Docs and Push to GitHub
                command: |
+                 cd /CDT
                  git pull origin circleci-project-setup
                  VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                  # docker pull fentechai/cdt:$VERSION_NEW
-                 cd /CDT
                  git config --global user.email "ci@circleci.com"
                  git config --global user.name "Circle CI Docs"
                  git config --global push.default simple
