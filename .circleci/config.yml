@@ -58,6 +58,7 @@ jobs:
           command: |
             apk add --no-cache \
               py-pip=9.0.0-r1
+            apk add --no-cache bash
       - add_ssh_keys:
           fingerprints:
             - "94:dc:75:8a:05:8e:b6:ef:bc:34:01:ed:7d:6b:86:ee"
