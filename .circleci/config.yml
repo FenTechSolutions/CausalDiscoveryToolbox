@@ -138,7 +138,7 @@ jobs:
                   git pull origin circleci-project-setup
                   VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                   docker pull fentechai/cdt:$VERSION_NEW
-                  docker run -e PYPI_PASSWORD --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install --upgrade keyrings.alt && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
+                  docker run -e $PYPI_PASSWORD --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /CDT && pip3 install --upgrade keyrings.alt && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p "$PYPI_PASSWORD" dist/*'
 
   build-docs:
     docker:
@@ -165,7 +165,9 @@ jobs:
                  git config --global user.email "ci@circleci.com"
                  git config --global user.name "Circle CI Docs"
                  git config --global push.default simple
-                 docker run -v $(pwd):/cdtlib --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
+                 ls .
+                 echo "$(pwd)"
+                 docker run -v $(pwd):/cdtlib --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /cdtlib && ls . && echo $(pwd) && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
                  git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
                  git add ./docs
                  git commit -m "[DEPLOY] Docs $VERSION_NEW [skip ci]"
