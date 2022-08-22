@@ -64,7 +64,7 @@ jobs:
             - "94:dc:75:8a:05:8e:b6:ef:bc:34:01:ed:7d:6b:86:ee"
       - when:
           condition:
-            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+            equal: [ master, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Bumpversion
@@ -77,7 +77,7 @@ jobs:
                   git add -u
                   VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                   git commit -m "[DEPLOY] $VERSION_NEW [skip ci]"
-                  git push deploy HEAD:circleci-project-setup
+                  git push deploy HEAD:master
 
   build-push-docker-images:
     parameters:
@@ -104,13 +104,13 @@ jobs:
             source $BASH_ENV
       - when:
           condition:
-            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+            equal: [ master, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Push Docker image
                 command: |
                   source $BASH_ENV
-                  git pull origin circleci-project-setup
+                  git pull origin master
                   VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                   docker login -u $DOCKER_USER  -p $DOCKER_PASS
                   docker pull << parameters.base-image>>:latest
@@ -130,12 +130,12 @@ jobs:
       - setup_remote_docker
       - when:
           condition:
-            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+            equal: [ master, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Push to PyPi
                 command: |
-                  git pull origin circleci-project-setup
+                  git pull origin master
                   VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                   docker pull fentechai/cdt:$VERSION_NEW
                   docker run -e PYPI_PASSWORD=$PYPI_PASSWORD --rm fentechai/cdt:$VERSION_NEW /bin/sh -c "cd /CDT && pip3 install --upgrade keyrings.alt && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p '$PYPI_PASSWORD' dist/*"
@@ -154,13 +154,13 @@ jobs:
             - "94:dc:75:8a:05:8e:b6:ef:bc:34:01:ed:7d:6b:86:ee"
       - when:
          condition:
-             equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+             equal: [ master, << pipeline.git.branch >> ]
          steps:
            - run:
                name: Build Docs and Push to GitHub
                command: |
                  cd /CDT
-                 git pull origin circleci-project-setup
+                 git pull origin master
                  VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                  # docker pull fentechai/cdt:$VERSION_NEW
                  git config --global user.email "ci@circleci.com"
@@ -174,7 +174,7 @@ jobs:
                  cd ..
                  git add ./docs
                  git commit -m "[DEPLOY] Docs $VERSION_NEW [skip ci]"
-                 git push deploy HEAD:circleci-project-setup
+                 git push deploy HEAD:master
 
 
 # Invoke jobs via workflows
@@ -182,37 +182,35 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-test:
-      #     name: build-test-image
+      - build-test:
+          name: build-test-image
 
-      # - test-image:
-      #     name: test-image
-      #     requires: [build-test-image]
+      - test-image:
+          name: test-image
+          requires: [build-test-image]
 
-      # - bumpversion:
-      #     requires: [test-image]
-      #     filters:
-      #       branches:
-      #         only:
-      #           - circleci-project-setup
+      - bumpversion:
+          requires: [test-image]
+          filters:
+            branches:
+              only:
+                - master
 
-      # - build-push-docker-images:
-      #     name: build-cpu-image
-      #     base-image: fentechai/cdt-base
-      #     target-image: fentechai/cdt
-      #     dockerfile: Dockerfile
-      #     requires: [bumpversion]
+      - build-push-docker-images:
+          name: build-cpu-image
+          base-image: fentechai/cdt-base
+          target-image: fentechai/cdt
+          dockerfile: Dockerfile
+          requires: [bumpversion]
 
-      # - build-push-docker-images:
-      #     name: build-gpu-image
-      #     base-image: fentechai/nv-cdt-base
-      #     target-image: fentechai/nv-cdt
-      #     dockerfile: nv-Dockerfile
-      #     requires: [bumpversion]
+      - build-push-docker-images:
+          name: build-gpu-image
+          base-image: fentechai/nv-cdt-base
+          target-image: fentechai/nv-cdt
+          dockerfile: nv-Dockerfile
+          requires: [bumpversion]
 
-      # - deploy-pypi:
-      #     name: deploy-Pypi
-      #     requires: [build-cpu-image]
+      - deploy-pypi:
+          requires: [build-cpu-image]
       - build-docs:
-          name: deploy-docs
-          # requires: [build-cpu-image]
+          requires: [build-cpu-image]
