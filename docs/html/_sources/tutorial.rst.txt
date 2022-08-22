@@ -113,5 +113,5 @@ understand the output of the toolbox's outputs:
    >>> e = list(g.edges())  # list of edges in the graph
 
 Please refer to `networkx` 's documentation for more detailed information:
-https://https://networkx.github.io/documentation/stable/
+https://networkx.github.io/documentation/stable/
 
