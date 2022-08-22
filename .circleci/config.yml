@@ -187,12 +187,12 @@ workflows:
 
       # - bumpversion:
       #     requires: [test-image]
-      #     lters:
-      #     branches:
-      #       only:
-      #         - circleci-project-setup
+      #     filters:
+      #       branches:
+      #         only:
+      #           - circleci-project-setup
 
-    - build-push-docker-images:
+      - build-push-docker-images:
           name: build-cpu-image
           base-image: fentechai/cdt-base
           target-image: fentechai/cdt
