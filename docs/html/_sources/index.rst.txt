@@ -18,7 +18,7 @@ Package for causal inference in graphs and in the pairwise settings for Python>=
 .. image:: https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/FenTechSolutions/CausalDiscoveryToolbox
 .. image:: https://img.shields.io/aur/license/pac.svg?maxAge=259200
-.. image:: https://img.shields.io/badge/version-0.5.23-yellow.svg?maxAge=259200
+.. image:: https://img.shields.io/badge/version-0.5.24-yellow.svg?maxAge=259200
 
 It implements lots of algorithms for graph structure recovery (including algorithms from the `bnlearn`, `pcalg` packages), mainly based out of observational data.
 
@@ -44,13 +44,13 @@ Docker images
 
 Docker images are available, including all the dependencies, and enabled functionalities:
 
-.. |36cpu| image:: https://img.shields.io/badge/docker-0.5.23-0db7ed.svg?maxAge=259200
+.. |36cpu| image:: https://img.shields.io/badge/docker-0.5.24-0db7ed.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/cdt-py3.6/
 
-.. |37cpu| image:: https://img.shields.io/badge/docker-0.5.23-0db7ed.svg?maxAge=259200
+.. |37cpu| image:: https://img.shields.io/badge/docker-0.5.24-0db7ed.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/cdt-py3.7/
 
-.. |36gpu| image:: https://img.shields.io/badge/nvidia--docker-0.5.23-76b900.svg?maxAge=259200
+.. |36gpu| image:: https://img.shields.io/badge/nvidia--docker-0.5.24-76b900.svg?maxAge=259200
     :target: https://hub.docker.com/r/divkal/nv-cdt-py3.6/
 
 .. |36cpudev| image:: https://img.shields.io/badge/docker-latest-0db7ed.svg?maxAge=259200
@@ -62,9 +62,9 @@ Docker images are available, including all the dependencies, and enabled functio
     :target: https://hub.docker.com/r/divkal/nv-cdt-dev/
 
 ..  |       Branch     |                                                                 master                                                                 |                                                                  dev                                                                 |
-..  | Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.23-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.5.23-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
-..  | Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.23-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
-..  | Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.23-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.5.23-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
+..  | Python 3.6 - CPU |       [![d36cpu](https://img.shields.io/badge/docker-0.5.24-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.6/)      |       [![d36cpudev](https://img.shields.io/badge/dev-0.5.24-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-dev)       |
+..  | Python 3.7 - CPU |       [![d37cpu](https://img.shields.io/badge/docker-0.5.24-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/cdt-py3.7/)      |                       [![d37gpu](https://img.shields.io/badge/dev-unavailable-lightgrey.svg?maxAge=259200)](#)                       |
+..  | Python 3.6 - GPU | [![d36gpu](https://img.shields.io/badge/nvidia--docker-0.5.24-76b900.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-py3.6/) |  [![d36gpudev](https://img.shields.io/badge/nvidia--dev-0.5.24-0db7ed.svg?maxAge=259200)](https://hub.docker.com/r/divkal/nv-cdt-dev) |
 
 +-------------------+---------+------------+
 |      Branch       | master  |    dev     |
@@ -126,6 +126,49 @@ In order to have access to additional algorithms from various R packages such as
 
 Check out how to install all R dependencies in the before-install section of the [travis.yml](https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/.travis.yml) file for debian based distributions.
 The `r-requirements file <https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/r_requirements.txt>`_ notes all the R packages used by the toolbox.
+
+Here is an example of installation script of the R packages on Ubuntu 20.04:
+
+.. code-block:: sh
+
+   apt-get -qq update
+   DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
+   apt-get -qq install dialog apt-utils -y
+   apt-get install apt-transport-https -y
+   apt-get install -qq software-properties-common -y
+   apt-get -qq update
+   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+   add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/' -y
+   apt-get -qq update
+
+   apt-get -qq install r-base -y
+   apt-get -qq install libssl-dev -y
+   apt-get -qq install libgmp3-dev  -y
+   apt-get -qq install git -y
+   apt-get -qq install build-essential  -y
+   apt-get -qq install libv8-dev  -y
+   apt-get -qq install libcurl4-openssl-dev -y
+   apt-get -qq install libgsl-dev -y
+
+   Rscript -e 'install.packages(c("V8"),repos="http://cran.us.r-project.org", quiet=TRUE, verbose=FALSE)'
+   Rscript -e 'install.packages(c("sfsmisc"),repos="http://cran.us.r-project.org", quiet=TRUE, verbose=FALSE)'
+   Rscript -e 'install.packages(c("clue"),repos="http://cran.us.r-project.org", quiet=TRUE, verbose=FALSE)'
+   Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz", repos=NULL, type="source")'
+   Rscript -e 'install.packages(c("lattice"),repos="http://cran.us.r-project.org", quiet=TRUE, verbose=FALSE)'
+   Rscript -e 'install.packages(c("devtools"),repos="http://cran.us.r-project.org", quiet=TRUE, verbose=FALSE)'
+   Rscript -e 'install.packages(c("MASS"),repos="http://cran.us.r-project.org", quiet=TRUE, verbose=FALSE)'
+   Rscript -e 'install.packages("BiocManager")'
+   Rscript -e 'BiocManager::install(c("igraph"))'
+   Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/fastICA/fastICA_1.2-2.tar.gz", repos=NULL, type="source")'
+   Rscript -e 'BiocManager::install(c("SID", "bnlearn", "pcalg", "kpcalg", "glmnet", "mboost"))'
+   Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/CAM/CAM_1.0.tar.gz", repos=NULL, type="source")'
+   Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/sparsebnUtils_0.0.8.tar.gz", repos=NULL, type="source")'
+   Rscript -e 'BiocManager::install(c("ccdrAlgorithm", "discretecdAlgorithm"))'
+
+   apt-get -qq install libxml2-dev -y
+   Rscript -e 'install.packages("devtools")'
+   Rscript -e 'library(devtools); install_github("cran/CAM"); install_github("cran/momentchi2"); install_github("Diviyan-Kalainathan/RCIT", quiet=TRUE, verbose=FALSE)'
+   Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/sparsebn/sparsebn_0.1.2.tar.gz", repos=NULL, type="source")'
 
 
 Overview

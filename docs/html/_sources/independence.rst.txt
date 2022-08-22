@@ -101,12 +101,6 @@ cdt.independence.graph
 .. autoclass:: LinearSVRL2
    :members:
 
-:hidden:`RFECVLinearSVR`
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: RFECVLinearSVR
-   :members:
-
 .. :hidden:`RRelief`
 .. ~~~~~~~~~~~~~~~~~
 ..
