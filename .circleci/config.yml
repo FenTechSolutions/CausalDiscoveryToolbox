@@ -55,11 +55,11 @@ jobs:
       - setup_remote_docker
       - run:
           name: Define run environment variables
-          command:
+          command: |
             echo 'export COMMIT_MESSAGE="$(git log  --format=%B -n 1)"' >> $BASH_ENV
             echo 'VERSION=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)' >> $BASH_ENV
             source $BASH_ENV
-            echo "Defined Vars : COMMIT_MESSAGE:$COMMIT_MESSAGE VERSION:$VERSION"
+            echo "Defined Vars:  COMMIT_MESSAGE:$COMMIT_MESSAGE VERSION:$VERSION"
 
 
       - when:
@@ -108,9 +108,9 @@ jobs:
           name: Define run environment variables
           command: |
             if [[ $(git branch --show-current) == "dev" ]]; then SUFFIX="-dev"; else SUFFIX=""; fi
-            echo "export COMMIT_MESSAGE=\"$(git log  --format=%B -n 1)\"" >> $BASH_ENV
-            echo "export SUFFIX=$SUFFIX" >> $BASH_ENV
-            echo "Defined VARS: SUFFIX:$SUFFIX  COMMIT_MESSAGE:$COMMIT_MESSAGE"
+            echo 'export COMMIT_MESSAGE="$(git log  --format=%B -n 1)"' >> $BASH_ENV
+            echo 'export SUFFIX=$SUFFIX' >> $BASH_ENV
+            echo 'Defined VARS: SUFFIX:$SUFFIX  COMMIT_MESSAGE:$COMMIT_MESSAGE'
             source $BASH_ENV
       - when:
           condition:
