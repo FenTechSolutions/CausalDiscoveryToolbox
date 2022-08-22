@@ -70,7 +70,7 @@ jobs:
                 name: Bumpversion
                 command: |
                   bash ./.circleci/bumpversion.sh
-                  git config --global user.email "diviyan@circleci.com"
+                  git config --global user.email "ci@circleci.com"
                   git config --global user.name "CircleCI Bumpversion"
                   git config --global push.default simple
                   git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
@@ -135,7 +135,6 @@ jobs:
             - run:
                 name: Push to PyPi
                 command: |
-                  source $BASH_ENV
                   git pull origin circleci-project-setup
                   VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                   docker pull fentechai/cdt:$VERSION_NEW
@@ -158,13 +157,13 @@ jobs:
              equal: [ circleci-project-setup, << pipeline.git.branch >> ]
          steps:
            - run:
-               name: Push to PyPi
+               name: Build Docs and Push to GitHub
                command: |
                  git pull origin circleci-project-setup
                  VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
                  docker pull fentechai/cdt:$VERSION_NEW
-                 git config --global user.email "ci@travis.com"
-                 git config --global user.name "Travis CI Docs"
+                 git config --global user.email "ci@circleci.com"
+                 git config --global user.name "Circle CI Docs"
                  git config --global push.default simple
                  docker run -v $(pwd):/cdtlib --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
                  git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
@@ -192,21 +191,23 @@ workflows:
       #         only:
       #           - circleci-project-setup
 
-      - build-push-docker-images:
-          name: build-cpu-image
-          base-image: fentechai/cdt-base
-          target-image: fentechai/cdt
-          dockerfile: Dockerfile
-          # requires: [bumpversion]
+      # - build-push-docker-images:
+      #     name: build-cpu-image
+      #     base-image: fentechai/cdt-base
+      #     target-image: fentechai/cdt
+      #     dockerfile: Dockerfile
+      #     requires: [bumpversion]
 
-      - build-push-docker-images:
-          name: build-gpu-image
-          base-image: fentechai/nv-cdt-base
-          target-image: fentechai/nv-cdt
-          dockerfile: nv-Dockerfile
-          # requires: [bumpversion]
+      # - build-push-docker-images:
+      #     name: build-gpu-image
+      #     base-image: fentechai/nv-cdt-base
+      #     target-image: fentechai/nv-cdt
+      #     dockerfile: nv-Dockerfile
+      #     requires: [bumpversion]
 
       - deploy-pypi:
-          requires: [build-cpu-image]
+          name: deploy-Pypi
+          # requires: [build-cpu-image]
       - build-docs:
-          requires: [build-cpu-image]
+          name: deploy-docs
+          # requires: [build-cpu-image]
