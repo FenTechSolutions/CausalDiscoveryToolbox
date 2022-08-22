@@ -23,5 +23,5 @@
 """
 from .Lasso import (Glasso, HSICLasso)
 from .FSGNN import FSGNN
-from .FSRegression import (RFECVLinearSVR, LinearSVRL2,  #RRelief,
+from .FSRegression import (LinearSVRL2,  #RRelief, RFECVLinearSVR,
                            DecisionTreeRegression, ARD)

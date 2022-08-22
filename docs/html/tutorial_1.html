@@ -1,82 +1,41 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Basic Tutorial &mdash; Causal Discovery Toolbox 0.5.23 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-
-  
-  
+  <title>Basic Tutorial &mdash; Causal Discovery Toolbox 0.5.24 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"extensions": ["tex2jax.js"], "jax": ["input/TeX", "output/HTML-CSS"], "tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}, "HTML-CSS": {"fonts": ["TeX"]}})</script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Advanced Tutorial" href="tutorial_2.html" />
     <link rel="prev" title="Get started" href="tutorial.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html">
-          
-
-          
-            
             <img src="_static/banner.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                0.5.23
+                0.5.24
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -84,18 +43,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Causal Discovery Toolbox Documentation</a></li>
 </ul>
@@ -122,75 +70,33 @@
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Documentation</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Causal Discovery Toolbox</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="tutorial.html">Get started</a> &raquo;</li>
-        
       <li>Basic Tutorial</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/tutorial_1.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="basic-tutorial">
-<h1>Basic Tutorial<a class="headerlink" href="#basic-tutorial" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="basic-tutorial">
+<h1>Basic Tutorial<a class="headerlink" href="#basic-tutorial" title="Permalink to this heading"></a></h1>
 <p>In this first tutorial, we will got through all the main features of the <cite>cdt</cite>
 package:</p>
 <ol class="arabic simple">
@@ -199,8 +105,8 @@ package:</p>
 <li><p>Apply a causal Discovery algorithm</p></li>
 <li><p>Evaluate our approach using 3 different scoring metrics</p></li>
 </ol>
-<div class="section" id="load-data">
-<h2>1. Load data<a class="headerlink" href="#load-data" title="Permalink to this headline">¶</a></h2>
+<section id="load-data">
+<h2>1. Load data<a class="headerlink" href="#load-data" title="Permalink to this heading"></a></h2>
 <p>Loading a standard dataset using the <cite>cdt</cite> package is straightforward using the
 <code class="docutils literal notranslate"><span class="pre">cdt.data</span></code> module. In this
 tutorial, we are going to load the <cite>Sachs</cite> dataset.</p>
@@ -226,9 +132,9 @@ known ground truth and real data.</p>
 </div>
 <p>And graph is loaded: the <code class="docutils literal notranslate"><span class="pre">data</span></code> object is a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> containing all
 the data, and <code class="docutils literal notranslate"><span class="pre">graph</span></code> contains the ground truth of the dataset:</p>
-</div>
-<div class="section" id="graph-skeleton">
-<h2>2. Graph skeleton<a class="headerlink" href="#graph-skeleton" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="graph-skeleton">
+<h2>2. Graph skeleton<a class="headerlink" href="#graph-skeleton" title="Permalink to this heading"></a></h2>
 <p>Having a graph skeleton on given data might be quite useful for having
 information on the structure of the data. In order to do so, let’s
 apply the Graph Lasso.</p>
@@ -344,9 +250,9 @@ DOI: https://doi.org/10.1186/1471-2105-7-S1-S7</cite></p>
 </div>
 <p>and the resulting skeleton is much more sparse. Let’s build on this new
 skeleton to perform our causal discovery.</p>
-</div>
-<div class="section" id="causal-discovery">
-<h2>3. Causal discovery<a class="headerlink" href="#causal-discovery" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="causal-discovery">
+<h2>3. Causal discovery<a class="headerlink" href="#causal-discovery" title="Permalink to this heading"></a></h2>
 <p>Having a graph skeleton, we are going to perform causal discovery with
 constraints, by using the <cite>GES</cite> algorithm.</p>
 <div class="admonition seealso">
@@ -380,9 +286,9 @@ skeleton.</p>
 Mooij, D. Janzing, B. Schölkopf: Causal Discovery with Continuous Additive Noise
 Models, JMLR 15:2009-2053, 2014.</cite></p>
 </div>
-</div>
-<div class="section" id="evaluation-and-scoring-metrics">
-<h2>4. Evaluation and scoring metrics<a class="headerlink" href="#evaluation-and-scoring-metrics" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="evaluation-and-scoring-metrics">
+<h2>4. Evaluation and scoring metrics<a class="headerlink" href="#evaluation-and-scoring-metrics" title="Permalink to this heading"></a></h2>
 <p>In order to evaluate various predictions with the ground truth, the <cite>cdt</cite>
 package includes 3 different metrics in the <code class="docutils literal notranslate"><span class="pre">cdt.metrics</span></code> module:</p>
 <ul class="simple">
@@ -414,55 +320,38 @@ package includes 3 different metrics in the <code class="docutils literal notran
 <li><p>The SHD score is lower as well</p></li>
 </ul>
 <p>This concludes our first tutorial on the <cite>cdt</cite> package.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="tutorial_2.html" class="btn btn-neutral float-right" title="Advanced Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="tutorial.html" class="btn btn-neutral float-left" title="Get started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorial_2.html" class="btn btn-neutral float-right" title="Advanced Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.
-
-    </p>
+    <p>&#169; Copyright 2018, Diviyan Kalainathan, Olivier Goudet.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

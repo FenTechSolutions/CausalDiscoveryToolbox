@@ -164,7 +164,7 @@ def hsiclasso(Xin, Yin, numFeat=5, ykernel='Gauss'):
             else:
                 lam[0, k] = C[0]
         # print mu,t,len(I)
-        if lassocond is 0:
+        if lassocond == 0:
             A.append(Il[j])
             Il.remove(Il[j])
 

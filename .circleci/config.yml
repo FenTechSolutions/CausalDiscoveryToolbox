@@ -1,0 +1,216 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+jobs:
+
+  build-test:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: docker:17.05.0-ce-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: "Build test image"
+          command: |
+            docker pull fentechai/cdt-base:latest
+            docker build  -t fentechai/cdt-test:$CIRCLE_BRANCH .
+            docker login -u $DOCKER_USER  -p $DOCKER_PASS
+            docker push fentechai/cdt-test:$CIRCLE_BRANCH
+
+  test-image:
+    docker:
+      - image: fentechai/cdt-test:$CIRCLE_BRANCH
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Test CDT installation
+          no_output_timeout: 40m
+          command: |
+            cd /CDT && pip3 uninstall cdt -y
+            python3 setup.py install develop --user
+            pytest --cov-report=xml --cov=./cdt
+            codecov --token $CODECOV_TOKEN
+
+  bumpversion:
+    docker:
+      - image: docker:17.05.0-ce-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache \
+              py-pip=9.0.0-r1
+            apk add --no-cache bash
+      - add_ssh_keys:
+          fingerprints:
+            - "94:dc:75:8a:05:8e:b6:ef:bc:34:01:ed:7d:6b:86:ee"
+      - when:
+          condition:
+            equal: [ master, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Bumpversion
+                command: |
+                  bash ./.circleci/bumpversion.sh
+                  git config --global user.email "ci@circleci.com"
+                  git config --global user.name "CircleCI Bumpversion"
+                  git config --global push.default simple
+                  git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
+                  git add -u
+                  VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
+                  git commit -m "[DEPLOY] $VERSION_NEW [skip ci]"
+                  git push deploy HEAD:master
+
+  build-push-docker-images:
+    parameters:
+      base-image:
+        type: string
+      target-image:
+        type: string
+      dockerfile:
+        type: string
+    docker:
+      - image: docker:17.05.0-ce-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Define run environment variables
+          command: |
+            echo 'export COMMIT_MESSAGE="$(git log  --format=%B -n 1)"' >> $BASH_ENV
+            echo 'export SUFFIX=$SUFFIX' >> $BASH_ENV
+            echo 'Defined VARS: SUFFIX:$SUFFIX  COMMIT_MESSAGE:$COMMIT_MESSAGE'
+            source $BASH_ENV
+      - when:
+          condition:
+            equal: [ master, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Push Docker image
+                command: |
+                  source $BASH_ENV
+                  git pull origin master
+                  VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
+                  docker login -u $DOCKER_USER  -p $DOCKER_PASS
+                  docker pull << parameters.base-image>>:latest
+                  docker build -f << parameters.dockerfile >>  -t << parameters.target-image >>$SUFFIX:$VERSION_NEW .
+                  docker push << parameters.target-image >>$SUFFIX:$VERSION_NEW
+                  docker tag << parameters.target-image >>$SUFFIX:$VERSION_NEW  << parameters.target-image >>$SUFFIX:latest
+                  docker push << parameters.target-image >>$SUFFIX:latest
+
+  deploy-pypi:
+    docker:
+      - image: docker:17.05.0-ce-git
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    steps:
+      - checkout
+      - setup_remote_docker
+      - when:
+          condition:
+            equal: [ master, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Push to PyPi
+                command: |
+                  git pull origin master
+                  VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
+                  docker pull fentechai/cdt:$VERSION_NEW
+                  docker run -e PYPI_PASSWORD=$PYPI_PASSWORD --rm fentechai/cdt:$VERSION_NEW /bin/sh -c "cd /CDT && pip3 install --upgrade keyrings.alt && pip3 install twine wheel && python3 setup.py sdist bdist_wheel && twine upload -u divkal -p '$PYPI_PASSWORD' dist/*"
+
+  build-docs:
+    docker:
+      - image: fentechai/cdt:latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    steps:
+      - checkout
+      - setup_remote_docker
+      - add_ssh_keys:
+          fingerprints:
+            - "94:dc:75:8a:05:8e:b6:ef:bc:34:01:ed:7d:6b:86:ee"
+      - when:
+         condition:
+             equal: [ master, << pipeline.git.branch >> ]
+         steps:
+           - run:
+               name: Build Docs and Push to GitHub
+               command: |
+                 cd /CDT
+                 git pull origin master
+                 VERSION_NEW=$(cat setup.py| grep version | cut -c 20- | rev | cut -c 3- | rev)
+                 # docker pull fentechai/cdt:$VERSION_NEW
+                 git config --global user.email "ci@circleci.com"
+                 git config --global user.name "Circle CI Docs"
+                 git config --global push.default simple
+                 # docker run -v $(pwd):/cdtlib --rm fentechai/cdt:$VERSION_NEW /bin/sh -c 'cd /cdtlib && pip3 uninstall cdt -y && pip3 install . && pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme && cd docs && sphinx-build -Eab html . html'
+                 pip3 install sphinx recommonmark sphinxcontrib-napoleon sphinx_rtd_theme
+                 cd docs
+                 sphinx-build -Eab html . html
+                 git remote add deploy git@github.com:FenTechSolutions/CausalDiscoveryToolbox.git
+                 cd ..
+                 git add ./docs
+                 git commit -m "[DEPLOY] Docs $VERSION_NEW [skip ci]"
+                 git push deploy HEAD:master
+
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  default:
+    jobs:
+      - build-test:
+          name: build-test-image
+
+      - test-image:
+          name: test-image
+          requires: [build-test-image]
+
+      - bumpversion:
+          requires: [test-image]
+          filters:
+            branches:
+              only:
+                - master
+
+      - build-push-docker-images:
+          name: build-cpu-image
+          base-image: fentechai/cdt-base
+          target-image: fentechai/cdt
+          dockerfile: Dockerfile
+          requires: [bumpversion]
+
+      - build-push-docker-images:
+          name: build-gpu-image
+          base-image: fentechai/nv-cdt-base
+          target-image: fentechai/nv-cdt
+          dockerfile: nv-Dockerfile
+          requires: [bumpversion]
+
+      - deploy-pypi:
+          requires: [build-cpu-image]
+      - build-docs:
+          requires: [build-cpu-image]
