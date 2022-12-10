@@ -22,7 +22,7 @@ def setup_package():
           url='https://github.com/FenTechSolutions/CausalDiscoveryToolbox',
           package_data={'': ['**/*.R', '**/*.csv']},
           install_requires=['numpy', 'scipy', 'scikit-learn',
-                            'joblib', 'pandas', 'statsmodels',
+                            'joblib', 'pandas', 'statsmodels', 'torch',
                             'networkx', 'skrebate', 'tqdm', 'GPUtil', 'requests'],
           include_package_data=True,
           author='Diviyan Kalainathan',
