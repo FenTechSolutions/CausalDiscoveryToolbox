@@ -186,7 +186,7 @@ class ANM(PairwiseModel):
             float: ANM fit score
         """
         gp = GaussianProcessRegressor().fit(x, y)
-        y_predict = gp.predict(x)
+        y_predict = gp.predict(x).reshape(-1, 1)
         indepscore = normalized_hsic(y_predict - y, x)
 
         return indepscore
