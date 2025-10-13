@@ -373,7 +373,9 @@ def run_SAM(in_data, skeleton=None, is_mixed=False, device="cpu",
             if not linear and functionalComplexity=="n_hidden_units":
                 neuron_optimizer.step()
 
-    return output.div_(test).cpu().numpy()
+    test_additions = test * (data.shape[0] // batch_size)
+
+    return output.div_(test_additions).cpu().numpy()
     # Evaluate total effect with final DAG
 
 

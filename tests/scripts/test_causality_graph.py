@@ -54,6 +54,13 @@ def test_SAM():
     assert isinstance(m.predict(data_graph), nx.DiGraph)
     return 0
 
+
+def test_SAM_batchsize():
+    m = SAM(train_epochs=10, test_epochs=10, nh=10, dnh=10, nruns=1, njobs=1, batch_size=3, gpus=0)
+    assert nx.to_numpy_array(m.predict(data_graph)).max() <= 1
+    return 0
+
+
 def test_SAMv1():
     m = SAMv1(train_epochs=10, test_epochs=10, nh=10, dnh=10, nruns=1, njobs=1)
     assert isinstance(m.predict(data_graph), nx.DiGraph)
@@ -62,6 +69,7 @@ def test_SAMv1():
 
 if __name__ == "__main__":
     test_SAM()
+    test_SAM_batchsize()
     test_SAMv1()
     # test_directed()
     # test_undirected()
