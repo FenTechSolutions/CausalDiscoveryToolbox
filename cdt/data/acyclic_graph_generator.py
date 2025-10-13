@@ -111,7 +111,7 @@ class AcyclicGraphGenerator(object):
                     self.adjacency_matrix[i, j] = 1
 
         elif self.dag_type == 'erdos':
-            nb_edges = self.expected_degree * self.nodes
+            nb_edges = (self.expected_degree * self.nodes)/2
             prob_connection = 2 * nb_edges/(self.nodes**2 - self.nodes)
             causal_order = np.random.permutation(np.arange(self.nodes))
 
