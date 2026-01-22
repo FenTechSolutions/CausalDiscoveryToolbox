@@ -247,7 +247,7 @@ class GNN(PairwiseModel):
         AB = []
         BA = []
 
-        if self.gpus > 1:
+        if self.njobs > 1:
             result_pair = parallel_run(GNN_instance, data, njobs=self.njobs,
                                        gpus=self.gpus, verbose=self.verbose,
                                        train_epochs=self.train_epochs,
